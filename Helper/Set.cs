@@ -8,6 +8,10 @@ namespace HWClassLibrary.Helper
         private List<T> _data;
 
         public delegate bool IsEqualDelegate(T a, T b);
+        public delegate ResultType ApplyDelegate<ResultType>(T x);
+        public delegate CombinedResultType 
+            CombineDelegate<CombinedResultType, ResultType>
+            (CombinedResultType combinedResultType, ResultType resultType);
 
         private IsEqualDelegate _isEqual = new IsEqualDelegate(delegate(T a, T b) { return a.Equals(b); });
 
@@ -47,13 +51,29 @@ namespace HWClassLibrary.Helper
         /// created 14.07.2007 16:44 on HAHOYER-DELL by hh
         public void Add(T t)
         {
-            for (int i = 0; i < _data.Count; i++)
-                if (_isEqual(_data[i], t))
-                    return;
+            if(Contains(t))
+                return;
             _data.Add(t);
         }
 
+        private bool Contains(T t)
+        {
+            for (int i = 0; i < _data.Count; i++)
+                if (_isEqual(_data[i], t))
+                    return true;
+            return false;
+        }
+
         private Set<T> And(Set<T> other)
+        {
+            Set<T> result = new Set<T>();
+            for (int i = 0; i < _data.Count; i++)
+                if (other.Contains(_data[i]))
+                    result._data.Add(_data[i]);
+            return result;
+        }
+
+        private Set<T> Or(Set<T> other)
         {
             Set<T> result = new Set<T>(_data.ToArray());
             for (int i = 0; i < other.Count; i++)
@@ -66,6 +86,32 @@ namespace HWClassLibrary.Helper
         static public Set<T> operator &(Set<T> a, Set<T> b) 
         {
             return a.And(b);
+        }
+
+        static public Set<T> operator |(Set<T> a, Set<T> b)
+        {
+            return a.Or(b);
+        }
+
+        public List<ResultType> Apply<ResultType>(ApplyDelegate<ResultType> applyDelegate)
+        {
+            List<ResultType> result = new List<ResultType>();
+            for (int i = 0; i < _data.Count; i++)
+            {
+                T t = _data[i];
+                result.Add(applyDelegate(t));
+            }
+            return result;
+        }
+        public CombinedResultType Apply<CombinedResultType, ResultType>(ApplyDelegate<ResultType> applyDelegate, CombineDelegate<CombinedResultType, ResultType> combineDelegate) where CombinedResultType : new()
+        {
+            CombinedResultType result = new CombinedResultType();
+            for (int i = 0; i < _data.Count; i++)
+            {
+                T t = _data[i];
+                result = combineDelegate(result, applyDelegate(t));
+            }
+            return result;
         }
     }
 }
