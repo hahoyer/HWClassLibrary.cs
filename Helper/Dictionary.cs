@@ -9,13 +9,23 @@ namespace HWClassLibrary.Helper
     /// <typeparam name="Value"></typeparam>
     public class DictionaryEx<Key, Value> : Dictionary<Key, Value> 
     {
-
         public DictionaryEx(DictionaryEx<Key, Value> x)
             : base(x)
         {
             
         }
+        public DictionaryEx(DictionaryEx<Key, Value> x, IEqualityComparer<Key> comparer)
+            : base(x,comparer)
+        {
+
+        }
         public DictionaryEx()
+        {
+
+        }
+
+        public DictionaryEx(IEqualityComparer<Key> comparer)
+            : base(comparer)
         {
 
         }
@@ -60,5 +70,80 @@ namespace HWClassLibrary.Helper
             }
             set { Add(key,value); }
         }
+
+        new public Key[] Keys
+        {
+            get
+            {
+                KeyCollection keys = base.Keys;
+                Key[]result = new Key[keys.Count];
+                int i = 0;
+                foreach (Key key in keys)
+                    result[i++] = key;
+                return result;
+            }
+        }
     }
+
+    class NoCaseComparer: IEqualityComparer<string>
+    {
+        private static IEqualityComparer<string> _default;
+
+        ///<summary>
+        ///Determines whether the specified objects are equal.
+        ///</summary>
+        ///
+        ///<returns>
+        ///true if the specified objects are equal; otherwise, false.
+        ///</returns>
+        ///
+        ///<param name="y">The second object of type T to compare.</param>
+        ///<param name="x">The first object of type T to compare.</param>
+        public bool Equals(string x, string y)
+        {
+            return x.ToUpperInvariant() == y.ToUpperInvariant();
+        }
+
+        ///<summary>
+        ///When overridden in a derived class, serves as a hash function for the specified object for hashing algorithms and data structures, such as a hash table.
+        ///</summary>
+        ///
+        ///<returns>
+        ///A hash code for the specified object.
+        ///</returns>
+        ///
+        ///<param name="obj">The object for which to get a hash code.</param>
+        ///<exception cref="T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
+        public int GetHashCode(string obj)
+        {
+            return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant());
+        }
+
+        public static IEqualityComparer<string> Default
+        {
+            get
+            {
+                if(_default == null)
+                    _default = new NoCaseComparer();
+                return _default;
+            }
+        }
+    }
+
+    public class NoCaseStringDictionary<Value>: DictionaryEx<string ,Value>
+    {
+        public NoCaseStringDictionary()
+            : base(NoCaseComparer.Default)
+        {
+            
+        }
+        public NoCaseStringDictionary(NoCaseStringDictionary<Value> x)
+            : base(x, NoCaseComparer.Default)
+        {
+            
+        }
+
+        public new NoCaseStringDictionary<Value> Clone { get { return new NoCaseStringDictionary<Value>(this); } }
+    }
+
 }

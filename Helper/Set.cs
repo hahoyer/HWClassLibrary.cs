@@ -15,6 +15,7 @@ namespace HWClassLibrary.Helper
 
         private IsEqualDelegate _isEqual = new IsEqualDelegate(delegate(T a, T b) { return a.Equals(b); });
 
+        [DumpData(false)]
         public IsEqualDelegate IsEqual
         {
             get { return _isEqual; } 
@@ -78,6 +79,20 @@ namespace HWClassLibrary.Helper
             Set<T> result = new Set<T>(_data.ToArray());
             for (int i = 0; i < other.Count; i++)
                 result.Add(other[i]);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
+        /// created 09.08.2007 23:50 on HAHOYER-DELL by hh
+        static public Set<T> Create(T[] data)
+        {
+            Set<T> result = new Set<T>();
+            for (int i = 0; i < data.Length; i++)
+                result.Add(data[i]);
             return result;
         }
 
