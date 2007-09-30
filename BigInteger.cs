@@ -3430,7 +3430,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
 
 
 
-    static void Main(string[] args)
+    static void NoMain(string[] args)
     {
         // Known problem -> these two pseudoprimes passes my implementation of
         // primality test but failed in JDK's isProbablePrime test.

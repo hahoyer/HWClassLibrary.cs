@@ -62,6 +62,11 @@ namespace HWClassLibrary.IO
             }
         }
 
+        public override string ToString()
+        {
+            return FullName;
+        }
+
         /// <summary>
         /// considers the file as a byte array
         /// </summary>

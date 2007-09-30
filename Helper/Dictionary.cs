@@ -9,12 +9,12 @@ namespace HWClassLibrary.Helper
     /// <typeparam name="Value"></typeparam>
     public class DictionaryEx<Key, Value> : Dictionary<Key, Value> 
     {
-        public DictionaryEx(DictionaryEx<Key, Value> x)
+        public DictionaryEx(IDictionary<Key, Value> x)
             : base(x)
         {
             
         }
-        public DictionaryEx(DictionaryEx<Key, Value> x, IEqualityComparer<Key> comparer)
+        public DictionaryEx(IDictionary<Key, Value> x, IEqualityComparer<Key> comparer)
             : base(x,comparer)
         {
 

@@ -638,5 +638,16 @@ namespace HWClassLibrary.Debug
         {
             AssertionFailed(1, s, s1);
         }
+
+        /// <summary>
+        /// Outputs the specified text.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// Created 09.09.07 12:03 by hh on HAHOYER-DELL
+        public static void ConsoleOutput(string text)
+        {
+            FlaggedLine(text);
+            Console.WriteLine(text);
+        }
     }
 }
