@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
     <AssemblyName>HWClassLibrary</AssemblyName>
@@ -17,6 +17,17 @@
     <Compile Include="Helper\Set.cs" />
     <Compile Include="Helper\TreeViewSupport.cs" />
     <Compile Include="IO\File.cs" />
+    <Compile Include="ShellLib\EnumIDList.cs" />
+    <Compile Include="ShellLib\FilterByExtension.cs" />
+    <Compile Include="ShellLib\IFolderFilter.cs" />
+    <Compile Include="ShellLib\IFolderFilterSite.cs" />
+    <Compile Include="ShellLib\IShellFolder.cs" />
+    <Compile Include="ShellLib\Malloc.cs" />
+    <Compile Include="ShellLib\PIDL.cs" />
+    <Compile Include="ShellLib\ShellApi.cs" />
+    <Compile Include="ShellLib\ShellFolder.cs" />
+    <Compile Include="ShellLib\ShellFunctions.cs" />
+    <Compile Include="ShellLib\ShellGUIDs.cs" />
   </ItemGroup>
   <Import Project="sys.targets" />
 </Project>
