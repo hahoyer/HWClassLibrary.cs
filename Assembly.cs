@@ -1,3 +1,3 @@
 using System;
-[assembly: CLSCompliant(false)]
+[assembly: CLSCompliant(true)]
 

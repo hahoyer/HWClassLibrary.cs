@@ -17,17 +17,6 @@
     <Compile Include="Helper\Set.cs" />
     <Compile Include="Helper\TreeViewSupport.cs" />
     <Compile Include="IO\File.cs" />
-    <Compile Include="ShellLib\EnumIDList.cs" />
-    <Compile Include="ShellLib\FilterByExtension.cs" />
-    <Compile Include="ShellLib\IFolderFilter.cs" />
-    <Compile Include="ShellLib\IFolderFilterSite.cs" />
-    <Compile Include="ShellLib\IShellFolder.cs" />
-    <Compile Include="ShellLib\Malloc.cs" />
-    <Compile Include="ShellLib\PIDL.cs" />
-    <Compile Include="ShellLib\ShellApi.cs" />
-    <Compile Include="ShellLib\ShellFolder.cs" />
-    <Compile Include="ShellLib\ShellFunctions.cs" />
-    <Compile Include="ShellLib\ShellGUIDs.cs" />
   </ItemGroup>
   <Import Project="sys.targets" />
 </Project>
