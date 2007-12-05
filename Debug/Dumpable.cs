@@ -23,7 +23,7 @@ namespace HWClassLibrary.Debug
         /// dump string to be shown in debug windows
         /// </summary>
         [DumpData(false)]
-        public string DebuggerDumpString { get { return DebuggerDump(); } }
+        public string DebuggerDumpString { get { return DebuggerDump().Replace("\n","\r\n"); } }
 
         /// <summary>
         /// Method dump with break,  
