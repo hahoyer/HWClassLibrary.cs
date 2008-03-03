@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -12,21 +13,23 @@ namespace HWClassLibrary.Helper.TreeViewSupport
     /// </summary>
     public class NodeAttribute : Attribute
     {
-        private readonly string _title;
         private readonly bool _isEnabled = true;
+        private readonly string _title;
 
         /// <summary>
         /// Default attribute to define a subnode for treeview. 
         /// Property name will be used as title of subnode
         /// </summary>
         /// created 06.02.2007 23:35
-        public NodeAttribute() { }
+        public NodeAttribute()
+        {
+        }
 
         /// <summary>
         /// Attribute to enable or disable subnode
         /// </summary>
         /// created 06.02.2007 23:35
-        public NodeAttribute(bool isEnabled) 
+        public NodeAttribute(bool isEnabled)
         {
             _isEnabled = isEnabled;
         }
@@ -46,6 +49,7 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         /// <value>The title.</value>
         /// created 06.02.2007 23:39
         public string Title { get { return _title; } }
+
         /// <summary>
         /// Gets a value indicating whether this instance is defined.
         /// </summary>
@@ -54,19 +58,14 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         /// </value>
         /// created 06.02.2007 23:41
         public bool IsEnabled { get { return _isEnabled; } }
-
     }
+
     /// <summary>
     /// Class attribute to define additional node info property, displayed after node title
     /// </summary>
-    public class AdditionalNodeInfoAttribute: Attribute
+    public class AdditionalNodeInfoAttribute : Attribute
     {
         private readonly string _property;
-
-        /// <summary>
-        /// Property to obtain additional node info
-        /// </summary>
-        public string Property { get { return _property; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:AdditionalNodeInfoAttribute"/> class.
@@ -77,6 +76,11 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         {
             _property = property;
         }
+
+        /// <summary>
+        /// Property to obtain additional node info
+        /// </summary>
+        public string Property { get { return _property; } }
     }
 
     public static class Service
@@ -88,16 +92,11 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         /// <param name="nodeData">The node data.</param>
         /// <returns></returns>
         /// created 06.02.2007 23:26
-        public static TreeNode CreateNode(string title, object nodeData)
+        private static TreeNode CreateNode(string title, object nodeData)
         {
-            TreeNode result = new TreeNode(title);
+            var result = new TreeNode(title);
             result.Tag = nodeData;
             return result;
-        }
-
-        public static void AddNodes(TreeNode target)
-        {
-            AddNodes(target,0);
         }
 
         /// <summary>
@@ -108,65 +107,51 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         /// <param name="depth">The depth.</param>
         /// <returns></returns>
         /// created 06.02.2007 23:27
-        public static TreeNode CreateNode(string title, object nodeData, int depth)
+        private static TreeNode CreateTree(string title, object nodeData)
         {
             if (nodeData == null)
                 return new TreeNode(title + " = null");
 
-            TreeNode result = InternalCreateNode(title, nodeData, depth);
-            if (depth > 0 && result.Nodes.Count == 0 && title == result.Text)
-                result.Text = result.Text + " [" + nodeData.GetType().FullName + "]";
-            return result;
-        }
-
-        private static TreeNode InternalCreateNode(string title, object nodeData, int depth)
-        {
-            IList xl = nodeData as IList;
+            var xl = nodeData as IList;
             if (xl != null)
-                return InternalCreateNode(title, xl, depth);
-
-            IDictionary xd = nodeData as IDictionary;
+                return InternalCreateTree(title, xl);
+            var xd = nodeData as IDictionary;
             if (xd != null)
-                return InternalCreateNodex(title, xd, depth);
+                return InternalCreateTree(title, xd);
 
-            string additionalInfo = GetAdditionalInfo(nodeData);
-            TreeNode result = CreateNode(title + additionalInfo, nodeData);
-            AddNodes(result,depth-1);
-            return result;
+            var additionalInfo = GetAdditionalInfo(nodeData);
+            return CreateNode(title + additionalInfo, nodeData);
         }
 
-        private static TreeNode InternalCreateNodex(string title, IDictionary nodeData, int depth)
+        private static TreeNode InternalCreateTree(string title, IDictionary nodeData)
         {
-            TreeNode result = CreateNode(title + " Count = " + nodeData.Count, nodeData);
-            int i = 0;
+            var result = CreateNode(title + " Count = " + nodeData.Count, nodeData);
+            var i = 0;
             foreach (DictionaryEntry entry in nodeData)
             {
-                TreeNode treeNode = CreateNode(i.ToString() + " " + entry.Key.ToString(), entry);
-                treeNode.Nodes.Add(CreateNode("key", entry.Key, depth-1));
-                treeNode.Nodes.Add(CreateNode("value", entry.Value, depth - 1));
+                var treeNode = CreateNode(i + " " + entry.Key, entry);
+                treeNode.Nodes.Add(CreateTree("key", entry.Key));
+                treeNode.Nodes.Add(CreateTree("value", entry.Value));
                 result.Nodes.Add(treeNode);
                 i++;
             }
             return result;
         }
 
-        private static TreeNode InternalCreateNode(string title, IList nodeData, int depth)
+        private static TreeNode InternalCreateTree(string title, IList nodeData)
         {
-            TreeNode result = CreateNode(title + " Count = "+ nodeData.Count, nodeData);
-            for (int i = 0; i < nodeData.Count; i++)
-            {
-                TreeNode treeNode = CreateNode(i.ToString(), nodeData[i], depth-1);
-                result.Nodes.Add(treeNode);
-            }
+            var result = CreateNode(title + " Count = " + nodeData.Count, nodeData);
+            for (var i = 0; i < nodeData.Count; i++)
+                result.Nodes.Add(CreateTree(i.ToString(), nodeData[i]));
             return result;
         }
 
         private static string GetAdditionalInfo(object nodeData)
         {
-            object[] attrs = nodeData.GetType().GetCustomAttributes(typeof (AdditionalNodeInfoAttribute), true);
+            var attrs = nodeData.GetType().GetCustomAttributes(typeof (AdditionalNodeInfoAttribute), true);
             if (attrs.Length > 0)
             {
-                AdditionalNodeInfoAttribute attr = (AdditionalNodeInfoAttribute) attrs[0];
+                var attr = (AdditionalNodeInfoAttribute) attrs[0];
                 return " " + nodeData.GetType().GetProperty(attr.Property).GetValue(nodeData, null);
             }
 
@@ -176,52 +161,87 @@ namespace HWClassLibrary.Helper.TreeViewSupport
             return "";
         }
 
-        private static void AddNodes(TreeNode target, int depth)
+        private static TreeNode[] CreateNodes(object target)
         {
-            if(depth < 0)
-                return;
+            var result = new List<TreeNode>();
+            result.AddRange(CreateFieldNodes(target));
+            result.AddRange(CreatePropertyNodes(target));
+            return result.ToArray();
+        }
 
-            object nodeData = target.Tag;
-            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-            foreach (FieldInfo fieldInfo in nodeData.GetType().GetFields(flags))
+        private static TreeNode[] CreatePropertyNodes(object nodeData)
+        {
+            var result = new List<TreeNode>();
+            foreach (var propertyInfo in nodeData.GetType().GetProperties(DefaultBindingFlags))
             {
-                object[] attrs = fieldInfo.GetCustomAttributes(typeof(NodeAttribute),true);
-                if (attrs.Length > 0)
-                {
-                    NodeAttribute attr = (NodeAttribute) attrs[0];
-                    if (attr.IsEnabled)
-                    {
-                        string title = attr.Title; 
-                        if(title == null)
-                            title = fieldInfo.Name;
-
-                        object value = fieldInfo.GetValue(nodeData);
-                        if(value != null)
-                            target.Nodes.Add(CreateNode(title, value, depth));
-                    }
-                    
-                }
+                var treeNode = CreateTreeNode(nodeData, propertyInfo);
+                if(treeNode != null)
+                    result.Add(treeNode);
             }
-            foreach (PropertyInfo propertyInfo in nodeData.GetType().GetProperties(flags))
+            return result.ToArray();
+        }
+
+        private static TreeNode[] CreateFieldNodes(object nodeData)
+        {
+            var result = new List<TreeNode>();
+            var type = nodeData.GetType();
+            foreach (var fieldInfo in type.GetFields(DefaultBindingFlags))
             {
-                object[] attrs = propertyInfo.GetCustomAttributes(typeof(NodeAttribute), true);
-                if (attrs.Length > 0)
-                {
-                    NodeAttribute attr = (NodeAttribute)attrs[0];
-                    if (attr.IsEnabled)
-                    {
-                        string title = attr.Title;
-                        if (title == null)
-                            title = propertyInfo.Name;
-
-                        object value = propertyInfo.GetValue(nodeData, null);
-                        if (value != null)
-                            target.Nodes.Add(CreateNode(title, value, depth));
-                    }
-
-                }
+                var treeNode = CreateTreeNode(nodeData, fieldInfo);
+                if(treeNode != null)
+                    result.Add(treeNode);
             }
-            ;
+            return result.ToArray();
+        }
+
+        private static BindingFlags DefaultBindingFlags { get { return BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance; } }
+
+        delegate object GetObjectDelegate();
+
+        private static TreeNode CreateTreeNode(object nodeData, FieldInfo fieldInfo)
+        {
+            return CreateTreeNode(fieldInfo, () => fieldInfo.GetValue(nodeData));
+        }
+
+        private static TreeNode CreateTreeNode(object nodeData, PropertyInfo propertyInfo)
+        {
+            return CreateTreeNode(propertyInfo, () => propertyInfo.GetValue(nodeData, null));
+        }
+
+        private static TreeNode CreateTreeNode(MemberInfo memberInfo, GetObjectDelegate getValue)
+        {
+            var attrs = memberInfo.GetCustomAttributes(typeof(NodeAttribute), true);
+            if (attrs.Length == 0)
+                return null;
+            
+            var attr = (NodeAttribute) attrs[0];
+            if (!attr.IsEnabled)
+                return null;
+
+            var value = getValue();
+            if (value == null)
+                return null;
+
+            return CreateTree(attr.Title ?? memberInfo.Name, value);
+        }
+
+        private static void AddNodes(TreeNode target)
+        {
+            target.Nodes.AddRange(CreateNodes(target.Tag));
+        }
+
+        public static void Connect(TreeView treeView, object target)
+        {
+            treeView.Nodes.AddRange(CreateNodes(target));
+            foreach (TreeNode node in treeView.Nodes)
+                AddNodes(node);
+
+            treeView.BeforeExpand += treeView_BeforeExpand;
+        }
+
+        static void treeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            AddNodes(e.Node);
         }
     }
 }

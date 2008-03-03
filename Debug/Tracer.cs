@@ -256,7 +256,7 @@ namespace HWClassLibrary.Debug
             string fieldDump = "";
             if (f.Length > 0)
                 fieldDump = DumpMembers(f, x);
-            PropertyInfo[] p = t.GetProperties(AnyBinding);
+            MemberInfo[] p = t.GetProperties(AnyBinding);
             string propertyDump = "";
             if (p.Length > 0)
                 propertyDump = DumpMembers(p, x);
