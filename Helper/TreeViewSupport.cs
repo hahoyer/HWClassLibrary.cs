@@ -227,6 +227,7 @@ namespace HWClassLibrary.Helper.TreeViewSupport
 
         private static void AddNodes(TreeNode target)
         {
+            target.Nodes.Clear();
             target.Nodes.AddRange(CreateNodes(target.Tag));
         }
 
