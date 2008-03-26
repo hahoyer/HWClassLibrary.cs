@@ -439,7 +439,7 @@ namespace HWClassLibrary.Debug
         /// <returns></returns>
         public static string DumpData(string text, int depth, object[] data)
         {
-            StackFrame sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
                 + text
                 + Indent(DumpMethodWithData(null, data), 1);
@@ -447,7 +447,7 @@ namespace HWClassLibrary.Debug
 
         private static string DumpMethodWithData(MethodBase m, object o, object[] p)
         {
-            string result = "\n";
+            var result = "\n";
             result += "this=";
             result += Dump(o);
             result += "\n";
@@ -457,11 +457,11 @@ namespace HWClassLibrary.Debug
 
         private static string DumpMethodWithData(ParameterInfo[] infos, object[] p)
         {
-            string result = "";
-            int n = 0;
+            var result = "";
+            var n = 0;
             if (infos != null)
                 n = infos.Length;
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 if (i > 0)
                     result += "\n";
@@ -470,7 +470,7 @@ namespace HWClassLibrary.Debug
                 result += "=";
                 result += Dump(p[i]);
             }
-            for (int i = n; i < p.Length; i+=2)
+            for (var i = n; i < p.Length; i+=2)
             {
                 result += "\n";
                 result += (string)p[i];

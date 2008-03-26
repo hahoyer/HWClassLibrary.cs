@@ -156,6 +156,11 @@ namespace HWClassLibrary.Helper.TreeViewSupport
 
         private static TreeNode[] CreateNodes(object target)
         {
+            var xn = target as ITreeNodeSupport;
+            if (xn != null)
+                return xn.CreateNodes();
+
+
             var xl = target as IList;
             if (xl != null)
                 return InternalCreateNodes(xl);
@@ -251,5 +256,9 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         {
             AddSubNodes(e.Node.Nodes);
         }
+    }
+
+    public interface ITreeNodeSupport {
+        TreeNode[] CreateNodes();
     }
 }
