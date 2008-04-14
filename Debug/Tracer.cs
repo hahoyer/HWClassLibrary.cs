@@ -13,7 +13,9 @@ namespace HWClassLibrary.Debug
     /// </summary>
     public class Tracer
     {
-		static int _indentCount = 0;
+        private static int _indentCount;
+        private static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+
         /// <summary>
         /// creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
@@ -22,10 +24,11 @@ namespace HWClassLibrary.Debug
         /// <returns>the "FileName(LineNr,ColNr): flagText: " string</returns>
         public static string FilePosn(StackFrame sf, string flagText)
         {
-            if (sf.GetFileLineNumber() == 0)
+            if(sf.GetFileLineNumber() == 0)
                 return "<nofile> ";
             return FilePosn(sf.GetFileName(), sf.GetFileLineNumber() - 1, sf.GetFileColumnNumber(), flagText);
         }
+
         /// <summary>
         /// creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
@@ -36,8 +39,9 @@ namespace HWClassLibrary.Debug
         /// <returns>the "FileName(LineNr,ColNr): flagText: " string</returns>
         public static string FilePosn(string FileName, int LineNr, int ColNr, string flagText)
         {
-            return FileName + "(" + (LineNr+1) + "," + ColNr + "): " + flagText + ": ";
+            return FileName + "(" + (LineNr + 1) + "," + ColNr + "): " + flagText + ": ";
         }
+
         /// <summary>
         /// creates a string to inspect a method
         /// </summary>
@@ -46,16 +50,16 @@ namespace HWClassLibrary.Debug
         /// <returns>string to inspect a method</returns>
         public static string DumpMethod(MethodBase m, bool ShowParam)
         {
-            string result = m.DeclaringType.Name + ".";
+            var result = m.DeclaringType.Name + ".";
             result += m.Name;
-            if (!ShowParam)
+            if(!ShowParam)
                 return result;
             result += "(";
-            for (int i = 0, n = m.GetParameters().Length; i < n; i++)
+            for(int i = 0, n = m.GetParameters().Length; i < n; i++)
             {
-                if (i != 0)
+                if(i != 0)
                     result += ", ";
-                ParameterInfo p = m.GetParameters()[i];
+                var p = m.GetParameters()[i];
                 result += p.ParameterType;
                 result += " ";
                 result += p.Name;
@@ -63,6 +67,7 @@ namespace HWClassLibrary.Debug
             result += ")";
             return result;
         }
+
         /// <summary>
         /// creates a string to inspect the method call contained in current call stack
         /// </summary>
@@ -71,9 +76,10 @@ namespace HWClassLibrary.Debug
         /// <returns>string to inspect the method call</returns>
         public static string MethodHeader(int depth, bool ShowParam)
         {
-            StackFrame sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), ShowParam));
         }
+
         /// <summary>
         /// creates a string to inspect the method call contained in current call stack (without parameter list)
         /// </summary>
@@ -83,17 +89,18 @@ namespace HWClassLibrary.Debug
         {
             return MethodHeader(depth + 1, false);
         }
+
         /// <summary>
         /// write a line to debug output
         /// </summary>
         /// <param name="s">the text</param>
         public static void Line(string s)
         {
-			s = IndentLine(s,_indentCount);
+            s = IndentLine(s, _indentCount);
             System.Diagnostics.Debug.WriteLine(s);
         }
 
-    	/// <summary>
+        /// <summary>
         /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method
         /// </summary>
         /// <param name="s">the text</param>
@@ -102,6 +109,7 @@ namespace HWClassLibrary.Debug
         {
             Line(MethodHeader(1, ShowParam) + s);
         }
+
         /// <summary>
         /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
@@ -110,6 +118,7 @@ namespace HWClassLibrary.Debug
         {
             Line(MethodHeader(1, false) + s);
         }
+
         /// <summary>
         /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
@@ -117,8 +126,9 @@ namespace HWClassLibrary.Debug
         /// <param name="s">the text</param>
         public static void FlaggedLine(int stackFrameDepth, string s)
         {
-            Line(MethodHeader(stackFrameDepth+1, false) + s);
+            Line(MethodHeader(stackFrameDepth + 1, false) + s);
         }
+
         /// <summary>
         /// generic dump function by use of reflection
         /// </summary>
@@ -126,10 +136,11 @@ namespace HWClassLibrary.Debug
         /// <returns></returns>
         public static string Dump(object x)
         {
-            if (x == null)
+            if(x == null)
                 return "null";
             return InternalDump(true, x.GetType(), x);
         }
+
         /// <summary>
         /// generic dump function by use of reflection
         /// </summary>
@@ -137,41 +148,42 @@ namespace HWClassLibrary.Debug
         /// <returns></returns>
         public static string DumpData(object x)
         {
-            if (x == null)
+            if(x == null)
                 return "";
             return InternalDumpData(x.GetType(), x);
         }
+
         private static string InternalDump(bool isTop, Type t, object x)
         {
-            IList xl = x as IList;
-            if (xl != null)
+            var xl = x as IList;
+            if(xl != null)
                 return InternalDump(xl);
-            IDictionary xd = x as IDictionary;
-            if (xd != null)
+            var xd = x as IDictionary;
+            if(xd != null)
                 return InternalDump(xd);
-            CodeObject co = x as CodeObject;
-            if (co != null)
+            var co = x as CodeObject;
+            if(co != null)
                 return InternalDump(co);
-            
-            if (t.IsPrimitive || t.ToString().StartsWith("System."))
+
+            if(t.IsPrimitive || t.ToString().StartsWith("System."))
                 return x.ToString();
 
-            if (t.ToString() == "Outlook.ApplicationClass")
+            if(t.ToString() == "Outlook.ApplicationClass")
                 return x.ToString();
-            if (t.ToString() == "Outlook.NameSpaceClass")
+            if(t.ToString() == "Outlook.NameSpaceClass")
                 return x.ToString();
-            if (t.ToString() == "Outlook.InspectorClass")
+            if(t.ToString() == "Outlook.InspectorClass")
                 return x.ToString();
 
-            DumpClassAttribute dea = DumpExcludeAttribute(t);
-            if (dea != null)
+            var dea = DumpExcludeAttribute(t);
+            if(dea != null)
                 return dea.Dump(isTop, t, x);
 
-            string Return = BaseDump(t, x) + InternalDumpData(t, x);
-            if (Return != "")
+            var Return = BaseDump(t, x) + InternalDumpData(t, x);
+            if(Return != "")
                 Return = Surround("(", Return, ")");
 
-            if (isTop || Return != "")
+            if(isTop || Return != "")
                 Return = t + Return;
 
             return Return;
@@ -179,31 +191,31 @@ namespace HWClassLibrary.Debug
 
         private static string InternalDump(CodeObject co)
         {
-            CodeSnippetExpression cse = co as CodeSnippetExpression;
-            if (cse != null)
+            var cse = co as CodeSnippetExpression;
+            if(cse != null)
                 return cse.Value;
-            
+
             throw new NotImplementedException();
         }
 
         private static string InternalDump(IList xl)
         {
-            string result = "";
-            for (int i = 0; i < xl.Count; i++)
+            var result = "";
+            for(var i = 0; i < xl.Count; i++)
             {
-                if (i > 0)
+                if(i > 0)
                     result += "\n";
                 result += "[" + i + "] " + Dump(xl[i]);
             }
-            return "Count="+xl.Count + HWString.Surround("{",result,"}");
+            return "Count=" + xl.Count + HWString.Surround("{", result, "}");
         }
 
         private static string InternalDump(IDictionary xd)
         {
-            string result = "";
-            foreach (DictionaryEntry entry in xd)
+            var result = "";
+            foreach(DictionaryEntry entry in xd)
             {
-                if (result != "")
+                if(result != "")
                     result += "\n";
                 result += "[" + Dump(entry.Key) + "] " + Dump(entry.Value);
             }
@@ -212,29 +224,31 @@ namespace HWClassLibrary.Debug
 
         private static DumpClassAttribute DumpExcludeAttribute(Type t)
         {
-            DumpClassAttribute result = DumpExcludeAttributeClass(t);
-            if (result != null)
+            var result = DumpExcludeAttributeClass(t);
+            if(result != null)
                 return result;
-            DumpClassAttribute[] results = DumpExcludeAttributeInterfaces(t);
-            if (results.Length == 0)
+            var results = DumpExcludeAttributeInterfaces(t);
+            if(results.Length == 0)
                 return null;
-            if (results.Length == 1)
+            if(results.Length == 1)
                 return results[0];
             throw new NotImplementedException();
         }
+
         private static DumpClassAttribute[] DumpExcludeAttributeInterfaces(Type t)
         {
-            ArrayList al = new ArrayList();
-            foreach (Type i in t.GetInterfaces())
+            var al = new ArrayList();
+            foreach(var i in t.GetInterfaces())
                 al.AddRange(DumpExcludeAttributeInterfaces(i));
-            if (al.Count == 0)
+            if(al.Count == 0)
                 return new DumpClassAttribute[0];
 
             return (DumpClassAttribute[]) al.ToArray();
         }
+
         private static DumpClassAttribute DumpExcludeAttributeSimple(Type t)
         {
-            Attribute[] a = Attribute.GetCustomAttributes(t, typeof (DumpClassAttribute));
+            var a = Attribute.GetCustomAttributes(t, typeof(DumpClassAttribute));
             if(a.Length == 0)
                 return null;
             return (DumpClassAttribute) a[0];
@@ -242,42 +256,42 @@ namespace HWClassLibrary.Debug
 
         private static DumpClassAttribute DumpExcludeAttributeClass(Type t)
         {
-            DumpClassAttribute result = DumpExcludeAttributeSimple(t);
-            if (result != null)
+            var result = DumpExcludeAttributeSimple(t);
+            if(result != null)
                 return result;
-            if (t.BaseType != null)
+            if(t.BaseType != null)
                 return DumpExcludeAttribute(t.BaseType);
             return null;
         }
 
         private static string InternalDumpData(Type t, object x)
         {
-            FieldInfo[] f = t.GetFields(AnyBinding);
-            string fieldDump = "";
-            if (f.Length > 0)
+            var f = t.GetFields(AnyBinding);
+            var fieldDump = "";
+            if(f.Length > 0)
                 fieldDump = DumpMembers(f, x);
             MemberInfo[] p = t.GetProperties(AnyBinding);
-            string propertyDump = "";
-            if (p.Length > 0)
+            var propertyDump = "";
+            if(p.Length > 0)
                 propertyDump = DumpMembers(p, x);
-            if (fieldDump == "")
+            if(fieldDump == "")
                 return propertyDump;
-            if (propertyDump == "")
+            if(propertyDump == "")
                 return fieldDump;
             return fieldDump + "\n" + propertyDump;
         }
 
         private static List<int> CheckMemberAttributes(MemberInfo[] f, object x)
         {
-            List<int> l = new List<int>();
-            for (int i = 0; i < f.Length; i++)
+            var l = new List<int>();
+            for(var i = 0; i < f.Length; i++)
             {
-                PropertyInfo pi = f[i] as PropertyInfo;
-                if (pi != null && pi.GetIndexParameters().Length > 0)
+                var pi = f[i] as PropertyInfo;
+                if(pi != null && pi.GetIndexParameters().Length > 0)
                     continue;
-                if (!CheckDumpDataAttribute(f[i]))
+                if(!CheckDumpDataAttribute(f[i]))
                     continue;
-                if (!CheckDumpExceptAttribute(f[i], x))
+                if(!CheckDumpExceptAttribute(f[i], x))
                     continue;
                 l.Add(i);
             }
@@ -286,10 +300,10 @@ namespace HWClassLibrary.Debug
 
         private static bool CheckDumpDataAttribute(MemberInfo m)
         {
-            DumpDataAttribute dda = (DumpDataAttribute)Attribute.GetCustomAttribute(m, typeof(DumpDataAttribute));
-            if (dda != null)
+            var dda = (DumpDataAttribute) Attribute.GetCustomAttribute(m, typeof(DumpDataAttribute));
+            if(dda != null)
                 return dda.Dump;
-            
+
             return (m is PropertyInfo);
         }
 
@@ -300,20 +314,20 @@ namespace HWClassLibrary.Debug
 
         private static string DumpSomeMembers(List<int> l, MemberInfo[] f, object x)
         {
-            string result = "";
-            for (int i = 0; i < l.Count; i++)
+            var result = "";
+            for(var i = 0; i < l.Count; i++)
             {
-                if (i > 0)
+                if(i > 0)
                     result += "\n";
-                if (l.Count > 10)
+                if(l.Count > 10)
                     result += i + ":";
                 result += f[l[i]].Name;
                 result += "=";
                 try
                 {
-                    result += Dump(Value(f[l[i]],x));
+                    result += Dump(Value(f[l[i]], x));
                 }
-                catch (Exception)
+                catch(Exception)
                 {
                     result += "<not implemented>";
                 }
@@ -323,73 +337,69 @@ namespace HWClassLibrary.Debug
 
         private static bool CheckDumpExceptAttribute(MemberInfo f, object x)
         {
-            DumpExceptAttribute[] deas = (DumpExceptAttribute[])Attribute.GetCustomAttributes(f, typeof(DumpExceptAttribute));
-            foreach (DumpExceptAttribute dea in deas)
+            var deas = (DumpExceptAttribute[]) Attribute.GetCustomAttributes(f, typeof(DumpExceptAttribute));
+            foreach(var dea in deas)
             {
-                object v = Value(f, x);
-                if (dea.Exception == null)
+                var v = Value(f, x);
+                if(dea.Exception == null)
                 {
-                    if (v == null)
+                    if(v == null)
                         return false;
                     if(v.Equals(DateTime.MinValue))
                         return false;
                     return true;
                 }
-                if (v.Equals(dea.Exception))
+                if(v.Equals(dea.Exception))
                     return false;
-                
             }
             return true;
         }
 
         private static string BaseDump(Type t, object x)
         {
-            string BaseDump = "";
-            if (t.BaseType != null && t.BaseType.ToString() != "System.Object")
+            var BaseDump = "";
+            if(t.BaseType != null && t.BaseType.ToString() != "System.Object")
                 BaseDump = InternalDump(false, t.BaseType, x);
-            if (BaseDump != "")
+            if(BaseDump != "")
                 BaseDump = "\nBase:" + BaseDump;
             return BaseDump;
         }
 
-        private static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
-
         private static object Value(MemberInfo info, object x)
         {
-            FieldInfo fi = info as FieldInfo;
-            if (fi != null)
+            var fi = info as FieldInfo;
+            if(fi != null)
                 return fi.GetValue(x);
-            PropertyInfo pi = info as PropertyInfo;
-            if (pi != null)
-                return pi.GetValue(x,null);
-            
+            var pi = info as PropertyInfo;
+            if(pi != null)
+                return pi.GetValue(x, null);
+
             throw new NotImplementedException();
         }
 
-        static string IndentElem(int count)
-		{
-			string result = "";
-			for(int i=0; i<count; i++)
-				result += "    ";
-			return result;
-		}
+        private static string IndentElem(int count)
+        {
+            var result = "";
+            for(var i = 0; i < count; i++)
+                result += "    ";
+            return result;
+        }
 
+        private static string IndentLine(string s, int count)
+        {
+            var indentElem = IndentElem(count);
+            return indentElem + s.Replace("\n", "\n" + indentElem);
+        }
 
-		private static string IndentLine(string s, int count)
-		{
-			string indentElem = IndentElem(count);
-			return indentElem + s.Replace("\n","\n"+indentElem);
-		}
-
-		/// <summary>
+        /// <summary>
         /// Indent paramer by 4 spaces
         /// </summary>
-		/// <param name="s"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
+        /// <param name="s"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public static string Indent(string s, int count)
         {
-            return s.Replace("\n", "\n"+IndentElem(count));
+            return s.Replace("\n", "\n" + IndentElem(count));
         }
 
         /// <summary>
@@ -397,7 +407,10 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Indent(string s){return Indent(s,1);}
+        public static string Indent(string s)
+        {
+            return Indent(s, 1);
+        }
 
         /// <summary>
         /// Surrounds string by left and right parenthesis. 
@@ -409,9 +422,9 @@ namespace HWClassLibrary.Debug
         /// <returns></returns>
         public static string Surround(string Left, string data, string Right)
         {
-            if (data.IndexOf("\n") < 0)
+            if(data.IndexOf("\n") < 0)
                 return Left + data + Right;
-            return "\n" + Left + Indent("\n" + data,1) + "\n" + Right;
+            return "\n" + Left + Indent("\n" + data, 1) + "\n" + Right;
         }
 
         /// <summary>
@@ -424,10 +437,10 @@ namespace HWClassLibrary.Debug
         /// <returns>the dump string</returns>
         public static string DumpMethodWithData(string text, int depth, object thisObject, object[] parameter)
         {
-            StackFrame sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
                 + text
-                + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter),1);
+                    + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter), 1);
         }
 
         /// <summary>
@@ -442,7 +455,7 @@ namespace HWClassLibrary.Debug
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
                 + text
-                + Indent(DumpMethodWithData(null, data), 1);
+                    + Indent(DumpMethodWithData(null, data), 1);
         }
 
         private static string DumpMethodWithData(MethodBase m, object o, object[] p)
@@ -459,23 +472,23 @@ namespace HWClassLibrary.Debug
         {
             var result = "";
             var n = 0;
-            if (infos != null)
+            if(infos != null)
                 n = infos.Length;
-            for (var i = 0; i < n; i++)
+            for(var i = 0; i < n; i++)
             {
-                if (i > 0)
+                if(i > 0)
                     result += "\n";
                 Assert(infos != null);
                 result += infos[i].Name;
                 result += "=";
                 result += Dump(p[i]);
             }
-            for (var i = n; i < p.Length; i+=2)
+            for(var i = n; i < p.Length; i += 2)
             {
                 result += "\n";
-                result += (string)p[i];
+                result += (string) p[i];
                 result += "=";
-                result += Dump(p[i+1]);
+                result += Dump(p[i + 1]);
             }
             return result;
         }
@@ -490,7 +503,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static string AssertionFailed(int stackFrameDepth, string cond, string data)
         {
-            string result = "Assertion Failed: " + cond + "\nData: " + data;
+            var result = "Assertion Failed: " + cond + "\nData: " + data;
             FlaggedLine(stackFrameDepth + 1, result);
             Debugger.Break();
             return result;
@@ -506,7 +519,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static string ConditionalBreak(int stackFrameDepth, string cond, string data)
         {
-            string result = "Conditional break: " + cond + "\nData: " + data;
+            var result = "Conditional break: " + cond + "\nData: " + data;
             FlaggedLine(stackFrameDepth + 1, result);
             Debugger.Break();
             return result;
@@ -522,31 +535,26 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void ThrowAssertionFailed(int stackFrameDepth, string cond, string data)
         {
-            string result = AssertionFailed(stackFrameDepth+1, cond, data);
+            var result = AssertionFailed(stackFrameDepth + 1, cond, data);
             throw new AssertionFailedException(result);
         }
 
-        private class AssertionFailedException : Exception
+        /// <summary>
+        /// Indent
+        /// </summary>
+        public static void IndentStart()
         {
-            public AssertionFailedException(string result):base(result)
-            {
-            }
+            _indentCount++;
         }
 
         /// <summary>
-		/// Indent
-		/// </summary>
-		public static void IndentStart()
-		{
-			_indentCount++;
-		}
-		/// <summary>
-		/// Unindent
-		/// </summary>
-		public static void IndentEnd()
-		{
-			_indentCount--;
-		}
+        /// Unindent
+        /// </summary>
+        public static void IndentEnd()
+        {
+            _indentCount--;
+        }
+
         /// <summary>
         /// Check boolean expression
         /// </summary>
@@ -556,10 +564,11 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void Assert(int stackFrameDepth, bool b, string text)
         {
-            if (b)
+            if(b)
                 return;
             AssertionFailed(stackFrameDepth + 1, "", text);
         }
+
         /// <summary>
         /// Check boolean expression
         /// </summary>
@@ -569,13 +578,14 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void ConditionalBreak(int stackFrameDepth, bool b, string text)
         {
-            if (b)
+            if(b)
                 ConditionalBreak(stackFrameDepth + 1, "", text);
         }
+
         [DebuggerHidden]
         public static void ConditionalBreak(bool cond, string data)
         {
-            if (cond)
+            if(cond)
                 ConditionalBreak(1, cond, data);
         }
 
@@ -587,9 +597,9 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void Assert(int stackFrameDepth, bool b)
         {
-            if (b)
+            if(b)
                 return;
-            AssertionFailed(stackFrameDepth+1, "", "");
+            AssertionFailed(stackFrameDepth + 1, "", "");
         }
 
         /// <summary>
@@ -612,7 +622,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void ThrowAssertionFailed(string s, string s1)
         {
-            ThrowAssertionFailed(1,s,s1);
+            ThrowAssertionFailed(1, s, s1);
         }
 
         /// <summary>
@@ -624,7 +634,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void Assert(bool b, string s)
         {
-            Assert(1, b,s);
+            Assert(1, b, s);
         }
 
         /// <summary>
@@ -649,5 +659,14 @@ namespace HWClassLibrary.Debug
             FlaggedLine(text);
             Console.WriteLine(text);
         }
+
+        #region Nested type: AssertionFailedException
+
+        private class AssertionFailedException : Exception
+        {
+            public AssertionFailedException(string result) : base(result) {}
+        }
+
+        #endregion
     }
 }
