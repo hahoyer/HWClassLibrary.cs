@@ -246,7 +246,7 @@ namespace HWClassLibrary.Debug
             return (DumpClassAttribute[]) al.ToArray();
         }
 
-        private static DumpClassAttribute DumpExcludeAttributeSimple(Type t)
+        private static DumpClassAttribute DumpExcludeAttributeSimple(MemberInfo t)
         {
             var a = Attribute.GetCustomAttributes(t, typeof(DumpClassAttribute));
             if(a.Length == 0)
@@ -312,7 +312,7 @@ namespace HWClassLibrary.Debug
             return DumpSomeMembers(CheckMemberAttributes(f, x), f, x);
         }
 
-        private static string DumpSomeMembers(List<int> l, MemberInfo[] f, object x)
+        private static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
         {
             var result = "";
             for(var i = 0; i < l.Count; i++)
@@ -358,7 +358,8 @@ namespace HWClassLibrary.Debug
         private static string BaseDump(Type t, object x)
         {
             var BaseDump = "";
-            if(t.BaseType != null && t.BaseType.ToString() != "System.Object")
+            if(t.BaseType != null && t.BaseType.ToString() != "System.Object" &&
+                t.BaseType.ToString() != "System.ValueType")
                 BaseDump = InternalDump(false, t.BaseType, x);
             if(BaseDump != "")
                 BaseDump = "\nBase:" + BaseDump;
