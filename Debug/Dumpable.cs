@@ -142,10 +142,6 @@ namespace HWClassLibrary.Debug
             Debugger.Break();
         }
 
-		/// <summary>
-        /// Default dump behaviour
-        /// </summary>
-        /// <returns></returns>
         public virtual string Dump()
         {
             return GetType().FullName + HWString.Surround("{", DumpData(), "}");
