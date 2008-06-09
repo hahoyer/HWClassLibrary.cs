@@ -1,9 +1,10 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
     <AssemblyName>HWClassLibrary</AssemblyName>
     <TargetTypeEx>CSharp.Library.UnitTest</TargetTypeEx>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
@@ -15,7 +16,9 @@
     <Compile Include="Helper\Dictionary.cs" />
     <Compile Include="Helper\HWString.cs" />
     <Compile Include="Helper\Number.cs" />
+    <Compile Include="Helper\Sequence.cs" />
     <Compile Include="Helper\Set.cs" />
+    <Compile Include="Helper\StringAligner.cs" />
     <Compile Include="Helper\TreeViewSupport.cs" />
     <Compile Include="IO\File.cs" />
   </ItemGroup>
