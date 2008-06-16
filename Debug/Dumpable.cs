@@ -83,7 +83,22 @@ namespace HWClassLibrary.Debug
 			Tracer.IndentEnd();
 			return rv;
 		}
-		/// <summary>
+        /// <summary>
+        /// Method dump, 
+        /// </summary>
+        /// <param name="trace"></param>
+        /// <param name="rv"></param>
+        /// <returns></returns>
+        [DebuggerHidden]
+        protected static void ReturnMethodDump(bool trace)
+        {
+            if (!trace)
+                return;
+            Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
+            Tracer.IndentEnd();
+            return;
+        }
+        /// <summary>
 		/// Method dump, 
 		/// </summary>
 		/// <param name="trace"></param>

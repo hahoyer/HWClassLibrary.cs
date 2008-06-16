@@ -59,5 +59,11 @@ namespace HWClassLibrary.Helper
                     return false;
             return true;
         }
+        public bool StartsWithAndNotEqual(Sequence<T> value)
+        {
+            if (_data.Length == value._data.Length)
+                return false;
+            return StartsWith(value);
+        }
     }
 }
