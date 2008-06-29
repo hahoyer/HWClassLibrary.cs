@@ -21,6 +21,7 @@
     <Compile Include="Helper\StringAligner.cs" />
     <Compile Include="Helper\TreeViewSupport.cs" />
     <Compile Include="IO\File.cs" />
+    <Compile Include="JetBrainsAnnotations.cs" />
   </ItemGroup>
   <Import Project="sys.targets" />
 </Project>

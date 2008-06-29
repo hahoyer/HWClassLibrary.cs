@@ -69,6 +69,7 @@ namespace HWClassLibrary.Helper.TreeViewSupport
     /// <summary>
     /// Class attribute to define additional node info property, displayed after node title
     /// </summary>
+    [AttributeUsage(AttributeTargets.Struct|AttributeTargets.Class)]
     public class AdditionalNodeInfoAttribute : Attribute
     {
         private readonly string _property;

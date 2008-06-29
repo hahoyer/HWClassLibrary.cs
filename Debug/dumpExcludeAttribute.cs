@@ -6,6 +6,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Used to control dump.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class| AttributeTargets.Struct)]
     public abstract class DumpClassAttribute : Attribute
     {
         /// <summary>
@@ -23,6 +24,7 @@ namespace HWClassLibrary.Debug
     /// Used to control dump.
     /// Use ToString function
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class dumpToStringAttribute : DumpClassAttribute
     {
         /// <summary>
@@ -42,6 +44,7 @@ namespace HWClassLibrary.Debug
     /// Used to control dump.
     /// Use ToString function
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class dumpAttribute : DumpClassAttribute
     {
         private readonly string _name;
@@ -79,6 +82,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Used to control dump of data element
     /// </summary>
+    [AttributeUsage(AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field)]
     public class DumpDataAttribute : Attribute
     {
         private readonly bool _dump;
@@ -101,6 +105,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Used to control dump of data element
     /// </summary>
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field)]
     public class DumpExceptAttribute : Attribute
     {
         private readonly object _exception;

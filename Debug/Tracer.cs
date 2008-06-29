@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using HWClassLibrary.Helper;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Debug
 {
@@ -304,7 +305,14 @@ namespace HWClassLibrary.Debug
             if(dda != null)
                 return dda.Dump;
 
-            return (m is PropertyInfo);
+            return !IsPrivate(m);
+        }
+
+        private static bool IsPrivate(MemberInfo m)
+        {
+            if(m is PropertyInfo)
+                return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
+            return ((FieldInfo) m).IsPrivate;
         }
 
         private static string DumpMembers(MemberInfo[] f, object x)
@@ -562,8 +570,8 @@ namespace HWClassLibrary.Debug
         /// <param name="stackFrameDepth">The stack frame depth.</param>
         /// <param name="b">if set to <c>true</c> [b].</param>
         /// <param name="text">The text.</param>
-        [DebuggerHidden]
-        public static void Assert(int stackFrameDepth, bool b, string text)
+        [DebuggerHidden, AssertionMethod]
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string text)
         {
             if(b)
                 return;
@@ -595,8 +603,8 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name="stackFrameDepth">The stack frame depth.</param>
         /// <param name="b">if set to <c>true</c> [b].</param>
-        [DebuggerHidden]
-        public static void Assert(int stackFrameDepth, bool b)
+        [DebuggerHidden, AssertionMethod]
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
         {
             if(b)
                 return;
@@ -608,8 +616,8 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name="b">if set to <c>true</c> [b].</param>
         /// created 16.12.2006 18:27
-        [DebuggerHidden]
-        public static void Assert(bool b)
+        [DebuggerHidden, AssertionMethod]
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
         {
             Assert(1, b);
         }
@@ -632,8 +640,8 @@ namespace HWClassLibrary.Debug
         /// <param name="b">if set to <c>true</c> [b].</param>
         /// <param name="s">The s.</param>
         /// created 16.12.2006 18:29
-        [DebuggerHidden]
-        public static void Assert(bool b, string s)
+        [DebuggerHidden, AssertionMethod]
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s)
         {
             Assert(1, b, s);
         }
