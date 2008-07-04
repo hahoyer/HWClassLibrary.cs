@@ -386,6 +386,22 @@ namespace HWClassLibrary.Debug
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Indent
+        /// </summary>
+        public static void IndentStart()
+        {
+            _indentCount++;
+        }
+
+        /// <summary>
+        /// Unindent
+        /// </summary>
+        public static void IndentEnd()
+        {
+            _indentCount--;
+        }
+
         private static string IndentElem(int count)
         {
             var result = "";
@@ -503,22 +519,6 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Function used in assertions
-        /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="cond">The cond.</param>
-        /// <param name="data">The data.</param>
-        /// <returns></returns>
-        [DebuggerHidden]
-        public static string AssertionFailed(int stackFrameDepth, string cond, string data)
-        {
-            var result = "Assertion Failed: " + cond + "\nData: " + data;
-            FlaggedLine(stackFrameDepth + 1, result);
-            Debugger.Break();
-            return result;
-        }
-
-        /// <summary>
         /// Function used for condition al break
         /// </summary>
         /// <param name="stackFrameDepth">The stack frame depth.</param>
@@ -532,50 +532,6 @@ namespace HWClassLibrary.Debug
             FlaggedLine(stackFrameDepth + 1, result);
             Debugger.Break();
             return result;
-        }
-
-        /// <summary>
-        /// Throws the assertion failed.
-        /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="cond">The cond.</param>
-        /// <param name="data">The data.</param>
-        /// created 15.10.2006 18:04
-        [DebuggerHidden]
-        public static void ThrowAssertionFailed(int stackFrameDepth, string cond, string data)
-        {
-            var result = AssertionFailed(stackFrameDepth + 1, cond, data);
-            throw new AssertionFailedException(result);
-        }
-
-        /// <summary>
-        /// Indent
-        /// </summary>
-        public static void IndentStart()
-        {
-            _indentCount++;
-        }
-
-        /// <summary>
-        /// Unindent
-        /// </summary>
-        public static void IndentEnd()
-        {
-            _indentCount--;
-        }
-
-        /// <summary>
-        /// Check boolean expression
-        /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="b">if set to <c>true</c> [b].</param>
-        /// <param name="text">The text.</param>
-        [DebuggerHidden, AssertionMethod]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string text)
-        {
-            if(b)
-                return;
-            AssertionFailed(stackFrameDepth + 1, "", text);
         }
 
         /// <summary>
@@ -596,6 +552,62 @@ namespace HWClassLibrary.Debug
         {
             if(cond)
                 ConditionalBreak(1, cond, data);
+        }
+
+        /// <summary>
+        /// Throws the assertion failed.
+        /// </summary>
+        /// <param name="stackFrameDepth">The stack frame depth.</param>
+        /// <param name="cond">The cond.</param>
+        /// <param name="data">The data.</param>
+        /// created 15.10.2006 18:04
+        [DebuggerHidden]
+        public static void ThrowAssertionFailed(int stackFrameDepth, string cond, string data)
+        {
+            var result = AssertionFailed(stackFrameDepth + 1, cond, data);
+            throw new AssertionFailedException(result);
+        }
+
+        /// <summary>
+        /// Throws the assertion failed.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="s1">The s1.</param>
+        /// created 16.12.2006 18:28
+        [DebuggerHidden]
+        public static void ThrowAssertionFailed(string s, string s1)
+        {
+            ThrowAssertionFailed(1, s, s1);
+        }
+
+        /// <summary>
+        /// Function used in assertions
+        /// </summary>
+        /// <param name="stackFrameDepth">The stack frame depth.</param>
+        /// <param name="cond">The cond.</param>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
+        [DebuggerHidden]
+        public static string AssertionFailed(int stackFrameDepth, string cond, string data)
+        {
+            var result = "Assertion Failed: " + cond + "\nData: " + data;
+            FlaggedLine(stackFrameDepth + 1, result);
+            Debugger.Break();
+            return result;
+        }
+
+        /// <summary>
+        /// Check boolean expression
+        /// </summary>
+        /// <param name="stackFrameDepth">The stack frame depth.</param>
+        /// <param name="b">if set to <c>true</c> [b].</param>
+        /// <param name="text">The text.</param>
+        [DebuggerHidden, AssertionMethod]
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string text)
+        {
+            if(b)
+                return;
+            AssertionFailed(stackFrameDepth + 1, "", text);
         }
 
         /// <summary>
@@ -620,18 +632,6 @@ namespace HWClassLibrary.Debug
         public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
         {
             Assert(1, b);
-        }
-
-        /// <summary>
-        /// Throws the assertion failed.
-        /// </summary>
-        /// <param name="s">The s.</param>
-        /// <param name="s1">The s1.</param>
-        /// created 16.12.2006 18:28
-        [DebuggerHidden]
-        public static void ThrowAssertionFailed(string s, string s1)
-        {
-            ThrowAssertionFailed(1, s, s1);
         }
 
         /// <summary>
@@ -669,13 +669,9 @@ namespace HWClassLibrary.Debug
             Console.WriteLine(text);
         }
 
-        #region Nested type: AssertionFailedException
-
         private class AssertionFailedException : Exception
         {
             public AssertionFailedException(string result) : base(result) {}
         }
-
-        #endregion
     }
 }
