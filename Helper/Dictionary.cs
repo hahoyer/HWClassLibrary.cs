@@ -29,10 +29,7 @@ namespace HWClassLibrary.Helper
         {
 
         }
-        /// <summary>
-        /// Delegate to create the value
-        /// </summary>
-        /// <returns></returns>
+
         public delegate Value CreateValue();
 
         public DictionaryEx<Key, Value> Clone { get { return new DictionaryEx<Key, Value>(this); } }
@@ -145,5 +142,4 @@ namespace HWClassLibrary.Helper
 
         public new NoCaseStringDictionary<Value> Clone { get { return new NoCaseStringDictionary<Value>(this); } }
     }
-
 }

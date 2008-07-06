@@ -18,6 +18,7 @@
     <Compile Include="Helper\Number.cs" />
     <Compile Include="Helper\Sequence.cs" />
     <Compile Include="Helper\Set.cs" />
+    <Compile Include="Helper\SimpleCache.cs" />
     <Compile Include="Helper\StringAligner.cs" />
     <Compile Include="Helper\TreeViewSupport.cs" />
     <Compile Include="IO\File.cs" />
