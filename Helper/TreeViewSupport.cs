@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper.TreeViewSupport
 {
@@ -69,7 +70,7 @@ namespace HWClassLibrary.Helper.TreeViewSupport
     /// <summary>
     /// Class attribute to define additional node info property, displayed after node title
     /// </summary>
-    [AttributeUsage(AttributeTargets.Struct|AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)]
     public class AdditionalNodeInfoAttribute : Attribute
     {
         private readonly string _property;
@@ -170,7 +171,7 @@ namespace HWClassLibrary.Helper.TreeViewSupport
                 return InternalCreateNodes(xd);
 
             if (target is DictionaryEntry)
-                return InternalCreateNodes((DictionaryEntry)target);
+                return InternalCreateNodes((DictionaryEntry) target);
 
             return InternalCreateNodes(target);
         }
@@ -240,10 +241,9 @@ namespace HWClassLibrary.Helper.TreeViewSupport
             nodes.AddRange(CreateNodes(target));
         }
 
-        public static void Connect(TreeView treeView, object target)
+        public static void Connect(TreeView treeView, string title, object target)
         {
-            AddNodes(treeView.Nodes, target);
-            AddSubNodes(treeView.Nodes);
+            treeView.Text = title + GetAdditionalInfo(target);
             treeView.BeforeExpand += treeView_BeforeExpand;
         }
 
@@ -259,7 +259,8 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         }
     }
 
-    public interface ITreeNodeSupport {
+    public interface ITreeNodeSupport
+    {
         TreeNode[] CreateNodes();
     }
 }
