@@ -5,72 +5,40 @@ using System.Reflection;
 using System.Windows.Forms;
 using HWClassLibrary.Debug;
 
-namespace HWClassLibrary.Helper.TreeViewSupport
+namespace HWClassLibrary.Helper
 {
     /// <summary>
     /// Attribute to define a subnode for treeview. 
     /// Only for public properties. 
     /// Only the first attribute is considered
     /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class NodeAttribute : Attribute
     {
-        private readonly bool _isEnabled = true;
-        private readonly string _title;
+        public readonly string IconKey;
 
         /// <summary>
         /// Default attribute to define a subnode for treeview. 
         /// Property name will be used as title of subnode
         /// </summary>
         /// created 06.02.2007 23:35
-        public NodeAttribute()
-        {
-        }
-
-        /// <summary>
-        /// Attribute to enable or disable subnode
-        /// </summary>
-        /// created 06.02.2007 23:35
-        public NodeAttribute(bool isEnabled)
-        {
-            _isEnabled = isEnabled;
-        }
+        public NodeAttribute() {}
 
         /// <summary>
         /// Attribute to define a subnode for treeview with title provided
         /// </summary>
+        /// <param name="iconKey">The icon key.</param>
         /// created 06.02.2007 23:35
-        public NodeAttribute(string title)
+        public NodeAttribute(string iconKey)
         {
-            _title = title;
-        }
-
-        /// <summary>
-        /// Gets the title. If null, the property name will be used
-        /// </summary>
-        /// <value>The title.</value>
-        /// created 06.02.2007 23:39
-        public string Title
-        {
-            get { return _title; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is defined.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is defined; otherwise, <c>false</c>.
-        /// </value>
-        /// created 06.02.2007 23:41
-        public bool IsEnabled
-        {
-            get { return _isEnabled; }
+            IconKey = iconKey;
         }
     }
 
     /// <summary>
     /// Class attribute to define additional node info property, displayed after node title
     /// </summary>
-    [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
     public class AdditionalNodeInfoAttribute : Attribute
     {
         private readonly string _property;
@@ -88,9 +56,25 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         /// <summary>
         /// Property to obtain additional node info
         /// </summary>
-        public string Property
+        public string Property { get { return _property; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class SmartNodeAttribute : Attribute
+    {
+        virtual public TreeNode Process(TreeNode treeNode)
         {
-            get { return _property; }
+            Service.CreateNodeList(treeNode);
+            switch(treeNode.Nodes.Count)
+            {
+                case 0:
+                    return null;
+                case -1:
+                    var node = treeNode.Nodes[0];
+                    node.Text = treeNode.Text + " \\ " + node.Text;
+                    return Process(node);
+            }
+            return treeNode;
         }
     }
 
@@ -100,49 +84,121 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         /// Creates a treenode.with a given title from an object
         /// </summary>
         /// <param name="title">The title.</param>
+        /// <param name="iconKey">The icon key.</param>
+        /// <param name="isDefaultIcon">if set to <c>true</c> [is default icon].</param>
         /// <param name="nodeData">The node data.</param>
         /// <returns></returns>
         /// created 06.02.2007 23:26
-        private static TreeNode CreateNode(string title, object nodeData)
+        public static TreeNode CreateNode(string title, string iconKey, bool isDefaultIcon, object nodeData)
         {
-            return new TreeNode(title + GetAdditionalInfo(nodeData)) {Tag = nodeData};
+            var result = new TreeNode(title + GetAdditionalInfo(nodeData)) {Tag = nodeData};
+            if(iconKey == null)
+                iconKey = GetIconKey(nodeData);
+            if(isDefaultIcon)
+            {
+                var defaultIcon = GetIconKey(nodeData);
+                if (defaultIcon != null)
+                    iconKey = defaultIcon;
+            }
+            if(iconKey != null)
+            {
+                result.ImageKey = iconKey;
+                result.SelectedImageKey = iconKey;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Creates the node.
+        /// </summary>
+        /// <param name="title">The title.</param>
+        /// <param name="iconKey">The icon key.</param>
+        /// <param name="nodeData">The node data.</param>
+        /// <returns></returns>
+        public static TreeNode CreateNode(string title, string iconKey, object nodeData)
+        {
+            return CreateNode(title, iconKey, false, nodeData);
+        }
+
+        /// <summary>
+        /// Creates the node.
+        /// </summary>
+        /// <param name="title">The title.</param>
+        /// <param name="nodeData">The node data.</param>
+        /// <returns></returns>
+        public static TreeNode CreateNode(string title, object nodeData)
+        {
+            return CreateNode(title, null, false, nodeData);
         }
 
         private static TreeNode[] InternalCreateNodes(IDictionary dictionary)
         {
             var result = new List<TreeNode>();
-            foreach (var o in dictionary)
-                result.Add(CreateNode(result.Count.ToString(), o));
+            foreach(var o in dictionary)
+                result.Add(CreateNode(result.Count.ToString(), "ListItem", o));
             return result.ToArray();
         }
 
         private static TreeNode[] InternalCreateNodes(IList list)
         {
             var result = new List<TreeNode>();
-            foreach (var o in list)
-                result.Add(CreateNode(result.Count.ToString(), o));
+            foreach(var o in list)
+                result.Add(CreateNode(result.Count.ToString(), "ListItem", true, o));
             return result.ToArray();
         }
 
         private static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry)
         {
             return new[]
-                       {
-                           CreateNode("key", dictionaryEntry.Key),
-                           CreateNode("value", dictionaryEntry.Value)
-                       };
+            {
+                CreateNode("key", "Key", true, dictionaryEntry.Key),
+                CreateNode("value", dictionaryEntry.Value)
+            };
+        }
+
+        /// <summary>
+        /// Gets the name of the icon.
+        /// </summary>
+        /// <param name="nodeData">The node data.</param>
+        /// <returns></returns>
+        private static string GetIconKey(object nodeData)
+        {
+            var ip = nodeData as IIconKeyProvider;
+            if(ip != null)
+                return ip.IconKey;
+            if (nodeData is string)
+                return "String";
+            if (nodeData is bool)
+                return "Bool";
+            if (nodeData.GetType().IsPrimitive)
+                return "Number";
+            if(nodeData is IDictionary)
+                return "Dictionary";
+            if (nodeData is IList)
+                return "List";
+
+            return null;
         }
 
         private static string GetAdditionalInfo(object nodeData)
         {
-            var attrs = nodeData.GetType().GetCustomAttributes(typeof (AdditionalNodeInfoAttribute), true);
-            if (attrs.Length > 0)
+            var attrs = nodeData.GetType().GetCustomAttributes(typeof(AdditionalNodeInfoAttribute), true);
+            if(attrs.Length > 0)
             {
                 var attr = (AdditionalNodeInfoAttribute) attrs[0];
-                return " " + nodeData.GetType().GetProperty(attr.Property).GetValue(nodeData, null);
+                return " = " + nodeData.GetType().GetProperty(attr.Property).GetValue(nodeData, null);
             }
 
-            if (nodeData.GetType().Namespace.StartsWith("System"))
+            var il = nodeData as IList;
+            if(il != null)
+            {
+                var result = " = IList";
+                if(il.GetType().IsGenericType)
+                    result += "<" + il.GetType().GetGenericArguments()[0].FullName + ">";
+                return result + "[" + ((IList) nodeData).Count + "]";
+            }
+
+            if(nodeData.GetType().Namespace.StartsWith("System"))
                 return " = " + nodeData;
 
             return "";
@@ -159,18 +215,17 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         private static TreeNode[] CreateNodes(object target)
         {
             var xn = target as ITreeNodeSupport;
-            if (xn != null)
+            if(xn != null)
                 return xn.CreateNodes();
 
-
             var xl = target as IList;
-            if (xl != null)
+            if(xl != null)
                 return InternalCreateNodes(xl);
             var xd = target as IDictionary;
-            if (xd != null)
+            if(xd != null)
                 return InternalCreateNodes(xd);
 
-            if (target is DictionaryEntry)
+            if(target is DictionaryEntry)
                 return InternalCreateNodes((DictionaryEntry) target);
 
             return InternalCreateNodes(target);
@@ -179,10 +234,10 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         private static TreeNode[] CreatePropertyNodes(object nodeData)
         {
             var result = new List<TreeNode>();
-            foreach (var propertyInfo in nodeData.GetType().GetProperties(DefaultBindingFlags))
+            foreach(var propertyInfo in nodeData.GetType().GetProperties(DefaultBindingFlags))
             {
                 var treeNode = CreateTreeNode(nodeData, propertyInfo);
-                if (treeNode != null)
+                if(treeNode != null)
                     result.Add(treeNode);
             }
             return result.ToArray();
@@ -192,19 +247,16 @@ namespace HWClassLibrary.Helper.TreeViewSupport
         {
             var result = new List<TreeNode>();
             var type = nodeData.GetType();
-            foreach (var fieldInfo in type.GetFields(DefaultBindingFlags))
+            foreach(var fieldInfo in type.GetFields(DefaultBindingFlags))
             {
                 var treeNode = CreateTreeNode(nodeData, fieldInfo);
-                if (treeNode != null)
+                if(treeNode != null)
                     result.Add(treeNode);
             }
             return result.ToArray();
         }
 
-        private static BindingFlags DefaultBindingFlags
-        {
-            get { return BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance; }
-        }
+        private static BindingFlags DefaultBindingFlags { get { return BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy; } }
 
         private delegate object GetObjectDelegate();
 
@@ -220,43 +272,64 @@ namespace HWClassLibrary.Helper.TreeViewSupport
 
         private static TreeNode CreateTreeNode(MemberInfo memberInfo, GetObjectDelegate getValue)
         {
-            var attrs = memberInfo.GetCustomAttributes(typeof (NodeAttribute), true);
-            if (attrs.Length == 0)
+            var attrs = memberInfo.GetCustomAttributes(typeof(NodeAttribute), true);
+            if(attrs.Length == 0)
                 return null;
 
             var attr = (NodeAttribute) attrs[0];
-            if (!attr.IsEnabled)
-                return null;
-
             var value = getValue();
-            if (value == null)
+            if(value == null)
                 return null;
 
-            return CreateNode(attr.Title ?? memberInfo.Name, value);
+            var result = CreateNode(memberInfo.Name, attr.IconKey, value);
+
+            var smartNode = (SmartNodeAttribute[]) memberInfo.GetCustomAttributes(typeof(SmartNodeAttribute), true);
+            if(smartNode.Length == 0)
+                return result;
+
+            return smartNode[0].Process(result);
         }
 
-        private static void AddNodes(TreeNodeCollection nodes, object target)
+        private static void CreateNodeList(TreeNodeCollection nodes, object target)
         {
             nodes.Clear();
             nodes.AddRange(CreateNodes(target));
         }
 
-        public static void Connect(TreeView treeView, string title, object target)
+        public static void Connect(TreeView treeView, object target)
         {
-            treeView.Text = title + GetAdditionalInfo(target);
+            CreateNodeList(treeView.Nodes, target);
+            AddSubNodes(treeView.Nodes);
             treeView.BeforeExpand += treeView_BeforeExpand;
         }
 
-        private static void AddSubNodes(TreeNodeCollection nodes)
+        static void AddSubNodes(TreeNodeCollection nodes)
         {
-            foreach (TreeNode node in nodes)
-                AddNodes(node.Nodes, node.Tag);
+            foreach(TreeNode node in nodes)
+                CreateNodeList(node);
+        }
+
+        internal static void CreateNodeList(TreeNode node)
+        {
+            CreateNodeList(node.Nodes, node.Tag);
         }
 
         private static void treeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
             AddSubNodes(e.Node.Nodes);
         }
+    }
+
+    /// <summary>
+    /// Provides Icon key for treeview
+    /// </summary>
+    public interface IIconKeyProvider
+    {
+        /// <summary>
+        /// Gets the icon key.
+        /// </summary>
+        /// <value>The icon key.</value>
+        string IconKey { get; }
     }
 
     public interface ITreeNodeSupport

@@ -1,15 +1,19 @@
+using System;
+using HWClassLibrary.Debug;
+
 namespace HWClassLibrary.Helper
 {
-    public class SimpleCache<Value> where Value : class
+    public class SimpleCache<ValueType> where ValueType : class
     {
-        private Value _value;
+        public ValueType Value;
 
-        public delegate Value CreateValue();
-        public Value Find(CreateValue createValue)
+        public delegate ValueType CreateValue();
+
+        public ValueType Find(CreateValue createValue)
         {
-            if (_value == null)
-                _value = createValue();
-            return _value;
+            if(Value == null)
+                Value = createValue();
+            return Value;
         }
     }
 }

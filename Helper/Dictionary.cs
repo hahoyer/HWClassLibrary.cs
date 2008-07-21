@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
@@ -7,32 +9,32 @@ namespace HWClassLibrary.Helper
     /// </summary>
     /// <typeparam name="Key"></typeparam>
     /// <typeparam name="Value"></typeparam>
-    public class DictionaryEx<Key, Value> : Dictionary<Key, Value> 
+    [AdditionalNodeInfo("NodeDump")]
+    public class DictionaryEx<Key, Value> : Dictionary<Key, Value>
     {
         public DictionaryEx(IDictionary<Key, Value> x)
-            : base(x)
-        {
-            
-        }
+            : base(x) {}
+
         public DictionaryEx(IDictionary<Key, Value> x, IEqualityComparer<Key> comparer)
-            : base(x,comparer)
-        {
+            : base(x, comparer) {}
 
-        }
-        public DictionaryEx()
-        {
-
-        }
+        public DictionaryEx() {}
 
         public DictionaryEx(IEqualityComparer<Key> comparer)
-            : base(comparer)
-        {
-
-        }
+            : base(comparer) {}
 
         public delegate Value CreateValue();
 
         public DictionaryEx<Key, Value> Clone { get { return new DictionaryEx<Key, Value>(this); } }
+        [DumpData(false)]
+        public string NodeDump
+        {
+            get
+            {
+                var genericArguments = GetType().GetGenericArguments();
+                return "DictionaryEx<" + genericArguments[0].FullName + "," + genericArguments[1].FullName + ">[" + Count + "]";
+            }
+        }
 
         /// <summary>
         /// Gets the or add.
@@ -44,10 +46,10 @@ namespace HWClassLibrary.Helper
         public Value Find(Key key, CreateValue createValue)
         {
             Value result;
-            if (TryGetValue(key, out result))
+            if(TryGetValue(key, out result))
                 return result;
             result = createValue();
-            Add(key,result);
+            Add(key, result);
             return result;
         }
 
@@ -56,33 +58,33 @@ namespace HWClassLibrary.Helper
         /// </summary>
         /// <value></value>
         /// created 13.01.2007 15:43
-        new public Value this[Key key]
+        public new Value this[Key key]
         {
             get
             {
                 Value result;
-                if (TryGetValue(key, out result))
+                if(TryGetValue(key, out result))
                     return result;
                 return default(Value);
             }
-            set { Add(key,value); }
+            set { Add(key, value); }
         }
 
-        new public Key[] Keys
+        public new Key[] Keys
         {
             get
             {
-                KeyCollection keys = base.Keys;
-                Key[]result = new Key[keys.Count];
-                int i = 0;
-                foreach (Key key in keys)
+                var keys = base.Keys;
+                var result = new Key[keys.Count];
+                var i = 0;
+                foreach(var key in keys)
                     result[i++] = key;
                 return result;
             }
         }
     }
 
-    class NoCaseComparer: IEqualityComparer<string>
+    internal class NoCaseComparer : IEqualityComparer<string>
     {
         private static IEqualityComparer<string> _default;
 
@@ -127,18 +129,13 @@ namespace HWClassLibrary.Helper
         }
     }
 
-    public class NoCaseStringDictionary<Value>: DictionaryEx<string ,Value>
+    public class NoCaseStringDictionary<Value> : DictionaryEx<string, Value>
     {
         public NoCaseStringDictionary()
-            : base(NoCaseComparer.Default)
-        {
-            
-        }
+            : base(NoCaseComparer.Default) {}
+
         public NoCaseStringDictionary(NoCaseStringDictionary<Value> x)
-            : base(x, NoCaseComparer.Default)
-        {
-            
-        }
+            : base(x, NoCaseComparer.Default) {}
 
         public new NoCaseStringDictionary<Value> Clone { get { return new NoCaseStringDictionary<Value>(this); } }
     }
