@@ -82,7 +82,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Used to control dump of data element
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Property|AttributeTargets.Field)]
     public class DumpDataAttribute : Attribute
     {
         private readonly bool _dump;
@@ -105,7 +105,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Used to control dump of data element
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class DumpExceptAttribute : Attribute
     {
         private readonly object _exception;
