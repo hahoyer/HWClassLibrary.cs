@@ -5,6 +5,7 @@
     <TargetTypeEx>CSharp.Library.UnitTest</TargetTypeEx>
     <OldToolsVersion>2.0</OldToolsVersion>
     <ProductVersion>9.0.21022</ProductVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
@@ -23,6 +24,11 @@
     <Compile Include="Helper\TreeViewSupport.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <Import Project="sys.targets" />
 </Project>

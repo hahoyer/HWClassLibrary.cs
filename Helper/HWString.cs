@@ -5,14 +5,14 @@ namespace HWClassLibrary.Helper
     /// <summary>
     /// String helper functions.
     /// </summary>
-    public static class HWString
+    public static class HWString 
     {
         /// <summary>
         /// Indent paramer by 4 spaces
         /// </summary>
-        /// <param name="x"></param>
+        /// <param name="x">The x.</param>
         /// <returns></returns>
-        public static string Indent(string x)
+        public static string Indent(this string x)
         {
             return x.Replace("\n", "\n    ");
         }
@@ -23,7 +23,7 @@ namespace HWClassLibrary.Helper
         /// <param name="x">The x.</param>
         /// <param name="count">The count.</param>
         /// <returns></returns>
-        public static string Indent(string x, int count)
+        public static string Indent(this string x, int count)
         {
             return x.Replace("\n", "\n" + Repeat("    ", count));
         }
@@ -35,7 +35,7 @@ namespace HWClassLibrary.Helper
         /// <param name="count">The count.</param>
         /// <returns></returns>
         /// created 15.10.2006 14:38
-        public static string Repeat(string s, int count)
+        public static string Repeat(this string s, int count)
         {
             var result = "";
             for(var i = 0; i < count; i++)
@@ -51,7 +51,7 @@ namespace HWClassLibrary.Helper
         /// <param name="data"></param>
         /// <param name="Right"></param>
         /// <returns></returns>
-        public static string Surround(string Left, string data, string Right)
+        public static string Surround(this string Left, string data, string Right)
         {
             if(data.IndexOf("\n") < 0)
                 return Left + data + Right;
@@ -64,7 +64,7 @@ namespace HWClassLibrary.Helper
         /// <param name="x">The x.</param>
         /// <returns></returns>
         /// created 08.01.2007 18:37
-        public static string Quote(string x)
+        public static string Quote(this string x)
         {
             return "\"" + x.Replace("\"", "\"\"") + "\"";
         }
