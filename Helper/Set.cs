@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HWClassLibrary.Debug;
 
@@ -7,18 +8,10 @@ namespace HWClassLibrary.Helper
     {
         private readonly List<T> _data;
 
-        public delegate bool IsEqualDelegate(T a, T b);
-
-        public delegate ResultType ApplyDelegate<ResultType>(T x);
-
-        public delegate CombinedResultType
-            CombineDelegate<CombinedResultType, ResultType>
-            (CombinedResultType combinedResultType, ResultType resultType);
-
-        private IsEqualDelegate _isEqual = delegate(T a, T b) { return a.Equals(b); };
+        private Func<T,T,bool> _isEqual = (a, b) => a.Equals(b);
 
         [DumpData(false)]
-        public IsEqualDelegate IsEqual
+        public Func<T, T, bool> IsEqual
         {
             get { return _isEqual; }
             set
@@ -110,7 +103,7 @@ namespace HWClassLibrary.Helper
             return a.Or(b);
         }
 
-        public List<ResultType> Apply<ResultType>(ApplyDelegate<ResultType> applyDelegate)
+        public List<ResultType> Apply<ResultType>(Func<T, ResultType> applyDelegate)
         {
             var result = new List<ResultType>();
             for(var i = 0; i < _data.Count; i++)
@@ -121,7 +114,12 @@ namespace HWClassLibrary.Helper
             return result;
         }
 
-        public CombinedResultType Apply<CombinedResultType, ResultType>(ApplyDelegate<ResultType> applyDelegate, CombineDelegate<CombinedResultType, ResultType> combineDelegate) where CombinedResultType : new()
+        public CombinedResultType Apply<CombinedResultType, ResultType>
+            (
+            Func<T, ResultType> applyDelegate,
+            Func<CombinedResultType, ResultType, CombinedResultType> combineDelegate
+                ) 
+            where CombinedResultType : new()
         {
             var result = new CombinedResultType();
             for(var i = 0; i < _data.Count; i++)

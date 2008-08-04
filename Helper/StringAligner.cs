@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HWClassLibrary.Debug;
 
@@ -50,7 +51,7 @@ namespace HWClassLibrary.Helper
         /// <summary>
         /// called when find start failed
         /// </summary>
-        public FindStartFailedDelegate FindStartFailed;
+        public Func<string,int,int> FindStartFailed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FloatingColumn"/> class.
@@ -84,7 +85,7 @@ namespace HWClassLibrary.Helper
         {
             if(offset == 0)
                 return;
-            line = line.Insert(position, HWString.Repeat(" ", offset));
+            line = line.Insert(position, " ".Repeat(offset));
             position += offset;
         }
 
@@ -124,11 +125,6 @@ namespace HWClassLibrary.Helper
         /// <returns></returns>
         /// created 15.10.2006 15:22
         public abstract int FindEnd(string s, int i);
-
-        /// <summary>
-        /// called when find start failed
-        /// </summary>
-        public delegate int FindStartFailedDelegate(string s, int i);
     }
 
     /// <summary>

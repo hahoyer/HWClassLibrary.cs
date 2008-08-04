@@ -7,9 +7,7 @@ namespace HWClassLibrary.Helper
     {
         public ValueType Value;
 
-        public delegate ValueType CreateValue();
-
-        public ValueType Find(CreateValue createValue)
+        public ValueType Find(Func<ValueType> createValue)
         {
             if(Value == null)
                 Value = createValue();

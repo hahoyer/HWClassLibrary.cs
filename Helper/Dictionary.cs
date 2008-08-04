@@ -13,17 +13,15 @@ namespace HWClassLibrary.Helper
     public class DictionaryEx<Key, Value> : Dictionary<Key, Value>
     {
         public DictionaryEx(IDictionary<Key, Value> x)
-            : base(x) {}
+            : base(x) { }
 
         public DictionaryEx(IDictionary<Key, Value> x, IEqualityComparer<Key> comparer)
-            : base(x, comparer) {}
+            : base(x, comparer) { }
 
-        public DictionaryEx() {}
+        public DictionaryEx() { }
 
         public DictionaryEx(IEqualityComparer<Key> comparer)
-            : base(comparer) {}
-
-        public delegate Value CreateValue();
+            : base(comparer) { }
 
         public DictionaryEx<Key, Value> Clone { get { return new DictionaryEx<Key, Value>(this); } }
         [DumpData(false)]
@@ -43,7 +41,7 @@ namespace HWClassLibrary.Helper
         /// <param name="createValue">The create value.</param>
         /// <returns></returns>
         /// created 13.01.2007 14:32
-        public Value Find(Key key, CreateValue createValue)
+        public Value Find(Key key, Func<Value> createValue)
         {
             Value result;
             if(TryGetValue(key, out result))
@@ -54,7 +52,7 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
-        /// Gets the <see cref="T:Value"/> with the specified key
+        /// Gets the value with the specified key
         /// </summary>
         /// <value></value>
         /// created 13.01.2007 15:43
@@ -98,10 +96,7 @@ namespace HWClassLibrary.Helper
         ///
         ///<param name="y">The second object of type T to compare.</param>
         ///<param name="x">The first object of type T to compare.</param>
-        public bool Equals(string x, string y)
-        {
-            return x.ToUpperInvariant() == y.ToUpperInvariant();
-        }
+        public bool Equals(string x, string y) { return x.ToUpperInvariant() == y.ToUpperInvariant(); }
 
         ///<summary>
         ///When overridden in a derived class, serves as a hash function for the specified object for hashing algorithms and data structures, such as a hash table.
@@ -113,10 +108,7 @@ namespace HWClassLibrary.Helper
         ///
         ///<param name="obj">The object for which to get a hash code.</param>
         ///<exception cref="T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
-        public int GetHashCode(string obj)
-        {
-            return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant());
-        }
+        public int GetHashCode(string obj) { return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant()); }
 
         public static IEqualityComparer<string> Default
         {
@@ -132,10 +124,12 @@ namespace HWClassLibrary.Helper
     public class NoCaseStringDictionary<Value> : DictionaryEx<string, Value>
     {
         public NoCaseStringDictionary()
-            : base(NoCaseComparer.Default) {}
+            : base(NoCaseComparer.Default) { }
 
+// ReSharper disable SuggestBaseTypeForParameter
         public NoCaseStringDictionary(NoCaseStringDictionary<Value> x)
-            : base(x, NoCaseComparer.Default) {}
+// ReSharper restore SuggestBaseTypeForParameter
+            : base(x, NoCaseComparer.Default) { }
 
         public new NoCaseStringDictionary<Value> Clone { get { return new NoCaseStringDictionary<Value>(this); } }
     }

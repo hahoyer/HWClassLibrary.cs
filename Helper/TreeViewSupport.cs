@@ -80,16 +80,7 @@ namespace HWClassLibrary.Helper
 
     public static class Service
     {
-        /// <summary>
-        /// Creates a treenode.with a given title from an object
-        /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="iconKey">The icon key.</param>
-        /// <param name="isDefaultIcon">if set to <c>true</c> [is default icon].</param>
-        /// <param name="nodeData">The node data.</param>
-        /// <returns></returns>
-        /// created 06.02.2007 23:26
-        public static TreeNode CreateNode(string title, string iconKey, bool isDefaultIcon, object nodeData)
+        private static TreeNode CreateNode(string title, string iconKey, bool isDefaultIcon, object nodeData)
         {
             var result = new TreeNode(title + GetAdditionalInfo(nodeData)) {Tag = nodeData};
             if(iconKey == null)
@@ -115,9 +106,49 @@ namespace HWClassLibrary.Helper
         /// <param name="iconKey">The icon key.</param>
         /// <param name="nodeData">The node data.</param>
         /// <returns></returns>
-        public static TreeNode CreateNode(string title, string iconKey, object nodeData)
+        public static TreeNode CreateTaggedNode(string title, string iconKey, object nodeData)
         {
-            return CreateNode(title, iconKey, false, nodeData);
+            return CreateTaggedNode(title, iconKey, false, nodeData);
+        }
+
+        /// <summary>
+        /// Creates the node.
+        /// </summary>
+        /// <param name="title">The title.</param>
+        /// <param name="iconKey">The icon key.</param>
+        /// <param name="nodeData">The node data.</param>
+        /// <returns></returns>
+        public static TreeNode CreateNamedNode(string title, string iconKey, object nodeData)
+        {
+            return CreateNamedNode(title, iconKey, false, nodeData);
+        }
+
+        /// <summary>
+        /// Creates a treenode.with a given title from an object
+        /// </summary>
+        /// <param name="title">The title.</param>
+        /// <param name="iconKey">The icon key.</param>
+        /// <param name="isDefaultIcon">if set to <c>true</c> [is default icon].</param>
+        /// <param name="nodeData">The node data.</param>
+        /// <returns></returns>
+        /// created 06.02.2007 23:26
+        public static TreeNode CreateNamedNode(string title, string iconKey, bool isDefaultIcon, object nodeData)
+        {
+            return CreateNode(title + " = ", iconKey, isDefaultIcon, nodeData);
+        }
+
+        /// <summary>
+        /// Creates a treenode.with a given title from an object
+        /// </summary>
+        /// <param name="title">The title.</param>
+        /// <param name="iconKey">The icon key.</param>
+        /// <param name="isDefaultIcon">if set to <c>true</c> [is default icon].</param>
+        /// <param name="nodeData">The node data.</param>
+        /// <returns></returns>
+        /// created 06.02.2007 23:26
+        public static TreeNode CreateTaggedNode(string title, string iconKey, bool isDefaultIcon, object nodeData)
+        {
+            return CreateNode(title + ": ", iconKey, isDefaultIcon, nodeData);
         }
 
         /// <summary>
@@ -126,24 +157,45 @@ namespace HWClassLibrary.Helper
         /// <param name="title">The title.</param>
         /// <param name="nodeData">The node data.</param>
         /// <returns></returns>
-        public static TreeNode CreateNode(string title, object nodeData)
+        public static TreeNode CreateTaggedNode(string title, object nodeData)
         {
-            return CreateNode(title, null, false, nodeData);
+            return CreateTaggedNode(title, null, false, nodeData);
+        }
+
+        /// <summary>
+        /// Creates the node.
+        /// </summary>
+        /// <param name="title">The title.</param>
+        /// <param name="nodeData">The node data.</param>
+        /// <returns></returns>
+        public static TreeNode CreateNamedNode(string title, object nodeData)
+        {
+            return CreateNamedNode(title, null, false, nodeData);
         }
 
         private static TreeNode[] InternalCreateNodes(IDictionary dictionary)
         {
             var result = new List<TreeNode>();
             foreach(var o in dictionary)
-                result.Add(CreateNode(result.Count.ToString(), "ListItem", o));
+                result.Add(CreateNumberedNode(result.Count, "ListItem", o));
             return result.ToArray();
+        }
+
+        private static TreeNode CreateNumberedNode(int i, string iconKey, object nodeData)
+        {
+            return CreateNumberedNode(i, iconKey, false, nodeData);
+        }
+
+        private static TreeNode CreateNumberedNode(int i, string iconKey, bool isDefaultIcon, object nodeData)
+        {
+            return CreateNode("[" + i + "] ", iconKey, isDefaultIcon, nodeData);
         }
 
         private static TreeNode[] InternalCreateNodes(IList list)
         {
             var result = new List<TreeNode>();
             foreach(var o in list)
-                result.Add(CreateNode(result.Count.ToString(), "ListItem", true, o));
+                result.Add(CreateNumberedNode(result.Count, "ListItem", true, o));
             return result.ToArray();
         }
 
@@ -151,8 +203,8 @@ namespace HWClassLibrary.Helper
         {
             return new[]
             {
-                CreateNode("key", "Key", true, dictionaryEntry.Key),
-                CreateNode("value", dictionaryEntry.Value)
+                CreateTaggedNode("key", "Key", true, dictionaryEntry.Key),
+                CreateTaggedNode("value", dictionaryEntry.Value)
             };
         }
 
@@ -163,6 +215,8 @@ namespace HWClassLibrary.Helper
         /// <returns></returns>
         private static string GetIconKey(object nodeData)
         {
+            if (nodeData == null)
+                return null;
             var ip = nodeData as IIconKeyProvider;
             if(ip != null)
                 return ip.IconKey;
@@ -182,24 +236,27 @@ namespace HWClassLibrary.Helper
 
         private static string GetAdditionalInfo(object nodeData)
         {
+            if (nodeData == null)
+                return "<null>";
+
             var attrs = nodeData.GetType().GetCustomAttributes(typeof(AdditionalNodeInfoAttribute), true);
             if(attrs.Length > 0)
             {
                 var attr = (AdditionalNodeInfoAttribute) attrs[0];
-                return " = " + nodeData.GetType().GetProperty(attr.Property).GetValue(nodeData, null);
+                return nodeData.GetType().GetProperty(attr.Property).GetValue(nodeData, null).ToString();
             }
 
             var il = nodeData as IList;
             if(il != null)
             {
-                var result = " = IList";
+                var result = "IList";
                 if(il.GetType().IsGenericType)
                     result += "<" + il.GetType().GetGenericArguments()[0].FullName + ">";
                 return result + "[" + ((IList) nodeData).Count + "]";
             }
 
             if(nodeData.GetType().Namespace.StartsWith("System"))
-                return " = " + nodeData;
+                return nodeData.ToString();
 
             return "";
         }
@@ -214,6 +271,9 @@ namespace HWClassLibrary.Helper
 
         private static TreeNode[] CreateNodes(object target)
         {
+            if (target == null)
+                return new TreeNode[0];
+
             var xn = target as ITreeNodeSupport;
             if(xn != null)
                 return xn.CreateNodes();
@@ -258,8 +318,6 @@ namespace HWClassLibrary.Helper
 
         private static BindingFlags DefaultBindingFlags { get { return BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy; } }
 
-        private delegate object GetObjectDelegate();
-
         private static TreeNode CreateTreeNode(object nodeData, FieldInfo fieldInfo)
         {
             return CreateTreeNode(fieldInfo, () => fieldInfo.GetValue(nodeData));
@@ -270,7 +328,7 @@ namespace HWClassLibrary.Helper
             return CreateTreeNode(propertyInfo, () => propertyInfo.GetValue(nodeData, null));
         }
 
-        private static TreeNode CreateTreeNode(MemberInfo memberInfo, GetObjectDelegate getValue)
+        private static TreeNode CreateTreeNode(MemberInfo memberInfo, Func<object> getValue)
         {
             var attrs = memberInfo.GetCustomAttributes(typeof(NodeAttribute), true);
             if(attrs.Length == 0)
@@ -281,7 +339,7 @@ namespace HWClassLibrary.Helper
             if(value == null)
                 return null;
 
-            var result = CreateNode(memberInfo.Name, attr.IconKey, value);
+            var result = CreateNamedNode(memberInfo.Name, attr.IconKey, value);
 
             var smartNode = (SmartNodeAttribute[]) memberInfo.GetCustomAttributes(typeof(SmartNodeAttribute), true);
             if(smartNode.Length == 0)
@@ -318,6 +376,7 @@ namespace HWClassLibrary.Helper
         {
             AddSubNodes(e.Node.Nodes);
         }
+
     }
 
     /// <summary>
