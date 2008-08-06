@@ -9,7 +9,7 @@ namespace HWClassLibrary.Debug
     /// Summary description for Dumpable.
     /// </summary>
     [dump("Dump"),Serializable]
-    public class Dumpable: MarshalByRefObject
+    public class Dumpable
     {
         /// <summary>
         /// generate dump string to be shown in debug windows
