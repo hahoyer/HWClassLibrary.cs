@@ -235,7 +235,7 @@ namespace HWClassLibrary.Helper
             return null;
         }
 
-        private static string GetAdditionalInfo(object nodeData)
+        internal static string GetAdditionalInfo(object nodeData)
         {
             if (nodeData == null)
                 return "<null>";
