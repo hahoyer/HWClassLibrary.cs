@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.Debug
@@ -7,17 +8,14 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Summary description for Dumpable.
     /// </summary>
-    [dump("Dump")]
+    [dump("Dump"),Serializable]
     public class Dumpable
     {
         /// <summary>
         /// generate dump string to be shown in debug windows
         /// </summary>
         /// <returns></returns>
-        public virtual string DebuggerDump()
-        {
-            return Tracer.Dump(this);
-        }
+        public virtual string DebuggerDump() { return Tracer.Dump(this); }
 
         /// <summary>
         /// dump string to be shown in debug windows
@@ -193,10 +191,7 @@ namespace HWClassLibrary.Debug
             Debugger.Break();
         }
 
-        public virtual string Dump()
-        {
-            return GetType().FullName + HWString.Surround("{", DumpData(), "}");
-        }
+        public virtual string Dump() { return GetType().FullName + DumpData().Surround("{", "}"); }
 
         /// <summary>
         /// Gets a value indicating whether this instance is in dump.

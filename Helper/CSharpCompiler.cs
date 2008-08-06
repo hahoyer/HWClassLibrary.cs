@@ -4,8 +4,10 @@ using System;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using HWClassLibrary.Debug;
 using HWClassLibrary.IO;
 using Microsoft.CSharp;
+using Microsoft.VisualStudio.DebuggerVisualizers;
 using NUnit.Framework;
 
 namespace HWClassLibrary.Helper
@@ -92,5 +94,6 @@ namespace HWClassLibrary.Helper
             object x4 = CSharpCompiler.Exec(File.SourceFileName(0), "?", "?", "?", null);
             object x5 = CSharpCompiler.Exec(File.SourceFileName(0), "?", "?", "?", null);
         }
+
     }
 }

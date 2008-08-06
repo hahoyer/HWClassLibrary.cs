@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 using HWClassLibrary.Debug;
+using HWClassLibrary.IO;
 
 namespace HWClassLibrary.Helper
 {

@@ -51,7 +51,7 @@ namespace HWClassLibrary.Helper
         /// <param name="data"></param>
         /// <param name="Right"></param>
         /// <returns></returns>
-        public static string Surround(this string Left, string data, string Right)
+        public static string Surround(this string data, string Left, string Right)
         {
             if(data.IndexOf("\n") < 0)
                 return Left + data + Right;
