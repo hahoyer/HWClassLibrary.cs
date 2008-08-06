@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 namespace HWClassLibrary.Helper
 {
+    [Serializable]
     public class Sequence<T>
     {
         private readonly T[] _data;

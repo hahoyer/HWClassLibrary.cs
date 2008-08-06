@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
@@ -10,8 +11,13 @@ namespace HWClassLibrary.Helper
     /// <typeparam name="Key"></typeparam>
     /// <typeparam name="Value"></typeparam>
     [AdditionalNodeInfo("NodeDump")]
+    [Serializable]
     public class DictionaryEx<Key, Value> : Dictionary<Key, Value>
     {
+        protected DictionaryEx(SerializationInfo info, StreamingContext context)
+            : base(info, context) {
+            }
+
         public DictionaryEx(IDictionary<Key, Value> x)
             : base(x) { }
 

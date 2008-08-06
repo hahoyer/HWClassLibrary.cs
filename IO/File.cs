@@ -1,43 +1,41 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.IO
 {
     /// <summary>
     /// Summary description for File.
     /// </summary>
+    [Serializable]
     public class File
     {
-        private string _name;
+        private readonly string _name;
 
-        private Uri _uriCache = null;
-        
-        Uri Uri
+        private Uri _uriCache;
+
+        private Uri Uri
         {
             get
             {
-                if(_uriCache == null)
-                    _uriCache = new Uri(_name);   
+                if (_uriCache == null)
+                    _uriCache = new Uri(_name);
                 return _uriCache;
             }
         }
 
-        bool IsFTP {get{return Uri.Scheme == Uri.UriSchemeFtp;}}
+        private bool IsFTP { get { return Uri.Scheme == Uri.UriSchemeFtp; } }
 
         /// <summary>
         /// constructs a FileInfo
         /// </summary>
         /// <param name="name">the filename</param>
-        public static File m(string name)
-        {
-            return new File(name);
-        }
+        public static File m(string name) { return new File(name); }
 
-        private File(string name)
-        {
-            _name = name;
-        }
+        private File(string name) { _name = name; }
+
+        public File() { _name = ""; }
 
         /// <summary>
         /// considers the file as a string. If file existe it should be a text file
@@ -49,23 +47,20 @@ namespace HWClassLibrary.IO
             {
                 if (!System.IO.File.Exists(_name))
                     return null;
-                StreamReader f = System.IO.File.OpenText(_name);
-                string result = f.ReadToEnd();
+                var f = System.IO.File.OpenText(_name);
+                var result = f.ReadToEnd();
                 f.Close();
                 return result;
             }
             set
             {
-                StreamWriter f = System.IO.File.CreateText(_name);
+                var f = System.IO.File.CreateText(_name);
                 f.Write(value);
                 f.Close();
             }
         }
 
-        public override string ToString()
-        {
-            return FullName;
-        }
+        public override string ToString() { return FullName; }
 
         /// <summary>
         /// considers the file as a byte array
@@ -74,15 +69,15 @@ namespace HWClassLibrary.IO
         {
             get
             {
-                FileStream f = System.IO.File.OpenRead(_name);
-                byte[] result = new byte[Size];
+                var f = System.IO.File.OpenRead(_name);
+                var result = new byte[Size];
                 f.Read(result, 0, (int) Size);
                 f.Close();
                 return result;
             }
             set
             {
-                FileStream f = System.IO.File.OpenWrite(_name);
+                var f = System.IO.File.OpenWrite(_name);
                 f.Write(value, 0, value.Length);
                 f.Close();
             }
@@ -91,7 +86,7 @@ namespace HWClassLibrary.IO
         /// <summary>
         /// Size of file in bytes
         /// </summary>
-        public long Size { get { return ((FileInfo)FileSystemInfo).Length; } }
+        public long Size { get { return ((FileInfo) FileSystemInfo).Length; } }
 
         /// <summary>
         /// Gets the full path of the directory or file.
@@ -106,19 +101,16 @@ namespace HWClassLibrary.IO
         /// <summary>
         /// Delete the file
         /// </summary>
-        public void Delete()
-        {
-            System.IO.File.Delete(_name);
-        }
+        public void Delete() { System.IO.File.Delete(_name); }
 
         /// <summary>
         /// returns true if it is a directory
         /// </summary>
-        public bool IsDirectory{get{return System.IO.Directory.Exists(_name);}}
+        public bool IsDirectory { get { return System.IO.Directory.Exists(_name); } }
 
-        private FileSystemInfo _fileInfoCache = null;
+        private FileSystemInfo _fileInfoCache;
 
-        FileSystemInfo FileSystemInfo
+        private FileSystemInfo FileSystemInfo
         {
             get
             {
@@ -132,6 +124,7 @@ namespace HWClassLibrary.IO
                 return _fileInfoCache;
             }
         }
+
         /// <summary>
         /// Content of directory, one line for each file
         /// </summary>
@@ -139,8 +132,8 @@ namespace HWClassLibrary.IO
 
         private string GetDirectoryString()
         {
-            string result = "";
-            foreach (FileInfo fi in ((DirectoryInfo)FileSystemInfo).GetFiles())
+            var result = "";
+            foreach (var fi in ((DirectoryInfo) FileSystemInfo).GetFiles())
             {
                 result += fi.Name;
                 result += "\n";
@@ -153,10 +146,7 @@ namespace HWClassLibrary.IO
         /// </summary>
         /// <param name="depth">The depth.</param>
         /// <returns></returns>
-        public static string SourcePath(int depth)
-        {
-            return new FileInfo(SourceFileName(depth + 1)).DirectoryName;
-        }
+        public static string SourcePath(int depth) { return new FileInfo(SourceFileName(depth + 1)).DirectoryName; }
 
         /// <summary>
         /// Gets the name of the source file that called this function
@@ -165,7 +155,7 @@ namespace HWClassLibrary.IO
         /// <returns></returns>
         public static string SourceFileName(int depth)
         {
-            StackFrame sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(depth + 1);
             return sf.GetFileName();
         }
     }

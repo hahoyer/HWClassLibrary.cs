@@ -3,6 +3,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
+    [Serializable]
     public class SimpleCache<ValueType> where ValueType : class
     {
         public ValueType Value;

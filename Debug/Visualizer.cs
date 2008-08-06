@@ -1,13 +1,7 @@
 using System;
-using System.Diagnostics;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 using Microsoft.VisualStudio.DebuggerVisualizers;
-
-[assembly : DebuggerVisualizer(
-    typeof(Visualizer),
-    Target = typeof(Dumpable),
-    Description = "Dumpable")]
 
 namespace HWClassLibrary.Debug
 {
@@ -20,17 +14,16 @@ namespace HWClassLibrary.Debug
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
             windowService.ShowDialog(new TreeForm
-            {
-                Target = objectProvider.GetObject(),
-                Text = objectProvider.GetObject().GetType().FullName
-            });
+                                         {
+                                             Target = objectProvider.GetObject(),
+                                             Text = objectProvider.GetObject().GetType().FullName
+                                         });
         }
+
         public static void TestShowVisualizer(object objectToVisualize)
         {
-            var myHost = new VisualizerDevelopmentHost(objectToVisualize, typeof(Visualizer));
+            var myHost = new VisualizerDevelopmentHost(objectToVisualize, typeof (Visualizer));
             myHost.ShowVisualizer();
         }
     }
-
-
 }
