@@ -15,6 +15,11 @@ namespace HWClassLibrary.Helper
             _data = x.ToArray();
         }
 
+        private Sequence(List<T> a)
+        {
+            _data = a.ToArray();
+        }
+
         private Sequence(T a, Sequence<T> b)
         {
             var x = new List<T> {a};
@@ -66,6 +71,33 @@ namespace HWClassLibrary.Helper
             if (_data.Length == value._data.Length)
                 return false;
             return StartsWith(value);
+        }
+
+        public Sequence<ResultType> Apply<ResultType>(Func<T, ResultType> applyDelegate)
+        {
+            var result = new List<ResultType>();
+            for (var i = 0; i < _data.Length; i++)
+            {
+                var t = _data[i];
+                result.Add(applyDelegate(t));
+            }
+            return new Sequence<ResultType>(result);
+        }
+
+        public CombinedResultType Apply<CombinedResultType, ResultType>
+            (
+            Func<T, ResultType> applyDelegate,
+            Func<CombinedResultType, ResultType, CombinedResultType> combineDelegate
+                )
+            where CombinedResultType : new()
+        {
+            var result = new CombinedResultType();
+            for (var i = 0; i < _data.Length; i++)
+            {
+                var t = _data[i];
+                result = combineDelegate(result, applyDelegate(t));
+            }
+            return result;
         }
     }
 }
