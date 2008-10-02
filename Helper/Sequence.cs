@@ -84,20 +84,35 @@ namespace HWClassLibrary.Helper
             return new Sequence<ResultType>(result);
         }
 
-        public CombinedResultType Apply<CombinedResultType, ResultType>
-            (
-            Func<T, ResultType> applyDelegate,
-            Func<CombinedResultType, ResultType, CombinedResultType> combineDelegate
-                )
-            where CombinedResultType : new()
+        public Result Serialize<Result>() 
+            where Result : ICombiner<Result>, new()
         {
-            var result = new CombinedResultType();
+            var result = new Result();
             for (var i = 0; i < _data.Length; i++)
-            {
-                var t = _data[i];
-                result = combineDelegate(result, applyDelegate(t));
-            }
+                result = result.CreateSequence(_data[i]);
             return result;
+        }
+
+        public Result Serialize<Result>(Result empty)
+            where Result : ICombiner<Result>
+        {
+            var result = empty;
+            for (var i = 0; i < _data.Length; i++)
+                result = result.CreateSequence(_data[i]);
+            return result;
+        }
+
+        public Result Serialize<Result>(Result empty, Func<Result, T, Result> combiner)
+        {
+            var result = empty;
+            for (var i = 0; i < _data.Length; i++)
+                result = combiner(result,_data[i]);
+            return result;
+        }
+
+        public interface ICombiner<Result>
+        {
+            Result CreateSequence(T t);
         }
     }
 }
