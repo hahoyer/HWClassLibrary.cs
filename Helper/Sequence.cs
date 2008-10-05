@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
     [Serializable]
-    public class Sequence<T>
+    public class Sequence<T>: Dumpable
     {
+        [DumpData(true)]
         private readonly T[] _data;
 
         private Sequence(Sequence<T> a, Sequence<T> b)
