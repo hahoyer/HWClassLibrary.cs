@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
     [Serializable]
-    public class Sequence<T>: Dumpable
+    public class Sequence<T>: Dumpable, IEnumerable<T>
     {
         [DumpData(true)]
         private readonly T[] _data;
@@ -75,13 +76,13 @@ namespace HWClassLibrary.Helper
             return StartsWith(value);
         }
 
-        public Sequence<ResultType> Apply<ResultType>(Func<T, ResultType> applyDelegate)
+        public Sequence<ResultType> Apply<ResultType>(Func<T, IEnumerable<ResultType>> applyDelegate)
         {
             var result = new List<ResultType>();
             for (var i = 0; i < _data.Length; i++)
             {
                 var t = _data[i];
-                result.Add(applyDelegate(t));
+                result.AddRange(applyDelegate(t));
             }
             return new Sequence<ResultType>(result);
         }
@@ -116,5 +117,27 @@ namespace HWClassLibrary.Helper
         {
             Result CreateSequence(T t);
         }
+
+        public IEnumerator<T> GetEnumerator() { return new Enumerator(this, 0); }
+
+        public class Enumerator : IEnumerator<T>
+        {
+            private readonly Sequence<T> _sequence;
+            private int _index;
+
+            public Enumerator(Sequence<T> sequence, int index)
+            {
+                _sequence = sequence;
+                _index = index;
+            }
+
+            public void Dispose() {  }
+            public bool MoveNext() { _index++; return _index < _sequence._data.Length; }
+            public void Reset() { _index = 0; }
+            public T Current { get { return _sequence._data[_index]; } }
+            object IEnumerator.Current { get { return Current; } }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
     }
 }
