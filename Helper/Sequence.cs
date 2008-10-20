@@ -79,10 +79,23 @@ namespace HWClassLibrary.Helper
         public Sequence<ResultType> Apply<ResultType>(Func<T, IEnumerable<ResultType>> applyDelegate)
         {
             var result = new List<ResultType>();
-            for (var i = 0; i < _data.Length; i++)
+            for(var i = 0; i < _data.Length; i++)
             {
-                var t = _data[i];
-                result.AddRange(applyDelegate(t));
+                var d = applyDelegate(_data[i]);
+                if(d != null)
+                    result.AddRange(d);
+            }
+            return new Sequence<ResultType>(result);
+        }
+
+        public Sequence<ResultType> Apply1<ResultType>(Func<T, ResultType> applyDelegate)
+        {
+            var result = new List<ResultType>();
+            for(var i = 0; i < _data.Length; i++)
+            {
+                var d = applyDelegate(_data[i]);
+                if (d != null)
+                    result.Add(d);
             }
             return new Sequence<ResultType>(result);
         }
