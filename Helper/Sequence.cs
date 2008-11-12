@@ -126,6 +126,8 @@ namespace HWClassLibrary.Helper
             return result;
         }
 
+        public bool IsEmpty { get { return _data.Length == 0; } }
+
         public interface ICombiner<Result>
         {
             Result CreateSequence(T t);
