@@ -88,7 +88,7 @@ namespace HWClassLibrary.Helper
             return new Sequence<ResultType>(result);
         }
 
-        public Sequence<ResultType> Apply1<ResultType>(Func<T, ResultType> applyDelegate)
+        public Sequence<ResultType> Apply1<ResultType>(Func<T, ResultType> applyDelegate) where ResultType : class
         {
             var result = new List<ResultType>();
             for(var i = 0; i < _data.Length; i++)
@@ -127,6 +127,8 @@ namespace HWClassLibrary.Helper
         }
 
         public bool IsEmpty { get { return _data.Length == 0; } }
+
+        public T[] ToArray() { return (T[]) _data.Clone(); }
 
         public interface ICombiner<Result>
         {
