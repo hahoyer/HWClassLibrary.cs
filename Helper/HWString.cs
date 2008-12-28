@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
@@ -97,6 +98,7 @@ namespace HWClassLibrary.Helper
 
         public static Sequence<T> Sequence<T>() { return new Sequence<T>(); }
         public static Sequence<T> Sequence<T>(T a) { return new Sequence<T>(a); }
+        public static Sequence<T> Sequence<T>(IList<T> a) { return new Sequence<T>(a); }
     }
 
 }

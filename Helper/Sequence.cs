@@ -45,6 +45,13 @@ namespace HWClassLibrary.Helper
             _data = new[] { a };
         }
 
+        internal Sequence(IList<T> a)
+        {
+            _data = new T[a.Count];
+            for(int i = 0; i < a.Count; i++)
+                _data[i] = a[i];
+        }
+
         public static Sequence<T> operator +(Sequence<T> a, Sequence<T> b)
         {
             return new Sequence<T>(a,b);
