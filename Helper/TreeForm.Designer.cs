@@ -36,16 +36,14 @@ namespace HWClassLibrary.Helper
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView1.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeView1.ImageIndex = 0;
             this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Location = new System.Drawing.Point(13, 13);
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
             this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.Size = new System.Drawing.Size(529, 549);
+            this.treeView1.Size = new System.Drawing.Size(554, 565);
             this.treeView1.TabIndex = 0;
             // 
             // imageList1
@@ -75,13 +73,13 @@ namespace HWClassLibrary.Helper
             this.imageList1.Images.SetKeyName(20, "Size");
             this.imageList1.Images.SetKeyName(21, "CodeError");
             // 
-            // Main
+            // TreeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(554, 565);
             this.Controls.Add(this.treeView1);
-            this.Name = "Main";
+            this.Name = "TreeForm";
             this.Text = "Main";
             this.ResumeLayout(false);
 
