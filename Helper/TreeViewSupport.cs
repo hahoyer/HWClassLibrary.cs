@@ -321,12 +321,22 @@ namespace HWClassLibrary.Helper
 
         private static TreeNode CreateTreeNode(object nodeData, FieldInfo fieldInfo)
         {
-            return CreateTreeNode(fieldInfo, () => fieldInfo.GetValue(nodeData));
+            return CreateTreeNode(fieldInfo, () => Value(fieldInfo, nodeData));
         }
 
         private static TreeNode CreateTreeNode(object nodeData, PropertyInfo propertyInfo)
         {
-            return CreateTreeNode(propertyInfo, () => propertyInfo.GetValue(nodeData, null));
+            return CreateTreeNode(propertyInfo, () => Value(propertyInfo, nodeData));
+        }
+
+        private static object Value(FieldInfo fieldInfo, object nodeData)
+        {
+            return fieldInfo.GetValue(nodeData);
+        }
+
+        private static object Value(PropertyInfo propertyInfo, object nodeData)
+        {
+            return propertyInfo.GetValue(nodeData, null);
         }
 
         private static TreeNode CreateTreeNode(MemberInfo memberInfo, Func<object> getValue)
@@ -336,7 +346,7 @@ namespace HWClassLibrary.Helper
                 return null;
 
             var attr = (NodeAttribute) attrs[0];
-            var value = getValue();
+            var value = CatchedEval(getValue);
             if(value == null)
                 return null;
 
@@ -347,6 +357,18 @@ namespace HWClassLibrary.Helper
                 return result;
 
             return smartNode[0].Process(result);
+        }
+
+        private static object CatchedEval(Func<object> value)
+        {
+            try
+            {
+                return value();
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
         }
 
         private static void CreateNodeList(TreeNodeCollection nodes, object target)

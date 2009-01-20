@@ -142,23 +142,23 @@ namespace HWClassLibrary.Helper
             Result CreateSequence(T t);
         }
 
-        public IEnumerator<T> GetEnumerator() { return new Enumerator(this, 0); }
+        public IEnumerator<T> GetEnumerator() { return new Enumerator(this); }
 
         public class Enumerator : IEnumerator<T>
         {
-            private readonly Sequence<T> _sequence;
+            private readonly Sequence<T> _parent;
             private int _index;
 
-            public Enumerator(Sequence<T> sequence, int index)
+            public Enumerator(Sequence<T> sequence)
             {
-                _sequence = sequence;
-                _index = index;
+                _parent = sequence;
+                Reset();
             }
 
             public void Dispose() {  }
-            public bool MoveNext() { _index++; return _index < _sequence._data.Length; }
-            public void Reset() { _index = 0; }
-            public T Current { get { return _sequence._data[_index]; } }
+            public bool MoveNext() { _index++; return _index < _parent._data.Length; }
+            public void Reset() { _index = -1; }
+            public T Current { get { return _parent._data[_index]; } }
             object IEnumerator.Current { get { return Current; } }
         }
 
