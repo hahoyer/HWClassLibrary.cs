@@ -131,6 +131,21 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
+        /// Method dump,
+        /// </summary>
+        /// <param name="trace">if set to <c>true</c> [trace].</param>
+        [DebuggerHidden]
+        protected static void ReturnMethodDumpWithBreak(bool trace)
+        {
+            if (!trace)
+                return;
+            Tracer.IndentEnd();
+            Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
+            Debugger.Break();
+            return;
+        }
+
+        /// <summary>
         /// Method dump, 
         /// </summary>
         /// <param name="trace"></param>
