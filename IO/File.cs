@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.IO
@@ -15,7 +16,7 @@ namespace HWClassLibrary.IO
 
         private Uri _uriCache;
 
-        private Uri Uri
+        public Uri Uri
         {
             get
             {
@@ -25,7 +26,7 @@ namespace HWClassLibrary.IO
             }
         }
 
-        private bool IsFTP { get { return Uri.Scheme == Uri.UriSchemeFtp; } }
+        public bool IsFTP { get { return Uri.Scheme == Uri.UriSchemeFtp; } }
 
         /// <summary>
         /// constructs a FileInfo
@@ -45,18 +46,35 @@ namespace HWClassLibrary.IO
         {
             get
             {
-                if (!System.IO.File.Exists(_name))
-                    return null;
-                var f = System.IO.File.OpenText(_name);
-                var result = f.ReadToEnd();
-                f.Close();
-                return result;
+                if(System.IO.File.Exists(_name))
+                {
+                    var f = System.IO.File.OpenText(_name);
+                    var result = f.ReadToEnd();
+                    f.Close();
+                    return result;
+                }
+                if (Uri.Scheme == Uri.UriSchemeHttp)
+                    return StringFromHTTP;
+                return null;
             }
             set
             {
                 var f = System.IO.File.CreateText(_name);
                 f.Write(value);
                 f.Close();
+            }
+        }
+
+        private string StringFromHTTP
+        {
+            get
+            {
+                var req = WebRequest.Create(Uri.AbsoluteUri);
+                var resp = req.GetResponse();
+                var stream = resp.GetResponseStream();
+                var streamReader = new StreamReader(stream);
+                var result = streamReader.ReadToEnd();
+                return result;
             }
         }
 
