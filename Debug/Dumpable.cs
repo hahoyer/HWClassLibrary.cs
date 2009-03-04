@@ -33,7 +33,7 @@ namespace HWClassLibrary.Debug
         {
             var os = Tracer.DumpMethodWithData("not implemented", 1, null, p);
             Tracer.Line(os);
-            Debugger.Break();
+            Tracer.TraceBreak();
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace HWClassLibrary.Debug
             var os = Tracer.DumpMethodWithData("", 1, this, p);
             Tracer.Line(os);
             Tracer.IndentStart();
-            Debugger.Break();
+            Tracer.TraceBreak();
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace HWClassLibrary.Debug
                 return;
             var os = Tracer.DumpData("", 1, p);
             Tracer.Line(os);
-            Debugger.Break();
+            Tracer.TraceBreak();
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace HWClassLibrary.Debug
                 return;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
-            Debugger.Break();
+            Tracer.TraceBreak();
             return;
         }
 
@@ -158,7 +158,7 @@ namespace HWClassLibrary.Debug
                 return rv;
             Tracer.IndentEnd();
             Tracer.Line("returns " + Tracer.Dump(rv));
-            Debugger.Break();
+            Tracer.TraceBreak();
             return rv;
         }
 
@@ -173,7 +173,7 @@ namespace HWClassLibrary.Debug
         {
             var os = Tracer.DumpMethodWithData(text, 1, this, p);
             Tracer.Line(os);
-            Debugger.Break();
+            Tracer.TraceBreak();
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace HWClassLibrary.Debug
         {
             var os = Tracer.DumpData(text, 1, p);
             Tracer.Line(os);
-            Debugger.Break();
+            Tracer.TraceBreak();
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace HWClassLibrary.Debug
 
             var os = Tracer.DumpMethodWithData("not implemented", 1, this, p);
             Tracer.Line(os);
-            Debugger.Break();
+            Tracer.TraceBreak();
         }
 
         public virtual string Dump() { return GetType().FullName + DumpData().Surround("{", "}"); }

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Reflection;
 using HWClassLibrary.Helper;
 using JetBrains.Annotations;
+using NUnit.Framework;
 
 namespace HWClassLibrary.Debug
 {
@@ -530,7 +531,7 @@ namespace HWClassLibrary.Debug
         {
             var result = "Conditional break: " + cond + "\nData: " + data;
             FlaggedLine(stackFrameDepth + 1, result);
-            Debugger.Break();
+            TraceBreak();
             return result;
         }
 
@@ -592,7 +593,7 @@ namespace HWClassLibrary.Debug
         {
             var result = "Assertion Failed: " + cond + "\nData: " + data;
             FlaggedLine(stackFrameDepth + 1, result);
-            Debugger.Break();
+            AssertionBreak(result);
             return result;
         }
 
@@ -673,5 +674,22 @@ namespace HWClassLibrary.Debug
         {
             public AssertionFailedException(string result) : base(result) {}
         }
+
+        [DebuggerHidden]
+        private static void AssertionBreak(string result)
+        {
+            if (Debugger.IsAttached)
+                Debugger.Break();
+            else
+                throw new AssertionException(result);
+        }
+
+        [DebuggerHidden]
+        public static void TraceBreak()
+        {
+            if (Debugger.IsAttached)
+                Debugger.Break();
+        }
+
     }
 }
