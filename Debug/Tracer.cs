@@ -34,27 +34,27 @@ namespace HWClassLibrary.Debug
         /// <summary>
         /// creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
-        /// <param name="FileName">asis</param>
-        /// <param name="LineNr">asis</param>
-        /// <param name="ColNr">asis</param>
+        /// <param name="fileName">asis</param>
+        /// <param name="lineNr">asis</param>
+        /// <param name="colNr">asis</param>
         /// <param name="flagText">asis</param>
-        /// <returns>the "FileName(LineNr,ColNr): flagText: " string</returns>
-        public static string FilePosn(string FileName, int LineNr, int ColNr, string flagText)
+        /// <returns>the "fileName(lineNr,colNr): flagText: " string</returns>
+        public static string FilePosn(string fileName, int lineNr, int colNr, string flagText)
         {
-            return FileName + "(" + (LineNr + 1) + "," + ColNr + "): " + flagText + ": ";
+            return fileName + "(" + (lineNr + 1) + "," + colNr + "): " + flagText + ": ";
         }
 
         /// <summary>
         /// creates a string to inspect a method
         /// </summary>
         /// <param name="m">the method</param>
-        /// <param name="ShowParam">controls if parameter list is appended</param>
+        /// <param name="showParam">controls if parameter list is appended</param>
         /// <returns>string to inspect a method</returns>
-        public static string DumpMethod(this MethodBase m, bool ShowParam)
+        public static string DumpMethod(this MethodBase m, bool showParam)
         {
             var result = m.DeclaringType.Name + ".";
             result += m.Name;
-            if(!ShowParam)
+            if(!showParam)
                 return result;
             result += "(";
             for(int i = 0, n = m.GetParameters().Length; i < n; i++)
@@ -74,12 +74,12 @@ namespace HWClassLibrary.Debug
         /// creates a string to inspect the method call contained in current call stack
         /// </summary>
         /// <param name="depth">the index of stack frame</param>
-        /// <param name="ShowParam">controls if parameter list is appended</param>
+        /// <param name="showParam">controls if parameter list is appended</param>
         /// <returns>string to inspect the method call</returns>
-        public static string MethodHeader(int depth, bool ShowParam)
+        public static string MethodHeader(int depth, bool showParam)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
-            return FilePosn(sf, DumpMethod(sf.GetMethod(), ShowParam));
+            return FilePosn(sf, DumpMethod(sf.GetMethod(), showParam));
         }
 
         /// <summary>
@@ -106,10 +106,10 @@ namespace HWClassLibrary.Debug
         /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method
         /// </summary>
         /// <param name="s">the text</param>
-        /// <param name="ShowParam">controls if parameter list is appended</param>
-        public static void FlaggedLine(string s, bool ShowParam)
+        /// <param name="showParam">controls if parameter list is appended</param>
+        public static void FlaggedLine(string s, bool showParam)
         {
-            Line(MethodHeader(1, ShowParam) + s);
+            Line(MethodHeader(1, showParam) + s);
         }
 
         /// <summary>
@@ -181,14 +181,14 @@ namespace HWClassLibrary.Debug
             if(dea != null)
                 return dea.Dump(isTop, t, x);
 
-            var Return = BaseDump(t, x) + InternalDumpData(t, x);
-            if(Return != "")
-                Return = Surround("(", Return, ")");
+            var result = BaseDump(t, x) + InternalDumpData(t, x);
+            if(result != "")
+                result = Surround("(", result, ")");
 
-            if(isTop || Return != "")
-                Return = t + Return;
+            if(isTop || result != "")
+                result = t + result;
 
-            return Return;
+            return result;
         }
 
         private static string InternalDump(this CodeObject co)
@@ -366,13 +366,13 @@ namespace HWClassLibrary.Debug
 
         private static string BaseDump(this Type t, object x)
         {
-            var BaseDump = "";
+            var baseDump = "";
             if(t.BaseType != null && t.BaseType.ToString() != "System.Object" &&
                 t.BaseType.ToString() != "System.ValueType")
-                BaseDump = InternalDump(false, t.BaseType, x);
-            if(BaseDump != "")
-                BaseDump = "\nBase:" + BaseDump;
-            return BaseDump;
+                baseDump = InternalDump(false, t.BaseType, x);
+            if(baseDump != "")
+                baseDump = "\nBase:" + baseDump;
+            return baseDump;
         }
 
         private static object Value(this MemberInfo info, object x)
@@ -442,26 +442,29 @@ namespace HWClassLibrary.Debug
         /// Surrounds string by left and right parenthesis. 
         /// If string contains any carriage return, some indenting is done also 
         /// </summary>
-        /// <param name="Left"></param>
+        /// <param name="left"></param>
         /// <param name="data"></param>
-        /// <param name="Right"></param>
+        /// <param name="right"></param>
         /// <returns></returns>
-        public static string Surround(string Left, string data, string Right)
+        public static string Surround(string left, string data, string right)
         {
             if(data.IndexOf("\n") < 0)
-                return Left + data + Right;
-            return "\n" + Left + Indent("\n" + data, 1) + "\n" + Right;
+                return left + data + right;
+            return "\n" + left + Indent("\n" + data, 1) + "\n" + right;
         }
 
         /// <summary>
         /// creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
         /// </summary>
         /// <param name="text">some text</param>
-        /// <param name="depth">the index of stack frame</param>
-        /// <param name="thisObject">"this" for the stack frame</param>
         /// <param name="parameter">parameter objects list for the frame</param>
-        /// <returns>the dump string</returns>
-        public static string DumpMethodWithData(string text, int depth, object thisObject, object[] parameter)
+        public static void DumpStaticMethodWithData(string text, params object[] parameter)
+        {
+            var result = DumpMethodWithData(text, 1, null, parameter);
+            Line(result);
+        }
+
+        internal static string DumpMethodWithData(string text, int depth, object thisObject, object[] parameter)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
@@ -527,12 +530,11 @@ namespace HWClassLibrary.Debug
         /// <param name="data">The data.</param>
         /// <returns></returns>
         [DebuggerHidden]
-        public static string ConditionalBreak(int stackFrameDepth, string cond, string data)
+        public static void ConditionalBreak(int stackFrameDepth, string cond, string data)
         {
             var result = "Conditional break: " + cond + "\nData: " + data;
             FlaggedLine(stackFrameDepth + 1, result);
             TraceBreak();
-            return result;
         }
 
         /// <summary>
@@ -552,7 +554,7 @@ namespace HWClassLibrary.Debug
         public static void ConditionalBreak(bool cond, string data)
         {
             if(cond)
-                ConditionalBreak(1, cond, data);
+                ConditionalBreak(1, true, data);
         }
 
         /// <summary>

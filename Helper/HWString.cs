@@ -100,5 +100,4 @@ namespace HWClassLibrary.Helper
         public static Sequence<T> Sequence<T>(T a) { return new Sequence<T>(a); }
         public static Sequence<T> Sequence<T>(IList<T> a) { return new Sequence<T>(a); }
     }
-
 }

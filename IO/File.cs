@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using HWClassLibrary.Debug;
+using System.Linq;
 
 namespace HWClassLibrary.IO
 {
@@ -112,6 +114,11 @@ namespace HWClassLibrary.IO
         public string FullName { get { return FileSystemInfo.FullName; } }
 
         /// <summary>
+        /// Gets the name of the directory or file without path.
+        /// </summary>
+        public string Name { get { return FileSystemInfo.Name; } }
+
+        /// <summary>
         /// Gets a value indicating whether a file exists.
         /// </summary>
         public bool Exists { get { return FileSystemInfo.Exists; } }
@@ -146,18 +153,25 @@ namespace HWClassLibrary.IO
         /// <summary>
         /// Content of directory, one line for each file
         /// </summary>
-        public string Directory { get { return GetDirectoryString(); } }
+        public string DirectoryString { get { return GetDirectoryString(); } }
 
         private string GetDirectoryString()
         {
             var result = "";
-            foreach (var fi in ((DirectoryInfo) FileSystemInfo).GetFiles())
+            foreach (var fi in GetItems())
             {
                 result += fi.Name;
                 result += "\n";
             }
             return result;
         }
+
+        private FileSystemInfo[] GetItems() { return GetDirectories().Union(GetFiles()).ToArray();}
+
+        private IEnumerable<FileSystemInfo> GetFiles() { return ((DirectoryInfo)FileSystemInfo).GetFiles().Select(f => (FileSystemInfo)f); }
+        private IEnumerable<FileSystemInfo> GetDirectories(){return ((DirectoryInfo)FileSystemInfo).GetDirectories().Select(f=>(FileSystemInfo)f);}
+
+        public File[] Items { get { return GetItems().Select(f => m(f.FullName)).ToArray(); } }
 
         /// <summary>
         /// Gets the directory of the source file that called this function
