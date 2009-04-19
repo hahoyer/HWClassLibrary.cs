@@ -23,10 +23,8 @@ namespace HWClassLibrary.Helper
         private static void AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
         {
             foreach (var ai in a)
-            {
                 if (isEqual(ai, bi))
                     return;
-            }
             a.Add(bi);
         }
 

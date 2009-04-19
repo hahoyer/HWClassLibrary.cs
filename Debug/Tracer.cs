@@ -423,7 +423,7 @@ namespace HWClassLibrary.Debug
         /// <param name="s"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public static string Indent(this string s, int count)
+        public static string Indent(string s, int count)
         {
             return s.Replace("\n", "\n" + IndentElem(count));
         }
@@ -433,7 +433,7 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Indent(this string s)
+        public static string Indent(string s)
         {
             return Indent(s, 1);
         }

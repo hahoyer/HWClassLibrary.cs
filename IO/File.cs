@@ -124,6 +124,28 @@ namespace HWClassLibrary.IO
         public bool Exists { get { return FileSystemInfo.Exists; } }
 
         /// <summary>
+        /// Gets a value indicating whether a file exists.
+        /// </summary>
+        public bool IsMounted
+        {
+            get
+            {
+                if (!Exists)
+                    return false;
+                if ((FileSystemInfo.Attributes & FileAttributes.ReparsePoint) == 0)
+                    return false;
+                try
+                {
+                    ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos("dummy");
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+        /// <summary>
         /// Delete the file
         /// </summary>
         public void Delete() { System.IO.File.Delete(_name); }
@@ -166,11 +188,7 @@ namespace HWClassLibrary.IO
             return result;
         }
 
-        private FileSystemInfo[] GetItems() { return GetDirectories().Union(GetFiles()).ToArray();}
-
-        private IEnumerable<FileSystemInfo> GetFiles() { return ((DirectoryInfo)FileSystemInfo).GetFiles().Select(f => (FileSystemInfo)f); }
-        private IEnumerable<FileSystemInfo> GetDirectories(){return ((DirectoryInfo)FileSystemInfo).GetDirectories().Select(f=>(FileSystemInfo)f);}
-
+        private FileSystemInfo[] GetItems() { return ((DirectoryInfo)FileSystemInfo).GetFileSystemInfos().ToArray();}
         public File[] Items { get { return GetItems().Select(f => m(f.FullName)).ToArray(); } }
 
         /// <summary>
