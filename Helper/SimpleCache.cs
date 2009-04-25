@@ -4,14 +4,24 @@ using HWClassLibrary.Debug;
 namespace HWClassLibrary.Helper
 {
     [Serializable]
-    public class SimpleCache<ValueType> where ValueType : class
+// ReSharper disable ClassNeverInstantiated.Global
+    public sealed class SimpleCache<TValueType> where TValueType : class
+// ReSharper restore ClassNeverInstantiated.Global
     {
-        public ValueType Value;
+        private bool _isValid;
+        private bool _isBusy;
+        public TValueType Value;
 
-        public ValueType Find(Func<ValueType> createValue)
+        public TValueType Find(Func<TValueType> createValue)
         {
-            if(Value == null)
+            Tracer.Assert(!_isBusy);
+            if(!_isValid)
+            {
+                _isBusy = true;
                 Value = createValue();
+                _isValid = true;
+                _isBusy = false;
+            }
             return Value;
         }
     }

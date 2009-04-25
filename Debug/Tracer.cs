@@ -16,6 +16,7 @@ namespace HWClassLibrary.Debug
     public static class Tracer
     {
         private static int _indentCount;
+        private static bool _isLineStart;
         private static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
 
         /// <summary>
@@ -98,8 +99,20 @@ namespace HWClassLibrary.Debug
         /// <param name="s">the text</param>
         public static void Line(string s)
         {
-            s = IndentLine(s, _indentCount);
+            s = IndentLine(_isLineStart, s, _indentCount);
             System.Diagnostics.Debug.WriteLine(s);
+            _isLineStart = true;
+        }
+
+        /// <summary>
+        /// write a line to debug output
+        /// </summary>
+        /// <param name="s">the text</param>
+        public static void LinePart(string s)
+        {
+            s = IndentLine(_isLineStart, s, _indentCount);
+            System.Diagnostics.Debug.Write(s);
+            _isLineStart = false;
         }
 
         /// <summary>
@@ -411,10 +424,10 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        private static string IndentLine(this string s, int count)
+        private static string IndentLine(bool isLineStart, string s, int count)
         {
             var indentElem = IndentElem(count);
-            return indentElem + s.Replace("\n", "\n" + indentElem);
+            return (isLineStart ? indentElem:"") + s.Replace("\n", "\n" + indentElem);
         }
 
         /// <summary>
