@@ -101,6 +101,7 @@ namespace HWClassLibrary.Debug
         {
             s = IndentLine(_isLineStart, s, _indentCount);
             System.Diagnostics.Debug.WriteLine(s);
+            Console.WriteLine(s);
             _isLineStart = true;
         }
 
@@ -112,6 +113,7 @@ namespace HWClassLibrary.Debug
         {
             s = IndentLine(_isLineStart, s, _indentCount);
             System.Diagnostics.Debug.Write(s);
+            Console.Write(s);
             _isLineStart = false;
         }
 

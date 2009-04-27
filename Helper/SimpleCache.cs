@@ -5,7 +5,7 @@ namespace HWClassLibrary.Helper
 {
     [Serializable]
 // ReSharper disable ClassNeverInstantiated.Global
-    public sealed class SimpleCache<TValueType> where TValueType : class
+    public sealed class SimpleCache<TValueType>
 // ReSharper restore ClassNeverInstantiated.Global
     {
         private bool _isValid;
