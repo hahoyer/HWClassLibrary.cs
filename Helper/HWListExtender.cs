@@ -5,30 +5,37 @@ namespace HWClassLibrary.Helper
 {
     public static class HWListExtender
     {
-        public static void AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual) { InternalAddDistinct(a, b, isEqual); }
-        public static void AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class { InternalAddDistinct(a, b, combine); }
+        public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual) { return InternalAddDistinct(a, b, isEqual); }
+        public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class { return InternalAddDistinct(a, b, combine); }
 
-        private static void InternalAddDistinct<T>(ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
+        private static bool InternalAddDistinct<T>(ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
         {
+            var result = false;
             foreach (var bi in b)
-                AddDistinct(a, bi, isEqual);
+                if(AddDistinct(a, bi, isEqual))
+                    result = true;
+            return result;
         }
 
-        private static void InternalAddDistinct<T>(IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class
+        private static bool InternalAddDistinct<T>(IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class
         {
+            var result = false;
             foreach (var bi in b)
-                AddDistinct(a, bi, combine);
+                if(AddDistinct(a, bi, combine))
+                    result = true;
+            return result;
         }
 
-        private static void AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
+        private static bool AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
         {
             foreach (var ai in a)
                 if (isEqual(ai, bi))
-                    return;
+                    return false;
             a.Add(bi);
+            return true;
         }
 
-        private static void AddDistinct<T>(IList<T> a, T bi, Func<T, T, T> combine) where T : class
+        private static bool AddDistinct<T>(IList<T> a, T bi, Func<T, T, T> combine) where T : class
         {
             for (var i = 0; i < a.Count; i++)
             {
@@ -36,10 +43,11 @@ namespace HWClassLibrary.Helper
                 if (ab != null)
                 {
                     a[i] = ab;
-                    return;
+                    return false;
                 }
             }
             a.Add(bi);
+            return true;
         }
     }
 }
