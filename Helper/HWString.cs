@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HWClassLibrary.Debug;
 
@@ -99,5 +100,62 @@ namespace HWClassLibrary.Helper
         public static Sequence<T> Sequence<T>() { return new Sequence<T>(); }
         public static Sequence<T> Sequence<T>(T a) { return new Sequence<T>(a); }
         public static Sequence<T> Sequence<T>(IList<T> a) { return new Sequence<T>(a); }
+    }
+
+    static public class HWDateTime
+    {
+        public static string Format(this DateTime dateTime)
+        {
+            var result = "";
+            result += dateTime.Hour.ToString("00");
+            result += ":";
+            result += dateTime.Minute.ToString("00");
+            result += ":";
+            result += dateTime.Second.ToString("00");
+            result += ".";
+            result += dateTime.Millisecond.ToString("000");
+            result += " ";
+            result += dateTime.Day.ToString("00");
+            result += ".";
+            result += dateTime.Month.ToString("00");
+            result += ".";
+            result += dateTime.Year.ToString("00");
+            return result;
+        }
+
+        public static string DynamicShortFormat(this DateTime dateTime, bool showMiliseconds)
+        {
+            var result = "";
+            result += dateTime.Hour.ToString("00");
+            result += ":";
+            result += dateTime.Minute.ToString("00");
+            result += ":";
+            result += dateTime.Second.ToString("00");
+            if (showMiliseconds)
+            {
+                result += ".";
+                result += dateTime.Millisecond.ToString("000");
+            }
+
+            var nowDate = DateTime.Now.Date;
+            var sameYear = nowDate.Year == dateTime.Year;
+            var sameMonth = sameYear && nowDate.Month == dateTime.Month;
+            var sameDay = sameMonth && nowDate.Day == dateTime.Day;
+            
+            if(!sameDay)
+            {
+                result += " ";
+                result += dateTime.Day.ToString("00");
+                result += ".";
+            }
+            if(!sameMonth)
+            {
+                result += dateTime.Month.ToString("00");
+                result += ".";
+            }
+            if (!sameYear)
+                result += dateTime.Year.ToString("00");
+            return result;
+        }
     }
 }
