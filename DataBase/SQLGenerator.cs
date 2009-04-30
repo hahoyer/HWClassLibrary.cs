@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
+using System.Linq;
 
 namespace HWClassLibrary.DataBase
 {
@@ -24,18 +23,7 @@ namespace HWClassLibrary.DataBase
         }
 
         public static string TableName { get { return typeof (T).Name; } }
-
-        public static TableColumn[] Columns
-        {
-            get
-            {
-                var fields = typeof (T).GetFields();
-                var result = new List<TableColumn>();
-                foreach (var fieldInfo in fields)
-                    result.Add(new TableColumn(fieldInfo));
-                return result.ToArray();
-            }
-        }
+        public static TableColumn[] Columns { get { return typeof (T).GetFields().Select(fieldInfo => new TableColumn(fieldInfo)).ToArray(); } }
 
         public static string InsertCommand(T newObject)
         {
@@ -60,7 +48,8 @@ namespace HWClassLibrary.DataBase
             return result;
         }
 
-        public static void SetValues(object o, SQLiteDataReader reader) {
+        public static void SetValues(object o, SQLiteDataReader reader)
+        {
             var columns = Columns;
             for (var i = 0; i < columns.Length; i++)
                 columns[i].Value(o, reader.GetValue(i));

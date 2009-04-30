@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using HWClassLibrary.Debug;
 using System.Linq;
+using System.Net;
 
 namespace HWClassLibrary.IO
 {
@@ -48,15 +46,22 @@ namespace HWClassLibrary.IO
         {
             get
             {
-                if(System.IO.File.Exists(_name))
+                if (System.IO.File.Exists(_name))
                 {
                     var f = System.IO.File.OpenText(_name);
                     var result = f.ReadToEnd();
                     f.Close();
                     return result;
                 }
-                if (Uri.Scheme == Uri.UriSchemeHttp)
-                    return StringFromHTTP;
+
+                try
+                {
+                    if (Uri.Scheme == Uri.UriSchemeHttp)
+                        return StringFromHTTP;
+                }
+                catch
+                {
+                }
                 return null;
             }
             set
@@ -145,6 +150,7 @@ namespace HWClassLibrary.IO
                 }
             }
         }
+
         /// <summary>
         /// Delete the file
         /// </summary>
@@ -153,7 +159,7 @@ namespace HWClassLibrary.IO
         /// <summary>
         /// returns true if it is a directory
         /// </summary>
-        public bool IsDirectory { get { return System.IO.Directory.Exists(_name); } }
+        public bool IsDirectory { get { return Directory.Exists(_name); } }
 
         private FileSystemInfo _fileInfoCache;
 
@@ -188,7 +194,7 @@ namespace HWClassLibrary.IO
             return result;
         }
 
-        private FileSystemInfo[] GetItems() { return ((DirectoryInfo)FileSystemInfo).GetFileSystemInfos().ToArray();}
+        private FileSystemInfo[] GetItems() { return ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray(); }
         public File[] Items { get { return GetItems().Select(f => m(f.FullName)).ToArray(); } }
 
         /// <summary>
