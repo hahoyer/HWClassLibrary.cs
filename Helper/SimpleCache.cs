@@ -8,21 +8,40 @@ namespace HWClassLibrary.Helper
     public sealed class SimpleCache<TValueType>
 // ReSharper restore ClassNeverInstantiated.Global
     {
+        private readonly Func<TValueType> _createValue;
         private bool _isValid;
         private bool _isBusy;
-        public TValueType Value;
+        private TValueType _value;
 
-        public TValueType Find(Func<TValueType> createValue)
+        public SimpleCache(Func<TValueType> createValue)
+        {
+            _createValue = createValue;
+        }
+
+        public TValueType Value
+        {
+            get
+            {
+                ObtainValue(_createValue);
+                return _value;
+            }
+        }
+
+        public void Reset()
+        {
+            _isValid = false;
+        }
+
+        private void ObtainValue(Func<TValueType> createValue)
         {
             Tracer.Assert(!_isBusy);
-            if(!_isValid)
+            if (!_isValid)
             {
                 _isBusy = true;
-                Value = createValue();
+                _value = createValue();
                 _isValid = true;
                 _isBusy = false;
             }
-            return Value;
         }
     }
 }
