@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HWClassLibrary.Helper
 {
@@ -48,6 +49,11 @@ namespace HWClassLibrary.Helper
             }
             a.Add(bi);
             return true;
+        }
+
+        public static string Dump<T>(this IEnumerable<T> x)
+        {
+            return x.Aggregate(x.ToArray().Length.ToString(), (a, xx) => a + " " + xx.ToString());
         }
     }
 }
