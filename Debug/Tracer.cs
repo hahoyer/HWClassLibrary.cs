@@ -28,7 +28,7 @@ namespace HWClassLibrary.Debug
         public static string FilePosn(this StackFrame sf, string flagText)
         {
             if(sf.GetFileLineNumber() == 0)
-                return "<nofile> ";
+                return "<nofile> " + flagText;
             return FilePosn(sf.GetFileName(), sf.GetFileLineNumber() - 1, sf.GetFileColumnNumber(), flagText);
         }
 
@@ -93,6 +93,18 @@ namespace HWClassLibrary.Debug
             return MethodHeader(depth + 1, false);
         }
 
+        public static string StackTrace()
+        {
+            var stackTrace = new StackTrace(true);
+            var result = "";
+            for (var i = 1; i < stackTrace.FrameCount; i++)
+            {
+                var stackFrame = stackTrace.GetFrame(i);
+                var filePosn = FilePosn(stackFrame, DumpMethod(stackFrame.GetMethod(), false));
+                result += "\n" + filePosn;
+            }
+            return result;
+        }
         /// <summary>
         /// write a line to debug output
         /// </summary>
