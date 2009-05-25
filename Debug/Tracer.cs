@@ -3,7 +3,9 @@ using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
 using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 using NUnit.Framework;
@@ -16,7 +18,7 @@ namespace HWClassLibrary.Debug
     public static class Tracer
     {
         private static int _indentCount;
-        private static bool _isLineStart;
+        private static bool _isLineStart = true;
         private static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
 
         /// <summary>
@@ -95,9 +97,14 @@ namespace HWClassLibrary.Debug
 
         public static string StackTrace()
         {
+            return StackTrace(1);
+        }
+
+        public static string StackTrace(int depth)
+        {
             var stackTrace = new StackTrace(true);
             var result = "";
-            for (var i = 1; i < stackTrace.FrameCount; i++)
+            for(var i = depth + 1; i < stackTrace.FrameCount; i++)
             {
                 var stackFrame = stackTrace.GetFrame(i);
                 var filePosn = FilePosn(stackFrame, DumpMethod(stackFrame.GetMethod(), false));
@@ -105,16 +112,32 @@ namespace HWClassLibrary.Debug
             }
             return result;
         }
+
+        private class WriteInitiator
+        {
+            private string _name = "";
+            private string _lastName = "";
+
+            public bool ThreadChanged { get { return _name != _lastName; } }
+
+            public string ThreadFlagString { get { return "[" + _lastName + "->" + _name + "]\n"; } }
+
+            public void NewThread()
+            {
+                _lastName = _name;
+                _name = Thread.CurrentThread.ManagedThreadId.ToString();
+            }
+        }
+
+        private static readonly WriteInitiator _writeInitiator = new WriteInitiator();
+
         /// <summary>
         /// write a line to debug output
         /// </summary>
         /// <param name="s">the text</param>
         public static void Line(string s)
         {
-            s = IndentLine(_isLineStart, s, _indentCount);
-            System.Diagnostics.Debug.WriteLine(s);
-            Console.WriteLine(s);
-            _isLineStart = true;
+            ThreadSafeWrite(s, true);
         }
 
         /// <summary>
@@ -123,10 +146,49 @@ namespace HWClassLibrary.Debug
         /// <param name="s">the text</param>
         public static void LinePart(string s)
         {
-            s = IndentLine(_isLineStart, s, _indentCount);
-            System.Diagnostics.Debug.Write(s);
-            Console.Write(s);
-            _isLineStart = false;
+            ThreadSafeWrite(s, false);
+        }
+
+        private static void ThreadSafeWrite(string s, bool isLine)
+        {
+            lock(_writeInitiator)
+            {
+                _writeInitiator.NewThread();
+
+                s = IndentLine(_isLineStart, s, _indentCount);
+
+                if(_writeInitiator.ThreadChanged)
+                {
+                    if(_isLineStart)
+                        s = _writeInitiator.ThreadFlagString + s;
+                    else if(s.Length > 0 && s[0] == '\n')
+                        s = "\n" + _writeInitiator.ThreadFlagString + s;
+                    else
+                        throw new NotImplementedException();
+                }
+
+                Write(s, isLine);
+
+                _isLineStart = isLine;
+            }
+        }
+
+        private static void Write(string s, bool isLine)
+        {
+            if(Debugger.IsAttached)
+            {
+                if(isLine)
+                    System.Diagnostics.Debug.WriteLine(s);
+                else
+                    System.Diagnostics.Debug.Write(s);
+            }
+            else
+            {
+                if(isLine)
+                    Console.WriteLine(s);
+                else
+                    Console.Write(s);
+            }
         }
 
         /// <summary>
@@ -395,7 +457,7 @@ namespace HWClassLibrary.Debug
         {
             var baseDump = "";
             if(t.BaseType != null && t.BaseType.ToString() != "System.Object" &&
-                t.BaseType.ToString() != "System.ValueType")
+               t.BaseType.ToString() != "System.ValueType")
                 baseDump = InternalDump(false, t.BaseType, x);
             if(baseDump != "")
                 baseDump = "\nBase:" + baseDump;
@@ -441,7 +503,7 @@ namespace HWClassLibrary.Debug
         private static string IndentLine(bool isLineStart, string s, int count)
         {
             var indentElem = IndentElem(count);
-            return (isLineStart ? indentElem:"") + s.Replace("\n", "\n" + indentElem);
+            return (isLineStart ? indentElem : "") + s.Replace("\n", "\n" + indentElem);
         }
 
         /// <summary>
@@ -495,8 +557,8 @@ namespace HWClassLibrary.Debug
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
-                + text
-                    + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter), 1);
+                   + text
+                   + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter), 1);
         }
 
         /// <summary>
@@ -510,8 +572,8 @@ namespace HWClassLibrary.Debug
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
-                + text
-                    + Indent(DumpMethodWithData(null, data), 1);
+                   + text
+                   + Indent(DumpMethodWithData(null, data), 1);
         }
 
         private static string DumpMethodWithData(MethodBase m, object o, object[] p)
@@ -633,7 +695,8 @@ namespace HWClassLibrary.Debug
         /// <param name="b">if set to <c>true</c> [b].</param>
         /// <param name="text">The text.</param>
         [DebuggerHidden, AssertionMethod]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string text)
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b,
+                                  string text)
         {
             if(b)
                 return;
@@ -701,13 +764,16 @@ namespace HWClassLibrary.Debug
 
         private class AssertionFailedException : Exception
         {
-            public AssertionFailedException(string result) : base(result) {}
+            public AssertionFailedException(string result)
+                : base(result)
+            {
+            }
         }
 
         [DebuggerHidden]
         private static void AssertionBreak(string result)
         {
-            if (Debugger.IsAttached)
+            if(Debugger.IsAttached)
                 Debugger.Break();
             else
                 throw new AssertionException(result);
@@ -716,9 +782,8 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void TraceBreak()
         {
-            if (Debugger.IsAttached)
+            if(Debugger.IsAttached)
                 Debugger.Break();
         }
-
     }
 }
