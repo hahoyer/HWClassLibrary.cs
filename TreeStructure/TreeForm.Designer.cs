@@ -1,4 +1,4 @@
-namespace HWClassLibrary.Helper
+namespace HWClassLibrary.TreeStructure
 {
     partial class TreeForm
     {

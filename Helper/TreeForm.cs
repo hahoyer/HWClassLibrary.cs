@@ -4,6 +4,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     public partial class TreeForm : Form
     {
         private object _target;

@@ -1,5 +1,8 @@
+using System;
+
 namespace HWClassLibrary.Helper
 {
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     partial class TreeForm
     {
         /// <summary>

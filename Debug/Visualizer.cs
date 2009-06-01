@@ -1,6 +1,6 @@
 using System;
 using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using HWClassLibrary.TreeStructure;
 using Microsoft.VisualStudio.DebuggerVisualizers;
 
 namespace HWClassLibrary.Debug

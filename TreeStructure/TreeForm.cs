@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using HWClassLibrary.Debug;
 
-namespace HWClassLibrary.Helper
+namespace HWClassLibrary.TreeStructure
 {
     public partial class TreeForm : Form
     {

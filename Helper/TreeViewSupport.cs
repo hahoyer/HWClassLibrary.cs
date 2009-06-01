@@ -12,6 +12,7 @@ namespace HWClassLibrary.Helper
     /// Only the first attribute is considered
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     public class NodeAttribute : Attribute
     {
         public readonly string IconKey;
@@ -38,6 +39,7 @@ namespace HWClassLibrary.Helper
     /// Class attribute to define additional node info property, displayed after node title
     /// </summary>
     [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     public class AdditionalNodeInfoAttribute : Attribute
     {
         private readonly string _property;
@@ -59,6 +61,7 @@ namespace HWClassLibrary.Helper
     }
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     public class SmartNodeAttribute : Attribute
     {
         virtual public TreeNode Process(TreeNode treeNode)
@@ -77,6 +80,7 @@ namespace HWClassLibrary.Helper
         }
     }
 
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     public static class Service
     {
         private static TreeNode CreateNode(string title, string iconKey, bool isDefaultIcon, object nodeData)
@@ -403,6 +407,7 @@ namespace HWClassLibrary.Helper
     /// <summary>
     /// Provides Icon key for treeview
     /// </summary>
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     public interface IIconKeyProvider
     {
         /// <summary>
@@ -412,6 +417,7 @@ namespace HWClassLibrary.Helper
         string IconKey { get; }
     }
 
+    [Obsolete("Use version from HWClassLibrary.TreeStructure", true)]
     public interface ITreeNodeSupport
     {
         TreeNode[] CreateNodes();
