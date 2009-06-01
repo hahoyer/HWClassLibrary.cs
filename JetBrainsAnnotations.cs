@@ -63,10 +63,6 @@ namespace JetBrains.Annotations
             myConditionType = conditionType;
         }
 
-        public AssertionConditionAttribute():this(AssertionConditionType.IS_TRUE)
-        {
-        }
-
         /// <summary>
         /// Gets condition type
         /// </summary>
@@ -110,27 +106,38 @@ namespace JetBrains.Annotations
     /// <summary>
     /// Indicates that the value of marked element could be <c>null</c> sometimes, so the check for <c>null</c> is necessary before its usage
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public sealed class CanBeNullAttribute : Attribute { }
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate |
+        AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public sealed class CanBeNullAttribute : Attribute
+    {
+    }
 
     /// <summary>
     /// Indicates that the value of marked element could never be <c>null</c>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public sealed class NotNullAttribute : Attribute { }
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate |
+        AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public sealed class NotNullAttribute : Attribute
+    {
+    }
 
     /// <summary>
     /// Indicates that the value of marked type (or its derivatives) cannot be compared using '==' or '!=' operators.
     /// There is only exception to compare with <c>null</c>, it is permitted
     /// </summary>
-    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
-    public sealed class CannotApplyEqualityOperatorAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false
+        , Inherited = true)]
+    public sealed class CannotApplyEqualityOperatorAttribute : Attribute
+    {
+    }
 
     /// <summary>
     /// When applied to target attribute, specifies a requirement for any type which is marked with 
     /// target attribute to implement or inherit specific type or types
     /// </summary>
-    /// <remarks>
+    /// <example>
     /// <code>
     /// [BaseTypeRequired(typeof(IComponent)] // Specify requirement
     /// public class ComponentAttribute : Attribute 
@@ -139,9 +146,10 @@ namespace JetBrains.Annotations
     /// [Component] // ComponentAttribute requires implementing IComponent interface
     /// public class MyComponent : IComponent
     /// {}
-    /// </code></remarks>
+    /// </code>
+    /// </example>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    [CLSCompliant(false)]
+    [BaseTypeRequired(typeof(Attribute))]
     public sealed class BaseTypeRequiredAttribute : Attribute
     {
         private readonly Type[] myBaseTypes;
@@ -159,5 +167,85 @@ namespace JetBrains.Annotations
         /// Gets enumerations of specified base types
         /// </summary>
         public IEnumerable<Type> BaseTypes { get { return myBaseTypes; } }
+    }
+
+    /// <summary>
+    /// Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),
+    /// so this symbol will not be marked as unused (as well as by other usage inspections)
+    /// </summary>
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = false)]
+    public class UsedImplicitlyAttribute : Attribute
+    {
+        /// <summary>
+        /// Gets value indicating what is meant to be used
+        /// </summary>
+        [UsedImplicitly]
+        public ImplicitUseFlags Flags { get; private set; }
+
+        /// <summary>
+        /// Initializes new instance of UsedImplicitlyAttribute
+        /// </summary>
+        public UsedImplicitlyAttribute()
+            : this(ImplicitUseFlags.Default)
+        {
+        }
+
+        /// <summary>
+        /// Initializes new instance of UsedImplicitlyAttribute with specified flags
+        /// </summary>
+        /// <param name="flags">Value of type <see cref="ImplicitUseFlags"/> indicating usage kind</param>
+        public UsedImplicitlyAttribute(ImplicitUseFlags flags)
+        {
+            Flags = flags;
+        }
+    }
+
+    /// <summary>
+    /// Should be used on attributes and causes ReSharper to not mark symbols marked with such attributes as unused (as well as by other usage inspections)
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class MeansImplicitUseAttribute : Attribute
+    {
+        /// <summary>
+        /// Gets value indicating what is meant to be used
+        /// </summary>
+        [UsedImplicitly]
+        public ImplicitUseFlags Flags { get; private set; }
+
+        /// <summary>
+        /// Initializes new instance of MeansImplicitUseAttribute
+        /// </summary>
+        [UsedImplicitly]
+        public MeansImplicitUseAttribute()
+            : this(ImplicitUseFlags.Default)
+        {
+        }
+
+        /// <summary>
+        /// Initializes new instance of MeansImplicitUseAttribute with specified flags
+        /// </summary>
+        /// <param name="flags">Value of type <see cref="ImplicitUseFlags"/> indicating usage kind</param>
+        [UsedImplicitly]
+        public MeansImplicitUseAttribute(ImplicitUseFlags flags)
+        {
+            Flags = flags;
+        }
+    }
+
+    /// <summary>
+    /// Specify what is considered used implicitly when marked with <see cref="MeansImplicitUseAttribute"/> or <see cref="UsedImplicitlyAttribute"/>
+    /// </summary>
+    [Flags]
+    public enum ImplicitUseFlags
+    {
+        /// <summary>
+        /// Only entity marked with attribute considered used
+        /// </summary>
+        Default = 0,
+
+        /// <summary>
+        /// Entity marked with attribute and all its members considered used
+        /// </summary>
+        IncludeMembers = 1
     }
 }
