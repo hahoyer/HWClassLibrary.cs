@@ -21,19 +21,11 @@
     <Compile Include="Helper\Dictionary.cs" />
     <Compile Include="Helper\HWListExtender.cs" />
     <Compile Include="Helper\HWString.cs" />
-    <Compile Include="Helper\TreeForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Helper\TreeForm.Designer.cs">
-      <DependentUpon>TreeForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Helper\Number.cs" />
     <Compile Include="Helper\Sequence.cs" />
     <Compile Include="Helper\Set.cs" />
     <Compile Include="Helper\SimpleCache.cs" />
     <Compile Include="Helper\StringAligner.cs" />
-    <Compile Include="Helper\TreeViewSupport.cs">
-    </Compile>
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
     <Compile Include="TreeStructure\Service.cs" />
@@ -55,10 +47,6 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Helper\TreeForm.resx">
-      <DependentUpon>TreeForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="TreeStructure\TreeForm.resx">
       <DependentUpon>TreeForm.cs</DependentUpon>
       <SubType>Designer</SubType>
