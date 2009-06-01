@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
-using HWClassLibrary.Debug;
-using HWClassLibrary.IO;
 
 namespace HWClassLibrary.Helper
 {
@@ -381,7 +379,7 @@ namespace HWClassLibrary.Helper
         {
             CreateNodeList(treeView.Nodes, target);
             AddSubNodes(treeView.Nodes);
-            treeView.BeforeExpand += treeView_BeforeExpand;
+            treeView.BeforeExpand += BeforeExpand;
         }
 
         static void AddSubNodes(TreeNodeCollection nodes)
@@ -395,7 +393,7 @@ namespace HWClassLibrary.Helper
             CreateNodeList(node.Nodes, node.Tag);
         }
 
-        private static void treeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        private static void BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
             AddSubNodes(e.Node.Nodes);
         }
