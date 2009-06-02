@@ -317,9 +317,9 @@ namespace HWClassLibrary.TreeStructure
             nodes.AddRange(target.CreateNodes());
         }
 
-        public static void Connect(this Control control, object target)
+        public static void Connect(this TreeView treeView, object target)
         {
-            target.Connect(control);
+            target.Connect(treeView);
         }
 
         public static void Connect(this object target, TreeView treeView)
