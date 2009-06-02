@@ -10,8 +10,15 @@ namespace HWClassLibrary.TreeStructure
 {
     public static class Extender
     {
-        [NotNull]
-        private static TreeNode CreateNode(this object nodeData, string title, string iconKey, bool isDefaultIcon)
+        /// <summary>
+        /// Creates a treenode.with a given title from an object
+        /// </summary>
+        /// <param name="nodeData"></param>
+        /// <param name="title"></param>
+        /// <param name="iconKey"></param>
+        /// <param name="isDefaultIcon"></param>
+        /// <returns></returns>
+        public static TreeNode CreateNode(this object nodeData, string title, string iconKey, bool isDefaultIcon)
         {
             var result = new TreeNode(title + nodeData.GetAdditionalInfo()) {Tag = nodeData};
             if(iconKey == null)
@@ -28,6 +35,11 @@ namespace HWClassLibrary.TreeStructure
                 result.SelectedImageKey = iconKey;
             }
             return result;
+        }
+
+        public static TreeNode CreateNode(this object nodeData)
+        {
+            return CreateNode(nodeData, "", null, false);
         }
 
         /// <summary>
