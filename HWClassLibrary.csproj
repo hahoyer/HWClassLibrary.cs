@@ -28,7 +28,7 @@
     <Compile Include="Helper\StringAligner.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
-    <Compile Include="TreeStructure\Service.cs" />
+    <Compile Include="TreeStructure\Extender.cs" />
     <Compile Include="TreeStructure\TreeForm.cs">
       <SubType>Form</SubType>
     </Compile>

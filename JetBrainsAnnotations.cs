@@ -150,6 +150,7 @@ namespace JetBrains.Annotations
     /// </example>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     [BaseTypeRequired(typeof(Attribute))]
+    [CLSCompliant(false)]
     public sealed class BaseTypeRequiredAttribute : Attribute
     {
         private readonly Type[] myBaseTypes;

@@ -63,7 +63,7 @@ namespace HWClassLibrary.TreeStructure
     {
         public static TreeNode Process(TreeNode treeNode)
         {
-            Service.CreateNodeList(treeNode);
+            treeNode.CreateNodeList();
             switch(treeNode.Nodes.Count)
             {
                 case 0:
@@ -92,5 +92,10 @@ namespace HWClassLibrary.TreeStructure
     public interface ITreeNodeSupport
     {
         TreeNode[] CreateNodes();
+    }
+
+    public interface IAdditionalNodeInfoProvider
+    {
+        string AdditionalNodeInfo { get; }
     }
 }

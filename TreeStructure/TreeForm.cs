@@ -16,8 +16,8 @@ namespace HWClassLibrary.TreeStructure
             set
             {
                 _target = value;
-                Service.Connect(treeView1, _target);
-                Text = Service.GetAdditionalInfo(value);
+                Extender.Connect(treeView1, _target);
+                Text = Extender.GetAdditionalInfo(value);
             }
         }
     }
