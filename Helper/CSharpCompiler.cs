@@ -14,13 +14,19 @@ namespace HWClassLibrary.Helper
         public static object Exec(string fileName, string namespaceName, string typeName, string methodName, params object[] args)
         {
             // Build the parameters for source compilation.
-            var cp = new CompilerParameters();
-            cp.GenerateInMemory = true;
-            cp.IncludeDebugInformation = true;
+            var cp = new CompilerParameters { GenerateInMemory = true, IncludeDebugInformation = true, CompilerOptions = "/TargetFrameworkVersion=v3.5" };
+            cp.ReferencedAssemblies.AddRange(new []{"System.dll", "NUnit.Framework.dll", "HWClassLibrary.dll"});
             var cr = new CSharpCodeProvider().CompileAssemblyFromFile(cp, fileName);
             if(cr.Errors.Count > 0)
+
+            {
+                foreach (var error in cr.Errors)
+                {
+                    Tracer.Line(error.ToString());
+                }
+                
                 throw new CSharpCompilerErrors(cr.Errors);
-            cp.ReferencedAssemblies.Add("HWClassLibrary.dll");
+            }
             var methodInfo = FindMethod(cr.CompiledAssembly, namespaceName, typeName, methodName);
             return methodInfo.Invoke(null, args);
         }
