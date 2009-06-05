@@ -55,5 +55,16 @@ namespace HWClassLibrary.Helper
         {
             return x.Aggregate(x.ToArray().Length.ToString(), (a, xx) => a + " " + xx.ToString());
         }
+        public static string Format<T>(this IEnumerable<T> x, string separator)
+        {
+            var result = "";
+            foreach (var element in x)
+            {
+                if (result != "")
+                    result += separator;
+                result += element.ToString();
+            }
+            return result;
+        }
     }
 }
