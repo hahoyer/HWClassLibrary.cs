@@ -9,23 +9,23 @@ namespace HWClassLibrary.Helper
     /// <summary>
     /// Dicionary that does not allow null values
     /// </summary>
-    /// <typeparam name="Key"></typeparam>
-    /// <typeparam name="Value"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     [TreeStructure.AdditionalNodeInfo("NodeDump")]
     [Serializable]
-    public class DictionaryEx<Key, Value> : Dictionary<Key, Value>
+    public class DictionaryEx<TKey, TValue> : Dictionary<TKey, TValue>
     {
         protected DictionaryEx(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
 
-        public DictionaryEx(IDictionary<Key, Value> x)
+        public DictionaryEx(IDictionary<TKey, TValue> x)
             : base(x)
         {
         }
 
-        public DictionaryEx(IDictionary<Key, Value> x, IEqualityComparer<Key> comparer)
+        public DictionaryEx(IDictionary<TKey, TValue> x, IEqualityComparer<TKey> comparer)
             : base(x, comparer)
         {
         }
@@ -34,12 +34,12 @@ namespace HWClassLibrary.Helper
         {
         }
 
-        public DictionaryEx(IEqualityComparer<Key> comparer)
+        public DictionaryEx(IEqualityComparer<TKey> comparer)
             : base(comparer)
         {
         }
 
-        public DictionaryEx<Key, Value> Clone { get { return new DictionaryEx<Key, Value>(this); } }
+        public DictionaryEx<TKey, TValue> Clone { get { return new DictionaryEx<TKey, TValue>(this); } }
 
         [DumpData(false)]
         public string NodeDump
@@ -59,9 +59,9 @@ namespace HWClassLibrary.Helper
         /// <param name="createValue">The create value.</param>
         /// <returns></returns>
         /// created 13.01.2007 14:32
-        public Value Find(Key key, Func<Value> createValue)
+        public TValue Find(TKey key, Func<TValue> createValue)
         {
-            Value result;
+            TValue result;
             if(TryGetValue(key, out result))
                 return result;
             result = createValue();
@@ -74,24 +74,24 @@ namespace HWClassLibrary.Helper
         /// </summary>
         /// <value></value>
         /// created 13.01.2007 15:43
-        public new Value this[Key key]
+        public new TValue this[TKey key]
         {
             get
             {
-                Value result;
+                TValue result;
                 if(TryGetValue(key, out result))
                     return result;
-                return default(Value);
+                return default(TValue);
             }
             set { Add(key, value); }
         }
 
-        public new Key[] Keys
+        public new TKey[] Keys
         {
             get
             {
                 var keys = base.Keys;
-                var result = new Key[keys.Count];
+                var result = new TKey[keys.Count];
                 var i = 0;
                 foreach(var key in keys)
                     result[i++] = key;

@@ -66,5 +66,13 @@ namespace HWClassLibrary.Helper
             }
             return result;
         }
+
+        public static TimeSpan Sum<T>(this IEnumerable<T> x, Func<T,TimeSpan> selector)
+        {
+            var result = new TimeSpan();
+            foreach(var element in x)
+                result += selector(element);
+            return result;
+        }
     }
 }

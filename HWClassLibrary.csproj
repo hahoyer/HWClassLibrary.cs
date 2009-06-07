@@ -15,6 +15,7 @@
     <Compile Include="DataBase\TableColumn.cs" />
     <Compile Include="Debug\Dumpable.cs" />
     <Compile Include="Debug\dumpExcludeAttribute.cs" />
+    <Compile Include="Debug\Profiler.cs" />
     <Compile Include="Debug\Tracer.cs" />
     <Compile Include="Debug\Visualizer.cs" />
     <Compile Include="Helper\CSharpCompiler.cs" />

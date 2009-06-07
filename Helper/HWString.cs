@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
@@ -101,7 +102,24 @@ namespace HWClassLibrary.Helper
         public static Sequence<T> Sequence<T>(T a) { return new Sequence<T>(a); }
         public static Sequence<T> Sequence<T>(IList<T> a) { return new Sequence<T>(a); }
 
-        public static string FormatSize(this long size)
+        public static string ExecuteCommand(this string command)
+        {
+            var procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command)
+                                    {
+                                        RedirectStandardOutput = true,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true
+                                    };
+            var proc = new System.Diagnostics.Process {StartInfo = procStartInfo};
+            proc.Start();
+            return proc.StandardOutput.ReadToEnd();
+        }
+
+    }
+
+    static public class HWLong
+    {
+        public static string Format3Digits(this long size)
         {
             var i = 0;
             for (; size >= 1000; i++, size /= 10)
@@ -122,7 +140,6 @@ namespace HWClassLibrary.Helper
                 return result;
             return result + "kMGT"[(i - 1) / 3];
         }
-
     }
 
     static public class HWDateTime
@@ -179,6 +196,14 @@ namespace HWClassLibrary.Helper
             if (!sameYear)
                 result += dateTime.Year.ToString("00");
             return result;
+        }
+
+        public static string Format3Digits(this TimeSpan timeSpan)
+        {
+            if (timeSpan.TotalMinutes >= 1)
+                return timeSpan.ToString();
+            var nanoSeconds = ((long)(timeSpan.TotalMilliseconds*1000*1000)).Format3Digits() + "ns";
+            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", "s");
         }
     }
 }

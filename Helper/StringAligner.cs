@@ -71,6 +71,8 @@ namespace HWClassLibrary.Helper
         public void Format(string[] lines, int[] positions)
         {
             var count = lines.Length;
+            if (count > 0 && lines[count - 1] == "")
+                count--;
             for(var i = 0; i < count; i++)
                 positions[i] = FindStart(lines[i], positions[i]);
             while(Levelling(count, lines, positions))
@@ -195,4 +197,5 @@ namespace HWClassLibrary.Helper
             return start;
         }
     }
+
 }
