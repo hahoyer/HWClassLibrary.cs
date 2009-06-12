@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
@@ -232,7 +233,7 @@ namespace HWClassLibrary.TreeStructure
                 return xd.InternalCreateNodes();
 
             if(target is DictionaryEntry)
-                return ((DictionaryEntry)target).InternalCreateNodes();
+                return ((DictionaryEntry) target).InternalCreateNodes();
 
             return target.InternalCreateNodes();
         }
@@ -337,14 +338,27 @@ namespace HWClassLibrary.TreeStructure
         public static void Connect(this object target, TreeView treeView)
         {
             treeView.Nodes.CreateNodeList(target);
-            treeView.Nodes.AddSubNodes();
+            treeView.Nodes.AddSubNodesAsync();
             treeView.BeforeExpand += BeforeExpand;
         }
 
-        private static void AddSubNodes(this TreeNodeCollection nodes)
+        private static void AddSubNodesAsync(this TreeNodeCollection nodes)
         {
-            foreach(TreeNode node in nodes)
-                node.CreateNodeList();
+            lock(nodes)
+            {
+                var backgroundWorker = new BackgroundWorker();
+                backgroundWorker.DoWork += ((sender, e) => AddSubNodes(nodes));
+                backgroundWorker.RunWorkerAsync();
+            }
+        }
+
+        private static void AddSubNodes(TreeNodeCollection nodes)
+        {
+            lock (nodes)
+            {
+                foreach(TreeNode node in nodes)
+                    node.CreateNodeList();
+            }
         }
 
         internal static void CreateNodeList(this TreeNode node)
@@ -354,8 +368,7 @@ namespace HWClassLibrary.TreeStructure
 
         private static void BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            e.Node.Nodes.AddSubNodes();
+            e.Node.Nodes.AddSubNodesAsync();
         }
     }
-
 }
