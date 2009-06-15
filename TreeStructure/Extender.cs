@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.TreeStructure
@@ -117,20 +119,20 @@ namespace HWClassLibrary.TreeStructure
             return nodeData.CreateNamedNode(title, null, false);
         }
 
-        private static TreeNode[] InternalCreateNodes(this IDictionary dictionary)
+        private static TreeNode[] InternalCreateNodes(IDictionary dictionary)
         {
             var result = new List<TreeNode>();
             foreach(var element in dictionary)
-                result.Add(element.CreateNumberedNode(result.Count, "ListItem"));
+                result.Add(CreateNumberedNode(element, result.Count, "ListItem"));
             return result.ToArray();
         }
 
-        private static TreeNode CreateNumberedNode(this object nodeData, int i, string iconKey)
+        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey)
         {
-            return nodeData.CreateNumberedNode(i, iconKey, false);
+            return CreateNumberedNode(nodeData, i, iconKey, false);
         }
 
-        private static TreeNode CreateNumberedNode(this object nodeData, int i, string iconKey, bool isDefaultIcon)
+        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey, bool isDefaultIcon)
         {
             return nodeData.CreateNode("[" + i + "] ", iconKey, isDefaultIcon);
         }
@@ -139,11 +141,11 @@ namespace HWClassLibrary.TreeStructure
         {
             var result = new List<TreeNode>();
             foreach(var o in list)
-                result.Add(o.CreateNumberedNode(result.Count, "ListItem", true));
+                result.Add(CreateNumberedNode(o, result.Count, "ListItem", true));
             return result.ToArray();
         }
 
-        private static TreeNode[] InternalCreateNodes(this DictionaryEntry dictionaryEntry)
+        private static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry)
         {
             return new[]
                        {
@@ -208,15 +210,15 @@ namespace HWClassLibrary.TreeStructure
             return "";
         }
 
-        private static TreeNode[] InternalCreateNodes(this object target)
+        private static TreeNode[] InternalCreateNodes(object target)
         {
             var result = new List<TreeNode>();
-            result.AddRange(target.CreateFieldNodes());
-            result.AddRange(target.CreatePropertyNodes());
+            result.AddRange(CreateFieldNodes(target));
+            result.AddRange(CreatePropertyNodes(target));
             return result.ToArray();
         }
 
-        private static TreeNode[] CreateNodes(this object target)
+        private static TreeNode[] CreateNodes(object target)
         {
             if(target == null)
                 return new TreeNode[0];
@@ -227,36 +229,36 @@ namespace HWClassLibrary.TreeStructure
 
             var xl = target as IList;
             if(xl != null)
-                return xl.InternalCreateNodes();
+                return InternalCreateNodes(xl);
             var xd = target as IDictionary;
             if(xd != null)
-                return xd.InternalCreateNodes();
+                return InternalCreateNodes(xd);
 
             if(target is DictionaryEntry)
-                return ((DictionaryEntry) target).InternalCreateNodes();
+                return InternalCreateNodes((DictionaryEntry) target);
 
-            return target.InternalCreateNodes();
+            return InternalCreateNodes(target);
         }
 
-        private static TreeNode[] CreatePropertyNodes(this object nodeData)
+        private static TreeNode[] CreatePropertyNodes(object nodeData)
         {
             var result = new List<TreeNode>();
             foreach(var propertyInfo in nodeData.GetType().GetProperties(DefaultBindingFlags))
             {
-                var treeNode = nodeData.CreateTreeNode(propertyInfo);
+                var treeNode = CreateTreeNode(nodeData, propertyInfo);
                 if(treeNode != null)
                     result.Add(treeNode);
             }
             return result.ToArray();
         }
 
-        private static TreeNode[] CreateFieldNodes(this object nodeData)
+        private static TreeNode[] CreateFieldNodes(object nodeData)
         {
             var result = new List<TreeNode>();
             var type = nodeData.GetType();
             foreach(var fieldInfo in type.GetFields(DefaultBindingFlags))
             {
-                var treeNode = nodeData.CreateTreeNode(fieldInfo);
+                var treeNode = CreateTreeNode(nodeData,fieldInfo);
                 if(treeNode != null)
                     result.Add(treeNode);
             }
@@ -272,34 +274,34 @@ namespace HWClassLibrary.TreeStructure
             }
         }
 
-        private static TreeNode CreateTreeNode(this object nodeData, FieldInfo fieldInfo)
+        private static TreeNode CreateTreeNode(object nodeData, FieldInfo fieldInfo)
         {
-            return fieldInfo.CreateTreeNode(() => Value(fieldInfo, nodeData));
+            return CreateTreeNode(fieldInfo, () => Value(fieldInfo, nodeData));
         }
 
-        private static TreeNode CreateTreeNode(this object nodeData, PropertyInfo propertyInfo)
+        private static TreeNode CreateTreeNode(object nodeData, PropertyInfo propertyInfo)
         {
-            return propertyInfo.CreateTreeNode(() => Value(propertyInfo, nodeData));
+            return CreateTreeNode(propertyInfo,() => Value(propertyInfo, nodeData));
         }
 
-        private static object Value(this FieldInfo fieldInfo, object nodeData)
+        private static object Value(FieldInfo fieldInfo, object nodeData)
         {
             return fieldInfo.GetValue(nodeData);
         }
 
-        private static object Value(this PropertyInfo propertyInfo, object nodeData)
+        private static object Value(PropertyInfo propertyInfo, object nodeData)
         {
             return propertyInfo.GetValue(nodeData, null);
         }
 
-        private static TreeNode CreateTreeNode(this MemberInfo memberInfo, Func<object> getValue)
+        private static TreeNode CreateTreeNode(MemberInfo memberInfo, Func<object> getValue)
         {
             var attrs = memberInfo.GetCustomAttributes(typeof(NodeAttribute), true);
             if(attrs.Length == 0)
                 return null;
 
             var attr = (NodeAttribute) attrs[0];
-            var value = getValue.CatchedEval();
+            var value = CatchedEval(getValue);
             if(value == null)
                 return null;
 
@@ -312,7 +314,7 @@ namespace HWClassLibrary.TreeStructure
             return SmartNodeAttribute.Process(result);
         }
 
-        private static object CatchedEval(this Func<object> value)
+        private static object CatchedEval(Func<object> value)
         {
             try
             {
@@ -324,25 +326,28 @@ namespace HWClassLibrary.TreeStructure
             }
         }
 
-        private static void CreateNodeList(this TreeNodeCollection nodes, object target)
+        private static void CreateNodeList(TreeNodeCollection nodes, object target)
         {
+            var treeNodes = CreateNodes(target);
+            Tracer.FlaggedLine(treeNodes.Dump());
+            //Tracer.ConditionalBreak(treeNodes.Length == 20,"");
             nodes.Clear();
-            nodes.AddRange(target.CreateNodes());
+            nodes.AddRange(treeNodes);
         }
 
         public static void Connect(this TreeView treeView, object target)
         {
-            target.Connect(treeView);
+            Connect(target,treeView);
         }
 
         public static void Connect(this object target, TreeView treeView)
         {
-            treeView.Nodes.CreateNodeList(target);
-            treeView.Nodes.AddSubNodesAsync();
+            CreateNodeList(treeView.Nodes,target);
+            AddSubNodes(treeView.Nodes);
             treeView.BeforeExpand += BeforeExpand;
         }
 
-        private static void AddSubNodesAsync(this TreeNodeCollection nodes)
+        private static void AddSubNodesAsync(TreeNodeCollection nodes)
         {
             lock(nodes)
             {
@@ -354,21 +359,18 @@ namespace HWClassLibrary.TreeStructure
 
         private static void AddSubNodes(TreeNodeCollection nodes)
         {
-            lock (nodes)
-            {
-                foreach(TreeNode node in nodes)
-                    node.CreateNodeList();
-            }
+            foreach(TreeNode node in nodes)
+                CreateNodeList(node);
         }
 
         internal static void CreateNodeList(this TreeNode node)
         {
-            node.Nodes.CreateNodeList(node.Tag);
+            CreateNodeList(node.Nodes, node.Tag);
         }
 
         private static void BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            e.Node.Nodes.AddSubNodesAsync();
+            AddSubNodes(e.Node.Nodes);
         }
     }
 }

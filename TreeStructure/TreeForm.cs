@@ -1,15 +1,19 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
-using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.TreeStructure
 {
     public partial class TreeForm : Form
     {
         private object _target;
-        
-        public TreeForm() { InitializeComponent(); }
-        
+
+        public TreeForm()
+        {
+            InitializeComponent();
+        }
+
         public object Target
         {
             get { return _target; }
