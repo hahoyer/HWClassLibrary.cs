@@ -70,6 +70,11 @@ namespace HWClassLibrary.Helper
             return "\"" + x.Replace("\"", "\"\"") + "\"";
         }
 
+        /// <summary>
+        /// Dumps the bytes as hex string.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <returns></returns>
         public static string HexDump(this byte[] bytes)
         {
             var result = "";
@@ -95,10 +100,6 @@ namespace HWClassLibrary.Helper
                 return " ";
             return "";
         }
-
-        public static Sequence<T> Sequence<T>() { return new Sequence<T>(); }
-        public static Sequence<T> Sequence<T>(T a) { return new Sequence<T>(a); }
-        public static Sequence<T> Sequence<T>(IList<T> a) { return new Sequence<T>(a); }
 
         public static string ExecuteCommand(this string command)
         {

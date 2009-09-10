@@ -74,5 +74,36 @@ namespace HWClassLibrary.Helper
                 result += selector(element);
             return result;
         }
+        /// <summary>
+        /// Checks if object starts with given object.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns></returns>
+        public static bool StartsWith<T>(this IList<T> x, IList<T> y)
+        {
+            if (x.Count < y.Count)
+                return false;
+            for (var i = 0; i < y.Count; i++)
+                if (!Equals(x[i], y[i]))
+                    return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if object starts with given object and is longer.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns></returns>
+        public static bool StartsWithAndNotEqual<T>(this IList<T> x, IList<T> y)
+        {
+            if (x.Count == y.Count)
+                return false;
+            return x.StartsWith(y);
+        }
+
     }
 }
