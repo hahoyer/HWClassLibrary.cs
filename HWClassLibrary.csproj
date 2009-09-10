@@ -19,9 +19,11 @@
     <Compile Include="Debug\Tracer.cs" />
     <Compile Include="Debug\Visualizer.cs" />
     <Compile Include="Helper\CSharpCompiler.cs" />
+    <Compile Include="Helper\DateTimeExtender.cs" />
     <Compile Include="Helper\Dictionary.cs" />
-    <Compile Include="Helper\HWListExtender.cs" />
-    <Compile Include="Helper\HWString.cs" />
+    <Compile Include="Helper\ListExtender.cs" />
+    <Compile Include="Helper\LongExtender.cs" />
+    <Compile Include="Helper\StringExtender.cs" />
     <Compile Include="Helper\Number.cs" />
     <Compile Include="Helper\Sequence.cs" />
     <Compile Include="Helper\Set.cs" />

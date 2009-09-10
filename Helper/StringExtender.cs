@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Threading;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
@@ -8,7 +6,7 @@ namespace HWClassLibrary.Helper
     /// <summary>
     /// String helper functions.
     /// </summary>
-    public static class HWString 
+    public static class StringExtender 
     {
         /// <summary>
         /// Indent paramer by 4 spaces
@@ -115,95 +113,5 @@ namespace HWClassLibrary.Helper
             return proc.StandardOutput.ReadToEnd();
         }
 
-    }
-
-    static public class HWLong
-    {
-        public static string Format3Digits(this long size)
-        {
-            var i = 0;
-            for (; size >= 1000; i++, size /= 10)
-                continue;
-
-            var result = size.ToString();
-            switch (i % 3)
-            {
-                case 1:
-                    result = result.Insert(1, ".");
-                    break;
-                case 2:
-                    result = result.Insert(2, ".");
-                    break;
-            }
-
-            if (i == 0)
-                return result;
-            return result + "kMGT"[(i - 1) / 3];
-        }
-    }
-
-    static public class HWDateTime
-    {
-        public static string Format(this DateTime dateTime)
-        {
-            var result = "";
-            result += dateTime.Hour.ToString("00");
-            result += ":";
-            result += dateTime.Minute.ToString("00");
-            result += ":";
-            result += dateTime.Second.ToString("00");
-            result += ".";
-            result += dateTime.Millisecond.ToString("000");
-            result += " ";
-            result += dateTime.Day.ToString("00");
-            result += ".";
-            result += dateTime.Month.ToString("00");
-            result += ".";
-            result += dateTime.Year.ToString("00");
-            return result;
-        }
-
-        public static string DynamicShortFormat(this DateTime dateTime, bool showMiliseconds)
-        {
-            var result = "";
-            result += dateTime.Hour.ToString("00");
-            result += ":";
-            result += dateTime.Minute.ToString("00");
-            result += ":";
-            result += dateTime.Second.ToString("00");
-            if (showMiliseconds)
-            {
-                result += ".";
-                result += dateTime.Millisecond.ToString("000");
-            }
-
-            var nowDate = DateTime.Now.Date;
-            var sameYear = nowDate.Year == dateTime.Year;
-            var sameMonth = sameYear && nowDate.Month == dateTime.Month;
-            var sameDay = sameMonth && nowDate.Day == dateTime.Day;
-            
-            if(!sameDay)
-            {
-                result += " ";
-                result += dateTime.Day.ToString("00");
-                result += ".";
-            }
-            if(!sameMonth)
-            {
-                result += dateTime.Month.ToString("00");
-                result += ".";
-            }
-            if (!sameYear)
-                result += dateTime.Year.ToString("00");
-            return result;
-        }
-
-        public static string Format3Digits(this TimeSpan timeSpan)
-        {
-            if (timeSpan.TotalMinutes >= 1)
-                return timeSpan.ToString();
-            var nanoSeconds = ((long)(timeSpan.TotalMilliseconds*1000*1000)).Format3Digits() + "ns";
-            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", "s");
-        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using HWClassLibrary.Debug;
+using System.Linq;
 using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.Debug
@@ -8,7 +9,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Summary description for Dumpable.
     /// </summary>
-    [dump("Dump"),Serializable]
+    [dump("Dump"), Serializable]
     public class Dumpable
     {
         /// <summary>
@@ -137,7 +138,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void ReturnMethodDumpWithBreak(bool trace)
         {
-            if (!trace)
+            if(!trace)
                 return;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
@@ -241,7 +242,6 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        public void Dispose() { 
-        }
+        public void Dispose() { }
     }
 }

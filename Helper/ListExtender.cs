@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace HWClassLibrary.Helper
 {
-    public static class HWListExtender
+    public static class ListExtender
     {
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual) { return InternalAddDistinct(a, b, isEqual); }
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class { return InternalAddDistinct(a, b, combine); }
