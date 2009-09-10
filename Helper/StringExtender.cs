@@ -70,7 +70,7 @@ namespace HWClassLibrary.Helper
             return "\"" + x.Replace("\"", "\"\"") + "\"";
         }
 
-        public static string HexDump(byte[] bytes)
+        public static string HexDump(this byte[] bytes)
         {
             var result = "";
             for (var i = 0; i < bytes.Length; i++)
