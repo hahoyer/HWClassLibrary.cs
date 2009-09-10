@@ -5,6 +5,10 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
+    /// <summary>
+    /// Arrays that support concatenation
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     [Serializable]
     public class Sequence<T>: Dumpable, IEnumerable<T>
     {
@@ -52,21 +56,44 @@ namespace HWClassLibrary.Helper
                 _data[i] = a[i];
         }
 
+        /// <summary>
+        /// Implements the operator +.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns>The result of the operator.</returns>
         public static Sequence<T> operator +(Sequence<T> a, Sequence<T> b)
         {
             return new Sequence<T>(a,b);
         }
 
+        /// <summary>
+        /// Implements the operator +.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns>The result of the operator.</returns>
         public static Sequence<T> operator +(Sequence<T> a, T b)
         {
             return new Sequence<T>(a, b);
         }
 
+        /// <summary>
+        /// Implements the operator +.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns>The result of the operator.</returns>
         public static Sequence<T> operator +(T a, Sequence<T> b)
         {
             return new Sequence<T>(a, b);
         }
 
+        /// <summary>
+        /// Checks if object starts with given object.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public bool StartsWith(Sequence<T> value)
         {
             if(_data.Length < value._data.Length)
@@ -76,6 +103,12 @@ namespace HWClassLibrary.Helper
                     return false;
             return true;
         }
+
+        /// <summary>
+        /// Checks if object starts with given object and is longer.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public bool StartsWithAndNotEqual(Sequence<T> value)
         {
             if (_data.Length == value._data.Length)
