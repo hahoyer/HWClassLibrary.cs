@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Threading;
 using HWClassLibrary.Helper;
 using JetBrains.Annotations;
-using NUnit.Framework;
 
 namespace HWClassLibrary.Debug
 {
@@ -42,10 +41,7 @@ namespace HWClassLibrary.Debug
         /// <param name="colNr">asis</param>
         /// <param name="flagText">asis</param>
         /// <returns>the "fileName(lineNr,colNr): flagText: " string</returns>
-        public static string FilePosn(string fileName, int lineNr, int colNr, string flagText)
-        {
-            return fileName + "(" + (lineNr + 1) + "," + colNr + "): " + flagText + ": ";
-        }
+        public static string FilePosn(string fileName, int lineNr, int colNr, string flagText) { return fileName + "(" + (lineNr + 1) + "," + colNr + "): " + flagText + ": "; }
 
         /// <summary>
         /// creates a string to inspect a method
@@ -90,15 +86,9 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name="depth">the index of stack frame</param>
         /// <returns>string to inspect the method call</returns>
-        public static string MethodHeader(int depth)
-        {
-            return MethodHeader(depth + 1, false);
-        }
+        public static string MethodHeader(int depth) { return MethodHeader(depth + 1, false); }
 
-        public static string StackTrace()
-        {
-            return StackTrace(1);
-        }
+        public static string StackTrace() { return StackTrace(1); }
 
         public static string StackTrace(int depth)
         {
@@ -135,19 +125,13 @@ namespace HWClassLibrary.Debug
         /// write a line to debug output
         /// </summary>
         /// <param name="s">the text</param>
-        public static void Line(string s)
-        {
-            ThreadSafeWrite(s, true);
-        }
+        public static void Line(string s) { ThreadSafeWrite(s, true); }
 
         /// <summary>
         /// write a line to debug output
         /// </summary>
         /// <param name="s">the text</param>
-        public static void LinePart(string s)
-        {
-            ThreadSafeWrite(s, false);
-        }
+        public static void LinePart(string s) { ThreadSafeWrite(s, false); }
 
         private static void ThreadSafeWrite(string s, bool isLine)
         {
@@ -196,29 +180,20 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name="s">the text</param>
         /// <param name="showParam">controls if parameter list is appended</param>
-        public static void FlaggedLine(string s, bool showParam)
-        {
-            Line(MethodHeader(1, showParam) + s);
-        }
+        public static void FlaggedLine(string s, bool showParam) { Line(MethodHeader(1, showParam) + s); }
 
         /// <summary>
         /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="s">the text</param>
-        public static void FlaggedLine(string s)
-        {
-            Line(MethodHeader(1, false) + s);
-        }
+        public static void FlaggedLine(string s) { Line(MethodHeader(1, false) + s); }
 
         /// <summary>
         /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="stackFrameDepth">The stack frame depth.</param>
         /// <param name="s">the text</param>
-        public static void FlaggedLine(int stackFrameDepth, string s)
-        {
-            Line(MethodHeader(stackFrameDepth + 1, false) + s);
-        }
+        public static void FlaggedLine(int stackFrameDepth, string s) { Line(MethodHeader(stackFrameDepth + 1, false) + s); }
 
         /// <summary>
         /// generic dump function by use of reflection
@@ -405,10 +380,7 @@ namespace HWClassLibrary.Debug
             return ((FieldInfo) m).IsPrivate;
         }
 
-        private static string DumpMembers(MemberInfo[] f, object x)
-        {
-            return DumpSomeMembers(CheckMemberAttributes(f, x), f, x);
-        }
+        private static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
 
         private static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
         {
@@ -479,18 +451,12 @@ namespace HWClassLibrary.Debug
         /// <summary>
         /// Indent
         /// </summary>
-        public static void IndentStart()
-        {
-            _indentCount++;
-        }
+        public static void IndentStart() { _indentCount++; }
 
         /// <summary>
         /// Unindent
         /// </summary>
-        public static void IndentEnd()
-        {
-            _indentCount--;
-        }
+        public static void IndentEnd() { _indentCount--; }
 
         private static string IndentElem(int count)
         {
@@ -512,20 +478,14 @@ namespace HWClassLibrary.Debug
         /// <param name="s"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public static string Indent(string s, int count)
-        {
-            return s.Replace("\n", "\n" + IndentElem(count));
-        }
+        public static string Indent(string s, int count) { return s.Replace("\n", "\n" + IndentElem(count)); }
 
         /// <summary>
         /// Indent paramer by 4 spaces
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Indent(string s)
-        {
-            return Indent(s, 1);
-        }
+        public static string Indent(string s) { return Indent(s, 1); }
 
         /// <summary>
         /// Surrounds string by left and right parenthesis. 
@@ -667,10 +627,7 @@ namespace HWClassLibrary.Debug
         /// <param name="s1">The s1.</param>
         /// created 16.12.2006 18:28
         [DebuggerHidden]
-        public static void ThrowAssertionFailed(string s, string s1)
-        {
-            ThrowAssertionFailed(1, s, s1);
-        }
+        public static void ThrowAssertionFailed(string s, string s1) { ThrowAssertionFailed(1, s, s1); }
 
         /// <summary>
         /// Function used in assertions
@@ -722,10 +679,7 @@ namespace HWClassLibrary.Debug
         /// <param name="b">if set to <c>true</c> [b].</param>
         /// created 16.12.2006 18:27
         [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
-        {
-            Assert(1, b);
-        }
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b) { Assert(1, b); }
 
         /// <summary>
         /// Asserts the specified b.
@@ -734,10 +688,7 @@ namespace HWClassLibrary.Debug
         /// <param name="s">The s.</param>
         /// created 16.12.2006 18:29
         [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s)
-        {
-            Assert(1, b, s);
-        }
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s) { Assert(1, b, s); }
 
         /// <summary>
         /// Assertions the failed.
@@ -746,10 +697,7 @@ namespace HWClassLibrary.Debug
         /// <param name="s1">The s1.</param>
         /// created 16.12.2006 18:30
         [DebuggerHidden]
-        public static void AssertionFailed(string s, string s1)
-        {
-            AssertionFailed(1, s, s1);
-        }
+        public static void AssertionFailed(string s, string s1) { AssertionFailed(1, s, s1); }
 
         /// <summary>
         /// Outputs the specified text.
@@ -765,9 +713,7 @@ namespace HWClassLibrary.Debug
         private class AssertionFailedException : Exception
         {
             public AssertionFailedException(string result)
-                : base(result)
-            {
-            }
+                : base(result) { }
         }
 
         [DebuggerHidden]
@@ -776,7 +722,7 @@ namespace HWClassLibrary.Debug
             if(Debugger.IsAttached)
                 Debugger.Break();
             else
-                throw new AssertionException(result);
+                throw new AssertionFailedException(result);
         }
 
         [DebuggerHidden]
