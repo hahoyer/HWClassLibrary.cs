@@ -4,9 +4,7 @@ using HWClassLibrary.Debug;
 namespace HWClassLibrary.Helper
 {
     [Serializable]
-// ReSharper disable ClassNeverInstantiated.Global
     public sealed class SimpleCache<TValueType>
-// ReSharper restore ClassNeverInstantiated.Global
     {
         private readonly Func<TValueType> _createValue;
         private bool _isValid;
