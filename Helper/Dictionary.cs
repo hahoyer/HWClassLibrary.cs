@@ -63,9 +63,13 @@ namespace HWClassLibrary.Helper
         {
             TValue result;
             if(TryGetValue(key, out result))
+            {
+                Tracer.Assert(!Equals(result, default(TValue)));
                 return result;
+            }
+            base[key] = default(TValue);
             result = createValue();
-            Add(key, result);
+            base[key] = result;
             return result;
         }
 
