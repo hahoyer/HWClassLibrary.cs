@@ -15,6 +15,8 @@ namespace HWClassLibrary.Helper
     [Serializable]
     public class DictionaryEx<TKey, TValue> : Dictionary<TKey, TValue>
     {
+        private readonly TValue _defaultValue;
+
         protected DictionaryEx(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -33,6 +35,8 @@ namespace HWClassLibrary.Helper
         public DictionaryEx()
         {
         }
+
+        public DictionaryEx(TValue defaultValue) { DefaultValue = defaultValue; }
 
         public DictionaryEx(IEqualityComparer<TKey> comparer)
             : base(comparer)
@@ -64,14 +68,16 @@ namespace HWClassLibrary.Helper
             TValue result;
             if(TryGetValue(key, out result))
             {
-                Tracer.Assert(!Equals(result, default(TValue)));
+                Tracer.Assert(!Equals(result, DefaultValue));
                 return result;
             }
-            base[key] = default(TValue);
+            base[key] = DefaultValue;
             result = createValue();
             base[key] = result;
             return result;
         }
+
+        public TValue DefaultValue;
 
         /// <summary>
         /// Gets the value with the specified key
