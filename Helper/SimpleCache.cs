@@ -20,26 +20,33 @@ namespace HWClassLibrary.Helper
         {
             get
             {
-                ObtainValue(_createValue);
+                Ensure();
                 return _value;
             }
         }
 
-        public void Reset()
+        public void Ensure()
         {
-            _isValid = false;
+            Tracer.Assert(!_isBusy);
+            if(_isValid)
+                return;
+            
+            _isBusy = true;
+            _value = _createValue();
+            _isValid = true;
+            _isBusy = false;
         }
 
-        private void ObtainValue(Func<TValueType> createValue)
+        public void Reset()
         {
             Tracer.Assert(!_isBusy);
             if (!_isValid)
-            {
-                _isBusy = true;
-                _value = createValue();
-                _isValid = true;
-                _isBusy = false;
-            }
+                return;
+            
+            _isBusy = true;
+            _value = default(TValueType);
+            _isValid = false;
+            _isBusy = false;
         }
     }
 }

@@ -329,7 +329,7 @@ namespace HWClassLibrary.TreeStructure
         private static void CreateNodeList(TreeNodeCollection nodes, object target)
         {
             var treeNodes = CreateNodes(target);
-            Tracer.FlaggedLine(treeNodes.Dump());
+            //Tracer.FlaggedLine(treeNodes.Dump());
             //Tracer.ConditionalBreak(treeNodes.Length == 20,"");
             nodes.Clear();
             nodes.AddRange(treeNodes);
