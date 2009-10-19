@@ -375,9 +375,13 @@ namespace HWClassLibrary.Debug
 
         private static bool IsPrivate(this MemberInfo m)
         {
-            if(m is PropertyInfo)
+            if(m is FieldInfo)
+                return ((FieldInfo) m).IsPrivate;
+            
+            if(((PropertyInfo)m).CanRead)
                 return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
-            return ((FieldInfo) m).IsPrivate;
+
+            return true;
         }
 
         private static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
