@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.TreeStructure
 {
@@ -10,7 +11,7 @@ namespace HWClassLibrary.TreeStructure
     /// Only for public properties. 
     /// Only the first attribute is considered
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property), MeansImplicitUse]
     public class NodeAttribute : Attribute
     {
         public readonly string IconKey;

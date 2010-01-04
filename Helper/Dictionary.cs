@@ -15,9 +15,7 @@ namespace HWClassLibrary.Helper
     [Serializable]
     public class DictionaryEx<TKey, TValue> : Dictionary<TKey, TValue>
     {
-        private readonly TValue _defaultValue;
-
-        protected DictionaryEx(SerializationInfo info, StreamingContext context)
+        private DictionaryEx(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
