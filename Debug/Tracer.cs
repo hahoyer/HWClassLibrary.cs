@@ -618,7 +618,7 @@ namespace HWClassLibrary.Debug
         /// <param name="data">The data.</param>
         /// created 15.10.2006 18:04
         [DebuggerHidden]
-        public static void ThrowAssertionFailed(int stackFrameDepth, string cond, string data)
+        public static void ThrowAssertionFailed(int stackFrameDepth, string cond, Func<string> data)
         {
             var result = AssertionFailed(stackFrameDepth + 1, cond, data);
             throw new AssertionFailedException(result);
@@ -631,7 +631,7 @@ namespace HWClassLibrary.Debug
         /// <param name="s1">The s1.</param>
         /// created 16.12.2006 18:28
         [DebuggerHidden]
-        public static void ThrowAssertionFailed(string s, string s1) { ThrowAssertionFailed(1, s, s1); }
+        public static void ThrowAssertionFailed(string s, Func<string> s1) { ThrowAssertionFailed(1, s, s1); }
 
         /// <summary>
         /// Function used in assertions
@@ -641,7 +641,7 @@ namespace HWClassLibrary.Debug
         /// <param name="data">The data.</param>
         /// <returns></returns>
         [DebuggerHidden]
-        public static string AssertionFailed(int stackFrameDepth, string cond, string data)
+        public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data)
         {
             var result = "Assertion Failed: " + cond + "\nData: " + data;
             FlaggedLine(stackFrameDepth + 1, result);
@@ -657,7 +657,7 @@ namespace HWClassLibrary.Debug
         /// <param name="text">The text.</param>
         [DebuggerHidden, AssertionMethod]
         public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b,
-                                  string text)
+                                  Func<string> text)
         {
             if(b)
                 return;
@@ -674,7 +674,7 @@ namespace HWClassLibrary.Debug
         {
             if(b)
                 return;
-            AssertionFailed(stackFrameDepth + 1, "", "");
+            AssertionFailed(stackFrameDepth + 1, "", ()=>"");
         }
 
         /// <summary>
@@ -692,7 +692,10 @@ namespace HWClassLibrary.Debug
         /// <param name="s">The s.</param>
         /// created 16.12.2006 18:29
         [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s) { Assert(1, b, s); }
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> s)
+        {
+            Assert(1, b, s);
+        }
 
         /// <summary>
         /// Assertions the failed.
@@ -701,7 +704,7 @@ namespace HWClassLibrary.Debug
         /// <param name="s1">The s1.</param>
         /// created 16.12.2006 18:30
         [DebuggerHidden]
-        public static void AssertionFailed(string s, string s1) { AssertionFailed(1, s, s1); }
+        public static void AssertionFailed(string s, Func<string> s1) { AssertionFailed(1, s, s1); }
 
         /// <summary>
         /// Outputs the specified text.
