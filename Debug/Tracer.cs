@@ -583,9 +583,9 @@ namespace HWClassLibrary.Debug
         /// <param name="data">The data.</param>
         /// <returns></returns>
         [DebuggerHidden]
-        public static void ConditionalBreak(int stackFrameDepth, string cond, string data)
+        public static void ConditionalBreak(int stackFrameDepth, string cond, Func<string> data)
         {
-            var result = "Conditional break: " + cond + "\nData: " + data;
+            var result = "Conditional break: " + cond + "\nData: " + data();
             FlaggedLine(stackFrameDepth + 1, result);
             TraceBreak();
         }
@@ -597,14 +597,14 @@ namespace HWClassLibrary.Debug
         /// <param name="b">if set to <c>true</c> [b].</param>
         /// <param name="text">The text.</param>
         [DebuggerHidden]
-        public static void ConditionalBreak(int stackFrameDepth, bool b, string text)
+        public static void ConditionalBreak(int stackFrameDepth, bool b, Func<string> text)
         {
             if(b)
                 ConditionalBreak(stackFrameDepth + 1, "", text);
         }
 
         [DebuggerHidden]
-        public static void ConditionalBreak(bool cond, string data)
+        public static void ConditionalBreak(bool cond, Func<string> data)
         {
             if(cond)
                 ConditionalBreak(1, true, data);
@@ -643,7 +643,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data)
         {
-            var result = "Assertion Failed: " + cond + "\nData: " + data;
+            var result = "Assertion Failed: " + cond + "\nData: " + data();
             FlaggedLine(stackFrameDepth + 1, result);
             AssertionBreak(result);
             return result;
