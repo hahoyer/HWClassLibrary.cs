@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.TreeStructure
@@ -19,7 +21,7 @@ namespace HWClassLibrary.TreeStructure
         /// <param name="iconKey"></param>
         /// <param name="isDefaultIcon"></param>
         /// <returns></returns>
-        public static TreeNode CreateNode(this object nodeData, string title = "", string iconKey = null, bool isDefaultIcon = false)
+        public static TreeNode CreateNode(this object nodeData, string title, string iconKey, bool isDefaultIcon)
         {
             var result = new TreeNode(title + nodeData.GetAdditionalInfo()) {Tag = nodeData};
             if(iconKey == null)
@@ -36,6 +38,11 @@ namespace HWClassLibrary.TreeStructure
                 result.SelectedImageKey = iconKey;
             }
             return result;
+        }
+
+        public static TreeNode CreateNode(this object nodeData)
+        {
+            return CreateNode(nodeData, "", null, false);
         }
 
         /// <summary>
@@ -120,7 +127,12 @@ namespace HWClassLibrary.TreeStructure
             return result.ToArray();
         }
 
-        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey, bool isDefaultIcon = false)
+        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey)
+        {
+            return CreateNumberedNode(nodeData, i, iconKey, false);
+        }
+
+        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey, bool isDefaultIcon)
         {
             return nodeData.CreateNode("[" + i + "] ", iconKey, isDefaultIcon);
         }
@@ -230,22 +242,27 @@ namespace HWClassLibrary.TreeStructure
 
         private static TreeNode[] CreatePropertyNodes(object nodeData)
         {
-            return nodeData
-                .GetType()
-                .GetProperties(DefaultBindingFlags)
-                .Select(propertyInfo => CreateTreeNode(nodeData, propertyInfo))
-                .Where(treeNode => treeNode != null)
-                .ToArray();
+            var result = new List<TreeNode>();
+            foreach(var propertyInfo in nodeData.GetType().GetProperties(DefaultBindingFlags))
+            {
+                var treeNode = CreateTreeNode(nodeData, propertyInfo);
+                if(treeNode != null)
+                    result.Add(treeNode);
+            }
+            return result.ToArray();
         }
 
         private static TreeNode[] CreateFieldNodes(object nodeData)
         {
-            return nodeData
-                .GetType()
-                .GetFields(DefaultBindingFlags)
-                .Select(fieldInfo => CreateTreeNode(nodeData, fieldInfo))
-                .Where(treeNode => treeNode != null)
-                .ToArray();
+            var result = new List<TreeNode>();
+            var type = nodeData.GetType();
+            foreach(var fieldInfo in type.GetFields(DefaultBindingFlags))
+            {
+                var treeNode = CreateTreeNode(nodeData,fieldInfo);
+                if(treeNode != null)
+                    result.Add(treeNode);
+            }
+            return result.ToArray();
         }
 
         private static BindingFlags DefaultBindingFlags
