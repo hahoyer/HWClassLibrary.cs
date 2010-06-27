@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
@@ -12,34 +11,40 @@ namespace HWClassLibrary.Helper
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     [TreeStructure.AdditionalNodeInfo("NodeDump")]
-    [Serializable]
     public class DictionaryEx<TKey, TValue> : Dictionary<TKey, TValue>
     {
-        private DictionaryEx(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        private readonly Func<TKey, TValue> _createValue;
+
+        public DictionaryEx(Func<TKey, TValue> createValue) { _createValue = createValue; }
+
+        public DictionaryEx(TValue defaultValue, Func<TKey, TValue> createValue)
         {
+            DefaultValue = defaultValue;
+            _createValue = createValue;
         }
 
-        public DictionaryEx(IDictionary<TKey, TValue> x)
-            : base(x)
-        {
-        }
-
-        public DictionaryEx(IDictionary<TKey, TValue> x, IEqualityComparer<TKey> comparer)
-            : base(x, comparer)
-        {
-        }
-
-        public DictionaryEx()
-        {
-        }
-
-        public DictionaryEx(TValue defaultValue) { DefaultValue = defaultValue; }
-
-        public DictionaryEx(IEqualityComparer<TKey> comparer)
+        public DictionaryEx(IEqualityComparer<TKey> comparer, Func<TKey, TValue> createValue)
             : base(comparer)
         {
+            _createValue = createValue;
         }
+
+        public DictionaryEx(DictionaryEx<TKey, TValue> x, IEqualityComparer<TKey> comparer)
+            : base(x, comparer)
+        {
+            _createValue = x._createValue;
+        }
+
+        public DictionaryEx(DictionaryEx<TKey, TValue> x)
+            : base(x)
+        {
+            _createValue = x._createValue;
+        }
+
+        public DictionaryEx() { _createValue = ThrowKeyNotFoundException; }
+
+        private static TValue ThrowKeyNotFoundException(TKey key) { throw new KeyNotFoundException(key.ToString()); }
+
 
         public DictionaryEx<TKey, TValue> Clone { get { return new DictionaryEx<TKey, TValue>(this); } }
 
@@ -58,10 +63,9 @@ namespace HWClassLibrary.Helper
         /// Gets the or add.
         /// </summary>
         /// <param name="key">The key.</param>
-        /// <param name="createValue">The create value.</param>
         /// <returns></returns>
         /// created 13.01.2007 14:32
-        public TValue Find(TKey key, Func<TValue> createValue)
+        public TValue Find(TKey key)
         {
             TValue result;
             if(TryGetValue(key, out result))
@@ -70,12 +74,12 @@ namespace HWClassLibrary.Helper
                 return result;
             }
             base[key] = DefaultValue;
-            result = createValue();
+            result = _createValue(key);
             base[key] = result;
             return result;
         }
 
-        public TValue DefaultValue;
+        public readonly TValue DefaultValue;
 
         /// <summary>
         /// Gets the value with the specified key
@@ -153,20 +157,20 @@ namespace HWClassLibrary.Helper
         }
     }
 
-    public class NoCaseStringDictionary<Value> : DictionaryEx<string, Value>
+    public class NoCaseStringDictionary<TValue> : DictionaryEx<string, TValue>
     {
-        public NoCaseStringDictionary()
-            : base(NoCaseComparer.Default)
+        public NoCaseStringDictionary(Func<string, TValue> createValue)
+            : base(NoCaseComparer.Default, createValue)
         {
         }
 
 // ReSharper disable SuggestBaseTypeForParameter
-        public NoCaseStringDictionary(NoCaseStringDictionary<Value> x)
+        public NoCaseStringDictionary(NoCaseStringDictionary<TValue> x)
 // ReSharper restore SuggestBaseTypeForParameter
             : base(x, NoCaseComparer.Default)
         {
         }
 
-        public new NoCaseStringDictionary<Value> Clone { get { return new NoCaseStringDictionary<Value>(this); } }
+        public new NoCaseStringDictionary<TValue> Clone { get { return new NoCaseStringDictionary<TValue>(this); } }
     }
 }
