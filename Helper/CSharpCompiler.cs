@@ -1,11 +1,12 @@
 using System;
 using System.CodeDom.Compiler;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using HWClassLibrary.Debug;
 using HWClassLibrary.IO;
+using HWClassLibrary.UnitTest;
 using Microsoft.CSharp;
-using NUnit.Framework;
 
 namespace HWClassLibrary.Helper
 {
@@ -47,10 +48,7 @@ namespace HWClassLibrary.Helper
                 return assembly.GetType(typeFullName);
             }
             var types = assembly.GetTypes();
-            for(var i = 0; i < types.Length; i++)
-                if(IsMatch(types[i], namespaceName, typeName))
-                    return types[i];
-            return null;
+            return types.FirstOrDefault(t => IsMatch(t, namespaceName, typeName));
         }
 
         private static bool IsMatch(Type type, string namespaceName, string typeName)
