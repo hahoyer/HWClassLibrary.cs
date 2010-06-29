@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.UnitTest
@@ -16,36 +15,47 @@ namespace HWClassLibrary.UnitTest
 
     [AttributeUsage(AttributeTargets.Method)]
     [MeansImplicitUse]
-    public class TestAttribute : Attribute { }
+    public class TestAttribute : Attribute
+    {
+    }
 
     [AttributeUsage(AttributeTargets.Class)]
     [MeansImplicitUse]
-    public class TestFixtureAttribute : Attribute {}
+    public class TestFixtureAttribute : Attribute
+    {
+    }
 
     [AttributeUsage(AttributeTargets.Method)]
     [MeansImplicitUse]
-    public class SetUp : Attribute { }
+    public class SetUp : Attribute
+    {
+    }
 
     [AttributeUsage(AttributeTargets.Method)]
-    public class ExplicitAttribute : Attribute { }
+    public class ExplicitAttribute : Attribute
+    {
+    }
 
     public static class TestExtender
     {
-        public static void RunTests(Assembly rootAssembly)
+        public static void RunTests(this Assembly rootAssembly) { var x = GetUnitTests(rootAssembly); }
+
+        private static Type[] GetUnitTests(Assembly rootAssembly)
         {
             var attributeType = typeof(TestFixtureAttribute);
-            var x = GetAssemblies(rootAssembly)
+            return GetAssemblies(rootAssembly)
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(t => t.GetCustomAttributes(attributeType, true).Length > 0)
                 .ToArray();
+
 
         }
 
         private static IEnumerable<Assembly> GetAssemblies(Assembly rootAssembly)
         {
-            var result = new[] { rootAssembly };
-            for (var referencedAssemblies = result; 
-                referencedAssemblies.Length > 0; 
+            var result = new[] {rootAssembly};
+            for(var referencedAssemblies = result;
+                referencedAssemblies.Length > 0;
                 result = result.Union(referencedAssemblies).ToArray())
             {
                 referencedAssemblies = referencedAssemblies
@@ -64,11 +74,10 @@ namespace HWClassLibrary.UnitTest
             {
                 return AppDomain.CurrentDomain.Load(yy);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 return Assembly.GetExecutingAssembly();
             }
         }
     }
-
 }
