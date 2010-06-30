@@ -21,6 +21,7 @@
     <Compile Include="Helper\Dictionary.cs" />
     <Compile Include="Helper\ListExtender.cs" />
     <Compile Include="Helper\LongExtender.cs" />
+    <Compile Include="Helper\ReflectionExtender.cs" />
     <Compile Include="Helper\StringExtender.cs" />
     <Compile Include="Helper\Number.cs" />
     <Compile Include="Helper\Set.cs" />

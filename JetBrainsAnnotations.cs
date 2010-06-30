@@ -153,7 +153,7 @@ namespace JetBrains.Annotations
     [CLSCompliant(false)]
     public sealed class BaseTypeRequiredAttribute : Attribute
     {
-        private readonly Type[] myBaseTypes;
+        private readonly Type[] _baseTypes;
 
         /// <summary>
         /// Initializes new instance of BaseTypeRequiredAttribute
@@ -161,13 +161,13 @@ namespace JetBrains.Annotations
         /// <param name="baseTypes">Specifies which types are required</param>
         public BaseTypeRequiredAttribute(params Type[] baseTypes)
         {
-            myBaseTypes = baseTypes;
+            _baseTypes = baseTypes;
         }
 
         /// <summary>
         /// Gets enumerations of specified base types
         /// </summary>
-        public IEnumerable<Type> BaseTypes { get { return myBaseTypes; } }
+        public IEnumerable<Type> BaseTypes { get { return _baseTypes; } }
     }
 
     /// <summary>

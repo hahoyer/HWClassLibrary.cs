@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
+using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.UnitTest
 {
@@ -36,19 +37,28 @@ namespace HWClassLibrary.UnitTest
     {
     }
 
+
+
     public static class TestExtender
     {
-        public static void RunTests(this Assembly rootAssembly) { var x = GetUnitTests(rootAssembly); }
-
-        private static Type[] GetUnitTests(Assembly rootAssembly)
+        public static void RunTests(this Assembly rootAssembly)
         {
-            var attributeType = typeof(TestFixtureAttribute);
+            var x = GetUnitTests(rootAssembly);
+            foreach(var type in x)
+                RunTests(type);
+        }
+
+        private static void RunTests(MethodInfo methodInfo)
+        {
+        }
+
+        private static IEnumerable<MethodInfo> GetUnitTests(Assembly rootAssembly)
+        {
             return GetAssemblies(rootAssembly)
                 .SelectMany(assembly => assembly.GetTypes())
-                .Where(t => t.GetCustomAttributes(attributeType, true).Length > 0)
-                .ToArray();
-
-
+                .Where(type => type.GetAttribute<TestFixtureAttribute>(true) != null)
+                .SelectMany(type=>type.GetMethods())
+                .Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null);
         }
 
         private static IEnumerable<Assembly> GetAssemblies(Assembly rootAssembly)
