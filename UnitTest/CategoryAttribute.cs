@@ -24,7 +24,7 @@ namespace HWClassLibrary.UnitTest
 
     [AttributeUsage(AttributeTargets.Method)]
     [MeansImplicitUse]
-    public class SetUp : Attribute
+    public class SetUpAttribute : Attribute
     {
     }
 
