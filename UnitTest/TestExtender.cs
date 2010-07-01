@@ -27,7 +27,7 @@ namespace HWClassLibrary.UnitTest
         {
             return GetAssemblies(rootAssembly)
                 .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => type.GetAttribute<TestFixtureAttribute>(true) != null)
+                .Where(type => !(type.IsAbstract || type.GetAttribute<TestFixtureAttribute>(true) == null))
                 .SelectMany(type=>type.GetMethods())
                 .Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null);
         }
