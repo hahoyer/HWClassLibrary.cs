@@ -13,7 +13,7 @@ namespace HWClassLibrary.UnitTest
 
         public void Add(MethodInfo methodInfo)
         {
-            Tracer.Line(methodInfo.ReturnType.Name + " " + methodInfo.ReflectedType.FullName + "." + methodInfo.Name);
+            Tracer.Line(methodInfo.ReturnType.Name + " " + methodInfo.DeclaringType.FullName + "." + methodInfo.Name);
             Tracer.IndentStart();
 
             if(methodInfo.GetAttribute<ExplicitAttribute>(true) == null)
@@ -21,15 +21,24 @@ namespace HWClassLibrary.UnitTest
                 var test = Activator.CreateInstance(methodInfo.ReflectedType);
                 var methods = methodInfo
                     .ReflectedType
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance);
                 var setups = methods
                     .Where(m => m.GetAttribute<SetUpAttribute>(false) != null)
                     .ToArray();
                 foreach(var setup in setups)
                 {
-                    Tracer.Line("setup: " + setup.ReflectedType.FullName + "." + setup.Name);
+                    Tracer.Line("setup: " + setup.DeclaringType.FullName + "." + setup.Name);
                     setup.Invoke(test, new object[0]);
                 }
+
+                try
+                {
+                    methodInfo.Invoke(test, new object[0]);
+                }
+                catch(Exception e)
+                {
+                }
+                ;
             }
             else
                 Tracer.Line("ExplicitAttribute used");

@@ -10,6 +10,7 @@ namespace HWClassLibrary.Debug
     /// Summary description for Dumpable.
     /// </summary>
     [dump("Dump"), Serializable]
+    [DebuggerDisplay("{DebuggerDumpString}")]
     public class Dumpable
     {
         /// <summary>

@@ -37,7 +37,7 @@ namespace HWClassLibrary.UnitTest
             var result = new[] {rootAssembly};
             for(IEnumerable<Assembly> referencedAssemblies = result;
                 referencedAssemblies.GetEnumerator().MoveNext();
-                result = result.Union(referencedAssemblies).ToArray())
+                result = result.Concat(referencedAssemblies).ToArray())
                 referencedAssemblies = referencedAssemblies
                     .SelectMany(assembly => assembly.GetReferencedAssemblies())
                     .Select(AssemblyLoad)
