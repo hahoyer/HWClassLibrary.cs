@@ -13,7 +13,7 @@ namespace HWClassLibrary.UnitTest
 
         public void Add(MethodInfo methodInfo)
         {
-            Tracer.Line(methodInfo.ReturnType.Name + " " + methodInfo.DeclaringType.FullName + "." + methodInfo.Name);
+            Tracer.Line("Start "+methodInfo.ReturnType.Name + " " + methodInfo.DeclaringType.FullName + "." + methodInfo.Name);
             Tracer.IndentStart();
 
             if(methodInfo.GetAttribute<ExplicitAttribute>(true) == null)
@@ -41,8 +41,9 @@ namespace HWClassLibrary.UnitTest
                 ;
             }
             else
-                Tracer.Line("ExplicitAttribute used");
+                Tracer.Line("Test not executed, ExplicitAttribute used");
             Tracer.IndentEnd();
+            Tracer.Line("End " + methodInfo.ReturnType.Name + " " + methodInfo.DeclaringType.FullName + "." + methodInfo.Name);
         }
         public void End() { NotImplementedMethod();  }
     }
