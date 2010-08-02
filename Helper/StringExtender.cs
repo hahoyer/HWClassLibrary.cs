@@ -67,7 +67,7 @@ namespace HWClassLibrary.Helper
         /// created 08.01.2007 18:37
         public static string Quote(this string x)
         {
-            return "\"" + x.Replace("\"", "\"\"") + "\"";
+            return "\"" + x.Replace("\\","\\\\").Replace("\"", "\\\"") + "\"";
         }
 
         /// <summary>
