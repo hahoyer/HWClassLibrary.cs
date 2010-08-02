@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
@@ -105,5 +106,11 @@ namespace HWClassLibrary.Helper
             return x.StartsWith(y);
         }
 
+        public static T OnlyOne<T>(this IEnumerable<T> x)
+        {
+            var xx = x.ToArray();
+            Tracer.Assert(xx.Length == 1);
+            return xx[0];
+        }
     }
 }
