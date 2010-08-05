@@ -48,5 +48,7 @@ namespace HWClassLibrary.Helper
             _isValid = false;
             _isBusy = false;
         }
+
+        public bool IsValid { get { return _isValid; } }
     }
 }
