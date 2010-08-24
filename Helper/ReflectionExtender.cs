@@ -17,7 +17,7 @@ namespace HWClassLibrary.Helper
         }
 
         [NotNull]
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MethodInfo @this, bool inherit)
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo @this, bool inherit)
             where TAttribute : Attribute
         {
             return @this
@@ -40,7 +40,7 @@ namespace HWClassLibrary.Helper
         }
 
         [CanBeNull]
-        public static TAttribute GetAttribute<TAttribute>(this MethodInfo @this, bool inherit) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute
         {
             var list = GetAttributes<TAttribute>(@this, inherit).ToArray();
             switch(list.Length)

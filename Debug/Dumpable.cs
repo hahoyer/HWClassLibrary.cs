@@ -9,7 +9,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     /// Summary description for Dumpable.
     /// </summary>
-    [dump("Dump"), Serializable]
+    [Dump("Dump"), Serializable]
     [DebuggerDisplay("{DebuggerDumpString}")]
     public class Dumpable
     {
@@ -22,7 +22,7 @@ namespace HWClassLibrary.Debug
         /// <summary>
         /// dump string to be shown in debug windows
         /// </summary>
-        [DumpData(false)]
+        [IsDumpEnabled(false)]
         public string DebuggerDumpString { get { return DebuggerDump().Replace("\n", "\r\n"); } }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace HWClassLibrary.Debug
         /// 	<c>true</c> if this instance is in dump; otherwise, <c>false</c>.
         /// </value>
         /// created 23.09.2006 17:39
-        [DumpData(false)]
+        [IsDumpEnabled(false)]
         public bool IsInDump { get { return _isInDump; } }
 
         private bool _isInDump;

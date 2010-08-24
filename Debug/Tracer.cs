@@ -241,7 +241,7 @@ namespace HWClassLibrary.Debug
             if(t.ToString() == "Outlook.InspectorClass")
                 return x.ToString();
 
-            var dea = DumpExcludeAttribute(t);
+            var dea = DumpClassAttribute(t);
             if(dea != null)
                 return dea.Dump(isTop, t, x);
 
@@ -288,12 +288,12 @@ namespace HWClassLibrary.Debug
             return result.Surround("{", "}");
         }
 
-        private static DumpClassAttribute DumpExcludeAttribute(this Type t)
+        private static DumpClassAttribute DumpClassAttribute(this Type t)
         {
-            var result = DumpExcludeAttributeClass(t);
+            var result = DumpClassAttributeClass(t);
             if(result != null)
                 return result;
-            var results = DumpExcludeAttributeInterfaces(t);
+            var results = DumpClassAttributeInterfaces(t);
             if(results.Length == 0)
                 return null;
             if(results.Length == 1)
@@ -301,37 +301,32 @@ namespace HWClassLibrary.Debug
             throw new NotImplementedException();
         }
 
-        private static DumpClassAttribute[] DumpExcludeAttributeInterfaces(this Type t)
+        private static DumpClassAttribute[] DumpClassAttributeInterfaces(this Type t)
         {
             var al = new ArrayList();
             foreach(var i in t.GetInterfaces())
-                al.AddRange(DumpExcludeAttributeInterfaces(i));
+                al.AddRange(DumpClassAttributeInterfaces(i));
             if(al.Count == 0)
                 return new DumpClassAttribute[0];
 
             return (DumpClassAttribute[]) al.ToArray();
         }
 
-        private static DumpClassAttribute DumpExcludeAttributeSimple(this MemberInfo t)
+        private static DumpClassAttribute DumpClassAttributeClass(this Type t)
         {
-            var a = Attribute.GetCustomAttributes(t, typeof(DumpClassAttribute));
-            if(a.Length == 0)
-                return null;
-            return (DumpClassAttribute) a[0];
-        }
-
-        private static DumpClassAttribute DumpExcludeAttributeClass(this Type t)
-        {
-            var result = DumpExcludeAttributeSimple(t);
+            var result = t.GetAttribute<DumpClassAttribute>(true);
             if(result != null)
                 return result;
             if(t.BaseType != null)
-                return DumpExcludeAttribute(t.BaseType);
+                return DumpClassAttribute(t.BaseType);
             return null;
         }
 
         private static string InternalDumpData(this Type t, object x)
         {
+            var dumpData = t.GetAttribute<DumpDataClassAttribute>(false);
+            if (dumpData != null)
+                return dumpData.Dump(t, x);
             var f = t.GetFields(AnyBinding);
             var fieldDump = "";
             if(f.Length > 0)
@@ -366,9 +361,9 @@ namespace HWClassLibrary.Debug
 
         private static bool CheckDumpDataAttribute(this MemberInfo m)
         {
-            var dda = (DumpDataAttribute) Attribute.GetCustomAttribute(m, typeof(DumpDataAttribute));
+            var dda = m.GetAttribute<IsDumpEnabledAttribute>(true);
             if(dda != null)
-                return dda.Dump;
+                return dda.Value;
 
             return !IsPrivate(m);
         }

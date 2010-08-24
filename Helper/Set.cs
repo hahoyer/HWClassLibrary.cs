@@ -10,7 +10,7 @@ namespace HWClassLibrary.Helper
 
         private Func<T,T,bool> _isEqual = (a, b) => a.Equals(b);
 
-        [DumpData(false)]
+        [IsDumpEnabled(false)]
         public Func<T, T, bool> IsEqual
         {
             get { return _isEqual; }
