@@ -56,6 +56,13 @@ namespace HWClassLibrary.Helper
         {
             return x.Aggregate(x.ToArray().Length.ToString(), (a, xx) => a + " " + xx.ToString());
         }
+
+        public static string DumpLines<T>(this IEnumerable<T> x)
+        {
+            var i = 0;
+            return x.Aggregate("", (a, xx) => a + "["+ i++ + "] " + xx.ToString() + "\n");
+        }
+
         public static string Format<T>(this IEnumerable<T> x, string separator)
         {
             var result = "";
