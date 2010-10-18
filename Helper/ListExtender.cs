@@ -58,9 +58,10 @@ namespace HWClassLibrary.Helper
         }
 
         public static string DumpLines<T>(this IEnumerable<T> x)
+            where T:Dumpable
         {
             var i = 0;
-            return x.Aggregate("", (a, xx) => a + "["+ i++ + "] " + xx.ToString() + "\n");
+            return x.Aggregate("", (a, xx) => a + "["+ i++ + "] " + xx.Dump() + "\n");
         }
 
         public static string Format<T>(this IEnumerable<T> x, string separator)
