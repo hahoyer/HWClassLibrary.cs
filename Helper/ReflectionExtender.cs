@@ -40,6 +40,18 @@ namespace HWClassLibrary.Helper
         }
 
         [CanBeNull]
+        public static TAttribute GetRecentAttribute<TAttribute>(this Type @this) where TAttribute : Attribute
+        {
+            return GetAttribute<TAttribute>(@this, false) ?? GetRecentAttributeBase<TAttribute>(@this.BaseType);
+        }
+
+        [CanBeNull]
+        private static TAttribute GetRecentAttributeBase<TAttribute>(this Type @this) where TAttribute : Attribute
+        {
+            return @this == null ? null : @this.GetRecentAttribute<TAttribute>();
+        }
+
+        [CanBeNull]
         public static TAttribute GetAttribute<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute
         {
             var list = GetAttributes<TAttribute>(@this, inherit).ToArray();

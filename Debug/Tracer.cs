@@ -314,7 +314,7 @@ namespace HWClassLibrary.Debug
 
         private static DumpClassAttribute DumpClassAttributeClass(this Type t)
         {
-            var result = t.GetAttribute<DumpClassAttribute>(true);
+            var result = t.GetRecentAttribute<DumpClassAttribute>();
             if(result != null)
                 return result;
             if(t.BaseType != null)
