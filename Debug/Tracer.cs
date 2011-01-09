@@ -365,17 +365,19 @@ namespace HWClassLibrary.Debug
             if(dda != null)
                 return dda.Value;
 
-            return !IsPrivate(m);
+            return !IsPrivateOrDump(m);
         }
 
-        private static bool IsPrivate(this MemberInfo m)
+        private static bool IsPrivateOrDump(this MemberInfo m)
         {
+            if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
+                return true;
+
             if(m is FieldInfo)
                 return ((FieldInfo) m).IsPrivate;
             
             if(((PropertyInfo)m).CanRead)
                 return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
-
             return true;
         }
 

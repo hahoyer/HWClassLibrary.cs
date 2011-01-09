@@ -40,7 +40,7 @@ namespace HWClassLibrary.Debug
     /// Use ToString function
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public class DumpToStringAttribute : DumpClassAttribute
+    public sealed class DumpToStringAttribute : DumpClassAttribute
     {
         /// <summary>
         /// set "ToString" as dump behaviour of class
@@ -60,7 +60,7 @@ namespace HWClassLibrary.Debug
     /// Use ToString function
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public class DumpAttribute : DumpClassAttribute
+    public sealed class DumpAttribute : DumpClassAttribute
     {
         private readonly string _name;
 
@@ -136,7 +136,7 @@ namespace HWClassLibrary.Debug
     /// Used to control dump of data element
     /// </summary>
     [AttributeUsage(AttributeTargets.Property|AttributeTargets.Field), MeansImplicitUse]
-    public class IsDumpEnabledAttribute : Attribute
+    public sealed class IsDumpEnabledAttribute : Attribute
     {
         private readonly bool _value;
 
