@@ -1,0 +1,83 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
+
+namespace HWClassLibrary.UnitTest
+{
+    internal sealed class TestMethod : Dumpable
+    {
+        private readonly MethodInfo _methodInfo;
+        public bool IsSuspended;
+        public TestMethod(MethodInfo methodInfo) { _methodInfo = methodInfo; }
+
+        public string ConfigurationString
+        {
+            get { return Name + ","; }
+        }
+
+        public string Name
+        {
+            get { return _methodInfo.Name; }
+        }
+
+        private object Setup()
+        {
+            var test = Activator.CreateInstance(_methodInfo.ReflectedType);
+            var methods = _methodInfo
+                .ReflectedType
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance);
+            var setups = methods
+                .Where(m => m.GetAttribute<SetUpAttribute>(false) != null)
+                .ToArray();
+            foreach(var setup in setups)
+            {
+                Tracer.Line("setup: " + setup.DeclaringType.FullName + "." + setup.Name);
+                setup.Invoke(test, new object[0]);
+            }
+            return test;
+        }
+
+        private void ShowException(Exception e)
+        {
+            Tracer.Line("*********************Exception: " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
+            Tracer.Line(e.GetType().FullName);
+            Tracer.Line(e.Message);
+            Tracer.Line("*********************End Exception: " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
+            throw new TestFailedException();
+        }
+
+        public void Run()
+        {
+            Tracer.Line("Start " + _methodInfo.ReturnType.Name + " " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
+            Tracer.IndentStart();
+            try
+            {
+                if(_methodInfo.GetAttribute<ExplicitAttribute>(true) != null)
+                    Tracer.Line("Test not executed, ExplicitAttribute used");
+                else if(!IsSuspended)
+                {
+                    var test = Setup();
+                    var isBreakDisabled = Tracer.IsBreakDisabled;
+                    Tracer.IsBreakDisabled = !TestRunner.IsModeErrorFocus;
+                    try
+                    {
+                        _methodInfo.Invoke(test, new object[0]);
+                    }
+                    catch(Exception e)
+                    {
+                        ShowException(e);
+                    }
+                    Tracer.IsBreakDisabled = isBreakDisabled;
+                }
+            }
+            finally
+            {
+                Tracer.IndentEnd();
+                Tracer.Line("End " + _methodInfo.ReturnType.Name + " " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
+            }
+        }
+    }
+}

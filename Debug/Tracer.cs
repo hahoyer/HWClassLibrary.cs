@@ -19,6 +19,8 @@ namespace HWClassLibrary.Debug
         private static int _indentCount;
         private static bool _isLineStart = true;
         private static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+        [UsedImplicitly]
+        public static bool IsBreakDisabled;
 
         /// <summary>
         /// creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
@@ -693,6 +695,11 @@ namespace HWClassLibrary.Debug
         {
             Assert(1, b, s);
         }
+        [DebuggerHidden, AssertionMethod]
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s)
+        {
+            Assert(1, b, ()=>s);
+        }
 
         /// <summary>
         /// Assertions the failed.
@@ -714,26 +721,33 @@ namespace HWClassLibrary.Debug
             Console.WriteLine(text);
         }
 
-        private class AssertionFailedException : Exception
+        private sealed class AssertionFailedException : Exception
         {
             public AssertionFailedException(string result)
                 : base(result) { }
         }
 
-        [DebuggerHidden]
-        private static void AssertionBreak(string result)
+        private sealed class BreakException: Exception
         {
-            if(Debugger.IsAttached)
-                Debugger.Break();
-            else
-                throw new AssertionFailedException(result);
         }
 
         [DebuggerHidden]
-        public static void TraceBreak()
+        private static void AssertionBreak(string result)
         {
-            if(Debugger.IsAttached)
-                Debugger.Break();
+            if (!Debugger.IsAttached || IsBreakDisabled)
+                throw new AssertionFailedException(result);
+            Debugger.Break();
         }
+
+        [DebuggerHidden]
+        internal static void TraceBreak()
+        {
+            if (!Debugger.IsAttached)
+                return;
+            if (IsBreakDisabled)
+                throw new BreakException();
+            Debugger.Break();
+        }
+
     }
 }

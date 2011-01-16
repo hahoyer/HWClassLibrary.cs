@@ -4,51 +4,118 @@ using System.Linq;
 using System.Reflection;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
+using HWClassLibrary.IO;
+using HWClassLibrary.Relation;
 
 namespace HWClassLibrary.UnitTest
 {
-    internal class TestRunner : Dumpable
+    public sealed class TestRunner : Dumpable
     {
-        private List<TestResult> _testResults= new List<TestResult>();
+        private readonly TestType[] _testTypes;
+        public static bool IsModeErrorFocus;
 
-        public void Add(MethodInfo methodInfo)
+        private TestRunner(IEnumerable<TestType> testTypes)
         {
-            Tracer.Line("Start "+methodInfo.ReturnType.Name + " " + methodInfo.DeclaringType.FullName + "." + methodInfo.Name);
-            Tracer.IndentStart();
-
-            if(methodInfo.GetAttribute<ExplicitAttribute>(true) == null)
-            {
-                var test = Activator.CreateInstance(methodInfo.ReflectedType);
-                var methods = methodInfo
-                    .ReflectedType
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance);
-                var setups = methods
-                    .Where(m => m.GetAttribute<SetUpAttribute>(false) != null)
-                    .ToArray();
-                foreach(var setup in setups)
-                {
-                    Tracer.Line("setup: " + setup.DeclaringType.FullName + "." + setup.Name);
-                    setup.Invoke(test, new object[0]);
-                }
-
-                try
-                {
-                    methodInfo.Invoke(test, new object[0]);
-                }
-                catch(Exception e)
-                {
-                }
-                ;
-            }
-            else
-                Tracer.Line("Test not executed, ExplicitAttribute used");
-            Tracer.IndentEnd();
-            Tracer.Line("End " + methodInfo.ReturnType.Name + " " + methodInfo.DeclaringType.FullName + "." + methodInfo.Name);
+            _testTypes = testTypes.ToArray();
+            Tracer.Assert(_testTypes.IsCircuidFree(Dependants), () => Tracer.Dump(_testTypes.Circuids(Dependants).ToArray()));
+            if(IsModeErrorFocus)
+                LoadConfiguration();
         }
-        public void End() { NotImplementedMethod();  }
+
+        internal static void RunTests(Assembly rootAssembly) { new TestRunner(GetUnitTestTypes(rootAssembly)).Run(); }
+
+        private TestType[] Dependants(TestType type)
+        {
+            if (IsModeErrorFocus)
+                return new TestType[0];
+            return type
+                .Dependants
+                .Select(attribute => attribute.AsTestType(_testTypes))
+                .ToArray();
+        }
+
+        private void Run()
+        {
+            while(RunLevel())
+                continue;
+            SaveConfiguration();
+        }
+
+        private bool RunLevel()
+        {
+            var openTests = _testTypes.Where(x => x.IsStartable).ToArray();
+            if(openTests.Length == 0)
+                return false;
+
+            foreach(var openTest in openTests)
+            {
+                var dependants = Dependants(openTest);
+                if(dependants.All(test => test.IsStarted))
+                {
+                    openTest.IsStarted = true;
+                    if(dependants.All(test => test.IsSuccessfull))
+                    {
+                        if(!IsModeErrorFocus)
+                            SaveConfiguration();
+                        openTest.Run();
+                    }
+                }
+            }
+            return true;
+        }
+
+        private string ConfigurationString
+        {
+            get { return _testTypes.Aggregate("", (current, testType) => current + testType.ConfigurationString); }
+            set
+            {
+                var pairs = value.Split('\n')
+                    .Join(_testTypes, line => line.Split(' ')[0], type => type.Type.FullName, (line, type) => new {line, type});
+                foreach(var pair in pairs)
+                    pair.type.ConfigurationString = pair.line;
+            }
+        }
+
+        private void SaveConfiguration() { File.m("Test.HWconfig").String = ConfigurationString; }
+        private void LoadConfiguration() { ConfigurationString = File.m("Test.HWconfig").String; }
+
+        private static IEnumerable<TestType> GetUnitTestTypes(Assembly rootAssembly)
+        {
+            return GetAssemblies(rootAssembly)
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => !(type.IsAbstract || type.GetAttribute<TestFixtureAttribute>(true) == null))
+                .Select(methodInfo => new TestType(methodInfo));
+        }
+
+        private static IEnumerable<Assembly> GetAssemblies(Assembly rootAssembly)
+        {
+            var result = new[] {rootAssembly};
+            for(IEnumerable<Assembly> referencedAssemblies = result;
+                referencedAssemblies.GetEnumerator().MoveNext();
+                result = result.Concat(referencedAssemblies).ToArray())
+            {
+                referencedAssemblies = referencedAssemblies
+                    .SelectMany(assembly => assembly.GetReferencedAssemblies())
+                    .Select(AssemblyLoad)
+                    .Distinct()
+                    .Where(assembly => !result.Contains(assembly));
+            }
+            return result;
+        }
+
+        private static Assembly AssemblyLoad(AssemblyName yy)
+        {
+            try
+            {
+                return AppDomain.CurrentDomain.Load(yy);
+            }
+            catch(Exception e)
+            {
+                return Assembly.GetExecutingAssembly();
+            }
+        }
     }
 
-    internal class TestResult
-    {
-    }
+    internal sealed class TestFailedException : Exception
+    {}
 }
