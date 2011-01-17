@@ -208,7 +208,22 @@ namespace HWClassLibrary.Debug
             Tracer.TraceBreak();
         }
 
-        public virtual string Dump() { return GetType().FullName + DumpData().Surround("{", "}"); }
+        public string Dump()
+        {
+            var oldIsInDump = _isInDump;
+            _isInDump = true;
+            var result = Dump(oldIsInDump);
+            _isInDump = oldIsInDump;
+            return result;
+        }
+
+        protected virtual string Dump(bool isRecursion)
+        {
+            var surround = "<recursion>"; 
+            if(!isRecursion)
+                surround = DumpData().Surround("{", "}");
+            return GetType().FullName + surround;
+        }
 
         /// <summary>
         /// Gets a value indicating whether this instance is in dump.
@@ -228,9 +243,7 @@ namespace HWClassLibrary.Debug
         /// <returns></returns>
         public virtual string DumpData()
         {
-            var oldIsInDump = _isInDump;
             string result;
-            _isInDump = true;
             try
             {
                 result = Tracer.DumpData(this);
@@ -239,7 +252,6 @@ namespace HWClassLibrary.Debug
             {
                 result = "<not implemented>";
             }
-            _isInDump = oldIsInDump;
             return result;
         }
 
