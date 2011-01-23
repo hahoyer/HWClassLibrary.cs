@@ -144,7 +144,7 @@ namespace HWClassLibrary.Debug
         /// Swith dump on
         /// </summary>
         /// <param name="value">dump this property or not</param>
-        public IsDumpEnabledAttribute(bool value)
+        public IsDumpEnabledAttribute(bool value = true)
         {
             _value = value;
         }

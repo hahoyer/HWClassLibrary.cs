@@ -740,7 +740,7 @@ namespace HWClassLibrary.Debug
         }
 
         [DebuggerHidden]
-        internal static void TraceBreak()
+        public static void TraceBreak()
         {
             if (!Debugger.IsAttached)
                 return;
