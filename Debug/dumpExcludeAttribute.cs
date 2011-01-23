@@ -24,14 +24,6 @@ namespace HWClassLibrary.Debug
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public abstract class DumpDataClassAttribute : Attribute
     {
-        /// <summary>
-        /// override this function to define special dump behaviour of class
-        /// </summary>                            
-        /// <param name="top">true if Dump has been called with that object, 
-        /// false if it is a recursive call within Dump process</param>
-        /// <param name="t">the type to dump. Is the type of any base class of "x"</param>
-        /// <param name="x">the object to dump</param>
-        /// <returns></returns>
         public abstract string Dump(Type t, object x);
     }
 
@@ -102,13 +94,6 @@ namespace HWClassLibrary.Debug
     {
         private readonly string _name;
 
-        /// <summary>
-        /// set "ToString" as dump behaviour of class
-        /// </summary>
-        /// <param name="top">true if Dump has been called with that object, false if it is a recursive call within Dump process</param>
-        /// <param name="t">the type to dump. Is the type of any base class of "x"</param>
-        /// <param name="x">the object to dump</param>
-        /// <returns></returns>
         public override string Dump(Type t, object x)
         {
             try
@@ -159,7 +144,7 @@ namespace HWClassLibrary.Debug
     /// Used to control dump of data element
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public class DumpExceptAttribute : Attribute
+    public sealed class DumpExceptAttribute : Attribute
     {
         private readonly object _exception;
 
