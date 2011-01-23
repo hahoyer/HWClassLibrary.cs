@@ -107,6 +107,21 @@ namespace HWClassLibrary.UnitTest
             }
         }
 
+        public int ConfigurationModePriority
+        {
+            get
+            {
+                if (!IsStarted || IsSuspended)
+                    return 4;
+                if (IsSuccessfull)
+                    return 2;
+                if (IsComplete)
+                    return 1;
+
+                return 3;
+            }
+        }
+
         public void Run()
         {
             foreach(var unitTestMethod in UnitTestMethods)

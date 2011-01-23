@@ -26,7 +26,7 @@ namespace HWClassLibrary.UnitTest
 
         private TestType[] Dependants(TestType type)
         {
-            if (IsModeErrorFocus)
+            if(IsModeErrorFocus)
                 return new TestType[0];
             return type
                 .Dependants
@@ -66,7 +66,12 @@ namespace HWClassLibrary.UnitTest
 
         private string ConfigurationString
         {
-            get { return _testTypes.Aggregate("", (current, testType) => current + testType.ConfigurationString); }
+            get
+            {
+                return _testTypes
+                    .OrderBy(t => t.ConfigurationModePriority)
+                    .Aggregate("", (current, testType) => current + testType.ConfigurationString);
+            }
             set
             {
                 var pairs = value.Split('\n')
@@ -117,5 +122,6 @@ namespace HWClassLibrary.UnitTest
     }
 
     internal sealed class TestFailedException : Exception
-    {}
+    {
+    }
 }
