@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
@@ -8,7 +9,7 @@ namespace HWClassLibrary.Helper
     {
         private readonly List<T> _data;
 
-        private Func<T,T,bool> _isEqual = (a, b) => a.Equals(b);
+        private Func<T, T, bool> _isEqual = (a, b) => a.Equals(b);
 
         [IsDumpEnabled(false)]
         public Func<T, T, bool> IsEqual
@@ -21,29 +22,23 @@ namespace HWClassLibrary.Helper
             }
         }
 
-        public Set()
-        {
-            _data = new List<T>();
-        }
+        public Set() { _data = new List<T>(); }
 
-        private Set(T[] ts)
-        {
-            _data = new List<T>(ts);
-        }
+        private Set(T[] ts) { _data = new List<T>(ts); }
 
         private int Count { get { return _data.Count; } }
 
         /// <summary>
-        /// Returns true if the instance is empty.
+        ///     Returns true if the instance is empty.
         /// </summary>
         /// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
         /// created 14.07.2007 16:43 on HAHOYER-DELL by hh
         public bool IsEmpty { get { return Count == 0; } }
 
         /// <summary>
-        /// Adds an element. 
+        ///     Adds an element.
         /// </summary>
-        /// <param name="t">The t.</param>
+        /// <param name = "t">The t.</param>
         /// created 14.07.2007 16:44 on HAHOYER-DELL by hh
         public void Add(T t)
         {
@@ -52,11 +47,13 @@ namespace HWClassLibrary.Helper
             _data.Add(t);
         }
 
-        private bool Contains(T t)
+        public bool Contains(T t)
         {
             for(var i = 0; i < _data.Count; i++)
+            {
                 if(_isEqual(_data[i], t))
                     return true;
+            }
             return false;
         }
 
@@ -64,8 +61,10 @@ namespace HWClassLibrary.Helper
         {
             var result = new Set<T>();
             for(var i = 0; i < _data.Count; i++)
+            {
                 if(other.Contains(_data[i]))
                     result._data.Add(_data[i]);
+            }
             return result;
         }
 
@@ -78,9 +77,9 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
-        /// Creates the specified data.
+        ///     Creates the specified data.
         /// </summary>
-        /// <param name="data">The data.</param>
+        /// <param name = "data">The data.</param>
         /// <returns></returns>
         /// created 09.08.2007 23:50 on HAHOYER-DELL by hh
         public static Set<T> Create(T[] data)
@@ -93,35 +92,26 @@ namespace HWClassLibrary.Helper
 
         private T this[int i] { get { return _data[i]; } }
 
-        public static Set<T> operator &(Set<T> a, Set<T> b)
-        {
-            return a.And(b);
-        }
+        public static Set<T> operator &(Set<T> a, Set<T> b) { return a.And(b); }
 
-        public static Set<T> operator |(Set<T> a, Set<T> b)
-        {
-            return a.Or(b);
-        }
+        public static Set<T> operator |(Set<T> a, Set<T> b) { return a.Or(b); }
 
-        public List<ResultType> Apply<ResultType>(Func<T, ResultType> applyDelegate)
+        public Set<TResultType> Apply<TResultType>(Func<T, TResultType> applyDelegate)
         {
-            var result = new List<ResultType>();
-            for(var i = 0; i < _data.Count; i++)
-            {
-                var t = _data[i];
+            var result = new Set<TResultType>();
+            foreach(var t in _data)
                 result.Add(applyDelegate(t));
-            }
             return result;
         }
 
-        public CombinedResultType Apply<CombinedResultType, ResultType>
+        public TCombinedResultType Apply<TCombinedResultType, TResultType>
             (
-            Func<T, ResultType> applyDelegate,
-            Func<CombinedResultType, ResultType, CombinedResultType> combineDelegate
-                ) 
-            where CombinedResultType : new()
+            Func<T, TResultType> applyDelegate,
+            Func<TCombinedResultType, TResultType, TCombinedResultType> combineDelegate
+            )
+            where TCombinedResultType : new()
         {
-            var result = new CombinedResultType();
+            var result = new TCombinedResultType();
             for(var i = 0; i < _data.Count; i++)
             {
                 var t = _data[i];
