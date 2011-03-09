@@ -13,6 +13,7 @@ namespace HWClassLibrary.UnitTest
     {
         private readonly TestType[] _testTypes;
         public static bool IsModeErrorFocus;
+        private readonly File _configFile = File.m("Test.HWconfig");
 
         private TestRunner(IEnumerable<TestType> testTypes)
         {
@@ -81,8 +82,23 @@ namespace HWClassLibrary.UnitTest
             }
         }
 
-        private void SaveConfiguration() { File.m("Test.HWconfig").String = ConfigurationString; }
-        private void LoadConfiguration() { ConfigurationString = File.m("Test.HWconfig").String; }
+        private void SaveConfiguration()
+        {
+            _configFile.String = ConfigurationString;
+            ConfigFileMessage("Configuration saved");
+        }
+
+        private void ConfigFileMessage(string flagText)
+        {
+            Tracer.Line(Tracer.FilePosn(_configFile.FullName, 1, 1, flagText));
+        }
+
+
+        private void LoadConfiguration()
+        {
+            ConfigurationString = _configFile.String;
+            ConfigFileMessage("Configuration loaded");
+        }
 
         private static IEnumerable<TestType> GetUnitTestTypes(Assembly rootAssembly)
         {
