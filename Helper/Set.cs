@@ -1,12 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
-    public class Set<T>
+    public sealed class Set<T>: IEnumerable<T>
     {
+        [IsDumpEnabled]
         private readonly List<T> _data;
 
         private Func<T, T, bool> _isEqual = (a, b) => a.Equals(b);
@@ -60,33 +62,24 @@ namespace HWClassLibrary.Helper
         private Set<T> And(Set<T> other)
         {
             var result = new Set<T>();
-            for(var i = 0; i < _data.Count; i++)
-            {
-                if(other.Contains(_data[i]))
-                    result._data.Add(_data[i]);
-            }
+            foreach(var value in _data.Where(other.Contains))
+                result._data.Add(value);
             return result;
         }
 
-        private Set<T> Or(Set<T> other)
+        private Set<T> Or(IEnumerable<T> other)
         {
             var result = new Set<T>(_data.ToArray());
-            for(var i = 0; i < other.Count; i++)
-                result.Add(other[i]);
+            foreach(var value in other)
+                result.Add(value);
             return result;
         }
 
-        /// <summary>
-        ///     Creates the specified data.
-        /// </summary>
-        /// <param name = "data">The data.</param>
-        /// <returns></returns>
-        /// created 09.08.2007 23:50 on HAHOYER-DELL by hh
-        public static Set<T> Create(T[] data)
+        public static Set<T> Create(IEnumerable<T> data)
         {
             var result = new Set<T>();
-            for(var i = 0; i < data.Length; i++)
-                result.Add(data[i]);
+            foreach(T t in data)
+                result.Add(t);
             return result;
         }
 
@@ -94,30 +87,14 @@ namespace HWClassLibrary.Helper
 
         public static Set<T> operator &(Set<T> a, Set<T> b) { return a.And(b); }
 
-        public static Set<T> operator |(Set<T> a, Set<T> b) { return a.Or(b); }
+        public static Set<T> operator |(Set<T> a, IEnumerable<T> b) { return a.Or(b); }
 
-        public Set<TResultType> Apply<TResultType>(Func<T, TResultType> applyDelegate)
-        {
-            var result = new Set<TResultType>();
-            foreach(var t in _data)
-                result.Add(applyDelegate(t));
-            return result;
-        }
+        public IEnumerator<T> GetEnumerator() { return _data.GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+    }
 
-        public TCombinedResultType Apply<TCombinedResultType, TResultType>
-            (
-            Func<T, TResultType> applyDelegate,
-            Func<TCombinedResultType, TResultType, TCombinedResultType> combineDelegate
-            )
-            where TCombinedResultType : new()
-        {
-            var result = new TCombinedResultType();
-            for(var i = 0; i < _data.Count; i++)
-            {
-                var t = _data[i];
-                result = combineDelegate(result, applyDelegate(t));
-            }
-            return result;
-        }
+    public static class SetExtender
+    {
+        public static Set<T> ToSet<T>(this IEnumerable<T> x) { return Set<T>.Create(x); }
     }
 }
