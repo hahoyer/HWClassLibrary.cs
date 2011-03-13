@@ -6,27 +6,18 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
-    public sealed class Set<T>: IEnumerable<T>
+    public sealed class Set<T> : IEnumerable<T>
+        where T : IComparable<T>
     {
         [IsDumpEnabled]
         private readonly List<T> _data;
 
-        private Func<T, T, bool> _isEqual = (a, b) => a.Equals(b);
+        public Set():this(new T[0]) { }
 
-        [IsDumpEnabled(false)]
-        public Func<T, T, bool> IsEqual
+        private Set(T[] ts)
         {
-            get { return _isEqual; }
-            set
-            {
-                Tracer.Assert(Count <= 1);
-                _isEqual = value;
-            }
+            _data = new List<T>(ts);
         }
-
-        public Set() { _data = new List<T>(); }
-
-        private Set(T[] ts) { _data = new List<T>(ts); }
 
         private int Count { get { return _data.Count; } }
 
@@ -36,6 +27,8 @@ namespace HWClassLibrary.Helper
         /// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
         /// created 14.07.2007 16:43 on HAHOYER-DELL by hh
         public bool IsEmpty { get { return Count == 0; } }
+
+        public static Set<T> Empty { get { return new Set<T>(); } }
 
         /// <summary>
         ///     Adds an element.
@@ -53,7 +46,7 @@ namespace HWClassLibrary.Helper
         {
             for(var i = 0; i < _data.Count; i++)
             {
-                if(_isEqual(_data[i], t))
+                if(_data[i].CompareTo(t) == 0)
                     return true;
             }
             return false;
@@ -78,7 +71,7 @@ namespace HWClassLibrary.Helper
         public static Set<T> Create(IEnumerable<T> data)
         {
             var result = new Set<T>();
-            foreach(T t in data)
+            foreach(var t in data)
                 result.Add(t);
             return result;
         }
@@ -95,6 +88,6 @@ namespace HWClassLibrary.Helper
 
     public static class SetExtender
     {
-        public static Set<T> ToSet<T>(this IEnumerable<T> x) { return Set<T>.Create(x); }
+        public static Set<T> ToSet<T>(this IEnumerable<T> x) where T : IComparable<T> { return Set<T>.Create(x); }
     }
 }
