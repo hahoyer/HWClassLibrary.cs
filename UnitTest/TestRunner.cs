@@ -88,10 +88,7 @@ namespace HWClassLibrary.UnitTest
             ConfigFileMessage("Configuration saved");
         }
 
-        private void ConfigFileMessage(string flagText)
-        {
-            Tracer.Line(Tracer.FilePosn(_configFile.FullName, 1, 1, flagText));
-        }
+        private void ConfigFileMessage(string flagText) { Tracer.Line(Tracer.FilePosn(_configFile.FullName, 1, 1, flagText)); }
 
 
         private void LoadConfiguration()
@@ -138,6 +135,5 @@ namespace HWClassLibrary.UnitTest
     }
 
     internal sealed class TestFailedException : Exception
-    {
-    }
+    {}
 }

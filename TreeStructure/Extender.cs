@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.TreeStructure
@@ -14,12 +13,12 @@ namespace HWClassLibrary.TreeStructure
     public static class Extender
     {
         /// <summary>
-        /// Creates a treenode.with a given title from an object
+        ///     Creates a treenode.with a given title from an object
         /// </summary>
-        /// <param name="nodeData"></param>
-        /// <param name="title"></param>
-        /// <param name="iconKey"></param>
-        /// <param name="isDefaultIcon"></param>
+        /// <param name = "nodeData"></param>
+        /// <param name = "title"></param>
+        /// <param name = "iconKey"></param>
+        /// <param name = "isDefaultIcon"></param>
         /// <returns></returns>
         public static TreeNode CreateNode(this object nodeData, string title, string iconKey, bool isDefaultIcon)
         {
@@ -40,84 +39,63 @@ namespace HWClassLibrary.TreeStructure
             return result;
         }
 
-        public static TreeNode CreateNode(this object nodeData)
-        {
-            return CreateNode(nodeData, "", null, false);
-        }
+        public static TreeNode CreateNode(this object nodeData) { return CreateNode(nodeData, "", null, false); }
 
         /// <summary>
-        /// Creates a treenode.with a given title from an object (format: &lt;title&gt;: &lt;nodeData.ToString()&gt;)
+        ///     Creates a treenode.with a given title from an object (format: &lt;title&gt;: &lt;nodeData.ToString()&gt;)
         /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="iconKey">The icon key.</param>
-        /// <param name="nodeData">The node data. Can be <see cref="IIconKeyProvider"/></param>
+        /// <param name = "title">The title.</param>
+        /// <param name = "iconKey">The icon key.</param>
+        /// <param name = "nodeData">The node data. Can be <see cref = "IIconKeyProvider" /></param>
         /// <returns></returns>
-        public static TreeNode CreateTaggedNode(this object nodeData, string title, string iconKey)
-        {
-            return nodeData.CreateTaggedNode(title, iconKey, false);
-        }
+        public static TreeNode CreateTaggedNode(this object nodeData, string title, string iconKey) { return nodeData.CreateTaggedNode(title, iconKey, false); }
 
         /// <summary>
-        /// Creates a treenode.with a given title from an object (format: &lt;title&gt; = &lt;nodeData.ToString()&gt;)
+        ///     Creates a treenode.with a given title from an object (format: &lt;title&gt; = &lt;nodeData.ToString()&gt;)
         /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="iconKey">The icon key.</param>
-        /// <param name="nodeData">The node data. Can be <see cref="IIconKeyProvider"/></param>
+        /// <param name = "title">The title.</param>
+        /// <param name = "iconKey">The icon key.</param>
+        /// <param name = "nodeData">The node data. Can be <see cref = "IIconKeyProvider" /></param>
         /// <returns></returns>
-        public static TreeNode CreateNamedNode(this object nodeData, string title, string iconKey)
-        {
-            return nodeData.CreateNamedNode(title, iconKey, false);
-        }
+        public static TreeNode CreateNamedNode(this object nodeData, string title, string iconKey) { return nodeData.CreateNamedNode(title, iconKey, false); }
 
         /// <summary>
-        /// Creates a treenode.with a given title from an object (format: &lt;title&gt; = &lt;nodeData.ToString()&gt;)
+        ///     Creates a treenode.with a given title from an object (format: &lt;title&gt; = &lt;nodeData.ToString()&gt;)
         /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="iconKey">The icon key.</param>
-        /// <param name="isDefaultIcon">if set to <c>true</c> [is default icon].</param>
-        /// <param name="nodeData">The node data. Can be <see cref="IIconKeyProvider"/></param>
+        /// <param name = "title">The title.</param>
+        /// <param name = "iconKey">The icon key.</param>
+        /// <param name = "isDefaultIcon">if set to <c>true</c> [is default icon].</param>
+        /// <param name = "nodeData">The node data. Can be <see cref = "IIconKeyProvider" /></param>
         /// <returns></returns>
         /// created 06.02.2007 23:26
-        public static TreeNode CreateNamedNode(this object nodeData, string title, string iconKey, bool isDefaultIcon)
-        {
-            return nodeData.CreateNode(title + " = ", iconKey, isDefaultIcon);
-        }
+        public static TreeNode CreateNamedNode(this object nodeData, string title, string iconKey, bool isDefaultIcon) { return nodeData.CreateNode(title + " = ", iconKey, isDefaultIcon); }
 
         /// <summary>
-        /// Creates a treenode.with a given title from an object (format: &lt;title&gt;: &lt;nodeData.ToString()&gt;)
+        ///     Creates a treenode.with a given title from an object (format: &lt;title&gt;: &lt;nodeData.ToString()&gt;)
         /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="iconKey">The icon key.</param>
-        /// <param name="isDefaultIcon">if set to <c>true</c> [is default icon].</param>
-        /// <param name="nodeData">The node data. Can be <see cref="IIconKeyProvider"/></param>
+        /// <param name = "title">The title.</param>
+        /// <param name = "iconKey">The icon key.</param>
+        /// <param name = "isDefaultIcon">if set to <c>true</c> [is default icon].</param>
+        /// <param name = "nodeData">The node data. Can be <see cref = "IIconKeyProvider" /></param>
         /// <returns></returns>
         /// created 06.02.2007 23:26
-        public static TreeNode CreateTaggedNode(this object nodeData, string title, string iconKey, bool isDefaultIcon)
-        {
-            return nodeData.CreateNode(title + ": ", iconKey, isDefaultIcon);
-        }
+        public static TreeNode CreateTaggedNode(this object nodeData, string title, string iconKey, bool isDefaultIcon) { return nodeData.CreateNode(title + ": ", iconKey, isDefaultIcon); }
 
         /// <summary>
-        /// Creates a treenode.with a given title from an object (format: &lt;title&gt;: &lt;nodeData.ToString()&gt;)
+        ///     Creates a treenode.with a given title from an object (format: &lt;title&gt;: &lt;nodeData.ToString()&gt;)
         /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="nodeData">The node data. Can be <see cref="IIconKeyProvider"/></param>
+        /// <param name = "title">The title.</param>
+        /// <param name = "nodeData">The node data. Can be <see cref = "IIconKeyProvider" /></param>
         /// <returns></returns>
-        public static TreeNode CreateTaggedNode(this object nodeData, string title)
-        {
-            return nodeData.CreateTaggedNode(title, null, false);
-        }
+        public static TreeNode CreateTaggedNode(this object nodeData, string title) { return nodeData.CreateTaggedNode(title, null, false); }
 
         /// <summary>
-        /// Creates a treenode.with a given title from an object (format: &lt;title&gt; = &lt;nodeData.ToString()&gt;)
+        ///     Creates a treenode.with a given title from an object (format: &lt;title&gt; = &lt;nodeData.ToString()&gt;)
         /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="nodeData">The node data. Can be <see cref="IIconKeyProvider"/></param>
+        /// <param name = "title">The title.</param>
+        /// <param name = "nodeData">The node data. Can be <see cref = "IIconKeyProvider" /></param>
         /// <returns></returns>
-        public static TreeNode CreateNamedNode(this object nodeData, string title)
-        {
-            return nodeData.CreateNamedNode(title, null, false);
-        }
+        public static TreeNode CreateNamedNode(this object nodeData, string title) { return nodeData.CreateNamedNode(title, null, false); }
 
         private static TreeNode[] InternalCreateNodes(IDictionary dictionary)
         {
@@ -127,15 +105,9 @@ namespace HWClassLibrary.TreeStructure
             return result.ToArray();
         }
 
-        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey)
-        {
-            return CreateNumberedNode(nodeData, i, iconKey, false);
-        }
+        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey) { return CreateNumberedNode(nodeData, i, iconKey, false); }
 
-        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey, bool isDefaultIcon)
-        {
-            return nodeData.CreateNode("[" + i + "] ", iconKey, isDefaultIcon);
-        }
+        private static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey, bool isDefaultIcon) { return nodeData.CreateNode("[" + i + "] ", iconKey, isDefaultIcon); }
 
         private static TreeNode[] InternalCreateNodes(IList list)
         {
@@ -148,16 +120,16 @@ namespace HWClassLibrary.TreeStructure
         private static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry)
         {
             return new[]
-                       {
-                           dictionaryEntry.Key.CreateTaggedNode("key", "Key", true),
-                           dictionaryEntry.Value.CreateTaggedNode("value")
-                       };
+                   {
+                       dictionaryEntry.Key.CreateTaggedNode("key", "Key", true),
+                       dictionaryEntry.Value.CreateTaggedNode("value")
+                   };
         }
 
         /// <summary>
-        /// Gets the name of the icon.
+        ///     Gets the name of the icon.
         /// </summary>
-        /// <param name="nodeData">The node data.</param>
+        /// <param name = "nodeData">The node data.</param>
         /// <returns></returns>
         private static string GetIconKey(this object nodeData)
         {
@@ -258,7 +230,7 @@ namespace HWClassLibrary.TreeStructure
             var type = nodeData.GetType();
             foreach(var fieldInfo in type.GetFields(DefaultBindingFlags))
             {
-                var treeNode = CreateTreeNode(nodeData,fieldInfo);
+                var treeNode = CreateTreeNode(nodeData, fieldInfo);
                 if(treeNode != null)
                     result.Add(treeNode);
             }
@@ -274,25 +246,13 @@ namespace HWClassLibrary.TreeStructure
             }
         }
 
-        private static TreeNode CreateTreeNode(object nodeData, FieldInfo fieldInfo)
-        {
-            return CreateTreeNode(fieldInfo, () => Value(fieldInfo, nodeData));
-        }
+        private static TreeNode CreateTreeNode(object nodeData, FieldInfo fieldInfo) { return CreateTreeNode(fieldInfo, () => Value(fieldInfo, nodeData)); }
 
-        private static TreeNode CreateTreeNode(object nodeData, PropertyInfo propertyInfo)
-        {
-            return CreateTreeNode(propertyInfo,() => Value(propertyInfo, nodeData));
-        }
+        private static TreeNode CreateTreeNode(object nodeData, PropertyInfo propertyInfo) { return CreateTreeNode(propertyInfo, () => Value(propertyInfo, nodeData)); }
 
-        private static object Value(FieldInfo fieldInfo, object nodeData)
-        {
-            return fieldInfo.GetValue(nodeData);
-        }
+        private static object Value(FieldInfo fieldInfo, object nodeData) { return fieldInfo.GetValue(nodeData); }
 
-        private static object Value(PropertyInfo propertyInfo, object nodeData)
-        {
-            return propertyInfo.GetValue(nodeData, null);
-        }
+        private static object Value(PropertyInfo propertyInfo, object nodeData) { return propertyInfo.GetValue(nodeData, null); }
 
         private static TreeNode CreateTreeNode(MemberInfo memberInfo, Func<object> getValue)
         {
@@ -335,14 +295,11 @@ namespace HWClassLibrary.TreeStructure
             nodes.AddRange(treeNodes);
         }
 
-        public static void Connect(this TreeView treeView, object target)
-        {
-            Connect(target,treeView);
-        }
+        public static void Connect(this TreeView treeView, object target) { Connect(target, treeView); }
 
         public static void Connect(this object target, TreeView treeView)
         {
-            CreateNodeList(treeView.Nodes,target);
+            CreateNodeList(treeView.Nodes, target);
             AddSubNodes(treeView.Nodes);
             treeView.BeforeExpand += BeforeExpand;
         }
@@ -363,14 +320,8 @@ namespace HWClassLibrary.TreeStructure
                 CreateNodeList(node);
         }
 
-        internal static void CreateNodeList(this TreeNode node)
-        {
-            CreateNodeList(node.Nodes, node.Tag);
-        }
+        internal static void CreateNodeList(this TreeNode node) { CreateNodeList(node.Nodes, node.Tag); }
 
-        private static void BeforeExpand(object sender, TreeViewCancelEventArgs e)
-        {
-            AddSubNodes(e.Node.Nodes);
-        }
+        private static void BeforeExpand(object sender, TreeViewCancelEventArgs e) { AddSubNodes(e.Node.Nodes); }
     }
 }

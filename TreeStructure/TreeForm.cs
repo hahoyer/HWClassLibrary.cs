@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.TreeStructure
 {
@@ -9,10 +10,7 @@ namespace HWClassLibrary.TreeStructure
     {
         private object _target;
 
-        public TreeForm()
-        {
-            InitializeComponent();
-        }
+        public TreeForm() { InitializeComponent(); }
 
         public object Target
         {

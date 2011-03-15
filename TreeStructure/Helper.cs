@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.TreeStructure
 {
     /// <summary>
-    /// Attribute to define a subnode for treeview. 
-    /// Only for public properties. 
-    /// Only the first attribute is considered
+    ///     Attribute to define a subnode for treeview. 
+    ///     Only for public properties. 
+    ///     Only the first attribute is considered
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property), MeansImplicitUse]
     public class NodeAttribute : Attribute
@@ -17,27 +18,22 @@ namespace HWClassLibrary.TreeStructure
         public readonly string IconKey;
 
         /// <summary>
-        /// Default attribute to define a subnode for treeview. 
-        /// Property name will be used as title of subnode
+        ///     Default attribute to define a subnode for treeview. 
+        ///     Property name will be used as title of subnode
         /// </summary>
         /// created 06.02.2007 23:35
-        public NodeAttribute()
-        {
-        }
+        public NodeAttribute() { }
 
         /// <summary>
-        /// Attribute to define a subnode for treeview with title provided
+        ///     Attribute to define a subnode for treeview with title provided
         /// </summary>
-        /// <param name="iconKey">The icon key.</param>
+        /// <param name = "iconKey">The icon key.</param>
         /// created 06.02.2007 23:35
-        public NodeAttribute(string iconKey)
-        {
-            IconKey = iconKey;
-        }
+        public NodeAttribute(string iconKey) { IconKey = iconKey; }
     }
 
     /// <summary>
-    /// Class attribute to define additional node info property, displayed after node title
+    ///     Class attribute to define additional node info property, displayed after node title
     /// </summary>
     [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
     public class AdditionalNodeInfoAttribute : Attribute
@@ -45,17 +41,14 @@ namespace HWClassLibrary.TreeStructure
         private readonly string _property;
 
         /// <summary>
-        /// Initializes a new instance of the AdditionalNodeInfoAttribute class.
+        ///     Initializes a new instance of the AdditionalNodeInfoAttribute class.
         /// </summary>
-        /// <param name="property">The property.</param>
+        /// <param name = "property">The property.</param>
         /// created 07.02.2007 00:47
-        public AdditionalNodeInfoAttribute(string property)
-        {
-            _property = property;
-        }
+        public AdditionalNodeInfoAttribute(string property) { _property = property; }
 
         /// <summary>
-        /// Property to obtain additional node info
+        ///     Property to obtain additional node info
         /// </summary>
         public string Property { get { return _property; } }
     }
@@ -80,12 +73,12 @@ namespace HWClassLibrary.TreeStructure
     }
 
     /// <summary>
-    /// Provides Icon key for treeview
+    ///     Provides Icon key for treeview
     /// </summary>
     public interface IIconKeyProvider
     {
         /// <summary>
-        /// Gets the icon key.
+        ///     Gets the icon key.
         /// </summary>
         /// <value>The icon key.</value>
         string IconKey { get; }

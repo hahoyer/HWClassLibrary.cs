@@ -6,27 +6,29 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.Debug
 {
     /// <summary>
-    /// Summary description for Tracer.
+    ///     Summary description for Tracer.
     /// </summary>
     public static class Tracer
     {
         private static int _indentCount;
         private static bool _isLineStart = true;
         private static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+
         [UsedImplicitly]
         public static bool IsBreakDisabled;
 
         /// <summary>
-        /// creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
+        ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
-        /// <param name="sf">the stack frame where the location is stored</param>
-        /// <param name="flagText">asis</param>
+        /// <param name = "sf">the stack frame where the location is stored</param>
+        /// <param name = "flagText">asis</param>
         /// <returns>the "FileName(LineNr,ColNr): flagText: " string</returns>
         public static string FilePosn(this StackFrame sf, string flagText)
         {
@@ -36,20 +38,20 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
+        ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
-        /// <param name="fileName">asis</param>
-        /// <param name="lineNr">asis</param>
-        /// <param name="colNr">asis</param>
-        /// <param name="flagText">asis</param>
+        /// <param name = "fileName">asis</param>
+        /// <param name = "lineNr">asis</param>
+        /// <param name = "colNr">asis</param>
+        /// <param name = "flagText">asis</param>
         /// <returns>the "fileName(lineNr,colNr): flagText: " string</returns>
         public static string FilePosn(string fileName, int lineNr, int colNr, string flagText) { return fileName + "(" + (lineNr + 1) + "," + colNr + "): " + flagText + ": "; }
 
         /// <summary>
-        /// creates a string to inspect a method
+        ///     creates a string to inspect a method
         /// </summary>
-        /// <param name="m">the method</param>
-        /// <param name="showParam">controls if parameter list is appended</param>
+        /// <param name = "m">the method</param>
+        /// <param name = "showParam">controls if parameter list is appended</param>
         /// <returns>string to inspect a method</returns>
         public static string DumpMethod(this MethodBase m, bool showParam)
         {
@@ -72,10 +74,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// creates a string to inspect the method call contained in current call stack
+        ///     creates a string to inspect the method call contained in current call stack
         /// </summary>
-        /// <param name="depth">the index of stack frame</param>
-        /// <param name="showParam">controls if parameter list is appended</param>
+        /// <param name = "depth">the index of stack frame</param>
+        /// <param name = "showParam">controls if parameter list is appended</param>
         /// <returns>string to inspect the method call</returns>
         public static string MethodHeader(int depth, bool showParam)
         {
@@ -84,9 +86,9 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// creates a string to inspect the method call contained in current call stack (without parameter list)
+        ///     creates a string to inspect the method call contained in current call stack (without parameter list)
         /// </summary>
-        /// <param name="depth">the index of stack frame</param>
+        /// <param name = "depth">the index of stack frame</param>
         /// <returns>string to inspect the method call</returns>
         public static string MethodHeader(int depth) { return MethodHeader(depth + 1, false); }
 
@@ -124,15 +126,15 @@ namespace HWClassLibrary.Debug
         private static readonly WriteInitiator _writeInitiator = new WriteInitiator();
 
         /// <summary>
-        /// write a line to debug output
+        ///     write a line to debug output
         /// </summary>
-        /// <param name="s">the text</param>
+        /// <param name = "s">the text</param>
         public static void Line(string s) { ThreadSafeWrite(s, true); }
 
         /// <summary>
-        /// write a line to debug output
+        ///     write a line to debug output
         /// </summary>
-        /// <param name="s">the text</param>
+        /// <param name = "s">the text</param>
         public static void LinePart(string s) { ThreadSafeWrite(s, false); }
 
         private static void ThreadSafeWrite(string s, bool isLine)
@@ -178,29 +180,29 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method
+        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method
         /// </summary>
-        /// <param name="s">the text</param>
-        /// <param name="showParam">controls if parameter list is appended</param>
+        /// <param name = "s">the text</param>
+        /// <param name = "showParam">controls if parameter list is appended</param>
         public static void FlaggedLine(string s, bool showParam) { Line(MethodHeader(1, showParam) + s); }
 
         /// <summary>
-        /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
+        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
-        /// <param name="s">the text</param>
+        /// <param name = "s">the text</param>
         public static void FlaggedLine(string s) { Line(MethodHeader(1, false) + s); }
 
         /// <summary>
-        /// write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
+        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="s">the text</param>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "s">the text</param>
         public static void FlaggedLine(int stackFrameDepth, string s) { Line(MethodHeader(stackFrameDepth + 1, false) + s); }
 
         /// <summary>
-        /// generic dump function by use of reflection
+        ///     generic dump function by use of reflection
         /// </summary>
-        /// <param name="x">the object to dump</param>
+        /// <param name = "x">the object to dump</param>
         /// <returns></returns>
         public static string Dump(object x)
         {
@@ -210,9 +212,9 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// generic dump function by use of reflection
+        ///     generic dump function by use of reflection
         /// </summary>
-        /// <param name="x">the object to dump</param>
+        /// <param name = "x">the object to dump</param>
         /// <returns></returns>
         public static string DumpData(object x)
         {
@@ -327,7 +329,7 @@ namespace HWClassLibrary.Debug
         private static string InternalDumpData(this Type t, object x)
         {
             var dumpData = t.GetAttribute<DumpDataClassAttribute>(false);
-            if (dumpData != null)
+            if(dumpData != null)
                 return dumpData.Dump(t, x);
             var f = t.GetFields(AnyBinding);
             var fieldDump = "";
@@ -377,8 +379,8 @@ namespace HWClassLibrary.Debug
 
             if(m is FieldInfo)
                 return ((FieldInfo) m).IsPrivate;
-            
-            if(((PropertyInfo)m).CanRead)
+
+            if(((PropertyInfo) m).CanRead)
                 return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
             return true;
         }
@@ -452,12 +454,12 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Indent
+        ///     Indent
         /// </summary>
         public static void IndentStart() { _indentCount++; }
 
         /// <summary>
-        /// Unindent
+        ///     Unindent
         /// </summary>
         public static void IndentEnd() { _indentCount--; }
 
@@ -476,27 +478,27 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Indent paramer by 4 spaces
+        ///     Indent paramer by 4 spaces
         /// </summary>
-        /// <param name="s"></param>
-        /// <param name="count"></param>
+        /// <param name = "s"></param>
+        /// <param name = "count"></param>
         /// <returns></returns>
         public static string Indent(string s, int count) { return s.Replace("\n", "\n" + IndentElem(count)); }
 
         /// <summary>
-        /// Indent paramer by 4 spaces
+        ///     Indent paramer by 4 spaces
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name = "s"></param>
         /// <returns></returns>
         public static string Indent(string s) { return Indent(s, 1); }
 
         /// <summary>
-        /// Surrounds string by left and right parenthesis. 
-        /// If string contains any carriage return, some indenting is done also 
+        ///     Surrounds string by left and right parenthesis. 
+        ///     If string contains any carriage return, some indenting is done also
         /// </summary>
-        /// <param name="left"></param>
-        /// <param name="data"></param>
-        /// <param name="right"></param>
+        /// <param name = "left"></param>
+        /// <param name = "data"></param>
+        /// <param name = "right"></param>
         /// <returns></returns>
         public static string Surround(string left, string data, string right)
         {
@@ -506,10 +508,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
+        ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
         /// </summary>
-        /// <param name="text">some text</param>
-        /// <param name="parameter">parameter objects list for the frame</param>
+        /// <param name = "text">some text</param>
+        /// <param name = "parameter">parameter objects list for the frame</param>
         public static void DumpStaticMethodWithData(string text, params object[] parameter)
         {
             var result = DumpMethodWithData(text, 1, null, parameter);
@@ -525,11 +527,11 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Dumps the data.
+        ///     Dumps the data.
         /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="depth">The stack depth.</param>
-        /// <param name="data">The data, as name/value pair.</param>
+        /// <param name = "text">The text.</param>
+        /// <param name = "depth">The stack depth.</param>
+        /// <param name = "data">The data, as name/value pair.</param>
         /// <returns></returns>
         public static string DumpData(string text, int depth, object[] data)
         {
@@ -575,11 +577,11 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Function used for condition al break
+        ///     Function used for condition al break
         /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="cond">The cond.</param>
-        /// <param name="data">The data.</param>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "cond">The cond.</param>
+        /// <param name = "data">The data.</param>
         /// <returns></returns>
         [DebuggerHidden]
         public static void ConditionalBreak(int stackFrameDepth, string cond, Func<string> data)
@@ -590,11 +592,11 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Check boolean expression
+        ///     Check boolean expression
         /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="b">if set to <c>true</c> [b].</param>
-        /// <param name="text">The text.</param>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "b">if set to <c>true</c> [b].</param>
+        /// <param name = "text">The text.</param>
         [DebuggerHidden]
         public static void ConditionalBreak(int stackFrameDepth, bool b, Func<string> text)
         {
@@ -610,11 +612,11 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Throws the assertion failed.
+        ///     Throws the assertion failed.
         /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="cond">The cond.</param>
-        /// <param name="data">The data.</param>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "cond">The cond.</param>
+        /// <param name = "data">The data.</param>
         /// created 15.10.2006 18:04
         [DebuggerHidden]
         public static void ThrowAssertionFailed(int stackFrameDepth, string cond, Func<string> data)
@@ -624,20 +626,20 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Throws the assertion failed.
+        ///     Throws the assertion failed.
         /// </summary>
-        /// <param name="s">The s.</param>
-        /// <param name="s1">The s1.</param>
+        /// <param name = "s">The s.</param>
+        /// <param name = "s1">The s1.</param>
         /// created 16.12.2006 18:28
         [DebuggerHidden]
         public static void ThrowAssertionFailed(string s, Func<string> s1) { ThrowAssertionFailed(1, s, s1); }
 
         /// <summary>
-        /// Function used in assertions
+        ///     Function used in assertions
         /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="cond">The cond.</param>
-        /// <param name="data">The data.</param>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "cond">The cond.</param>
+        /// <param name = "data">The data.</param>
         /// <returns></returns>
         [DebuggerHidden]
         public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data)
@@ -649,11 +651,11 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Check boolean expression
+        ///     Check boolean expression
         /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="b">if set to <c>true</c> [b].</param>
-        /// <param name="text">The text.</param>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "b">if set to <c>true</c> [b].</param>
+        /// <param name = "text">The text.</param>
         [DebuggerHidden, AssertionMethod]
         public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b,
                                   Func<string> text)
@@ -664,56 +666,51 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Check boolean expression
+        ///     Check boolean expression
         /// </summary>
-        /// <param name="stackFrameDepth">The stack frame depth.</param>
-        /// <param name="b">if set to <c>true</c> [b].</param>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "b">if set to <c>true</c> [b].</param>
         [DebuggerHidden, AssertionMethod]
         public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
         {
             if(b)
                 return;
-            AssertionFailed(stackFrameDepth + 1, "", ()=>"");
+            AssertionFailed(stackFrameDepth + 1, "", () => "");
         }
 
         /// <summary>
-        /// Asserts the specified b.
+        ///     Asserts the specified b.
         /// </summary>
-        /// <param name="b">if set to <c>true</c> [b].</param>
+        /// <param name = "b">if set to <c>true</c> [b].</param>
         /// created 16.12.2006 18:27
         [DebuggerHidden, AssertionMethod]
         public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b) { Assert(1, b); }
 
         /// <summary>
-        /// Asserts the specified b.
+        ///     Asserts the specified b.
         /// </summary>
-        /// <param name="b">if set to <c>true</c> [b].</param>
-        /// <param name="s">The s.</param>
+        /// <param name = "b">if set to <c>true</c> [b].</param>
+        /// <param name = "s">The s.</param>
         /// created 16.12.2006 18:29
         [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> s)
-        {
-            Assert(1, b, s);
-        }
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> s) { Assert(1, b, s); }
+
         [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s)
-        {
-            Assert(1, b, ()=>s);
-        }
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s) { Assert(1, b, () => s); }
 
         /// <summary>
-        /// Assertions the failed.
+        ///     Assertions the failed.
         /// </summary>
-        /// <param name="s">The s.</param>
-        /// <param name="s1">The s1.</param>
+        /// <param name = "s">The s.</param>
+        /// <param name = "s1">The s1.</param>
         /// created 16.12.2006 18:30
         [DebuggerHidden]
         public static void AssertionFailed(string s, Func<string> s1) { AssertionFailed(1, s, s1); }
 
         /// <summary>
-        /// Outputs the specified text.
+        ///     Outputs the specified text.
         /// </summary>
-        /// <param name="text">The text.</param>
+        /// <param name = "text">The text.</param>
         /// Created 09.09.07 12:03 by hh on HAHOYER-DELL
         public static void ConsoleOutput(string text)
         {
@@ -727,14 +724,13 @@ namespace HWClassLibrary.Debug
                 : base(result) { }
         }
 
-        private sealed class BreakException: Exception
-        {
-        }
+        private sealed class BreakException : Exception
+        {}
 
         [DebuggerHidden]
         private static void AssertionBreak(string result)
         {
-            if (!Debugger.IsAttached || IsBreakDisabled)
+            if(!Debugger.IsAttached || IsBreakDisabled)
                 throw new AssertionFailedException(result);
             Debugger.Break();
         }
@@ -742,12 +738,11 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void TraceBreak()
         {
-            if (!Debugger.IsAttached)
+            if(!Debugger.IsAttached)
                 return;
-            if (IsBreakDisabled)
+            if(IsBreakDisabled)
                 throw new BreakException();
             Debugger.Break();
         }
-
     }
 }

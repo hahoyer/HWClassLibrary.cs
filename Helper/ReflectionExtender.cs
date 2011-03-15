@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
@@ -40,16 +41,10 @@ namespace HWClassLibrary.Helper
         }
 
         [CanBeNull]
-        public static TAttribute GetRecentAttribute<TAttribute>(this Type @this) where TAttribute : Attribute
-        {
-            return GetAttribute<TAttribute>(@this, false) ?? GetRecentAttributeBase<TAttribute>(@this.BaseType);
-        }
+        public static TAttribute GetRecentAttribute<TAttribute>(this Type @this) where TAttribute : Attribute { return GetAttribute<TAttribute>(@this, false) ?? GetRecentAttributeBase<TAttribute>(@this.BaseType); }
 
         [CanBeNull]
-        private static TAttribute GetRecentAttributeBase<TAttribute>(this Type @this) where TAttribute : Attribute
-        {
-            return @this == null ? null : @this.GetRecentAttribute<TAttribute>();
-        }
+        private static TAttribute GetRecentAttributeBase<TAttribute>(this Type @this) where TAttribute : Attribute { return @this == null ? null : @this.GetRecentAttribute<TAttribute>(); }
 
         [CanBeNull]
         public static TAttribute GetAttribute<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute

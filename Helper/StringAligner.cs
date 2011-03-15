@@ -1,20 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
     /// <summary>
-    /// Class to align strings
+    ///     Class to align strings
     /// </summary>
     public class StringAligner
     {
         private readonly List<FloatingColumn> _floatingColumns = new List<FloatingColumn>();
 
         /// <summary>
-        /// Adds the floating column.
+        ///     Adds the floating column.
         /// </summary>
-        /// <param name="pattern">The pattern.</param>
+        /// <param name = "pattern">The pattern.</param>
         /// created 15.10.2006 14:58
         public void AddFloatingColumn(params string[] pattern)
         {
@@ -25,9 +26,9 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
-        /// Formats the specified string.
+        ///     Formats the specified string.
         /// </summary>
-        /// <param name="s">The string.</param>
+        /// <param name = "s">The string.</param>
         /// <returns></returns>
         /// created 15.10.2006 14:59
         public string Format(string s)
@@ -44,34 +45,31 @@ namespace HWClassLibrary.Helper
     }
 
     /// <summary>
-    /// Description of a floating column
+    ///     Description of a floating column
     /// </summary>
     public abstract class FloatingColumn : Dumpable
     {
         /// <summary>
-        /// called when find start failed
+        ///     called when find start failed
         /// </summary>
-        public Func<string,int,int> FindStartFailed;
+        public Func<string, int, int> FindStartFailed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingColumn"/> class.
+        ///     Initializes a new instance of the <see cref = "FloatingColumn" /> class.
         /// </summary>
         /// created 15.10.2006 15:44
-        protected FloatingColumn()
-        {
-            FindStartFailed = ((s, i) => s.Length);
-        }
+        protected FloatingColumn() { FindStartFailed = ((s, i) => s.Length); }
 
         /// <summary>
-        /// Formats the specified lines beginning at specified positions .
+        ///     Formats the specified lines beginning at specified positions .
         /// </summary>
-        /// <param name="lines">The lines, will be modified.</param>
-        /// <param name="positions">The positions, will be set to end of part handled.</param>
+        /// <param name = "lines">The lines, will be modified.</param>
+        /// <param name = "positions">The positions, will be set to end of part handled.</param>
         /// created 15.10.2006 15:07
         public void Format(string[] lines, int[] positions)
         {
             var count = lines.Length;
-            if (count > 0 && lines[count - 1] == "")
+            if(count > 0 && lines[count - 1] == "")
                 count--;
             for(var i = 0; i < count; i++)
                 positions[i] = FindStart(lines[i], positions[i]);
@@ -111,46 +109,43 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
-        /// Finds the start.of column marker
+        ///     Finds the start.of column marker
         /// </summary>
-        /// <param name="s">The string.</param>
-        /// <param name="i">The old start position.</param>
+        /// <param name = "s">The string.</param>
+        /// <param name = "i">The old start position.</param>
         /// <returns></returns>
         /// created 15.10.2006 15:22
         public abstract int FindStart(string s, int i);
 
         /// <summary>
-        /// Finds the end.of column marker
+        ///     Finds the end.of column marker
         /// </summary>
-        /// <param name="s">The string.</param>
-        /// <param name="i">The old start position.</param>
+        /// <param name = "s">The string.</param>
+        /// <param name = "i">The old start position.</param>
         /// <returns></returns>
         /// created 15.10.2006 15:22
         public abstract int FindEnd(string s, int i);
     }
 
     /// <summary>
-    /// Floating column with string pattern. Spaces inserted before pattern. 
+    ///     Floating column with string pattern. Spaces inserted before pattern.
     /// </summary>
     public class StringPattern : FloatingColumn
     {
         private readonly string[] _pattern;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StringPattern"/> class.
+        ///     Initializes a new instance of the <see cref = "StringPattern" /> class.
         /// </summary>
-        /// <param name="pattern">The pattern.</param>
+        /// <param name = "pattern">The pattern.</param>
         /// created 15.10.2006 14:57
-        public StringPattern(string[] pattern)
-        {
-            _pattern = pattern;
-        }
+        public StringPattern(string[] pattern) { _pattern = pattern; }
 
         /// <summary>
-        /// Finds the start.of column marker
+        ///     Finds the start.of column marker
         /// </summary>
-        /// <param name="s">The string.</param>
-        /// <param name="start">The old start position.</param>
+        /// <param name = "s">The string.</param>
+        /// <param name = "start">The old start position.</param>
         /// <returns></returns>
         /// created 15.10.2006 15:22
         /// created 15.10.2006 15:23
@@ -171,10 +166,10 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
-        /// Finds the end.of column marker
+        ///     Finds the end.of column marker
         /// </summary>
-        /// <param name="s">The string.</param>
-        /// <param name="start">The old start position.</param>
+        /// <param name = "s">The string.</param>
+        /// <param name = "start">The old start position.</param>
         /// <returns></returns>
         /// created 15.10.2006 15:22
         public override int FindEnd(string s, int start)
@@ -197,5 +192,4 @@ namespace HWClassLibrary.Helper
             return start;
         }
     }
-
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
@@ -11,10 +13,7 @@ namespace HWClassLibrary.Helper
         private bool _isBusy;
         private TValueType _value;
 
-        public SimpleCache(Func<TValueType> createValue)
-        {
-            _createValue = createValue;
-        }
+        public SimpleCache(Func<TValueType> createValue) { _createValue = createValue; }
 
         public TValueType Value
         {
@@ -30,7 +29,7 @@ namespace HWClassLibrary.Helper
             Tracer.Assert(!_isBusy);
             if(_isValid)
                 return;
-            
+
             _isBusy = true;
             _value = _createValue();
             _isValid = true;
@@ -40,9 +39,9 @@ namespace HWClassLibrary.Helper
         public void Reset()
         {
             Tracer.Assert(!_isBusy);
-            if (!_isValid)
+            if(!_isValid)
                 return;
-            
+
             _isBusy = true;
             _value = default(TValueType);
             _isValid = false;

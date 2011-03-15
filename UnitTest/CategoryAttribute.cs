@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.UnitTest
@@ -10,26 +13,22 @@ namespace HWClassLibrary.UnitTest
         public CategoryAttribute(string name) { Name = name; }
     }
 
-    [AttributeUsage(AttributeTargets.Method)]
-    [MeansImplicitUse]
+    [AttributeUsage(AttributeTargets.Method), MeansImplicitUse]
+    
     public sealed class TestAttribute : Attribute
-    {
-    }
+    {}
 
-    [AttributeUsage(AttributeTargets.Class)]
-    [MeansImplicitUse]
+    [AttributeUsage(AttributeTargets.Class), MeansImplicitUse]
+    
     public sealed class TestFixtureAttribute : Attribute
-    {
-    }
+    {}
 
-    [AttributeUsage(AttributeTargets.Method)]
-    [MeansImplicitUse]
+    [AttributeUsage(AttributeTargets.Method), MeansImplicitUse]
+    
     public abstract class SetUpAttribute : Attribute
-    {
-    }
+    {}
 
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ExplicitAttribute : Attribute
-    {
-    }
+    {}
 }

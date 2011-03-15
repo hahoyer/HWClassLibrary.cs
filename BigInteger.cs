@@ -131,14 +131,17 @@
 //************************************************************************************
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using HWClassLibrary.Debug;
 
-namespace HWClassLibrary
+namespace HWClassLibrary.Obsolete
 {
     /// <summary>
-    /// Big integers of automatic length
+    ///     Big integers of automatic length
     /// </summary>
-    [Obsolete("",true)]
-    public class BigInteger
+    [Obsolete("", true)]
+    public sealed class BigInteger
     {
         // maximum length of the BigInteger in uint (4 bytes)
         // change this to suit the required level of precision.
@@ -174,7 +177,7 @@ namespace HWClassLibrary
         private int dataLength; // number of actual chars used
 
         /// <summary>
-        /// Constructor (Default value for BigInteger is 0
+        ///     Constructor (Default value for BigInteger is 0
         /// </summary>
         public BigInteger()
         {
@@ -186,9 +189,9 @@ namespace HWClassLibrary
         // 
         //***********************************************************************
         /// <summary>
-        /// Constructor (Default value provided by long)
+        ///     Constructor (Default value provided by long)
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public BigInteger(long value)
         {
             data = new uint[maxLength];
@@ -211,17 +214,19 @@ namespace HWClassLibrary
                     throw (new ArithmeticException("Positive overflow in constructor."));
             }
             else if(tempVal < 0) // underflow check for -ve value
+            {
                 if(value != -1 || (data[dataLength - 1] & 0x80000000) == 0)
                     throw (new ArithmeticException("Negative underflow in constructor."));
+            }
 
             if(dataLength == 0)
                 dataLength = 1;
         }
 
         /// <summary>
-        /// Constructor (Default value provided by BigInteger)
+        ///     Constructor (Default value provided by BigInteger)
         /// </summary>
-        /// <param name="bi"></param>
+        /// <param name = "bi"></param>
         public BigInteger(BigInteger bi)
         {
             data = new uint[maxLength];
@@ -256,10 +261,10 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// Constructor (Default value provided by a string of digits of the specified base)
+        ///     Constructor (Default value provided by a string of digits of the specified base)
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="radix"></param>
+        /// <param name = "value"></param>
+        /// <param name = "radix"></param>
         public BigInteger(string value, int radix)
         {
             var multiplier = new BigInteger(1);
@@ -328,9 +333,9 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// Constructor (Default value provided by an array of bytes)
+        ///     Constructor (Default value provided by an array of bytes)
         /// </summary>
-        /// <param name="inData"></param>
+        /// <param name = "inData"></param>
         public BigInteger(byte[] inData)
         {
             dataLength = inData.Length >> 2;
@@ -345,8 +350,10 @@ namespace HWClassLibrary
             data = new uint[maxLength];
 
             for(int i = inData.Length - 1, j = 0; i >= 3; i -= 4, j++)
+            {
                 data[j] = (uint) ((inData[i - 3] << 24) + (inData[i - 2] << 16) +
                                   (inData[i - 1] << 8) + inData[i]);
+            }
 
             if(leftOver == 1)
                 data[dataLength - 1] = inData[0];
@@ -365,10 +372,10 @@ namespace HWClassLibrary
         // 
         //***********************************************************************
         /// <summary>
-        /// Constructor (Default value provided by an array of bytes of the specified length.)
+        ///     Constructor (Default value provided by an array of bytes of the specified length.)
         /// </summary>
-        /// <param name="inData"></param>
-        /// <param name="inLen"></param>
+        /// <param name = "inData"></param>
+        /// <param name = "inLen"></param>
         public BigInteger(byte[] inData, int inLen)
         {
             dataLength = inLen >> 2;
@@ -383,8 +390,10 @@ namespace HWClassLibrary
             data = new uint[maxLength];
 
             for(int i = inLen - 1, j = 0; i >= 3; i -= 4, j++)
+            {
                 data[j] = (uint) ((inData[i - 3] << 24) + (inData[i - 2] << 16) +
                                   (inData[i - 1] << 8) + inData[i]);
+            }
 
             if(leftOver == 1)
                 data[dataLength - 1] = inData[0];
@@ -403,9 +412,9 @@ namespace HWClassLibrary
         }
 
         /// <summary>
-        /// ctor
+        ///     ctor
         /// </summary>
-        /// <param name="inData"></param>
+        /// <param name = "inData"></param>
         private BigInteger(uint[] inData)
         {
             dataLength = inData.Length;
@@ -432,20 +441,14 @@ namespace HWClassLibrary
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static implicit operator BigInteger(long value)
-        {
-            return (new BigInteger(value));
-        }
+        public static implicit operator BigInteger(long value) { return (new BigInteger(value)); }
 
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static implicit operator BigInteger(int value)
-        {
-            return (new BigInteger(value));
-        }
+        public static implicit operator BigInteger(int value) { return (new BigInteger(value)); }
 
         //***********************************************************************
         // Overloading of addition operator
@@ -517,8 +520,10 @@ namespace HWClassLibrary
             if(index > result.dataLength)
                 result.dataLength = index;
             else
+            {
                 while(result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
                     result.dataLength--;
+            }
 
             // overflow check
             var lastPos = maxLength - 1;
@@ -659,7 +664,8 @@ namespace HWClassLibrary
                     bi2 = -bi2;
                 }
             }
-            catch(Exception) {}
+            catch(Exception)
+            {}
 
             var result = new BigInteger();
 
@@ -702,6 +708,7 @@ namespace HWClassLibrary
             if((result.data[lastPos] & 0x80000000) != 0)
             {
                 if(bi1Neg != bi2Neg && result.data[lastPos] == 0x80000000) // different sign
+                {
                     // handle the special case where multiplication produces
                     // a max negative number in 2's complement.
 
@@ -711,12 +718,15 @@ namespace HWClassLibrary
                     {
                         var isMaxNeg = true;
                         for(var i = 0; i < result.dataLength - 1 && isMaxNeg; i++)
+                        {
                             if(result.data[i] != 0)
                                 isMaxNeg = false;
+                        }
 
                         if(isMaxNeg)
                             return result;
                     }
+                }
 
                 throw (new ArithmeticException("Multiplication overflow."));
             }
@@ -773,11 +783,13 @@ namespace HWClassLibrary
                 }
 
                 if(carry != 0)
+                {
                     if(bufLen + 1 <= buffer.Length)
                     {
                         buffer[bufLen] = (uint) carry;
                         bufLen++;
                     }
+                }
                 count -= shiftAmount;
             }
             return bufLen;
@@ -936,10 +948,7 @@ namespace HWClassLibrary
         /// <param name="bi1"></param>
         /// <param name="bi2"></param>
         /// <returns></returns>
-        public static bool operator ==(BigInteger bi1, BigInteger bi2)
-        {
-            return bi1.Equals(bi2);
-        }
+        public static bool operator ==(BigInteger bi1, BigInteger bi2) { return bi1.Equals(bi2); }
 
         /// <summary>
         /// Overloading of inequality operator
@@ -947,15 +956,12 @@ namespace HWClassLibrary
         /// <param name="bi1"></param>
         /// <param name="bi2"></param>
         /// <returns></returns>
-        public static bool operator !=(BigInteger bi1, BigInteger bi2)
-        {
-            return !(bi1.Equals(bi2));
-        }
+        public static bool operator !=(BigInteger bi1, BigInteger bi2) { return !(bi1.Equals(bi2)); }
 
         /// <summary>
-        /// asis
+        ///     asis
         /// </summary>
-        /// <param name="o"></param>
+        /// <param name = "o"></param>
         /// <returns></returns>
         public override bool Equals(object o)
         {
@@ -965,19 +971,18 @@ namespace HWClassLibrary
                 return false;
 
             for(var i = 0; i < dataLength; i++)
+            {
                 if(data[i] != bi.data[i])
                     return false;
+            }
             return true;
         }
 
         /// <summary>
-        /// asis
+        ///     asis
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
+        public override int GetHashCode() { return ToString().GetHashCode(); }
 
         //***********************************************************************
         // Overloading of inequality operator
@@ -1052,10 +1057,7 @@ namespace HWClassLibrary
         /// <param name="bi1"></param>
         /// <param name="bi2"></param>
         /// <returns></returns>
-        public static bool operator >=(BigInteger bi1, BigInteger bi2)
-        {
-            return (bi1 == bi2 || bi1 > bi2);
-        }
+        public static bool operator >=(BigInteger bi1, BigInteger bi2) { return (bi1 == bi2 || bi1 > bi2); }
 
         /// <summary>
         /// Overloading of inequality operator
@@ -1063,10 +1065,7 @@ namespace HWClassLibrary
         /// <param name="bi1"></param>
         /// <param name="bi2"></param>
         /// <returns></returns>
-        public static bool operator <=(BigInteger bi1, BigInteger bi2)
-        {
-            return (bi1 == bi2 || bi1 < bi2);
-        }
+        public static bool operator <=(BigInteger bi1, BigInteger bi2) { return (bi1 == bi2 || bi1 < bi2); }
 
         //***********************************************************************
         // Private function that supports the division of two numbers with
@@ -1443,9 +1442,9 @@ namespace HWClassLibrary
         // Returns max(this, bi)
         //***********************************************************************
         /// <summary>
-        /// asis
+        ///     asis
         /// </summary>
-        /// <param name="bi"></param>
+        /// <param name = "bi"></param>
         /// <returns></returns>
         public BigInteger max(BigInteger bi)
         {
@@ -1459,9 +1458,9 @@ namespace HWClassLibrary
         // Returns min(this, bi)
         //***********************************************************************
         /// <summary>
-        /// asis
+        ///     asis
         /// </summary>
-        /// <param name="bi"></param>
+        /// <param name = "bi"></param>
         /// <returns></returns>
         public BigInteger min(BigInteger bi)
         {
@@ -1475,7 +1474,7 @@ namespace HWClassLibrary
         // Returns the absolute value
         //***********************************************************************
         /// <summary>
-        /// asis
+        ///     asis
         /// </summary>
         /// <returns></returns>
         public BigInteger abs()
@@ -1490,13 +1489,10 @@ namespace HWClassLibrary
         // Returns a string representing the BigInteger in base 10.
         //***********************************************************************
         /// <summary>
-        /// asis
+        ///     asis
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return ToString(10);
-        }
+        public override string ToString() { return ToString(10); }
 
         //***********************************************************************
         // Returns a string representing the BigInteger in sign-and-magnitude
@@ -1509,9 +1505,9 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// asis
+        ///     asis
         /// </summary>
-        /// <param name="radix"></param>
+        /// <param name = "radix"></param>
         /// <returns></returns>
         public string ToString(int radix)
         {
@@ -1531,7 +1527,8 @@ namespace HWClassLibrary
                 {
                     a = -a;
                 }
-                catch(Exception) {}
+                catch(Exception)
+                {}
             }
 
             var quotient = new BigInteger();
@@ -1574,7 +1571,7 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// Returns a hex string showing the contains of the BigInteger
+        ///     Returns a hex string showing the contains of the BigInteger
         /// </summary>
         /// <returns></returns>
         public string ToHexString()
@@ -1591,10 +1588,10 @@ namespace HWClassLibrary
         // Modulo Exponentiation
         //***********************************************************************
         /// <summary>
-        /// Modulo Exponentiation
+        ///     Modulo Exponentiation
         /// </summary>
-        /// <param name="exp"></param>
-        /// <param name="n"></param>
+        /// <param name = "exp"></param>
+        /// <param name = "n"></param>
         /// <returns></returns>
         public BigInteger modPow(BigInteger exp, BigInteger n)
         {
@@ -1748,9 +1745,9 @@ namespace HWClassLibrary
         // Returns gcd(this, bi)
         //***********************************************************************
         /// <summary>
-        /// Returns gcd(this, bi)
+        ///     Returns gcd(this, bi)
         /// </summary>
-        /// <param name="bi"></param>
+        /// <param name = "bi"></param>
         /// <returns></returns>
         public BigInteger gcd(BigInteger bi)
         {
@@ -1783,10 +1780,10 @@ namespace HWClassLibrary
         // Populates "this" with the specified amount of random bits
         //***********************************************************************
         /// <summary>
-        /// Populates "this" with the specified amount of random bits
+        ///     Populates "this" with the specified amount of random bits
         /// </summary>
-        /// <param name="bits"></param>
-        /// <param name="rand"></param>
+        /// <param name = "bits"></param>
+        /// <param name = "rand"></param>
         public void genRandomBits(int bits, Random rand)
         {
             var dwords = bits >> 5;
@@ -1831,7 +1828,7 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// Returns the position of the most significant bit in the BigInteger.
+        ///     Returns the position of the most significant bit in the BigInteger.
         /// </summary>
         /// <returns></returns>
         public int bitCount()
@@ -1874,9 +1871,9 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// Probabilistic prime test based on Fermat's little theorem
+        ///     Probabilistic prime test based on Fermat's little theorem
         /// </summary>
-        /// <param name="confidence"></param>
+        /// <param name = "confidence"></param>
         /// <returns></returns>
         public bool FermatLittleTest(int confidence)
         {
@@ -1887,11 +1884,13 @@ namespace HWClassLibrary
                 thisVal = this;
 
             if(thisVal.dataLength == 1)
+            {
                 // test small numbers
                 if(thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
                 else if(thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
+            }
 
             if((thisVal.data[0] & 0x1) == 0) // even numbers
                 return false;
@@ -1963,9 +1962,9 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// Probabilistic prime test based on Rabin-Miller's
+        ///     Probabilistic prime test based on Rabin-Miller's
         /// </summary>
-        /// <param name="confidence"></param>
+        /// <param name = "confidence"></param>
         /// <returns></returns>
         public bool RabinMillerTest(int confidence)
         {
@@ -1976,11 +1975,13 @@ namespace HWClassLibrary
                 thisVal = this;
 
             if(thisVal.dataLength == 1)
+            {
                 // test small numbers
                 if(thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
                 else if(thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
+            }
 
             if((thisVal.data[0] & 0x1) == 0) // even numbers
                 return false;
@@ -2088,9 +2089,9 @@ namespace HWClassLibrary
         //
         //***********************************************************************
         /// <summary>
-        /// Probabilistic prime test based on Solovay-Strassen (Euler Criterion)
+        ///     Probabilistic prime test based on Solovay-Strassen (Euler Criterion)
         /// </summary>
-        /// <param name="confidence"></param>
+        /// <param name = "confidence"></param>
         /// <returns></returns>
         public bool SolovayStrassenTest(int confidence)
         {
@@ -2101,11 +2102,13 @@ namespace HWClassLibrary
                 thisVal = this;
 
             if(thisVal.dataLength == 1)
+            {
                 // test small numbers
                 if(thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
                 else if(thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
+            }
 
             if((thisVal.data[0] & 0x1) == 0) // even numbers
                 return false;
@@ -2177,7 +2180,7 @@ namespace HWClassLibrary
         // Otherwise, returns False indicating that number is composite.
         //***********************************************************************
         /// <summary>
-        /// Implementation of the Lucas Strong Pseudo Prime test.
+        ///     Implementation of the Lucas Strong Pseudo Prime test.
         /// </summary>
         /// <returns></returns>
         public bool LucasStrongTest()
@@ -2189,11 +2192,13 @@ namespace HWClassLibrary
                 thisVal = this;
 
             if(thisVal.dataLength == 1)
+            {
                 // test small numbers
                 if(thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
                 else if(thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
+            }
 
             if((thisVal.data[0] & 0x1) == 0) // even numbers
                 return false;
@@ -2334,11 +2339,11 @@ namespace HWClassLibrary
         // Returns true if number is probably prime.
         //***********************************************************************
         /// <summary>
-        /// Determines whether a number is probably prime, using the Rabin-Miller's 
-        /// test.  Before applying the test, the number is tested for divisibility
-        /// by primes less than 2000
+        ///     Determines whether a number is probably prime, using the Rabin-Miller's 
+        ///     test.  Before applying the test, the number is tested for divisibility
+        ///     by primes less than 2000
         /// </summary>
-        /// <param name="confidence"></param>
+        /// <param name = "confidence"></param>
         /// <returns></returns>
         public bool isProbablePrime(int confidence)
         {
@@ -2394,7 +2399,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
         //
         //***********************************************************************
         /// <summary>
-        /// Determines whether this BigInteger is probably prime 
+        ///     Determines whether this BigInteger is probably prime
         /// </summary>
         /// <returns></returns>
         public bool isProbablePrime()
@@ -2406,11 +2411,13 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
                 thisVal = this;
 
             if(thisVal.dataLength == 1)
+            {
                 // test small numbers
                 if(thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
                 else if(thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
+            }
 
             if((thisVal.data[0] & 0x1) == 0) // even numbers
                 return false;
@@ -2487,19 +2494,16 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
         // Returns the lowest 4 bytes of the BigInteger as an int.
         //***********************************************************************
         /// <summary>
-        /// Returns the lowest 4 bytes of the BigInteger as an int.
+        ///     Returns the lowest 4 bytes of the BigInteger as an int.
         /// </summary>
         /// <returns></returns>
-        public int IntValue()
-        {
-            return (int) data[0];
-        }
+        public int IntValue() { return (int) data[0]; }
 
         //***********************************************************************
         // Returns the lowest 8 bytes of the BigInteger as a long.
         //***********************************************************************
         /// <summary>
-        /// Returns the lowest 8 bytes of the BigInteger as a long.
+        ///     Returns the lowest 8 bytes of the BigInteger as a long.
         /// </summary>
         /// <returns></returns>
         public long LongValue()
@@ -2526,10 +2530,10 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
         // Algorithm adapted from [3] and [4] with some optimizations
         //***********************************************************************
         /// <summary>
-        /// Computes the Jacobi Symbol for a and b.
+        ///     Computes the Jacobi Symbol for a and b.
         /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
+        /// <param name = "a"></param>
+        /// <param name = "b"></param>
         /// <returns></returns>
         public static int Jacobi(BigInteger a, BigInteger b)
         {
@@ -2545,10 +2549,12 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
                 return 1; // a == 1
 
             if(a < 0)
+            {
                 if((((b - 1).data[0]) & 0x2) == 0) //if( (((b-1) >> 1).data[0] & 0x1) == 0)
                     return Jacobi(-a, b);
                 else
                     return -Jacobi(-a, b);
+            }
 
             var e = 0;
             for(var index = 0; index < a.dataLength; index++)
@@ -2586,11 +2592,11 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
         // Generates a positive BigInteger that is probably prime.
         //***********************************************************************
         /// <summary>
-        /// Generates a positive BigInteger that is probably prime.
+        ///     Generates a positive BigInteger that is probably prime.
         /// </summary>
-        /// <param name="bits"></param>
-        /// <param name="confidence"></param>
-        /// <param name="rand"></param>
+        /// <param name = "bits"></param>
+        /// <param name = "confidence"></param>
+        /// <param name = "rand"></param>
         /// <returns></returns>
         public static BigInteger genPseudoPrime(int bits, int confidence, Random rand)
         {
@@ -2612,10 +2618,10 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
         // Generates a random number with the specified number of bits such that gcd(number, this) = 1
         //***********************************************************************
         /// <summary>
-        /// Generates a random number with the specified number of bits such that gcd(number, this) = 1
+        ///     Generates a random number with the specified number of bits such that gcd(number, this) = 1
         /// </summary>
-        /// <param name="bits"></param>
-        /// <param name="rand"></param>
+        /// <param name = "bits"></param>
+        /// <param name = "rand"></param>
         /// <returns></returns>
         public BigInteger genCoPrime(int bits, Random rand)
         {
@@ -2641,9 +2647,9 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
         // the inverse does not exist.  (i.e. gcd(this, modulus) != 1)
         //***********************************************************************
         /// <summary>
-        /// Returns the modulo inverse of this.  Throws ArithmeticException if
+        ///     Returns the modulo inverse of this.  Throws ArithmeticException if
         /// </summary>
-        /// <param name="modulus"></param>
+        /// <param name = "modulus"></param>
         /// <returns></returns>
         public BigInteger modInverse(BigInteger modulus)
         {
@@ -2706,7 +2712,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
         // Returns the value of the BigInteger as a byte array.  The lowest index contains the MSB.
         //***********************************************************************
         /// <summary>
-        /// Returns the value of the BigInteger as a byte array.  The lowest index contains the MSB.
+        ///     Returns the value of the BigInteger as a byte array.  The lowest index contains the MSB.
         /// </summary>
         /// <returns></returns>
         public byte[] getBytes()
@@ -3049,6 +3055,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
 
                 var done = false;
                 while(!done)
+                {
                     for(var i = 0; i < 64; i++)
                     {
                         if(i < t1)
@@ -3059,9 +3066,11 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
                         if(val[i] != 0)
                             done = true;
                     }
+                }
 
                 done = false;
                 while(!done)
+                {
                     for(var i = 0; i < 64; i++)
                     {
                         if(i < t2)
@@ -3072,6 +3081,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
                         if(val2[i] != 0)
                             done = true;
                     }
+                }
 
                 while(val[0] == 0)
                     val[0] = (byte) (rand.NextDouble()*256);
@@ -3134,6 +3144,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
 
                 var done = false;
                 while(!done)
+                {
                     for(var i = 0; i < 64; i++)
                     {
                         if(i < t1)
@@ -3144,6 +3155,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
                         if(val[i] != 0)
                             done = true;
                     }
+                }
 
                 while(val[0] == 0)
                     val[0] = (byte) (rand.NextDouble()*256);
@@ -3228,6 +3240,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
 
                 var done = false;
                 while(!done)
+                {
                     for(var i = 0; i < 64; i++)
                     {
                         if(i < t1)
@@ -3238,6 +3251,7 @@ Console.WriteLine("Not prime!  Divisible by {0}\n",
                         if(val[i] != 0)
                             done = true;
                     }
+                }
 
                 while(val[0] == 0)
                     val[0] = (byte) (rand.NextDouble()*256);

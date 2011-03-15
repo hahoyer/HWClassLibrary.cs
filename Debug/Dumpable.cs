@@ -2,33 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.Debug
 {
     /// <summary>
-    /// Summary description for Dumpable.
+    ///     Summary description for Dumpable.
     /// </summary>
-    [Dump("Dump"), Serializable]
-    [DebuggerDisplay("{DebuggerDumpString}")]
+    [Dump("Dump"), Serializable, DebuggerDisplay("{DebuggerDumpString}")]
+    
     public class Dumpable
     {
         /// <summary>
-        /// generate dump string to be shown in debug windows
+        ///     generate dump string to be shown in debug windows
         /// </summary>
         /// <returns></returns>
         public virtual string DebuggerDump() { return Tracer.Dump(this); }
 
         /// <summary>
-        /// dump string to be shown in debug windows
+        ///     dump string to be shown in debug windows
         /// </summary>
         [IsDumpEnabled(false)]
         public string DebuggerDumpString { get { return DebuggerDump().Replace("\n", "\r\n"); } }
 
         /// <summary>
-        /// Method dump with break,  
+        ///     Method dump with break,
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         public static void NotImplementedFunction(params object[] p)
@@ -39,10 +40,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method start dump, 
+        ///     Method start dump,
         /// </summary>
-        /// <param name="trace"></param>
-        /// <param name="p"></param>
+        /// <param name = "trace"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected void StartMethodDump(bool trace, params object[] p)
@@ -55,10 +56,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method start dump, 
+        ///     Method start dump,
         /// </summary>
-        /// <param name="trace"></param>
-        /// <param name="p"></param>
+        /// <param name = "trace"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected void StartMethodDumpWithBreak(bool trace, params object[] p)
@@ -72,10 +73,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method start dump, 
+        ///     Method start dump,
         /// </summary>
-        /// <param name="trace"></param>
-        /// <param name="p"></param>
+        /// <param name = "trace"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected static void DumpWithBreak(bool trace, params object[] p)
@@ -88,10 +89,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method start dump, 
+        ///     Method start dump,
         /// </summary>
-        /// <param name="trace"></param>
-        /// <param name="p"></param>
+        /// <param name = "trace"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected static void Dump(bool trace, params object[] p)
@@ -103,10 +104,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method dump, 
+        ///     Method dump,
         /// </summary>
-        /// <param name="trace"></param>
-        /// <param name="rv"></param>
+        /// <param name = "trace"></param>
+        /// <param name = "rv"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected static T ReturnMethodDump<T>(bool trace, T rv)
@@ -119,9 +120,9 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method dump,
+        ///     Method dump,
         /// </summary>
-        /// <param name="trace">if set to <c>true</c> [trace].</param>
+        /// <param name = "trace">if set to <c>true</c> [trace].</param>
         [DebuggerHidden]
         protected static void ReturnMethodDump(bool trace)
         {
@@ -133,9 +134,9 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method dump,
+        ///     Method dump,
         /// </summary>
-        /// <param name="trace">if set to <c>true</c> [trace].</param>
+        /// <param name = "trace">if set to <c>true</c> [trace].</param>
         [DebuggerHidden]
         protected static void ReturnMethodDumpWithBreak(bool trace)
         {
@@ -148,10 +149,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method dump, 
+        ///     Method dump,
         /// </summary>
-        /// <param name="trace"></param>
-        /// <param name="rv"></param>
+        /// <param name = "trace"></param>
+        /// <param name = "rv"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected static T ReturnMethodDumpWithBreak<T>(bool trace, T rv)
@@ -165,10 +166,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method dump with break,  
+        ///     Method dump with break,
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="p"></param>
+        /// <param name = "text"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected void DumpMethodWithBreak(string text, params object[] p)
@@ -179,10 +180,10 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method dump with break,  
+        ///     Method dump with break,
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="p"></param>
+        /// <param name = "text"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected static void DumpDataWithBreak(string text, params object[] p)
@@ -193,9 +194,9 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        /// Method dump with break,  
+        ///     Method dump with break,
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
         protected void NotImplementedMethod(params object[] p)
@@ -219,17 +220,17 @@ namespace HWClassLibrary.Debug
 
         protected virtual string Dump(bool isRecursion)
         {
-            var surround = "<recursion>"; 
+            var surround = "<recursion>";
             if(!isRecursion)
                 surround = DumpData().Surround("{", "}");
             return GetType().FullName + surround;
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is in dump.
+        ///     Gets a value indicating whether this instance is in dump.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is in dump; otherwise, <c>false</c>.
+        ///     <c>true</c> if this instance is in dump; otherwise, <c>false</c>.
         /// </value>
         /// created 23.09.2006 17:39
         [IsDumpEnabled(false)]
@@ -238,7 +239,7 @@ namespace HWClassLibrary.Debug
         private bool _isInDump;
 
         /// <summary>
-        /// Default dump of data
+        ///     Default dump of data
         /// </summary>
         /// <returns></returns>
         public virtual string DumpData()

@@ -15,10 +15,7 @@ namespace HWClassLibrary.UnitTest
         private TestMethod[] _forcedMethods;
         private bool IsSuspended;
 
-        public IEnumerable<DependantAttribute> Dependants
-        {
-            get { return Type.GetAttributes<DependantAttribute>(true); }
-        }
+        public IEnumerable<DependantAttribute> Dependants { get { return Type.GetAttributes<DependantAttribute>(true); } }
 
         internal IEnumerable<TestMethod> UnitTestMethods
         {
@@ -33,20 +30,11 @@ namespace HWClassLibrary.UnitTest
 
         public bool IsStarted { get; set; }
 
-        public bool IsStartable
-        {
-            get { return !IsStarted && !IsSuspended; }
-        }
+        public bool IsStartable { get { return !IsStarted && !IsSuspended; } }
 
-        public bool IsComplete
-        {
-            get { return _isComplete; }
-        }
+        public bool IsComplete { get { return _isComplete; } }
 
-        public bool IsSuccessfull
-        {
-            get { return IsComplete && _failedMethods.Count == 0; }
-        }
+        public bool IsSuccessfull { get { return IsComplete && _failedMethods.Count == 0; } }
 
         public string ConfigurationString
         {
@@ -111,11 +99,11 @@ namespace HWClassLibrary.UnitTest
         {
             get
             {
-                if (!IsStarted || IsSuspended)
+                if(!IsStarted || IsSuspended)
                     return 4;
-                if (IsSuccessfull)
+                if(IsSuccessfull)
                     return 2;
-                if (IsComplete)
+                if(IsComplete)
                     return 1;
 
                 return 3;

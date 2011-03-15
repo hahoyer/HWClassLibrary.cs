@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using HWClassLibrary.Helper;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.UnitTest
 {

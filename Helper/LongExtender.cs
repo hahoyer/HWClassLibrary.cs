@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using HWClassLibrary.Debug;
 using HWClassLibrary.UnitTest;
 
@@ -9,14 +11,14 @@ namespace HWClassLibrary.Helper
         public static string Format3Digits(this long value)
         {
             var size = 0;
-            for (; value >= 1000; size++, value /= 10)
+            for(; value >= 1000; size++, value /= 10)
                 continue;
 
             var result = value.ToString();
-            if (size%3 > 0)
+            if(size%3 > 0)
                 result = result.Insert(size%3, ".");
 
-            if (size == 0)
+            if(size == 0)
                 return result;
             return result + "kMGTPEZY"[(size - 1)/3];
         }
@@ -48,6 +50,6 @@ namespace HWClassLibrary.Helper
             InternalTest(123456789012345678, "123P");
         }
 
-        private static void InternalTest(long x, string y) { Tracer.Assert(1, x.Format3Digits() == y,()=> x + " != " + y); }
+        private static void InternalTest(long x, string y) { Tracer.Assert(1, x.Format3Digits() == y, () => x + " != " + y); }
     }
 }

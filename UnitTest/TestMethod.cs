@@ -13,15 +13,9 @@ namespace HWClassLibrary.UnitTest
         public bool IsSuspended;
         public TestMethod(MethodInfo methodInfo) { _methodInfo = methodInfo; }
 
-        public string ConfigurationString
-        {
-            get { return Name + ","; }
-        }
+        public string ConfigurationString { get { return Name + ","; } }
 
-        public string Name
-        {
-            get { return _methodInfo.Name; }
-        }
+        public string Name { get { return _methodInfo.Name; } }
 
         private object Setup()
         {

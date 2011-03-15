@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.DataBase
 {
@@ -17,7 +20,8 @@ namespace HWClassLibrary.DataBase
         {
             get
             {
-                if (Type == typeof (string)) return "TEXT";
+                if(Type == typeof(string))
+                    return "TEXT";
                 throw new NotImplementedException();
             }
         }
@@ -26,11 +30,11 @@ namespace HWClassLibrary.DataBase
         {
             var value = _fieldInfo.GetValue(o);
             var result = value.ToString();
-            if (DBType == "TEXT")
+            if(DBType == "TEXT")
                 result = "'" + result.Replace("'", "''") + "'";
             return result;
         }
 
-        public void Value(object o, object value) { _fieldInfo.SetValue(o,value); }
+        public void Value(object o, object value) { _fieldInfo.SetValue(o, value); }
     }
 }

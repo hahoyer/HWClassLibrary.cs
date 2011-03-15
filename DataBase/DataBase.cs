@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.DataBase
@@ -15,7 +17,7 @@ namespace HWClassLibrary.DataBase
         {
             get
             {
-                if (_connection == null)
+                if(_connection == null)
                 {
                     _connection = new SQLiteConnection {ConnectionString = ConnectionString};
                     _connection.Open();
@@ -35,19 +37,19 @@ namespace HWClassLibrary.DataBase
             {
                 reader = command.ExecuteReader();
             }
-            catch (SQLiteException e)
+            catch(SQLiteException e)
             {
                 var expectedMessage = "SQLite error\r\nno such table: " + SQLGenerator<T>.TableName;
-                if (expectedMessage != e.Message)
+                if(expectedMessage != e.Message)
                     throw;
                 CreateTable<T>();
                 return new T[0];
             }
             var result = new List<T>();
-            foreach (var dataReader in reader)
+            foreach(var dataReader in reader)
             {
                 var @object = new T();
-                SQLGenerator<T>.SetValues(@object,reader);
+                SQLGenerator<T>.SetValues(@object, reader);
                 result.Add(@object);
             }
             return result.ToArray();
