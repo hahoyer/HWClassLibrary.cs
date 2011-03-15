@@ -12,12 +12,10 @@ namespace HWClassLibrary.Helper
         [IsDumpEnabled]
         private readonly List<T> _data;
 
-        public Set():this(new T[0]) { }
+        public Set()
+            : this(new T[0]) { }
 
-        private Set(T[] ts)
-        {
-            _data = new List<T>(ts);
-        }
+        private Set(T[] ts) { _data = new List<T>(ts); }
 
         private int Count { get { return _data.Count; } }
 
@@ -52,13 +50,7 @@ namespace HWClassLibrary.Helper
             return false;
         }
 
-        private Set<T> And(Set<T> other)
-        {
-            var result = new Set<T>();
-            foreach(var value in _data.Where(other.Contains))
-                result._data.Add(value);
-            return result;
-        }
+        private Set<T> And(Set<T> other) { return _data.Where(other.Contains).ToSet(); }
 
         private Set<T> Or(IEnumerable<T> other)
         {
@@ -76,11 +68,15 @@ namespace HWClassLibrary.Helper
             return result;
         }
 
+        private Set<T> Without(Set<T> other) { return _data.Where(x => !other.Contains(x)).ToSet(); }
+
         private T this[int i] { get { return _data[i]; } }
 
         public static Set<T> operator &(Set<T> a, Set<T> b) { return a.And(b); }
 
         public static Set<T> operator |(Set<T> a, IEnumerable<T> b) { return a.Or(b); }
+        public static Set<T> operator |(Set<T> a, T b) { return a.Or(b.ToSet()); }
+        public static Set<T> operator -(Set<T> a, T b) { return a.Without(b.ToSet()); }
 
         public IEnumerator<T> GetEnumerator() { return _data.GetEnumerator(); }
         IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
@@ -89,5 +85,6 @@ namespace HWClassLibrary.Helper
     public static class SetExtender
     {
         public static Set<T> ToSet<T>(this IEnumerable<T> x) where T : IComparable<T> { return Set<T>.Create(x); }
+        public static Set<T> ToSet<T>(this T x) where T : IComparable<T> { return Set<T>.Create(new[] {x}); }
     }
 }
