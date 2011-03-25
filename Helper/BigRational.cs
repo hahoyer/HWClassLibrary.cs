@@ -6,9 +6,12 @@ using System;
 
 namespace HWClassLibrary.Helper
 {
+    [Dump("ToString")]
     public sealed class BigRational : IEquatable<BigRational>
     {
+        [IsDumpEnabled(false)]
         public readonly BigInteger Nominator;
+        [IsDumpEnabled(false)]
         public readonly BigInteger Denominator;
 
         public BigRational(BigInteger nominator, BigInteger denominator)
