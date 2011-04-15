@@ -41,9 +41,9 @@ namespace HWClassLibrary.UnitTest
             get
             {
                 return
-                    Type.FullName
+                    ConfigurationMode
                     + " "
-                    + ConfigurationMode
+                    + Type.FullName
                     + " "
                     + FailedMethodNames
                     + "\n";
@@ -51,8 +51,8 @@ namespace HWClassLibrary.UnitTest
             set
             {
                 var elements = value.Split(' ');
-                Tracer.Assert(elements[0] == Type.FullName);
-                ConfigurationMode = elements[1];
+                Tracer.Assert(elements[1] == Type.FullName);
+                ConfigurationMode = elements[0];
                 FailedMethodNames = elements[2];
             }
         }

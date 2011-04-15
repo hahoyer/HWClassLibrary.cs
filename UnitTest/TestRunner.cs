@@ -76,7 +76,8 @@ namespace HWClassLibrary.UnitTest
             set
             {
                 var pairs = value.Split('\n')
-                    .Join(_testTypes, line => line.Split(' ')[0], type => type.Type.FullName, (line, type) => new {line, type});
+                    .Where(line => line != "")
+                    .Join(_testTypes, line => line.Split(' ')[1], type => type.Type.FullName, (line, type) => new {line, type});
                 foreach(var pair in pairs)
                     pair.type.ConfigurationString = pair.line;
             }
