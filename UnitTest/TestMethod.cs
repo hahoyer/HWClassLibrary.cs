@@ -17,23 +17,6 @@ namespace HWClassLibrary.UnitTest
 
         public string Name { get { return _methodInfo.Name; } }
 
-        private object Setup()
-        {
-            var test = Activator.CreateInstance(_methodInfo.ReflectedType);
-            var methods = _methodInfo
-                .ReflectedType
-                .GetMethods(BindingFlags.Public | BindingFlags.Instance);
-            var setups = methods
-                .Where(m => m.GetAttribute<SetUpAttribute>(false) != null)
-                .ToArray();
-            foreach(var setup in setups)
-            {
-                Tracer.Line("setup: " + setup.DeclaringType.FullName + "." + setup.Name);
-                setup.Invoke(test, new object[0]);
-            }
-            return test;
-        }
-
         private void ShowException(Exception e)
         {
             Tracer.Line("*********************Exception: " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
@@ -53,7 +36,7 @@ namespace HWClassLibrary.UnitTest
                     Tracer.Line("Test not executed, ExplicitAttribute used");
                 else if(!IsSuspended)
                 {
-                    var test = Setup();
+                    var test = Activator.CreateInstance(_methodInfo.ReflectedType);
                     var isBreakDisabled = Tracer.IsBreakDisabled;
                     Tracer.IsBreakDisabled = !TestRunner.IsModeErrorFocus;
                     try
