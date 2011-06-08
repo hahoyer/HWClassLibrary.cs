@@ -114,7 +114,7 @@ namespace HWClassLibrary.Debug
     /// <summary>
     ///     Used to control dump of data element
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field), MeansImplicitUse]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class IsDumpEnabledAttribute : Attribute
     {
         private readonly bool _value;
