@@ -113,11 +113,11 @@ namespace HWClassLibrary.Debug
 
     public abstract class DumpEnabledAttributeBase : Attribute
     {
-        private readonly bool _value;
+        private readonly bool _isEnabled;
 
-        protected DumpEnabledAttributeBase(bool value) { _value = value; }
+        protected DumpEnabledAttributeBase(bool isEnabled) { _isEnabled = isEnabled; }
 
-        public bool Value { get { return _value; } }
+        public bool IsEnabled { get { return _isEnabled; } }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field), MeansImplicitUse]

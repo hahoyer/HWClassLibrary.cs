@@ -367,7 +367,7 @@ namespace HWClassLibrary.Debug
         {
             var dda = m.GetAttribute<EnableDumpAttribute>(true);
             if(dda != null)
-                return dda.Value;
+                return dda.IsEnabled;
 
             return !IsPrivateOrDump(m);
         }
