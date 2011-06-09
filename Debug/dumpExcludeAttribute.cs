@@ -111,24 +111,24 @@ namespace HWClassLibrary.Debug
         public DumpDataAttribute(string name) { _name = name; }
     }
 
-    public abstract class DumpEnabledAttributeBase : Attribute
+    public abstract class DumpEnabledAttribute : Attribute
     {
         private readonly bool _isEnabled;
 
-        protected DumpEnabledAttributeBase(bool isEnabled) { _isEnabled = isEnabled; }
+        protected DumpEnabledAttribute(bool isEnabled) { _isEnabled = isEnabled; }
 
         public bool IsEnabled { get { return _isEnabled; } }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field), MeansImplicitUse]
-    public sealed class EnableDumpAttribute : DumpEnabledAttributeBase
+    public sealed class EnableDumpAttribute : DumpEnabledAttribute
     {
         public EnableDumpAttribute()
             : base(true) {}
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public sealed class DisableDumpAttribute : DumpEnabledAttributeBase
+    public sealed class DisableDumpAttribute : DumpEnabledAttribute
     {
         public DisableDumpAttribute()
             : base(false) { }
