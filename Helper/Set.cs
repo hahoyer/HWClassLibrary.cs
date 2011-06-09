@@ -9,7 +9,7 @@ namespace HWClassLibrary.Helper
     public sealed class Set<T> : IEnumerable<T>
         where T : IComparable<T>
     {
-        [IsDumpEnabled]
+        [EnableDump]
         private readonly List<T> _data;
 
         public Set()
@@ -24,7 +24,7 @@ namespace HWClassLibrary.Helper
         /// </summary>
         /// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
         /// created 14.07.2007 16:43 on HAHOYER-DELL by hh
-        [IsDumpEnabled(false)]
+        [DisableDump]
         public bool IsEmpty { get { return Count == 0; } }
 
         public static Set<T> Empty { get { return new Set<T>(); } }

@@ -23,7 +23,7 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     dump string to be shown in debug windows
         /// </summary>
-        [IsDumpEnabled(false)]
+        [DisableDump]
         public string DebuggerDumpString { get { return DebuggerDump().Replace("\n", "\r\n"); } }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace HWClassLibrary.Debug
         ///     <c>true</c> if this instance is in dump; otherwise, <c>false</c>.
         /// </value>
         /// created 23.09.2006 17:39
-        [IsDumpEnabled(false)]
+        [DisableDump]
         public bool IsInDump { get { return _isInDump; } }
 
         private bool _isInDump;

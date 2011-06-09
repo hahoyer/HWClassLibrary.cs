@@ -40,7 +40,7 @@ namespace HWClassLibrary.Helper
 
         public DictionaryEx<TKey, TValue> Clone { get { return new DictionaryEx<TKey, TValue>(this); } }
 
-        [IsDumpEnabled(false)]
+        [DisableDump]
         public string NodeDump
         {
             get

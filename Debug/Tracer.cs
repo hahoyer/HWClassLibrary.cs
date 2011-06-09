@@ -365,7 +365,7 @@ namespace HWClassLibrary.Debug
 
         private static bool CheckDumpDataAttribute(this MemberInfo m)
         {
-            var dda = m.GetAttribute<IsDumpEnabledAttribute>(true);
+            var dda = m.GetAttribute<EnableDumpAttribute>(true);
             if(dda != null)
                 return dda.Value;
 

@@ -9,9 +9,9 @@ namespace HWClassLibrary.Helper
     [Dump("ToString")]
     public sealed class BigRational : IEquatable<BigRational>
     {
-        [IsDumpEnabled(false)]
+        [DisableDump]
         public readonly BigInteger Nominator;
-        [IsDumpEnabled(false)]
+        [DisableDump]
         public readonly BigInteger Denominator;
 
         public BigRational(BigInteger nominator, BigInteger denominator)
@@ -22,7 +22,7 @@ namespace HWClassLibrary.Helper
             Tracer.Assert(Denominator > 0);
         }
 
-        [IsDumpEnabled(false)]
+        [DisableDump]
         public bool IsNegative { get { return Nominator < 0; } }
 
         private static BigInteger GreatestCommonDivisor(BigInteger nominator, BigInteger denominator)

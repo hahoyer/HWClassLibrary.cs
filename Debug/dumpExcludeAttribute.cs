@@ -111,24 +111,27 @@ namespace HWClassLibrary.Debug
         public DumpDataAttribute(string name) { _name = name; }
     }
 
-    /// <summary>
-    ///     Used to control dump of data element
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public sealed class IsDumpEnabledAttribute : Attribute
+    public abstract class DumpEnabledAttributeBase : Attribute
     {
         private readonly bool _value;
 
-        /// <summary>
-        ///     Swith dump on
-        /// </summary>
-        /// <param name = "value">dump this property or not</param>
-        public IsDumpEnabledAttribute(bool value = true) { _value = value; }
+        protected DumpEnabledAttributeBase(bool value) { _value = value; }
 
-        /// <summary>
-        ///     Swith dump on
-        /// </summary>
         public bool Value { get { return _value; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field), MeansImplicitUse]
+    public sealed class EnableDumpAttribute : DumpEnabledAttributeBase
+    {
+        public EnableDumpAttribute()
+            : base(true) {}
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    public sealed class DisableDumpAttribute : DumpEnabledAttributeBase
+    {
+        public DisableDumpAttribute()
+            : base(false) { }
     }
 
     /// <summary>
