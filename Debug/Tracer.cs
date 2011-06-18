@@ -85,15 +85,24 @@ namespace HWClassLibrary.Debug
             return FilePosn(sf, DumpMethod(sf.GetMethod(), showParam));
         }
 
+        public static string CallingMethodName(int depth)
+        {
+            var sf = new StackTrace(true).GetFrame(depth + 1);
+            return DumpMethod(sf.GetMethod(), false);
+        }
+
         /// <summary>
         ///     creates a string to inspect the method call contained in current call stack (without parameter list)
         /// </summary>
         /// <param name = "depth">the index of stack frame</param>
         /// <returns>string to inspect the method call</returns>
+        [UsedImplicitly]
         public static string MethodHeader(int depth) { return MethodHeader(depth + 1, false); }
 
+        [UsedImplicitly]
         public static string StackTrace() { return StackTrace(1); }
 
+        [UsedImplicitly]
         public static string StackTrace(int depth)
         {
             var stackTrace = new StackTrace(true);
@@ -107,7 +116,7 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        private class WriteInitiator
+        private sealed class WriteInitiator
         {
             private string _name = "";
             private string _lastName = "";
@@ -735,6 +744,7 @@ namespace HWClassLibrary.Debug
             Debugger.Break();
         }
 
+        [UsedImplicitly]
         [DebuggerHidden]
         public static void TraceBreak()
         {
@@ -744,5 +754,9 @@ namespace HWClassLibrary.Debug
                 throw new BreakException();
             Debugger.Break();
         }
+
+        [UsedImplicitly]
+        public static string CallingMethodName() { return CallingMethodName(1); }
+
     }
 }

@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Debug
 {
     /// <summary>
     ///     Summary description for Dumpable.
     /// </summary>
-    [Dump("Dump"), Serializable, DebuggerDisplay("{DebuggerDumpString}")]
+    [Dump("Dump")]
     
     public class Dumpable
     {
@@ -23,7 +24,7 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     dump string to be shown in debug windows
         /// </summary>
-        [DisableDump]
+        [DisableDump, UsedImplicitly]
         public string DebuggerDumpString { get { return DebuggerDump().Replace("\n", "\r\n"); } }
 
         /// <summary>

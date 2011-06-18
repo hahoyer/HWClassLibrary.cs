@@ -128,7 +128,7 @@ namespace HWClassLibrary.UnitTest
             {
                 return AppDomain.CurrentDomain.Load(yy);
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return Assembly.GetExecutingAssembly();
             }

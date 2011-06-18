@@ -12,8 +12,7 @@ namespace HWClassLibrary.UnitTest
         internal TestType(Type type) { Type = type; }
         private bool _isComplete;
         private readonly List<TestMethod> _failedMethods = new List<TestMethod>();
-        private TestMethod[] _forcedMethods;
-        private bool IsSuspended;
+        private bool _isSuspended;
 
         public IEnumerable<DependantAttribute> Dependants { get { return Type.GetAttributes<DependantAttribute>(true); } }
 
@@ -30,7 +29,7 @@ namespace HWClassLibrary.UnitTest
 
         public bool IsStarted { get; set; }
 
-        public bool IsStartable { get { return !IsStarted && !IsSuspended; } }
+        public bool IsStartable { get { return !IsStarted && !_isSuspended; } }
 
         public bool IsComplete { get { return _isComplete; } }
 
@@ -79,7 +78,7 @@ namespace HWClassLibrary.UnitTest
         {
             get
             {
-                if(!IsStarted || IsSuspended)
+                if(!IsStarted || _isSuspended)
                     return "notrun";
                 if(IsSuccessfull)
                     return "success";
@@ -91,7 +90,7 @@ namespace HWClassLibrary.UnitTest
             set
             {
                 if(value != "error")
-                    IsSuspended = true;
+                    _isSuspended = true;
             }
         }
 
@@ -99,7 +98,7 @@ namespace HWClassLibrary.UnitTest
         {
             get
             {
-                if(!IsStarted || IsSuspended)
+                if(!IsStarted || _isSuspended)
                     return 4;
                 if(IsSuccessfull)
                     return 2;
