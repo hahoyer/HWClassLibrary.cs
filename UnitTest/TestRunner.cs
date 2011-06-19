@@ -100,38 +100,10 @@ namespace HWClassLibrary.UnitTest
 
         private static IEnumerable<TestType> GetUnitTestTypes(Assembly rootAssembly)
         {
-            return GetAssemblies(rootAssembly)
-                .SelectMany(assembly => assembly.GetTypes())
+            return rootAssembly
+                .GetReferencedTypes()
                 .Where(type => !(type.IsAbstract || type.GetAttribute<TestFixtureAttribute>(true) == null))
                 .Select(methodInfo => new TestType(methodInfo));
-        }
-
-        private static IEnumerable<Assembly> GetAssemblies(Assembly rootAssembly)
-        {
-            var result = new[] {rootAssembly};
-            for(IEnumerable<Assembly> referencedAssemblies = result;
-                referencedAssemblies.GetEnumerator().MoveNext();
-                result = result.Concat(referencedAssemblies).ToArray())
-            {
-                referencedAssemblies = referencedAssemblies
-                    .SelectMany(assembly => assembly.GetReferencedAssemblies())
-                    .Select(AssemblyLoad)
-                    .Distinct()
-                    .Where(assembly => !result.Contains(assembly));
-            }
-            return result;
-        }
-
-        private static Assembly AssemblyLoad(AssemblyName yy)
-        {
-            try
-            {
-                return AppDomain.CurrentDomain.Load(yy);
-            }
-            catch(Exception)
-            {
-                return Assembly.GetExecutingAssembly();
-            }
         }
     }
 

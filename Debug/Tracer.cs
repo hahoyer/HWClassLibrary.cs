@@ -53,9 +53,11 @@ namespace HWClassLibrary.Debug
         /// <param name = "m">the method</param>
         /// <param name = "showParam">controls if parameter list is appended</param>
         /// <returns>string to inspect a method</returns>
-        public static string DumpMethod(this MethodBase m, bool showParam)
+        public static string DumpMethod(this MethodBase m, bool showParam) { return DumpMethod(m, Assembly.GetCallingAssembly(), showParam); }
+
+        private static string DumpMethod(this MethodBase m, Assembly callingAssembly, bool showParam)
         {
-            var result = m.DeclaringType.Name + ".";
+            var result = m.DeclaringType.PrettyName(callingAssembly) + ".";
             result += m.Name;
             if(!showParam)
                 return result;
@@ -77,40 +79,44 @@ namespace HWClassLibrary.Debug
         ///     creates a string to inspect the method call contained in current call stack
         /// </summary>
         /// <param name = "depth">the index of stack frame</param>
+        /// <param name = "callingAssembly"></param>
         /// <param name = "showParam">controls if parameter list is appended</param>
         /// <returns>string to inspect the method call</returns>
-        public static string MethodHeader(int depth, bool showParam)
+        public static string MethodHeader(int depth, Assembly callingAssembly, bool showParam)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
-            return FilePosn(sf, DumpMethod(sf.GetMethod(), showParam));
+            return FilePosn(sf, DumpMethod(sf.GetMethod(), callingAssembly, showParam));
         }
 
-        public static string CallingMethodName(int depth)
+        public static string CallingMethodName(int depth, Assembly callingAssembly)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
-            return DumpMethod(sf.GetMethod(), false);
+            return DumpMethod(sf.GetMethod(), callingAssembly, false);
         }
 
         /// <summary>
         ///     creates a string to inspect the method call contained in current call stack (without parameter list)
         /// </summary>
         /// <param name = "depth">the index of stack frame</param>
+        /// <param name = "assembly"></param>
         /// <returns>string to inspect the method call</returns>
         [UsedImplicitly]
-        public static string MethodHeader(int depth) { return MethodHeader(depth + 1, false); }
+        public static string MethodHeader(int depth, Assembly assembly) { return MethodHeader(depth + 1, assembly, false); }
+        public static string MethodHeader(int depth) { return MethodHeader(depth + 1, null, false); }
+        public static string MethodHeader(int depth, bool showParam) { return MethodHeader(depth + 1, null, showParam); }
 
         [UsedImplicitly]
-        public static string StackTrace() { return StackTrace(1); }
+        public static string StackTrace() { return StackTrace(1, Assembly.GetCallingAssembly()); }
 
         [UsedImplicitly]
-        public static string StackTrace(int depth)
+        public static string StackTrace(int depth, Assembly assembly)
         {
             var stackTrace = new StackTrace(true);
             var result = "";
             for(var i = depth + 1; i < stackTrace.FrameCount; i++)
             {
                 var stackFrame = stackTrace.GetFrame(i);
-                var filePosn = FilePosn(stackFrame, DumpMethod(stackFrame.GetMethod(), false));
+                var filePosn = FilePosn(stackFrame, DumpMethod(stackFrame.GetMethod(), assembly, false));
                 result += "\n" + filePosn;
             }
             return result;
@@ -193,20 +199,28 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name = "s">the text</param>
         /// <param name = "showParam">controls if parameter list is appended</param>
-        public static void FlaggedLine(string s, bool showParam) { Line(MethodHeader(1, showParam) + s); }
+        public static void FlaggedLine(string s, bool showParam) { Line(MethodHeader(1, Assembly.GetCallingAssembly(), showParam) + s); }
 
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name = "s">the text</param>
-        public static void FlaggedLine(string s) { Line(MethodHeader(1, false) + s); }
+        public static void FlaggedLine(string s) { Line(MethodHeader(1, Assembly.GetCallingAssembly(), false) + s); }
 
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name = "stackFrameDepth">The stack frame depth.</param>
         /// <param name = "s">the text</param>
-        public static void FlaggedLine(int stackFrameDepth, string s) { Line(MethodHeader(stackFrameDepth + 1, false) + s); }
+        public static void FlaggedLine(int stackFrameDepth, string s) { FlaggedLine(stackFrameDepth + 1, null, s); }
+
+        /// <summary>
+        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
+        /// </summary>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "assembly"></param>
+        /// <param name = "s">the text</param>
+        public static void FlaggedLine(int stackFrameDepth, Assembly assembly, string s) { Line(MethodHeader(stackFrameDepth + 1, assembly, false) + s); }
 
         /// <summary>
         ///     generic dump function by use of reflection
@@ -523,14 +537,14 @@ namespace HWClassLibrary.Debug
         /// <param name = "parameter">parameter objects list for the frame</param>
         public static void DumpStaticMethodWithData(string text, params object[] parameter)
         {
-            var result = DumpMethodWithData(text, 1, null, parameter);
+            var result = DumpMethodWithData(text, 1, Assembly.GetCallingAssembly(), null, parameter);
             Line(result);
         }
 
-        internal static string DumpMethodWithData(string text, int depth, object thisObject, object[] parameter)
+        internal static string DumpMethodWithData(string text, int depth, Assembly assembly, object thisObject, object[] parameter)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
-            return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
+            return FilePosn(sf, DumpMethod(sf.GetMethod(), assembly, true))
                    + text
                    + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter), 1);
         }
@@ -540,12 +554,13 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name = "text">The text.</param>
         /// <param name = "depth">The stack depth.</param>
+        /// <param name = "assembly"></param>
         /// <param name = "data">The data, as name/value pair.</param>
         /// <returns></returns>
-        public static string DumpData(string text, int depth, object[] data)
+        public static string DumpData(string text, int depth, Assembly assembly, object[] data)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
-            return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
+            return FilePosn(sf, DumpMethod(sf.GetMethod(), assembly, true))
                    + text
                    + Indent(DumpMethodWithData(null, data), 1);
         }
@@ -589,14 +604,15 @@ namespace HWClassLibrary.Debug
         ///     Function used for condition al break
         /// </summary>
         /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "assembly"></param>
         /// <param name = "cond">The cond.</param>
         /// <param name = "data">The data.</param>
         /// <returns></returns>
         [DebuggerHidden]
-        public static void ConditionalBreak(int stackFrameDepth, string cond, Func<string> data)
+        public static void ConditionalBreak(int stackFrameDepth, Assembly assembly, string cond, Func<string> data)
         {
             var result = "Conditional break: " + cond + "\nData: " + data();
-            FlaggedLine(stackFrameDepth + 1, result);
+            FlaggedLine(stackFrameDepth + 1, assembly, result);
             TraceBreak();
         }
 
@@ -604,20 +620,36 @@ namespace HWClassLibrary.Debug
         ///     Check boolean expression
         /// </summary>
         /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "assembly"></param>
         /// <param name = "b">if set to <c>true</c> [b].</param>
         /// <param name = "text">The text.</param>
         [DebuggerHidden]
-        public static void ConditionalBreak(int stackFrameDepth, bool b, Func<string> text)
+        public static void ConditionalBreak(int stackFrameDepth, Assembly assembly, bool b, Func<string> text)
         {
             if(b)
-                ConditionalBreak(stackFrameDepth + 1, "", text);
+                ConditionalBreak(stackFrameDepth + 1, assembly, "", text);
         }
 
         [DebuggerHidden]
         public static void ConditionalBreak(bool cond, Func<string> data)
         {
             if(cond)
-                ConditionalBreak(1, true, data);
+                ConditionalBreak(1, Assembly.GetCallingAssembly(), true, data);
+        }
+
+        /// <summary>
+        ///     Throws the assertion failed.
+        /// </summary>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "assembly"></param>
+        /// <param name = "cond">The cond.</param>
+        /// <param name = "data">The data.</param>
+        /// created 15.10.2006 18:04
+        [DebuggerHidden]
+        public static void ThrowAssertionFailed(int stackFrameDepth, Assembly assembly, string cond, Func<string> data)
+        {
+            var result = AssertionFailed(stackFrameDepth + 1, assembly, cond, data);
+            throw new AssertionFailedException(result);
         }
 
         /// <summary>
@@ -630,7 +662,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void ThrowAssertionFailed(int stackFrameDepth, string cond, Func<string> data)
         {
-            var result = AssertionFailed(stackFrameDepth + 1, cond, data);
+            var result = AssertionFailed(stackFrameDepth + 1, null, cond, data);
             throw new AssertionFailedException(result);
         }
 
@@ -641,7 +673,24 @@ namespace HWClassLibrary.Debug
         /// <param name = "s1">The s1.</param>
         /// created 16.12.2006 18:28
         [DebuggerHidden]
-        public static void ThrowAssertionFailed(string s, Func<string> s1) { ThrowAssertionFailed(1, s, s1); }
+        public static void ThrowAssertionFailed(string s, Func<string> s1) { ThrowAssertionFailed(1, Assembly.GetCallingAssembly(), s, s1); }
+
+        /// <summary>
+        ///     Function used in assertions
+        /// </summary>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "assembly"></param>
+        /// <param name = "cond">The cond.</param>
+        /// <param name = "data">The data.</param>
+        /// <returns></returns>
+        [DebuggerHidden]
+        public static string AssertionFailed(int stackFrameDepth, Assembly assembly, string cond, Func<string> data)
+        {
+            var result = "Assertion Failed: " + cond + "\nData: " + data();
+            FlaggedLine(stackFrameDepth + 1, assembly, result);
+            AssertionBreak(result);
+            return result;
+        }
 
         /// <summary>
         ///     Function used in assertions
@@ -651,12 +700,22 @@ namespace HWClassLibrary.Debug
         /// <param name = "data">The data.</param>
         /// <returns></returns>
         [DebuggerHidden]
-        public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data)
+        public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data) { return AssertionFailed(stackFrameDepth + 1, null, cond, data); }
+
+        /// <summary>
+        ///     Check boolean expression
+        /// </summary>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "assembly"></param>
+        /// <param name = "b">if set to <c>true</c> [b].</param>
+        /// <param name = "text">The text.</param>
+        [DebuggerHidden]
+        public static void Assert(int stackFrameDepth, Assembly assembly, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b,
+                                  Func<string> text)
         {
-            var result = "Assertion Failed: " + cond + "\nData: " + data();
-            FlaggedLine(stackFrameDepth + 1, result);
-            AssertionBreak(result);
-            return result;
+            if(b)
+                return;
+            AssertionFailed(stackFrameDepth + 1, assembly, "", text);
         }
 
         /// <summary>
@@ -665,13 +724,27 @@ namespace HWClassLibrary.Debug
         /// <param name = "stackFrameDepth">The stack frame depth.</param>
         /// <param name = "b">if set to <c>true</c> [b].</param>
         /// <param name = "text">The text.</param>
-        [DebuggerHidden, AssertionMethod]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b,
-                                  Func<string> text)
+        [DebuggerHidden]
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> text)
         {
             if(b)
                 return;
-            AssertionFailed(stackFrameDepth + 1, "", text);
+            AssertionFailed(stackFrameDepth + 1, null, "", text);
+        }
+
+        /// <summary>
+        ///     Check boolean expression
+        /// </summary>
+        /// <param name = "stackFrameDepth">The stack frame depth.</param>
+        /// <param name = "assembly"></param>
+        /// <param name = "b">if set to <c>true</c> [b].</param>
+        [DebuggerHidden]
+        [AssertionMethod]
+        public static void Assert(int stackFrameDepth, Assembly assembly, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
+        {
+            if(b)
+                return;
+            AssertionFailed(stackFrameDepth + 1, assembly, "", () => "");
         }
 
         /// <summary>
@@ -679,12 +752,13 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name = "stackFrameDepth">The stack frame depth.</param>
         /// <param name = "b">if set to <c>true</c> [b].</param>
-        [DebuggerHidden, AssertionMethod]
+        [DebuggerHidden]
+        [AssertionMethod]
         public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
         {
             if(b)
                 return;
-            AssertionFailed(stackFrameDepth + 1, "", () => "");
+            AssertionFailed(stackFrameDepth + 1, null, "", () => "");
         }
 
         /// <summary>
@@ -692,8 +766,9 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name = "b">if set to <c>true</c> [b].</param>
         /// created 16.12.2006 18:27
-        [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b) { Assert(1, b); }
+        [DebuggerHidden]
+        [AssertionMethod]
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b) { Assert(1, Assembly.GetCallingAssembly(), b); }
 
         /// <summary>
         ///     Asserts the specified b.
@@ -701,11 +776,13 @@ namespace HWClassLibrary.Debug
         /// <param name = "b">if set to <c>true</c> [b].</param>
         /// <param name = "s">The s.</param>
         /// created 16.12.2006 18:29
-        [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> s) { Assert(1, b, s); }
+        [DebuggerHidden]
+        [AssertionMethod]
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> s) { Assert(1, Assembly.GetCallingAssembly(), b, s); }
 
-        [DebuggerHidden, AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s) { Assert(1, b, () => s); }
+        [DebuggerHidden]
+        [AssertionMethod]
+        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s) { Assert(1, Assembly.GetCallingAssembly(), b, () => s); }
 
         /// <summary>
         ///     Assertions the failed.
@@ -714,7 +791,7 @@ namespace HWClassLibrary.Debug
         /// <param name = "s1">The s1.</param>
         /// created 16.12.2006 18:30
         [DebuggerHidden]
-        public static void AssertionFailed(string s, Func<string> s1) { AssertionFailed(1, s, s1); }
+        public static void AssertionFailed(string s, Func<string> s1) { AssertionFailed(1, Assembly.GetCallingAssembly(), s, s1); }
 
         /// <summary>
         ///     Outputs the specified text.
@@ -756,7 +833,6 @@ namespace HWClassLibrary.Debug
         }
 
         [UsedImplicitly]
-        public static string CallingMethodName() { return CallingMethodName(1); }
-
+        public static string CallingMethodName() { return CallingMethodName(1, Assembly.GetCallingAssembly()); }
     }
 }

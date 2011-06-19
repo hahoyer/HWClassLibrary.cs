@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HWClassLibrary.Debug;
+using HWClassLibrary.UnitTest;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
@@ -80,6 +81,42 @@ namespace HWClassLibrary.Helper
                 _this = @this;
                 _inherit = inherit;
                 _list = list;
+            }
+        }
+
+        public static IEnumerable<Assembly> GetAssemblies(this Assembly rootAssembly)
+        {
+            var result = new[] {rootAssembly};
+            for(IEnumerable<Assembly> referencedAssemblies = result;
+                referencedAssemblies.GetEnumerator().MoveNext();
+                result = result.Concat(referencedAssemblies).ToArray())
+            {
+                referencedAssemblies = referencedAssemblies
+                    .SelectMany(assembly => assembly.GetReferencedAssemblies())
+                    .Select(AssemblyLoad)
+                    .Distinct()
+                    .Where(assembly => !result.Contains(assembly)).ToArray();
+            }
+            return result;
+        }
+
+        public static IEnumerable<Type> GetReferencedTypes(this Assembly rootAssembly)
+        {
+            return rootAssembly
+                .GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes());
+        }
+
+
+        public static Assembly AssemblyLoad(AssemblyName yy)
+        {
+            try
+            {
+                return AppDomain.CurrentDomain.Load(yy);
+            }
+            catch(Exception)
+            {
+                return Assembly.GetExecutingAssembly();
             }
         }
     }
