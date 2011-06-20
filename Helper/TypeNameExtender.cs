@@ -8,52 +8,60 @@ namespace HWClassLibrary.Helper
 {
     public static class TypeNameExtender
     {
-        public static string PrettyName(this Type type) { return type.PrettyName(Assembly.GetCallingAssembly()); }
+        private static IEnumerable<Type> _referencedTypesCache;
 
-        public static string PrettyName(this Type type, Assembly assembly)
+        public static void OnModuleLoaded() { _referencedTypesCache = null; }
+
+        public static string PrettyName(this Type type)
         {
             if(type == typeof(int))
                 return "int";
             if(type == typeof(string))
                 return "string";
 
-            var result = PrettyTypeName(type, assembly);
+            var result = PrettyTypeName(type);
             if(type.IsGenericType)
-                result = result + PrettyNameForGeneric(type.GetGenericArguments(), assembly);
+                result = result + PrettyNameForGeneric(type.GetGenericArguments());
             return result;
         }
 
-        private static string PrettyTypeName(Type type, Assembly assembly)
+        private static string PrettyTypeName(Type type)
         {
             var result = type.Name;
             if(type.IsGenericType)
                 result = result.Remove(result.IndexOf('`'));
 
-            if (type.Namespace == null)
+            if(type.Namespace == null)
                 return result;
 
-            if (assembly == null)
-                return type.Namespace + "." + result;
-
-            var conflictingTypes = assembly
-                .GetReferencedTypes()
+            var conflictingTypes = ReferencedTypes
                 .Where(definedType => definedType.Name == type.Name && definedType.Namespace != type.Namespace)
                 .ToArray();
 
             var namespaceParts = type.Namespace.Split('.').Reverse().ToArray();
             var namespacePart = "";
-            for(var i= 0; i < namespaceParts.Length && conflictingTypes.Length > 0; i++)
+            for(var i = 0; i < namespaceParts.Length && conflictingTypes.Length > 0; i++)
             {
                 namespacePart = namespaceParts[i] + "." + namespacePart;
                 conflictingTypes = conflictingTypes
                     .Where(conflictingType => (conflictingType.Namespace + ".").EndsWith(namespacePart))
                     .ToArray();
             }
-                
+
             return namespacePart + result;
         }
 
-        private static string PrettyNameForGeneric(Type[] types, Assembly assembly)
+        private static IEnumerable<Type> ReferencedTypes
+        {
+            get
+            {
+                if(_referencedTypesCache == null)
+                    _referencedTypesCache = Assembly.GetEntryAssembly().GetReferencedTypes();
+                return _referencedTypesCache;
+            }
+        }
+
+        private static string PrettyNameForGeneric(Type[] types)
         {
             var result = "";
             var delim = "<";
@@ -61,7 +69,7 @@ namespace HWClassLibrary.Helper
             {
                 result += delim;
                 delim = ",";
-                result += t.PrettyName(assembly);
+                result += t.PrettyName();
             }
             return result + ">";
         }

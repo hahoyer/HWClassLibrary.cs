@@ -91,10 +91,13 @@ namespace HWClassLibrary.Helper
                 referencedAssemblies.GetEnumerator().MoveNext();
                 result = result.Concat(referencedAssemblies).ToArray())
             {
-                referencedAssemblies = referencedAssemblies
-                    .SelectMany(assembly => assembly.GetReferencedAssemblies())
-                    .Select(AssemblyLoad)
-                    .Distinct()
+                var assemblyNames = referencedAssemblies
+                    .SelectMany(assembly => assembly.GetReferencedAssemblies()).ToArray();
+                var assemblies = assemblyNames
+                    .Select(AssemblyLoad).ToArray();
+                var enumerable = assemblies
+                    .Distinct().ToArray();
+                referencedAssemblies = enumerable
                     .Where(assembly => !result.Contains(assembly)).ToArray();
             }
             return result;

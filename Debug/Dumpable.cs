@@ -35,7 +35,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void NotImplementedFunction(params object[] p)
         {
-            var os = Tracer.DumpMethodWithData("not implemented", 1, Assembly.GetCallingAssembly(), null, p);
+            var os = Tracer.DumpMethodWithData("not implemented", 1, null, p);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -51,7 +51,7 @@ namespace HWClassLibrary.Debug
         {
             if(!trace)
                 return;
-            var os = Tracer.DumpMethodWithData("", 1, Assembly.GetCallingAssembly(), this, p);
+            var os = Tracer.DumpMethodWithData("", 1, this, p);
             Tracer.Line(os);
             Tracer.IndentStart();
         }
@@ -67,7 +67,7 @@ namespace HWClassLibrary.Debug
         {
             if(!trace)
                 return;
-            var os = Tracer.DumpMethodWithData("", 1, Assembly.GetCallingAssembly(), this, p);
+            var os = Tracer.DumpMethodWithData("", 1, this, p);
             Tracer.Line(os);
             Tracer.IndentStart();
             Tracer.TraceBreak();
@@ -84,7 +84,7 @@ namespace HWClassLibrary.Debug
         {
             if(!trace)
                 return;
-            var os = Tracer.DumpData("", 1, Assembly.GetCallingAssembly(), p);
+            var os = Tracer.DumpData("", 1, p);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -100,7 +100,7 @@ namespace HWClassLibrary.Debug
         {
             if(!trace)
                 return;
-            var os = Tracer.DumpData("", 1, Assembly.GetCallingAssembly(), p);
+            var os = Tracer.DumpData("", 1, p);
             Tracer.Line(os);
         }
 
@@ -116,7 +116,7 @@ namespace HWClassLibrary.Debug
             if(!trace)
                 return rv;
             Tracer.IndentEnd();
-            Tracer.Line(Tracer.MethodHeader(1, Assembly.GetCallingAssembly()) + "[returns] " + Tracer.Dump(rv));
+            Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
             return rv;
         }
 
@@ -130,7 +130,7 @@ namespace HWClassLibrary.Debug
             if(!trace)
                 return;
             Tracer.IndentEnd();
-            Tracer.Line(Tracer.MethodHeader(1, Assembly.GetCallingAssembly()) + "[returns]");
+            Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
             return;
         }
 
@@ -144,7 +144,7 @@ namespace HWClassLibrary.Debug
             if(!trace)
                 return;
             Tracer.IndentEnd();
-            Tracer.Line(Tracer.MethodHeader(1, Assembly.GetCallingAssembly()) + "[returns]");
+            Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
             Tracer.TraceBreak();
             return;
         }
@@ -175,7 +175,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected void DumpMethodWithBreak(string text, params object[] p)
         {
-            var os = Tracer.DumpMethodWithData(text, 1, Assembly.GetCallingAssembly(), this, p);
+            var os = Tracer.DumpMethodWithData(text, 1, this, p);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -189,7 +189,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void DumpDataWithBreak(string text, params object[] p)
         {
-            var os = Tracer.DumpData(text, 1, Assembly.GetCallingAssembly(), p);
+            var os = Tracer.DumpData(text, 1, p);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -205,7 +205,7 @@ namespace HWClassLibrary.Debug
             if(IsInDump)
                 throw new NotImplementedException();
 
-            var os = Tracer.DumpMethodWithData("not implemented", 1, Assembly.GetCallingAssembly(), this, p);
+            var os = Tracer.DumpMethodWithData("not implemented", 1, this, p);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -224,7 +224,7 @@ namespace HWClassLibrary.Debug
             var surround = "<recursion>";
             if(!isRecursion)
                 surround = DumpData().Surround("{", "}");
-            return GetType().FullName + surround;
+            return GetType().PrettyName() + surround;
         }
 
         /// <summary>
