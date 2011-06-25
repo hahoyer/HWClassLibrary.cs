@@ -13,8 +13,4 @@ namespace HWClassLibrary.UnitTest
     [AttributeUsage(AttributeTargets.Class), MeansImplicitUse]
     public sealed class TestFixtureAttribute : Attribute
     {}
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public sealed class ExplicitAttribute : Attribute
-    {}
 }

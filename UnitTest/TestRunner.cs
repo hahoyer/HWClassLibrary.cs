@@ -14,6 +14,8 @@ namespace HWClassLibrary.UnitTest
         private readonly TestType[] _testTypes;
         public static bool IsModeErrorFocus;
         private readonly File _configFile = File.m("Test.HWconfig");
+        private string _status = "Start";
+        private int _complete;
 
         private TestRunner(IEnumerable<TestType> testTypes)
         {
@@ -37,8 +39,10 @@ namespace HWClassLibrary.UnitTest
 
         private void Run()
         {
+            _status = "run";
             while(RunLevel())
                 continue;
+            _status = "ran";
             SaveConfiguration();
         }
 
@@ -59,6 +63,7 @@ namespace HWClassLibrary.UnitTest
                         if(!IsModeErrorFocus)
                             SaveConfiguration();
                         openTest.Run();
+                        _complete++;
                     }
                 }
             }
@@ -69,19 +74,22 @@ namespace HWClassLibrary.UnitTest
         {
             get
             {
-                return _testTypes
+                return HeaderText + "\n" +
+                    _testTypes
                     .OrderBy(t => t.ConfigurationModePriority)
                     .Aggregate("", (current, testType) => current + testType.ConfigurationString);
             }
             set
             {
                 var pairs = value.Split('\n')
-                    .Where(line => line != "")
+                    .Where((line,i) => i > 0 && line != "")
                     .Join(_testTypes, line => line.Split(' ')[1], type => type.Type.FullName, (line, type) => new {line, type});
                 foreach(var pair in pairs)
                     pair.type.ConfigurationString = pair.line;
             }
         }
+
+        private string HeaderText { get { return DateTime.Now.Format() + " " + _status + " " + _complete + " of " + _testTypes.Length; } }
 
         private void SaveConfiguration()
         {

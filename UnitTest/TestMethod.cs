@@ -32,9 +32,7 @@ namespace HWClassLibrary.UnitTest
             Tracer.IndentStart();
             try
             {
-                if(_methodInfo.GetAttribute<ExplicitAttribute>(true) != null)
-                    Tracer.Line("Test not executed, ExplicitAttribute used");
-                else if(!IsSuspended)
+                if(!IsSuspended)
                 {
                     var test = Activator.CreateInstance(_methodInfo.ReflectedType);
                     var isBreakDisabled = Tracer.IsBreakDisabled;

@@ -80,7 +80,7 @@ namespace HWClassLibrary.Helper
         ///     Special test, will not work automatically.
         /// </summary>
         /// created 08.10.2006 16:33
-        [Test, Explicit]
+        //[Test]
         public void TestMethod()
         {
             var x1 = CSharpCompiler.Exec(File.SourceFileName(0), "?", "?", "?", null);
