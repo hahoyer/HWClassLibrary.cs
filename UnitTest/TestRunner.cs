@@ -16,6 +16,7 @@ namespace HWClassLibrary.UnitTest
         private readonly File _configFile = File.m("Test.HWconfig");
         private string _status = "Start";
         private int _complete;
+        private string _currentMethodName = "";
 
         private TestRunner(IEnumerable<TestType> testTypes)
         {
@@ -61,7 +62,11 @@ namespace HWClassLibrary.UnitTest
                     if(dependants.All(test => test.IsSuccessfull))
                     {
                         if(!IsModeErrorFocus)
+                        {
+                            _currentMethodName = openTest.Type.FullName;
                             SaveConfiguration();
+                            _currentMethodName = "";
+                        }
                         openTest.Run();
                         _complete++;
                     }
@@ -89,7 +94,7 @@ namespace HWClassLibrary.UnitTest
             }
         }
 
-        private string HeaderText { get { return DateTime.Now.Format() + " " + _status + " " + _complete + " of " + _testTypes.Length; } }
+        private string HeaderText { get { return DateTime.Now.Format() + " " + _status + " " + _complete + " of " + _testTypes.Length + " " + _currentMethodName; } }
 
         private void SaveConfiguration()
         {
