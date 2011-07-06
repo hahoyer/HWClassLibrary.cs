@@ -31,7 +31,7 @@ namespace HWClassLibrary.Helper
             if(type.IsGenericType)
                 result = result.Remove(result.IndexOf('`'));
 
-            if (type.DeclaringType != null)
+            if (type.IsNested && !type.IsGenericParameter)
                 return type.DeclaringType.PrettyName() + "." + result;
 
             if(type.Namespace == null)
