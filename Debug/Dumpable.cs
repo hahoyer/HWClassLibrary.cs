@@ -83,15 +83,16 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method start dump,
         /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
         /// <param name="breakExecution"></param>
-        /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static void Dump(bool breakExecution, params object[] p)
+        protected static void Dump(string name, object value, bool breakExecution = false)
         {
             if(!IsMethodDumpTraceActive)
                 return;
-            var os = Tracer.DumpData("", 1, p);
+            var os = Tracer.DumpData("", 1, new object[]{name, value});
             Tracer.Line(os);
             if(breakExecution)
                 Tracer.TraceBreak();
