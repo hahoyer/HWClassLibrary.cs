@@ -40,6 +40,7 @@ namespace HWClassLibrary.Debug
             Tracer.TraceBreak();
         }
 
+        private static readonly Stack<bool> _methodDumpTraceSwitches = new Stack<bool>();
         /// <summary>
         ///     Method start dump,
         /// </summary>
@@ -49,12 +50,15 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected void StartMethodDump(bool trace, params object[] p)
         {
-            if(!trace)
+            _methodDumpTraceSwitches.Push(trace);
+            if(!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpMethodWithData("", 1, this, p);
             Tracer.Line(os);
             Tracer.IndentStart();
         }
+
+        private static bool IsMethodDumpTraceActive { get { return _methodDumpTraceSwitches.Peek(); } }
 
         /// <summary>
         ///     Method start dump,
@@ -65,7 +69,8 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected void StartMethodDumpWithBreak(bool trace, params object[] p)
         {
-            if(!trace)
+            _methodDumpTraceSwitches.Push(trace);
+            if (!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpMethodWithData("", 1, this, p);
             Tracer.Line(os);
@@ -76,13 +81,12 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method start dump,
         /// </summary>
-        /// <param name = "trace"></param>
         /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static void DumpWithBreak(bool trace, params object[] p)
+        protected static void DumpWithBreak(params object[] p)
         {
-            if(!trace)
+            if (!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpData("", 1, p);
             Tracer.Line(os);
@@ -92,13 +96,12 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method start dump,
         /// </summary>
-        /// <param name = "trace"></param>
         /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static void Dump(bool trace, params object[] p)
+        protected static void Dump(params object[] p)
         {
-            if(!trace)
+            if (!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpData("", 1, p);
             Tracer.Line(os);
@@ -107,13 +110,12 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump,
         /// </summary>
-        /// <param name = "trace"></param>
         /// <param name = "rv"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static T ReturnMethodDump<T>(bool trace, T rv)
+        protected static T ReturnMethodDump<T>(T rv)
         {
-            if(!trace)
+            if(!_methodDumpTraceSwitches.Pop())
                 return rv;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
@@ -123,11 +125,10 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump,
         /// </summary>
-        /// <param name = "trace">if set to <c>true</c> [trace].</param>
         [DebuggerHidden]
-        protected static void ReturnMethodDump(bool trace)
+        protected static void ReturnMethodDump()
         {
-            if(!trace)
+            if (!_methodDumpTraceSwitches.Pop())
                 return;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
@@ -137,11 +138,10 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump,
         /// </summary>
-        /// <param name = "trace">if set to <c>true</c> [trace].</param>
         [DebuggerHidden]
-        protected static void ReturnMethodDumpWithBreak(bool trace)
+        protected static void ReturnMethodDumpWithBreak()
         {
-            if(!trace)
+            if (!_methodDumpTraceSwitches.Pop())
                 return;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
@@ -152,13 +152,12 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump,
         /// </summary>
-        /// <param name = "trace"></param>
         /// <param name = "rv"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static T ReturnMethodDumpWithBreak<T>(bool trace, T rv)
+        protected static T ReturnMethodDumpWithBreak<T>(T rv)
         {
-            if(!trace)
+            if (!_methodDumpTraceSwitches.Pop())
                 return rv;
             Tracer.IndentEnd();
             Tracer.Line("returns " + Tracer.Dump(rv));
