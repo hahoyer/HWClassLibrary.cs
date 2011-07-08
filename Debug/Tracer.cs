@@ -764,5 +764,7 @@ namespace HWClassLibrary.Debug
 
         [UsedImplicitly]
         public static string CallingMethodName() { return CallingMethodName(1); }
+
+        public static int CurrentFrameCount(int depth) { return new StackTrace(true).FrameCount - depth; }
     }
 }

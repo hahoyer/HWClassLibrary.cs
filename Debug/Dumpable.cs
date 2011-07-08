@@ -1,8 +1,25 @@
+//     Compiler for programming language "Reni"
+//     Copyright (C) 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 using JetBrains.Annotations;
@@ -15,6 +32,8 @@ namespace HWClassLibrary.Debug
     [Dump("Dump")]
     public class Dumpable
     {
+        private static readonly Stack<MethodDumpTraceItem> _methodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
+
         /// <summary>
         ///     generate dump string to be shown in debug windows
         /// </summary>
@@ -24,7 +43,8 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     dump string to be shown in debug windows
         /// </summary>
-        [DisableDump, UsedImplicitly]
+        [DisableDump]
+        [UsedImplicitly]
         public string DebuggerDumpString { get { return DebuggerDump().Replace("\n", "\r\n"); } }
 
         /// <summary>
@@ -40,7 +60,6 @@ namespace HWClassLibrary.Debug
             Tracer.TraceBreak();
         }
 
-        private static readonly Stack<bool> _methodDumpTraceSwitches = new Stack<bool>();
         /// <summary>
         ///     Method start dump,
         /// </summary>
@@ -50,15 +69,13 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected void StartMethodDump(bool trace, params object[] p)
         {
-            _methodDumpTraceSwitches.Push(trace);
+            StartMethodDump(1, trace);
             if(!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpMethodWithData("", 1, this, p);
             Tracer.Line(os);
             Tracer.IndentStart();
         }
-
-        private static bool IsMethodDumpTraceActive { get { return _methodDumpTraceSwitches.Peek(); } }
 
         /// <summary>
         ///     Method start dump,
@@ -69,8 +86,8 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected void StartMethodDumpWithBreak(bool trace, params object[] p)
         {
-            _methodDumpTraceSwitches.Push(trace);
-            if (!IsMethodDumpTraceActive)
+            StartMethodDump(1, trace);
+            if(!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpMethodWithData("", 1, this, p);
             Tracer.Line(os);
@@ -86,7 +103,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void DumpWithBreak(params object[] p)
         {
-            if (!IsMethodDumpTraceActive)
+            if(!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpData("", 1, p);
             Tracer.Line(os);
@@ -101,7 +118,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void Dump(params object[] p)
         {
-            if (!IsMethodDumpTraceActive)
+            if(!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpData("", 1, p);
             Tracer.Line(os);
@@ -115,7 +132,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static T ReturnMethodDump<T>(T rv)
         {
-            if(!_methodDumpTraceSwitches.Pop())
+            if(!IsMethodDumpTraceActive)
                 return rv;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
@@ -128,7 +145,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void ReturnMethodDump()
         {
-            if (!_methodDumpTraceSwitches.Pop())
+            if(!IsMethodDumpTraceActive)
                 return;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
@@ -139,9 +156,19 @@ namespace HWClassLibrary.Debug
         ///     Method dump,
         /// </summary>
         [DebuggerHidden]
+        protected static void EndMethodDump()
+        {
+            var top = _methodDumpTraceSwitches.Pop();
+            Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(1));
+        }
+
+        /// <summary>
+        ///     Method dump,
+        /// </summary>
+        [DebuggerHidden]
         protected static void ReturnMethodDumpWithBreak()
         {
-            if (!_methodDumpTraceSwitches.Pop())
+            if(!IsMethodDumpTraceActive)
                 return;
             Tracer.IndentEnd();
             Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
@@ -157,7 +184,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static T ReturnMethodDumpWithBreak<T>(T rv)
         {
-            if (!_methodDumpTraceSwitches.Pop())
+            if(!IsMethodDumpTraceActive)
                 return rv;
             Tracer.IndentEnd();
             Tracer.Line("returns " + Tracer.Dump(rv));
@@ -257,5 +284,29 @@ namespace HWClassLibrary.Debug
         }
 
         public void Dispose() { }
+
+        private static void StartMethodDump(int depth, bool trace)
+        {
+            var frameCount = Tracer.CurrentFrameCount(depth + 1);
+            _methodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
+        }
+
+        private sealed class MethodDumpTraceItem
+        {
+            private readonly int _frameCount;
+            private readonly bool _trace;
+
+            public MethodDumpTraceItem(int frameCount, bool trace)
+            {
+                _frameCount = frameCount;
+                _trace = trace;
+            }
+
+            internal int FrameCount { get { return _frameCount; } }
+            internal bool Trace { get { return _trace; } }
+        }
+
+        private static bool IsMethodDumpTraceActive { get { return _methodDumpTraceSwitches.Peek().Trace; } }
+
     }
 }
