@@ -128,6 +128,7 @@ namespace HWClassLibrary.Debug
             }
         }
 
+        [DebuggerHidden]
         protected void BreakExecution()
         {
             if(IsMethodDumpTraceActive)
