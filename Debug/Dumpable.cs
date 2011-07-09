@@ -33,6 +33,7 @@ namespace HWClassLibrary.Debug
     public class Dumpable
     {
         private static readonly Stack<MethodDumpTraceItem> _methodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
+        private static bool _breakExecution;
 
         /// <summary>
         ///     generate dump string to be shown in debug windows
@@ -60,59 +61,64 @@ namespace HWClassLibrary.Debug
             Tracer.TraceBreak();
         }
 
+        protected static void BreakNext() { _breakExecution = true; }
+
         /// <summary>
         ///     Method start dump,
         /// </summary>
-        /// <param name = "breakExecution"></param>
         /// <param name = "trace"></param>
         /// <param name = "p"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected void StartMethodDump(bool breakExecution, bool trace, params object[] p)
+        protected void StartMethodDump(bool trace, params object[] p)
         {
             StartMethodDump(1, trace);
-            if(!IsMethodDumpTraceActive)
-                return;
-            var os = Tracer.DumpMethodWithData("", 1, this, p);
-            Tracer.Line(os);
-            Tracer.IndentStart();
-            if(breakExecution)
-                Tracer.TraceBreak();
+            if(IsMethodDumpTraceActive)
+            {
+                var os = Tracer.DumpMethodWithData("", 1, this, p);
+                Tracer.Line(os);
+                Tracer.IndentStart();
+                if(_breakExecution)
+                    Tracer.TraceBreak();
+            }
+            _breakExecution = false;
         }
 
         /// <summary>
         ///     Method start dump,
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="breakExecution"></param>
+        /// <param name = "name"></param>
+        /// <param name = "value"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static void Dump(string name, object value, bool breakExecution = false)
+        protected static void Dump(string name, object value)
         {
-            if(!IsMethodDumpTraceActive)
-                return;
-            var os = Tracer.DumpData("", 1, new object[]{name, value});
-            Tracer.Line(os);
-            if(breakExecution)
-                Tracer.TraceBreak();
+            if(IsMethodDumpTraceActive)
+            {
+                var os = Tracer.DumpData("", 1, new[] {name, value});
+                Tracer.Line(os);
+                if(_breakExecution)
+                    Tracer.TraceBreak();
+            }
+            _breakExecution = false;
         }
 
         /// <summary>
         ///     Method dump,
         /// </summary>
-        /// <param name="breakExecution"></param>
         /// <param name = "rv"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static T ReturnMethodDump<T>(bool breakExecution, T rv)
+        protected static T ReturnMethodDump<T>(T rv)
         {
-            if(!IsMethodDumpTraceActive)
-                return rv;
-            Tracer.IndentEnd();
-            Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
-            if(breakExecution)
-                Tracer.TraceBreak();
+            if (IsMethodDumpTraceActive)
+            {
+                Tracer.IndentEnd();
+                Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
+                if(_breakExecution)
+                    Tracer.TraceBreak();
+            }
+            _breakExecution = false;
             return rv;
         }
 
@@ -120,15 +126,16 @@ namespace HWClassLibrary.Debug
         ///     Method dump,
         /// </summary>
         [DebuggerHidden]
-        protected static void ReturnMethodDump(bool breakExecution)
+        protected static void ReturnVoidMethodDump()
         {
-            if(!IsMethodDumpTraceActive)
-                return;
-            Tracer.IndentEnd();
-            Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
-            if(breakExecution)
-                Tracer.TraceBreak();
-            return;
+            if (IsMethodDumpTraceActive)
+            {
+                Tracer.IndentEnd();
+                Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
+                if(_breakExecution)
+                    Tracer.TraceBreak();
+            }
+            _breakExecution = false;
         }
 
         /// <summary>
@@ -137,8 +144,14 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void EndMethodDump()
         {
-            var top = _methodDumpTraceSwitches.Pop();
-            Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(1));
+            CheckDumpLevel(1);
+            _methodDumpTraceSwitches.Pop();
+        }
+
+        private static void CheckDumpLevel(int depth)
+        {
+            var top = _methodDumpTraceSwitches.Peek();
+            Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth+1));
         }
 
         /// <summary>
@@ -255,6 +268,13 @@ namespace HWClassLibrary.Debug
             internal bool Trace { get { return _trace; } }
         }
 
-        private static bool IsMethodDumpTraceActive { get { return _methodDumpTraceSwitches.Peek().Trace; } }
+        private static bool IsMethodDumpTraceActive
+        {
+            get
+            {
+                CheckDumpLevel(2);
+                return _methodDumpTraceSwitches.Peek().Trace;
+            }
+        }
     }
 }
