@@ -30,8 +30,16 @@
     <Compile Include="DataBase\SQLGenerator.cs" />
     <Compile Include="DataBase\DataBase.cs" />
     <Compile Include="DataBase\TableColumn.cs" />
+    <Compile Include="Debug\DisableDumpAttribute.cs" />
     <Compile Include="Debug\Dumpable.cs" />
-    <Compile Include="Debug\dumpExcludeAttribute.cs" />
+    <Compile Include="Debug\DumpClassAttribute.cs" />
+    <Compile Include="Debug\DumpDataClassAttribute.cs" />
+    <Compile Include="Debug\DumpEnabledAttribute.cs" />
+    <Compile Include="Debug\DumpExceptAttribute.cs" />
+    <Compile Include="Debug\DumpAttribute.cs" />
+    <Compile Include="Debug\DumpToStringAttribute.cs" />
+    <Compile Include="Debug\EnableDumpAttribute.cs" />
+    <Compile Include="Debug\EnableDumpWithExceptionsAttribute.cs" />
     <Compile Include="Debug\Profiler.cs" />
     <Compile Include="Debug\Tracer.cs" />
     <Compile Include="Debug\Visualizer.cs" />

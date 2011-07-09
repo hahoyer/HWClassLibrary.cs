@@ -422,20 +422,10 @@ namespace HWClassLibrary.Debug
 
         private static bool CheckDumpExceptAttribute(this MemberInfo f, object x)
         {
-            var deas = (DumpExceptAttribute[]) Attribute.GetCustomAttributes(f, typeof(DumpExceptAttribute));
-            foreach(var dea in deas)
+            foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))
             {
                 var v = Value(f, x);
-                if(dea.Exception == null)
-                {
-                    if(v == null)
-                        return false;
-                    if(v.Equals(DateTime.MinValue))
-                        return false;
-                    return true;
-                }
-                if(v.Equals(dea.Exception))
-                    return false;
+                return !dea.IsException(v);
             }
             return true;
         }
@@ -766,5 +756,14 @@ namespace HWClassLibrary.Debug
         public static string CallingMethodName() { return CallingMethodName(1); }
 
         public static int CurrentFrameCount(int depth) { return new StackTrace(true).FrameCount - depth; }
+    }
+
+    internal interface IDumpExceptAttribute
+    {
+        bool IsException(object target);
+    }
+
+    public abstract class DumpAttributeBase: Attribute
+    {
     }
 }
