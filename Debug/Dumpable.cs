@@ -144,6 +144,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void EndMethodDump()
         {
+            _breakExecution = false; 
             CheckDumpLevel(1);
             _methodDumpTraceSwitches.Pop();
         }
