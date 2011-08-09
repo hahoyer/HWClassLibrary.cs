@@ -141,12 +141,17 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void EndMethodDump()
         {
+            if (!Debugger.IsAttached)
+                return;
+
             CheckDumpLevel(1);
             _methodDumpTraceSwitches.Pop();
         }
 
         private static void CheckDumpLevel(int depth)
         {
+            if (!Debugger.IsAttached)
+                return;
             var top = _methodDumpTraceSwitches.Peek();
             Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
         }
@@ -246,6 +251,8 @@ namespace HWClassLibrary.Debug
 
         private static void StartMethodDump(int depth, bool trace)
         {
+            if (!Debugger.IsAttached)
+                return;
             var frameCount = Tracer.CurrentFrameCount(depth + 1);
             _methodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
         }
@@ -269,6 +276,8 @@ namespace HWClassLibrary.Debug
         {
             get
             {
+                if (!Debugger.IsAttached)
+                    return false;
                 CheckDumpLevel(2);
                 return _methodDumpTraceSwitches.Peek().Trace;
             }
