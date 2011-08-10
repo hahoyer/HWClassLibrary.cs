@@ -278,7 +278,7 @@ namespace HWClassLibrary.Debug
             {
                 if (!Debugger.IsAttached)
                     return false;
-                CheckDumpLevel(2);
+                //CheckDumpLevel(2);
                 return _methodDumpTraceSwitches.Peek().Trace;
             }
         }

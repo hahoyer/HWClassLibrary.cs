@@ -59,15 +59,7 @@ namespace HWClassLibrary.Helper
         public DictionaryEx<TKey, TValue> Clone { get { return new DictionaryEx<TKey, TValue>(this); } }
 
         [DisableDump]
-        public string NodeDump
-        {
-            get
-            {
-                var genericArguments = GetType().GetGenericArguments();
-                return "DictionaryEx<" + genericArguments[0].FullName + "," + genericArguments[1].FullName + ">[" +
-                       Count + "]";
-            }
-        }
+        public string NodeDump { get { return GetType().PrettyName(); } }
 
         /// <summary>
         ///     Gets the or add.
@@ -146,10 +138,7 @@ namespace HWClassLibrary.Helper
         ///<exception cref = "T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
         public int GetHashCode(string obj) { return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant()); }
 
-        public static IEqualityComparer<string> Default
-        {
-            get { return _default ?? (_default = new NoCaseComparer()); }
-        }
+        public static IEqualityComparer<string> Default { get { return _default ?? (_default = new NoCaseComparer()); } }
     }
 
     public class NoCaseStringDictionary<TValue> : DictionaryEx<string, TValue>

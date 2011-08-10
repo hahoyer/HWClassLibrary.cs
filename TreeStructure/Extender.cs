@@ -1,3 +1,21 @@
+//     Compiler for programming language "Reni"
+//     Copyright (C) 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -6,6 +24,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.TreeStructure
@@ -169,12 +188,7 @@ namespace HWClassLibrary.TreeStructure
 
             var il = nodeData as IList;
             if(il != null)
-            {
-                var result = "IList";
-                if(il.GetType().IsGenericType)
-                    result += "<" + il.GetType().GetGenericArguments()[0].FullName + ">";
-                return result + "[" + ((IList) nodeData).Count + "]";
-            }
+                return il.GetType().PrettyName() + "[" + ((IList) nodeData).Count + "]";
 
             if(nodeData.GetType().Namespace.StartsWith("System"))
                 return nodeData.ToString();
@@ -190,7 +204,7 @@ namespace HWClassLibrary.TreeStructure
             return result.ToArray();
         }
 
-        private static TreeNode[] CreateNodes(object target)
+        public static TreeNode[] CreateNodes(this object target)
         {
             if(target == null)
                 return new TreeNode[0];
@@ -214,27 +228,22 @@ namespace HWClassLibrary.TreeStructure
 
         private static TreeNode[] CreatePropertyNodes(object nodeData)
         {
-            var result = new List<TreeNode>();
-            foreach(var propertyInfo in nodeData.GetType().GetProperties(DefaultBindingFlags))
-            {
-                var treeNode = CreateTreeNode(nodeData, propertyInfo);
-                if(treeNode != null)
-                    result.Add(treeNode);
-            }
-            return result.ToArray();
+            return nodeData
+                .GetType()
+                .GetProperties(DefaultBindingFlags)
+                .Select(propertyInfo => CreateTreeNode(nodeData, propertyInfo))
+                .Where(treeNode => treeNode != null)
+                .ToArray();
         }
 
         private static TreeNode[] CreateFieldNodes(object nodeData)
         {
-            var result = new List<TreeNode>();
             var type = nodeData.GetType();
-            foreach(var fieldInfo in type.GetFields(DefaultBindingFlags))
-            {
-                var treeNode = CreateTreeNode(nodeData, fieldInfo);
-                if(treeNode != null)
-                    result.Add(treeNode);
-            }
-            return result.ToArray();
+            return type
+                .GetFields(DefaultBindingFlags)
+                .Select(fieldInfo => CreateTreeNode(nodeData, fieldInfo))
+                .Where(treeNode => treeNode != null)
+                .ToArray();
         }
 
         private static BindingFlags DefaultBindingFlags

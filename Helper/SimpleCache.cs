@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HWClassLibrary.Debug;
+using HWClassLibrary.TreeStructure;
 
 namespace HWClassLibrary.Helper
 {
@@ -29,6 +30,7 @@ namespace HWClassLibrary.Helper
         private readonly Func<TValueType> _createValue;
         private bool _isValid;
         private bool _isBusy;
+        [Node]
         private TValueType _value;
 
         public SimpleCache(Func<TValueType> createValue) { _createValue = createValue; }
@@ -66,6 +68,7 @@ namespace HWClassLibrary.Helper
             _isBusy = false;
         }
 
+        [Node]
         public bool IsValid { get { return _isValid; } }
     }
 }
