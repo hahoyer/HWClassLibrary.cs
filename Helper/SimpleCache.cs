@@ -27,11 +27,11 @@ namespace HWClassLibrary.Helper
     [Serializable]
     public sealed class SimpleCache<TValueType>
     {
-        private readonly Func<TValueType> _createValue;
-        private bool _isValid;
-        private bool _isBusy;
+        readonly Func<TValueType> _createValue;
+        bool _isValid;
+        bool _isBusy;
         [Node]
-        private TValueType _value;
+        TValueType _value;
 
         public SimpleCache(Func<TValueType> createValue) { _createValue = createValue; }
 
@@ -70,5 +70,8 @@ namespace HWClassLibrary.Helper
 
         [Node]
         public bool IsValid { get { return _isValid; } }
+
+        [EnableDumpExcept(false)]
+        public bool IsBusy { get { return _isBusy; } }
     }
 }
