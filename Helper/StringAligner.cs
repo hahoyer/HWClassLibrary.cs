@@ -1,3 +1,21 @@
+//     Compiler for programming language "Reni"
+//     Copyright (C) 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,18 +23,10 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
-    /// <summary>
-    ///     Class to align strings
-    /// </summary>
-    public class StringAligner
+    public sealed class StringAligner
     {
-        private readonly List<FloatingColumn> _floatingColumns = new List<FloatingColumn>();
+        readonly List<FloatingColumn> _floatingColumns = new List<FloatingColumn>();
 
-        /// <summary>
-        ///     Adds the floating column.
-        /// </summary>
-        /// <param name = "pattern">The pattern.</param>
-        /// created 15.10.2006 14:58
         public void AddFloatingColumn(params string[] pattern)
         {
             var c = _floatingColumns.Count;
@@ -25,21 +35,14 @@ namespace HWClassLibrary.Helper
                 _floatingColumns[c - 1].FindStartFailed = _floatingColumns[c].FindStart;
         }
 
-        /// <summary>
-        ///     Formats the specified string.
-        /// </summary>
-        /// <param name = "s">The string.</param>
-        /// <returns></returns>
-        /// created 15.10.2006 14:59
-        public string Format(string s)
+        internal string Format(string lines) { return Format(lines.Split('\n')).Aggregate("", (current, temp) => current + temp + "\n"); }
+
+        public string[] Format(string[] lines)
         {
-            var ss = s.Split('\n');
-            var p = new int[ss.Length];
-            for(var i = 0; i < _floatingColumns.Count; i++)
-                _floatingColumns[i].Format(ss, p);
-            var result = "";
-            for(var i = 0; i < ss.Length; i++)
-                result += ss[i] + "\n";
+            var result = lines.Select(x => x).ToArray();
+            var p = new int[result.Length];
+            foreach(var column in _floatingColumns)
+                column.Format(result, p);
             return result;
         }
     }
@@ -81,7 +84,7 @@ namespace HWClassLibrary.Helper
                 positions[i] = FindEnd(lines[i], positions[i]);
         }
 
-        private static void FormatLine(ref string line, ref int position, int offset)
+        static void FormatLine(ref string line, ref int position, int offset)
         {
             if(offset == 0)
                 return;
@@ -89,7 +92,7 @@ namespace HWClassLibrary.Helper
             position += offset;
         }
 
-        private static bool Levelling(int count, string[] lines, int[] positions)
+        static bool Levelling(int count, string[] lines, int[] positions)
         {
             for(var i = 1; i < count; i++)
             {
@@ -132,7 +135,7 @@ namespace HWClassLibrary.Helper
     /// </summary>
     public class StringPattern : FloatingColumn
     {
-        private readonly string[] _pattern;
+        readonly string[] _pattern;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref = "StringPattern" /> class.
