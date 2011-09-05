@@ -42,6 +42,18 @@
     <Compile Include="Debug\Profiler.cs" />
     <Compile Include="Debug\Tracer.cs" />
     <Compile Include="Debug\Visualizer.cs" />
+    <Compile Include="EF\Utility\Accessibility.cs" />
+    <Compile Include="EF\Utility\CodeGenerationTools.cs" />
+    <Compile Include="EF\Utility\CodeRegion.cs" />
+    <Compile Include="EF\Utility\DynamicHost.cs" />
+    <Compile Include="EF\Utility\DynamicTextTransformation.cs" />
+    <Compile Include="EF\Utility\MetadataConstants.cs" />
+    <Compile Include="EF\Utility\EntityFrameworkTemplateFileManager.cs" />
+    <Compile Include="EF\Utility\FunctionImportParameter.cs" />
+    <Compile Include="EF\Utility\IDynamicHost.cs" />
+    <Compile Include="EF\Utility\MetadataLoader.cs" />
+    <Compile Include="EF\Utility\MetadataTools.cs" />
+    <Compile Include="EF\Utility\NullHost.cs" />
     <Compile Include="Helper\BigRational.cs" />
     <Compile Include="Helper\CSharpCompiler.cs" />
     <Compile Include="Helper\DateTimeExtender.cs" />
@@ -75,6 +87,9 @@
     <Compile Include="UnitTest\TestType.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="JetBrains.ReSharper.Refactorings.CSharp">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\JetBrains\ReSharper\v6.0\Bin\JetBrains.ReSharper.Refactorings.CSharp.dll</HintPath>
     </Reference>
@@ -82,10 +97,13 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Data.SQLite" />
     <Reference Include="System.Data.SQLite.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TreeStructure\TreeForm.resx">
