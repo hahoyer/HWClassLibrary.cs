@@ -1,3 +1,21 @@
+//     Compiler for programming language "Reni"
+//     Copyright (C) 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,7 +80,12 @@ namespace HWClassLibrary.Helper
         /// <param name = "x">The x.</param>
         /// <returns></returns>
         /// created 08.01.2007 18:37
-        public static string Quote(this string x) { return "\"" + x.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\""; }
+        public static string Quote(this string x)
+        {
+            if(x == null)
+                return "null";
+            return "\"" + x.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+        }
 
         /// <summary>
         ///     Dumps the bytes as hex string.
@@ -81,7 +104,7 @@ namespace HWClassLibrary.Helper
             return result;
         }
 
-        private static string HexDumpFiller(int i, int length)
+        static string HexDumpFiller(int i, int length)
         {
             Tracer.Assert(length < 16);
             if(0 == length)
@@ -90,7 +113,7 @@ namespace HWClassLibrary.Helper
                 return "x[";
             if(i == length)
                 return "]";
-            if(i%4 == 0)
+            if(i % 4 == 0)
                 return " ";
             return "";
         }
