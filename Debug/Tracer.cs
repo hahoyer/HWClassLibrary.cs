@@ -262,6 +262,9 @@ namespace HWClassLibrary.Debug
             var co = x as CodeObject;
             if(co != null)
                 return InternalDump(co);
+            var xt = x as Type;
+            if (xt != null)
+                return xt.PrettyName();
 
             if(t.IsPrimitive || t.ToString().StartsWith("System."))
                 return x.ToString();
