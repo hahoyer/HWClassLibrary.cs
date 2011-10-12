@@ -24,6 +24,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
     <Compile Include="DataBase\SQLGenerator.cs" />
@@ -69,6 +72,13 @@
     <Compile Include="Helper\TypeNameExtender.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
+    <Compile Include="T4\CodeGenerationTools.cs" />
+    <Compile Include="T4\DynamicHost.cs" />
+    <Compile Include="T4\DynamicTextTransformation.cs" />
+    <Compile Include="T4\Extender.cs" />
+    <Compile Include="T4\TemplateFileManager.cs" />
+    <Compile Include="T4\IDynamicHost.cs" />
+    <Compile Include="T4\NullHost.cs" />
     <Compile Include="TreeStructure\Extender.cs" />
     <Compile Include="TreeStructure\TreeForm.cs">
       <SubType>Form</SubType>

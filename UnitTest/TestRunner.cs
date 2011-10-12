@@ -86,6 +86,8 @@ namespace HWClassLibrary.UnitTest
             }
             set
             {
+                if (value == null)
+                    return;
                 var pairs = value.Split('\n')
                     .Where((line,i) => i > 0 && line != "")
                     .Join(_testTypes, line => line.Split(' ')[1], type => type.Type.FullName, (line, type) => new {line, type});
