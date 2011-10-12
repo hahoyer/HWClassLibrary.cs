@@ -24,11 +24,10 @@ using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using JetBrains.Annotations;
 
 namespace HWClassLibrary.T4
 {
-    public abstract class TemplateFileManagerBase
+    sealed class TemplateFileManager
     {
         sealed class Block
         {
@@ -46,13 +45,13 @@ namespace HWClassLibrary.T4
         readonly Block _header = new Block();
         readonly DynamicTextTransformation _textTransformation;
 
-        protected TemplateFileManagerBase(object textTransformation)
+        internal TemplateFileManager(DynamicTextTransformation textTransformation)
         {
-            _textTransformation = DynamicTextTransformation.Create(textTransformation);
+            _textTransformation = textTransformation;
             _generationEnvironment = _textTransformation.GenerationEnvironment;
         }
 
-        internal virtual string[] Process(bool split)
+        internal string[] ProcessBase(bool split)
         {
             var generatedFileNames = new List<string>();
 
@@ -79,8 +78,6 @@ namespace HWClassLibrary.T4
 
             return generatedFileNames.ToArray();
         }
-
-        protected abstract void CreateFile(string fileName, string content);
 
         /// <summary>
         ///     Marks the end of the last file if there was one, and starts a new
@@ -125,124 +122,51 @@ namespace HWClassLibrary.T4
 
             _currentBlock = null;
         }
-    }
 
-    /// <summary>
-    ///     Responsible for marking the various sections of the generation,
-    ///     so they can be split up into separate files
-    /// </summary>
-    public sealed class TemplateFileManager : TemplateFileManagerBase
-    {
-        /// <summary>
-        ///     Creates the VsTemplateFileManager if VS is detected, otherwise
-        ///     creates the file system version.
-        /// </summary>
-        internal static TemplateFileManagerBase Create(DynamicTextTransformation transformation)
+        internal string[] Process(bool split)
         {
-            var host = transformation.Host;
+            var templateProjectItem = _textTransformation.TemplateProjectItem();
+            if(templateProjectItem != null && templateProjectItem.ProjectItems == null)
+                return new string[0];
 
-#if !PREPROCESSED_TEMPLATE
-            if(host.AsIServiceProvider() != null)
-                return new VsTemplateFileManager(host.AsIServiceProvider(), host.TemplateFile);
-#endif
-            return new TemplateFileManager(transformation);
+            var generatedFileNames = ProcessBase(split);
+
+            if(templateProjectItem != null )
+            {
+                Action<string[]> projectSyncAction = keepFileNames => ProjectSync(templateProjectItem, keepFileNames);
+                projectSyncAction.EndInvoke(projectSyncAction.BeginInvoke(generatedFileNames, null, null));
+            }
+            return generatedFileNames;
         }
 
-        /// <summary>
-        ///     Initializes an TemplateFileManager Instance  with the
-        ///     TextTransformation (T4 generated class) that is currently running
-        /// </summary>
-        TemplateFileManager([NotNull] object textTransformation)
-            : base(textTransformation) { }
-
-        /// <summary>
-        ///     Produce the template output files.
-        /// </summary>
-        protected override void CreateFile(string fileName, string content)
+        internal void CreateFile(string fileName, string content)
         {
-            if(IsFileContentDifferent(fileName, content))
+            if(Extender.IsFileContentDifferent(fileName, content))
+            {
+                _textTransformation.CheckoutFileIfRequired(fileName);
                 File.WriteAllText(fileName, content);
+            }
         }
 
-        static bool IsFileContentDifferent(String fileName, string newContent) { return !(File.Exists(fileName) && File.ReadAllText(fileName) == newContent); }
-
-#if !PREPROCESSED_TEMPLATE
-        sealed class VsTemplateFileManager : TemplateFileManagerBase
+        static void ProjectSync(ProjectItem templateProjectItem, string[] keepFileNames)
         {
-            readonly ProjectItem _templateProjectItem;
-            readonly DTE _dte;
-            readonly Action<string> _checkOutAction;
-            readonly Action<string[]> _projectSyncAction;
+            var keepFileNameSet = new HashSet<string>(keepFileNames);
+            var originalOutput = Path.GetFileNameWithoutExtension(templateProjectItem.FileNames[0]);
 
-            /// <summary>
-            ///     Creates an instance of the VsTemplateFileManager class with the IDynamicHost instance
-            /// </summary>
-            public VsTemplateFileManager(IServiceProvider hostServiceProvider, string templateFile)
-                : base(null)
-            {
-                _dte = (DTE) hostServiceProvider.GetService(typeof(DTE));
-                if(_dte == null)
-                    throw new ArgumentNullException("hostServiceProvider");
+            var projectFiles = templateProjectItem
+                .ProjectItems
+                .Cast<ProjectItem>()
+                .ToDictionary(projectItem => projectItem.FileNames[0]);
 
-                _templateProjectItem = _dte.Solution.FindProjectItem(templateFile);
+            // Remove unused items from the project
+            var pairs = projectFiles
+                .Where(pair => !keepFileNames.Contains(pair.Key) && !(Path.GetFileNameWithoutExtension(pair.Key) + ".").StartsWith(originalOutput + "."));
+            foreach(var pair in pairs)
+                pair.Value.Delete();
 
-                _checkOutAction = fileName => _dte.SourceControl.CheckOutItem(fileName);
-                _projectSyncAction = keepFileNames => ProjectSync(_templateProjectItem, keepFileNames);
-            }
-
-            internal override string[] Process(bool split)
-            {
-                if(_templateProjectItem.ProjectItems == null)
-                    return new string[0];
-
-                var generatedFileNames = base.Process(split);
-
-                _projectSyncAction.EndInvoke(_projectSyncAction.BeginInvoke(generatedFileNames, null, null));
-
-                return generatedFileNames;
-            }
-
-            protected override void CreateFile(string fileName, string content)
-            {
-                if(IsFileContentDifferent(fileName, content))
-                {
-                    CheckoutFileIfRequired(fileName);
-                    File.WriteAllText(fileName, content);
-                }
-            }
-
-            static void ProjectSync(ProjectItem templateProjectItem, string[] keepFileNames)
-            {
-                var keepFileNameSet = new HashSet<string>(keepFileNames);
-                var originalOutput = Path.GetFileNameWithoutExtension(templateProjectItem.FileNames[0]);
-
-                var projectFiles = templateProjectItem
-                    .ProjectItems
-                    .Cast<ProjectItem>()
-                    .ToDictionary(projectItem => projectItem.FileNames[0]);
-
-                // Remove unused items from the project
-                var pairs = projectFiles
-                    .Where(pair => !keepFileNames.Contains(pair.Key) && !(Path.GetFileNameWithoutExtension(pair.Key) + ".").StartsWith(originalOutput + "."));
-                foreach(var pair in pairs)
-                    pair.Value.Delete();
-
-                // Add missing files to the project
-                foreach(var fileName in keepFileNameSet.Where(fileName => !projectFiles.ContainsKey(fileName)))
-                    templateProjectItem.ProjectItems.AddFromFile(fileName);
-            }
-
-            void CheckoutFileIfRequired(string fileName)
-            {
-                if(_dte.SourceControl == null
-                   || !_dte.SourceControl.IsItemUnderSCC(fileName)
-                   || _dte.SourceControl.IsItemCheckedOut(fileName))
-                    return;
-
-                // run on worker thread to prevent T4 calling back into VS
-                _checkOutAction.EndInvoke(_checkOutAction.BeginInvoke(fileName, null, null));
-            }
+            // Add missing files to the project
+            foreach(var fileName in keepFileNameSet.Where(fileName => !projectFiles.ContainsKey(fileName)))
+                templateProjectItem.ProjectItems.AddFromFile(fileName);
         }
-#endif
     }
 }

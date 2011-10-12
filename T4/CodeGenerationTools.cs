@@ -25,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 using Microsoft.CSharp;
 
@@ -37,8 +38,7 @@ namespace HWClassLibrary.T4
     public sealed class CodeGenerationTools
     {
         readonly DynamicTextTransformation _textTransformation;
-        readonly CSharpCodeProvider _code;
-        readonly TemplateFileManagerBase _fileManager;
+        readonly SimpleCache<CSharpCodeProvider> _codeProviderCache = new SimpleCache<CSharpCodeProvider>(()=> new CSharpCodeProvider());
 
         /// <summary>
         ///     Initializes a new CodeGenerationTools object with the TextTransformation (T4 generated class)
@@ -47,21 +47,19 @@ namespace HWClassLibrary.T4
         internal CodeGenerationTools([NotNull] object textTransformation)
         {
             _textTransformation = DynamicTextTransformation.Create(textTransformation);
-            _fileManager = TemplateFileManager.Create(_textTransformation);
-            _code = new CSharpCodeProvider();
             FullyQualifySystemTypes = false;
             CamelCaseFields = true;
         }
 
         [UsedImplicitly]
-        public string[] ProcessFiles() { return _fileManager.Process(true); }
+        public string[] ProcessFiles() { return FileManager.Process(true); }
 
         /// <summary>
         ///     Marks the end of the last file if there was one, and starts a new
         ///     and marks this point in generation as a new file.
         /// </summary>
         [UsedImplicitly]
-        public void StartNewFile(string name) { _fileManager.StartNewFile(name); }
+        public void StartNewFile(string name) { FileManager.StartNewFile(name); }
 
         ///<summary>
         ///    When true, all types that are not being generated
@@ -81,6 +79,8 @@ namespace HWClassLibrary.T4
         ///    Default is true.
         ///</summary>
         public bool CamelCaseFields { get; set; }
+        
+        TemplateFileManager FileManager { get { return _textTransformation.FileManager; } }
 
         /// <summary>
         ///     Returns the NamespaceName suggested by VS if running inside VS.  Otherwise, returns
@@ -105,7 +105,7 @@ namespace HWClassLibrary.T4
             if(name == null)
                 return null;
 
-            return _code.CreateEscapedIdentifier(name);
+            return _codeProviderCache.Value.CreateEscapedIdentifier(name);
         }
 
 
@@ -154,7 +154,7 @@ namespace HWClassLibrary.T4
             if(FullyQualifySystemTypes)
                 typeName = "global::" + clrType.FullName;
             else
-                typeName = _code.GetTypeOutput(new CodeTypeReference(clrType));
+                typeName = _codeProviderCache.Value.GetTypeOutput(new CodeTypeReference(clrType));
             return typeName;
         }
 
