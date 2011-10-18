@@ -28,7 +28,7 @@ using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.T4
 {
-    sealed class TemplateFileManager
+    sealed class FileManager
     {
         readonly DictionaryEx<string, Box<string>> _fileItems;
 
@@ -36,13 +36,13 @@ namespace HWClassLibrary.T4
         // TextTransformation object
         readonly StringBuilder _text;
 
-        readonly DynamicTextTransformation _textTransformation;
+        readonly Wrapper _wrapper;
 
-        internal TemplateFileManager(DynamicTextTransformation textTransformation)
+        internal FileManager(Wrapper wrapper)
         {
             _fileItems = new DictionaryEx<string, Box<string>>(fileName => new Box<string>(""));
-            _textTransformation = textTransformation;
-            _text = _textTransformation.GenerationEnvironment;
+            _wrapper = wrapper;
+            _text = _wrapper.GenerationEnvironment;
         }
 
 
@@ -79,7 +79,7 @@ namespace HWClassLibrary.T4
             OnFilesChanging();
 
             //Tracer.LaunchDebugger();
-            var outputPath = Path.GetDirectoryName(_textTransformation.Host.TemplateFile) ?? "";
+            var outputPath = Path.GetDirectoryName(_wrapper.Host.TemplateFile) ?? "";
             foreach(var fileItem in _fileItems)
                 CreateFile(Path.Combine(outputPath, fileItem.Key), fileItem.Value.Content);
 
@@ -93,14 +93,14 @@ namespace HWClassLibrary.T4
         {
             if(Extender.IsFileContentDifferent(fileName, content))
             {
-                _textTransformation.CheckoutFileIfRequired(fileName);
+                _wrapper.CheckoutFileIfRequired(fileName);
                 File.WriteAllText(fileName, content);
             }
         }
 
         void ProjectSync(string[] newFiles)
         {
-            var item = _textTransformation.TemplateProjectItem();
+            var item = _wrapper.TemplateProjectItem();
             if (item == null || item.ProjectItems == null)
                 return;
 

@@ -71,9 +71,9 @@
     <Compile Include="JetBrainsAnnotations.cs" />
     <Compile Include="T4\Context.cs" />
     <Compile Include="T4\DynamicHost.cs" />
-    <Compile Include="T4\DynamicTextTransformation.cs" />
+    <Compile Include="T4\Wrapper.cs" />
     <Compile Include="T4\Extender.cs" />
-    <Compile Include="T4\TemplateFileManager.cs" />
+    <Compile Include="T4\FileManager.cs" />
     <Compile Include="T4\IDynamicHost.cs" />
     <Compile Include="T4\NullHost.cs" />
     <Compile Include="TreeStructure\Extender.cs" />

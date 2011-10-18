@@ -5,11 +5,7 @@ using System;
 
 namespace HWClassLibrary.T4
 {
-    /// <summary>
-    ///     Reponsible for abstracting the use of Host between times
-    ///     when it is available and not
-    /// </summary>
-    public interface IDynamicHost
+    interface IDynamicHost
     {
         /// <summary>
         ///     An abstracted call to Microsoft.VisualStudio.TextTemplating.ITextTemplatingEngineHost ResolveParameterValue

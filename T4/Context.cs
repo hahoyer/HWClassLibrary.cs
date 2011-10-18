@@ -37,12 +37,12 @@ namespace HWClassLibrary.T4
     /// </summary>
     public sealed class Context
     {
-        readonly DynamicTextTransformation _textTransformation;
+        readonly Wrapper _wrapper;
         readonly SimpleCache<CSharpCodeProvider> _codeProviderCache = new SimpleCache<CSharpCodeProvider>(()=> new CSharpCodeProvider());
 
         internal Context([NotNull] object textTransformation)
         {
-            _textTransformation = DynamicTextTransformation.Create(textTransformation);
+            _wrapper = Wrapper.Create(textTransformation);
             FullyQualifySystemTypes = false;
             CamelCaseFields = true;
         }
@@ -75,7 +75,7 @@ namespace HWClassLibrary.T4
         ///</summary>
         public bool CamelCaseFields { get; set; }
         
-        TemplateFileManager FileManager { get { return _textTransformation.FileManager; } }
+        FileManager FileManager { get { return _wrapper.FileManager; } }
 
         /// <summary>
         ///     Returns the NamespaceName suggested by VS if running inside VS.  Otherwise, returns
@@ -84,7 +84,7 @@ namespace HWClassLibrary.T4
         [UsedImplicitly]
         public string NameSpace()
         {
-            var result = _textTransformation.Host.ResolveParameterValue("directiveId", "namespaceDirectiveProcessor", "namespaceHint");
+            var result = _wrapper.Host.ResolveParameterValue("directiveId", "namespaceDirectiveProcessor", "namespaceHint");
             if(String.IsNullOrEmpty(result))
                 return null;
 

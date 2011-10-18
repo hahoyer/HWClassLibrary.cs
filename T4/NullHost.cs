@@ -1,3 +1,22 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,35 +24,11 @@ using System;
 
 namespace HWClassLibrary.T4
 {
-    /// <summary>
-    ///     Reponsible for implementing the IDynamicHost when the
-    ///     Host property is not available on the TextTemplating type. The Host
-    ///     property only exists when the hostspecific attribute of the template
-    ///     directive is set to true.
-    /// </summary>
-    public class NullHost : IDynamicHost
+    sealed class NullHost : IDynamicHost
     {
-        /// <summary>
-        ///     An abstraction of the call to Microsoft.VisualStudio.TextTemplating.ITextTemplatingEngineHost ResolveParameterValue
-        ///     that simply retuns null.
-        /// </summary>
         public string ResolveParameterValue(string id, string name, string otherName) { return null; }
-
-        /// <summary>
-        ///     An abstraction of the call to Microsoft.VisualStudio.TextTemplating.ITextTemplatingEngineHost ResolvePath
-        ///     that simply retuns the path passed in.
-        /// </summary>
         public string ResolvePath(string path) { return path; }
-
-        /// <summary>
-        ///     An abstraction of the call to Microsoft.VisualStudio.TextTemplating.ITextTemplatingEngineHost TemplateFile
-        ///     that returns null.
-        /// </summary>
         public string TemplateFile { get { return null; } }
-
-        /// <summary>
-        ///     Returns null.
-        /// </summary>
         public IServiceProvider AsIServiceProvider() { return null; }
     }
 }
