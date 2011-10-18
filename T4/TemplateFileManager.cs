@@ -24,122 +24,71 @@ using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.T4
 {
     sealed class TemplateFileManager
     {
-        sealed class Block
-        {
-            public String Name;
-            public int Start, Length;
-        }
+        readonly DictionaryEx<string, Box<string>> _fileItems;
 
         // reference to the GenerationEnvironment StringBuilder on the
         // TextTransformation object
-        readonly StringBuilder _generationEnvironment;
+        readonly StringBuilder _text;
 
-        Block _currentBlock;
-        readonly List<Block> _files = new List<Block>();
-        readonly Block _footer = new Block();
-        readonly Block _header = new Block();
         readonly DynamicTextTransformation _textTransformation;
 
         internal TemplateFileManager(DynamicTextTransformation textTransformation)
         {
+            _fileItems = new DictionaryEx<string, Box<string>>(fileName => new Box<string>(""));
             _textTransformation = textTransformation;
-            _generationEnvironment = _textTransformation.GenerationEnvironment;
+            _text = _textTransformation.GenerationEnvironment;
         }
 
-        internal string[] ProcessBase(bool split)
+
+        string[] _currentFiles;
+        int _currentStart;
+
+        public void Files(string[] files)
         {
-            var generatedFileNames = new List<string>();
+            OnFilesChanging();
+            Tracer.Assert(_currentFiles == null);
+            // Special treatment of empty file list: send text to default target
+            if(files.Length > 0)
+                _currentFiles = files;
+        }
 
-            if(split)
+        void OnFilesChanging()
+        {
+            if(_currentFiles != null)
             {
-                EndBlock();
-
-                var headerText = _generationEnvironment.ToString(_header.Start, _header.Length);
-                var footerText = _generationEnvironment.ToString(_footer.Start, _footer.Length);
-                var outputPath = Path.GetDirectoryName(_textTransformation.Host.TemplateFile);
-
-                _files.Reverse();
-
-                foreach(var block in _files)
+                foreach(var file in _currentFiles)
                 {
-                    var fileName = Path.Combine(outputPath, block.Name);
-                    var content = headerText + _generationEnvironment.ToString(block.Start, block.Length) + footerText;
-
-                    generatedFileNames.Add(fileName);
-                    CreateFile(fileName, content);
-                    _generationEnvironment.Remove(block.Start, block.Length);
+                    var box = _fileItems.Find(file);
+                    box.Content = box.Content + _text.ToString(_currentStart, _text.Length - _currentStart);
                 }
+                _text.Remove(_currentStart, _text.Length - _currentStart);
             }
 
-            return generatedFileNames.ToArray();
+            _currentFiles = null;
+            _currentStart = _text.Length;
         }
 
-        /// <summary>
-        ///     Marks the end of the last file if there was one, and starts a new
-        ///     and marks this point in generation as a new file.
-        /// </summary>
-        public void StartNewFile(string name)
+        internal void Process()
         {
-            if(name == null)
-                throw new ArgumentNullException("name");
+            OnFilesChanging();
 
-            CurrentBlock = new Block {Name = name};
+            var outputPath = Path.GetDirectoryName(_textTransformation.Host.TemplateFile) ?? "";
+            foreach(var fileItem in _fileItems)
+                CreateFile(Path.Combine(outputPath, fileItem.Key), fileItem.Value.Content);
+
+            var newFiles = _fileItems.Keys.Select(name => Path.Combine(outputPath, name)).ToArray();
+
+            Action projectSyncAction = () => ProjectSync(newFiles);
+            projectSyncAction.EndInvoke(projectSyncAction.BeginInvoke(null, null));
         }
 
-        Block CurrentBlock
-        {
-            get { return _currentBlock; }
-            set
-            {
-                if(CurrentBlock != null)
-                    EndBlock();
-
-                if(value != null)
-                    value.Start = _generationEnvironment.Length;
-
-                _currentBlock = value;
-            }
-        }
-
-        public void StartFooter() { CurrentBlock = _footer; }
-
-        public void StartHeader() { CurrentBlock = _header; }
-
-        public void EndBlock()
-        {
-            if(CurrentBlock == null)
-                return;
-
-            CurrentBlock.Length = _generationEnvironment.Length - CurrentBlock.Start;
-
-            if(CurrentBlock != _header && CurrentBlock != _footer)
-                _files.Add(CurrentBlock);
-
-            _currentBlock = null;
-        }
-
-        internal string[] Process(bool split)
-        {
-            var templateProjectItem = _textTransformation.TemplateProjectItem();
-            if(templateProjectItem != null && templateProjectItem.ProjectItems == null)
-                return new string[0];
-
-            var generatedFileNames = ProcessBase(split);
-
-            if(templateProjectItem != null )
-            {
-                Action<string[]> projectSyncAction = keepFileNames => ProjectSync(templateProjectItem, keepFileNames);
-                projectSyncAction.EndInvoke(projectSyncAction.BeginInvoke(generatedFileNames, null, null));
-            }
-            return generatedFileNames;
-        }
-
-        internal void CreateFile(string fileName, string content)
+        void CreateFile(string fileName, string content)
         {
             if(Extender.IsFileContentDifferent(fileName, content))
             {
@@ -148,25 +97,29 @@ namespace HWClassLibrary.T4
             }
         }
 
-        static void ProjectSync(ProjectItem templateProjectItem, string[] keepFileNames)
+        void ProjectSync(string[] newFiles)
         {
-            var keepFileNameSet = new HashSet<string>(keepFileNames);
-            var originalOutput = Path.GetFileNameWithoutExtension(templateProjectItem.FileNames[0]);
+            var item = _textTransformation.TemplateProjectItem();
+            if (item == null || item.ProjectItems == null)
+                return;
 
-            var projectFiles = templateProjectItem
+            var defaultFile = Path.GetFileNameWithoutExtension(item.FileNames[0]);
+
+            var projectFiles = item
                 .ProjectItems
                 .Cast<ProjectItem>()
                 .ToDictionary(projectItem => projectItem.FileNames[0]);
 
             // Remove unused items from the project
-            var pairs = projectFiles
-                .Where(pair => !keepFileNames.Contains(pair.Key) && !(Path.GetFileNameWithoutExtension(pair.Key) + ".").StartsWith(originalOutput + "."));
-            foreach(var pair in pairs)
+            var toDelete = projectFiles
+                .Where(pair => !newFiles.Contains(pair.Key) && !(Path.GetFileNameWithoutExtension(pair.Key) + ".").StartsWith(defaultFile + "."));
+            foreach(var pair in toDelete)
                 pair.Value.Delete();
 
             // Add missing files to the project
-            foreach(var fileName in keepFileNameSet.Where(fileName => !projectFiles.ContainsKey(fileName)))
-                templateProjectItem.ProjectItems.AddFromFile(fileName);
+            foreach(var fileName in newFiles.Where(fileName => !projectFiles.ContainsKey(fileName)))
+                item.ProjectItems.AddFromFile(fileName);
         }
     }
+
 }

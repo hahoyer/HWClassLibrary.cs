@@ -35,16 +35,16 @@ namespace HWClassLibrary.T4
     ///     Responsible for helping to create source code that is
     ///     correctly formated and functional
     /// </summary>
-    public sealed class CodeGenerationTools
+    public sealed class CodeGenerationContext
     {
         readonly DynamicTextTransformation _textTransformation;
         readonly SimpleCache<CSharpCodeProvider> _codeProviderCache = new SimpleCache<CSharpCodeProvider>(()=> new CSharpCodeProvider());
 
         /// <summary>
-        ///     Initializes a new CodeGenerationTools object with the TextTransformation (T4 generated class)
+        ///     Initializes a new CodeGenerationContext object with the TextTransformation (T4 generated class)
         ///     that is currently running
         /// </summary>
-        internal CodeGenerationTools([NotNull] object textTransformation)
+        internal CodeGenerationContext([NotNull] object textTransformation)
         {
             _textTransformation = DynamicTextTransformation.Create(textTransformation);
             FullyQualifySystemTypes = false;
@@ -52,14 +52,13 @@ namespace HWClassLibrary.T4
         }
 
         [UsedImplicitly]
-        public string[] ProcessFiles() { return FileManager.Process(true); }
+        public void ProcessFiles() { FileManager.Process(); }
 
-        /// <summary>
-        ///     Marks the end of the last file if there was one, and starts a new
-        ///     and marks this point in generation as a new file.
-        /// </summary>
         [UsedImplicitly]
-        public void StartNewFile(string name) { FileManager.StartNewFile(name); }
+        public void Files(params string[] files) { FileManager.Files(files); }
+
+        [UsedImplicitly]
+        public string File { set { Files(value); } }
 
         ///<summary>
         ///    When true, all types that are not being generated

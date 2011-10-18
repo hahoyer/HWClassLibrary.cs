@@ -10,7 +10,7 @@ namespace HWClassLibrary.T4
     public static class Extender
     {
         [UsedImplicitly]
-        public static CodeGenerationTools Tools(this object textTransformation) { return new CodeGenerationTools(textTransformation); }
+        public static CodeGenerationContext Context(this object textTransformation) { return new CodeGenerationContext(textTransformation); }
         internal static bool IsFileContentDifferent(String fileName, string newContent) { return !(File.Exists(fileName) && File.ReadAllText(fileName) == newContent); }
     }
 }

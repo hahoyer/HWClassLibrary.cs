@@ -117,12 +117,14 @@ namespace HWClassLibrary.T4
                 return null;
             return (DTE) Host.AsIServiceProvider().GetService(typeof(DTE));
         }
+
         internal ProjectItem TemplateProjectItem()
         {
-            if (DTE == null)
+            if(DTE == null)
                 return null;
             return DTE.Solution.FindProjectItem(Host.TemplateFile);
         }
+
         internal void CheckoutFileIfRequired(string fileName)
         {
             if (DTE == null

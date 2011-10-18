@@ -58,6 +58,7 @@
     <Compile Include="EF\Utility\MetadataTools.cs" />
     <Compile Include="EF\Utility\NullHost.cs" />
     <Compile Include="Helper\BigRational.cs" />
+    <Compile Include="Helper\Box.cs" />
     <Compile Include="Helper\CSharpCompiler.cs" />
     <Compile Include="Helper\DateTimeExtender.cs" />
     <Compile Include="Helper\Dictionary.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="Helper\TypeNameExtender.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
-    <Compile Include="T4\CodeGenerationTools.cs" />
+    <Compile Include="T4\CodeGenerationContext.cs" />
     <Compile Include="T4\DynamicHost.cs" />
     <Compile Include="T4\DynamicTextTransformation.cs" />
     <Compile Include="T4\Extender.cs" />
