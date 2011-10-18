@@ -1,4 +1,4 @@
-﻿// 
+// 
 //     Project HWClassLibrary
 //     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
@@ -17,237 +17,147 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
+using System.Text;
+using EnvDTE;
 using HWClassLibrary.Debug;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 using HWClassLibrary.Helper;
 using JetBrains.Annotations;
-using Microsoft.CSharp;
+using Microsoft.VisualStudio.TextTemplating;
 
 namespace HWClassLibrary.T4
 {
-    /// <summary>
-    ///     Responsible for helping to create source code that is
-    ///     correctly formated and functional
-    /// </summary>
     public sealed class Context
     {
-        readonly Wrapper _wrapper;
-        readonly SimpleCache<CSharpCodeProvider> _codeProviderCache = new SimpleCache<CSharpCodeProvider>(()=> new CSharpCodeProvider());
+        readonly DictionaryEx<string, Box<string>> _fileItems;
+        readonly StringBuilder _text;
+        readonly ITextTemplatingEngineHost _host;
+        readonly SimpleCache<DTE> _dte;
+        string[] _currentFiles;
+        int _currentStart;
 
-        internal Context([NotNull] object textTransformation)
+        internal Context(StringBuilder text, ITextTemplatingEngineHost host)
         {
-            _wrapper = Wrapper.Create(textTransformation);
-            FullyQualifySystemTypes = false;
-            CamelCaseFields = true;
+            _text = text;
+            _host = host;
+            _fileItems = new DictionaryEx<string, Box<string>>(fileName => new Box<string>(""));
+            _dte = new SimpleCache<DTE>(ObtainDTE);
         }
 
         [UsedImplicitly]
-        public void ProcessFiles() { FileManager.Process(); }
-
-        [UsedImplicitly]
-        public void Files(params string[] files) { FileManager.Files(files); }
+        public string NameSpace
+        {
+            get
+            {
+                return _host.ResolveParameterValue("directiveId", "namespaceDirectiveProcessor", "namespaceHint")
+                       ?? "";
+            }
+        }
 
         [UsedImplicitly]
         public string File { set { Files(value); } }
 
-        ///<summary>
-        ///    When true, all types that are not being generated
-        ///    are fully qualified to keep them from conflicting with
-        ///    types that are being generated. Useful when you have
-        ///    something like a type being generated named System.
-        ///
-        ///    Default is false.
-        ///</summary>
-        public bool FullyQualifySystemTypes { get; set; }
-
-        ///<summary>
-        ///    When true, the field names are Camel Cased,
-        ///    otherwise they will preserve the case they
-        ///    start with.
-        ///
-        ///    Default is true.
-        ///</summary>
-        public bool CamelCaseFields { get; set; }
-        
-        FileManager FileManager { get { return _wrapper.FileManager; } }
-
-        /// <summary>
-        ///     Returns the NamespaceName suggested by VS if running inside VS.  Otherwise, returns
-        ///     null.
-        /// </summary>
         [UsedImplicitly]
-        public string NameSpace()
+        public void Files(params string[] files)
         {
-            var result = _wrapper.Host.ResolveParameterValue("directiveId", "namespaceDirectiveProcessor", "namespaceHint");
-            if(String.IsNullOrEmpty(result))
-                return null;
-
-            return result;
+            OnFilesChanging();
+            Tracer.Assert(_currentFiles == null);
+            // Special treatment of empty file list: send text to default target
+            if(files.Length > 0)
+                _currentFiles = files;
         }
 
-        /// <summary>
-        ///     Returns a string that is safe for use as an identifier in C#.
-        ///     Keywords are escaped.
-        /// </summary>
-        public string Escape(string name)
+        [UsedImplicitly]
+        public void ProcessFiles()
         {
-            if(name == null)
-                return null;
+            OnFilesChanging();
 
-            return _codeProviderCache.Value.CreateEscapedIdentifier(name);
+            //Tracer.LaunchDebugger();
+            var outputPath = Path.GetDirectoryName(_host.TemplateFile) ?? "";
+            foreach(var fileItem in _fileItems)
+                CreateFile(Path.Combine(outputPath, fileItem.Key), fileItem.Value.Content);
+
+            var newFiles = _fileItems.Keys.Select(name => Path.Combine(outputPath, name)).ToArray();
+
+            Action projectSyncAction = () => ProjectSync(newFiles);
+            projectSyncAction.EndInvoke(projectSyncAction.BeginInvoke(null, null));
         }
 
+        DTE DTE { get { return _dte.Value; } }
 
-        /// <summary>
-        ///     Returns the NamespaceName with each segment safe to
-        ///     use as an identifier.
-        /// </summary>
-        public string EscapeNamespace(string namespaceName)
+        void OnFilesChanging()
         {
-            if(String.IsNullOrEmpty(namespaceName))
-                return namespaceName;
-
-            var parts = namespaceName.Split('.');
-            namespaceName = String.Empty;
-            foreach(var part in parts)
+            if(_currentFiles != null)
             {
-                if(namespaceName != String.Empty)
-                    namespaceName += ".";
-
-                namespaceName += Escape(part);
+                foreach(var file in _currentFiles)
+                {
+                    var box = _fileItems.Find(file);
+                    box.Content = box.Content + _text.ToString(_currentStart, _text.Length - _currentStart);
+                }
+                _text.Remove(_currentStart, _text.Length - _currentStart);
             }
 
-            return namespaceName;
+            _currentFiles = null;
+            _currentStart = _text.Length;
         }
 
-        string FieldName(string name)
+        void CreateFile(string fileName, string content)
         {
-            if(CamelCaseFields)
-                return "_" + CamelCase(name);
-            return "_" + name;
+            if(!Extender.IsFileContentDifferent(fileName, content))
+                return;
+
+            CheckoutFileIfRequired(fileName);
+            System.IO.File.WriteAllText(fileName, content);
         }
 
-        ///<summary>
-        ///    Returns the name of the Type object formatted for
-        ///    use in source code.
-        ///
-        ///    This method changes behavior based on the FullyQualifySystemTypes
-        ///    setting.
-        ///</summary>
-        public string Escape(Type clrType)
+        void CheckoutFileIfRequired(string fileName)
         {
-            if(clrType == null)
+            if(DTE == null
+               || DTE.SourceControl == null
+               || DTE.SourceControl.IsItemUnderSCC(fileName)
+               || DTE.SourceControl.IsItemCheckedOut(fileName))
+                return;
+
+            Action<string> checkOutAction = name => DTE.SourceControl.CheckOutItem(name);
+            checkOutAction.EndInvoke(checkOutAction.BeginInvoke(fileName, null, null));
+        }
+
+        void ProjectSync(string[] newFiles)
+        {
+            if(DTE == null)
+                return;
+
+            var item = DTE.Solution.FindProjectItem(_host.TemplateFile);
+            if(item == null || item.ProjectItems == null)
+                return;
+
+            var defaultFile = Path.GetFileNameWithoutExtension(item.FileNames[0]);
+
+            var projectFiles = item
+                .ProjectItems
+                .Cast<ProjectItem>()
+                .ToDictionary(projectItem => projectItem.FileNames[0]);
+
+            // Remove unused items from the project
+            var toDelete = projectFiles
+                .Where(pair => !newFiles.Contains(pair.Key) && !(Path.GetFileNameWithoutExtension(pair.Key) + ".").StartsWith(defaultFile + "."));
+            foreach(var pair in toDelete)
+                pair.Value.Delete();
+
+            // Add missing files to the project
+            foreach(var fileName in newFiles.Where(fileName => !projectFiles.ContainsKey(fileName)))
+                item.ProjectItems.AddFromFile(fileName);
+        }
+
+        DTE ObtainDTE()
+        {
+            var provider = _host as IServiceProvider;
+            if(provider == null)
                 return null;
-
-            string typeName;
-            if(FullyQualifySystemTypes)
-                typeName = "global::" + clrType.FullName;
-            else
-                typeName = _codeProviderCache.Value.GetTypeOutput(new CodeTypeReference(clrType));
-            return typeName;
-        }
-
-
-        /// <summary>
-        ///     Returns the passed in identifier with the first letter changed to lowercase
-        /// </summary>
-        public string CamelCase(string identifier)
-        {
-            if(String.IsNullOrEmpty(identifier))
-                return identifier;
-
-            if(identifier.Length == 1)
-                return identifier[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
-
-            return identifier[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant() + identifier.Substring(1);
-        }
-
-        /// <summary>
-        ///     If the value parameter is null or empty an empty string is returned,
-        ///     otherwise it retuns value with a single space concatenated on the end.
-        /// </summary>
-        public string SpaceAfter(string value) { return StringAfter(value, " "); }
-
-        /// <summary>
-        ///     If the value parameter is null or empty an empty string is returned,
-        ///     otherwise it retuns value with a single space concatenated on the end.
-        /// </summary>
-        public string SpaceBefore(string value) { return StringBefore(" ", value); }
-
-        /// <summary>
-        ///     If the value parameter is null or empty an empty string is returned,
-        ///     otherwise it retuns value with append concatenated on the end.
-        /// </summary>
-        public string StringAfter(string value, string append)
-        {
-            if(String.IsNullOrEmpty(value))
-                return String.Empty;
-
-            return value + append;
-        }
-
-        /// <summary>
-        ///     If the value parameter is null or empty an empty string is returned,
-        ///     otherwise it retuns value with prepend concatenated on the front.
-        /// </summary>
-        public string StringBefore(string prepend, string value)
-        {
-            if(String.IsNullOrEmpty(value))
-                return String.Empty;
-
-            return prepend + value;
-        }
-
-        /// <summary>
-        ///     Retuns as full of a name as possible, if a namespace is provided
-        ///     the namespace and name are combined with a period, otherwise just
-        ///     the name is returned.
-        /// </summary>
-        public string CreateFullName(string namespaceName, string name)
-        {
-            if(String.IsNullOrEmpty(namespaceName))
-                return name;
-
-            return namespaceName + "." + name;
-        }
-
-        public string CreateLiteral(object value)
-        {
-            if(value == null)
-                return String.Empty;
-
-            var type = value.GetType();
-            if(type.IsEnum)
-                return type.FullName + "." + value;
-            if(type == typeof(Guid))
-                return String.Format(CultureInfo.InvariantCulture, "new Guid(\"{0}\")",
-                                     ((Guid) value).ToString("D", CultureInfo.InvariantCulture));
-            if(type == typeof(DateTime))
-                return String.Format(CultureInfo.InvariantCulture, "new DateTime({0}, DateTimeKind.Unspecified)",
-                                     ((DateTime) value).Ticks);
-            if(type == typeof(byte[]))
-            {
-                var arrayInit = String.Join(", ", ((byte[]) value).Select(b => b.ToString(CultureInfo.InvariantCulture)).ToArray());
-                return String.Format(CultureInfo.InvariantCulture, "new Byte[] {{{0}}}", arrayInit);
-            }
-            if(type == typeof(DateTimeOffset))
-            {
-                var dto = (DateTimeOffset) value;
-                return String.Format(CultureInfo.InvariantCulture, "new DateTimeOffset({0}, new TimeSpan({1}))",
-                                     dto.Ticks, dto.Offset.Ticks);
-            }
-
-            var expression = new CodePrimitiveExpression(value);
-            var writer = new StringWriter();
-            var code = new CSharpCodeProvider();
-            code.GenerateCodeFromExpression(expression, writer, new CodeGeneratorOptions());
-            return writer.ToString();
+            return (DTE) provider.GetService(typeof(DTE));
         }
     }
 }

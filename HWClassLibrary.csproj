@@ -69,13 +69,8 @@
     <Compile Include="Helper\TypeNameExtender.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
-    <Compile Include="T4\Context.cs" />
-    <Compile Include="T4\DynamicHost.cs" />
-    <Compile Include="T4\Wrapper.cs" />
     <Compile Include="T4\Extender.cs" />
-    <Compile Include="T4\FileManager.cs" />
-    <Compile Include="T4\IDynamicHost.cs" />
-    <Compile Include="T4\NullHost.cs" />
+    <Compile Include="T4\Context.cs" />
     <Compile Include="TreeStructure\Extender.cs" />
     <Compile Include="TreeStructure\TreeForm.cs">
       <SubType>Form</SubType>
@@ -98,6 +93,8 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.DebuggerVisualizers, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
