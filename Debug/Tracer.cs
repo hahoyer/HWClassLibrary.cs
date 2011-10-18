@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -35,9 +36,9 @@ namespace HWClassLibrary.Debug
     /// </summary>
     public static class Tracer
     {
-        private static int _indentCount;
-        private static bool _isLineStart = true;
-        private static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+        static int _indentCount;
+        static bool _isLineStart = true;
+        static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
 
         [UsedImplicitly]
         public static bool IsBreakDisabled;
@@ -134,10 +135,10 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        private sealed class WriteInitiator
+        sealed class WriteInitiator
         {
-            private string _name = "";
-            private string _lastName = "";
+            string _name = "";
+            string _lastName = "";
 
             public bool ThreadChanged { get { return _name != _lastName; } }
 
@@ -150,7 +151,7 @@ namespace HWClassLibrary.Debug
             }
         }
 
-        private static readonly WriteInitiator _writeInitiator = new WriteInitiator();
+        static readonly WriteInitiator _writeInitiator = new WriteInitiator();
 
         /// <summary>
         ///     write a line to debug output
@@ -164,7 +165,7 @@ namespace HWClassLibrary.Debug
         /// <param name = "s">the text</param>
         public static void LinePart(string s) { ThreadSafeWrite(s, false); }
 
-        private static void ThreadSafeWrite(string s, bool isLine)
+        static void ThreadSafeWrite(string s, bool isLine)
         {
             lock(_writeInitiator)
             {
@@ -173,14 +174,12 @@ namespace HWClassLibrary.Debug
                 s = IndentLine(_isLineStart, s, _indentCount);
 
                 if(_writeInitiator.ThreadChanged)
-                {
                     if(_isLineStart)
                         s = _writeInitiator.ThreadFlagString + s;
                     else if(s.Length > 0 && s[0] == '\n')
                         s = "\n" + _writeInitiator.ThreadFlagString + s;
                     else
                         throw new NotImplementedException();
-                }
 
                 Write(s, isLine);
 
@@ -188,22 +187,17 @@ namespace HWClassLibrary.Debug
             }
         }
 
-        private static void Write(string s, bool isLine)
+        static void Write(string s, bool isLine)
         {
             if(Debugger.IsAttached)
-            {
                 if(isLine)
                     System.Diagnostics.Debug.WriteLine(s);
                 else
                     System.Diagnostics.Debug.Write(s);
-            }
+            else if(isLine)
+                Console.WriteLine(s);
             else
-            {
-                if(isLine)
-                    Console.WriteLine(s);
-                else
-                    Console.Write(s);
-            }
+                Console.Write(s);
         }
 
         /// <summary>
@@ -251,7 +245,7 @@ namespace HWClassLibrary.Debug
             return InternalDumpData(x.GetType(), x);
         }
 
-        private static string InternalDump(bool isTop, Type t, object x)
+        static string InternalDump(bool isTop, Type t, object x)
         {
             var xl = x as IList;
             if(xl != null)
@@ -263,7 +257,7 @@ namespace HWClassLibrary.Debug
             if(co != null)
                 return InternalDump(co);
             var xt = x as Type;
-            if (xt != null)
+            if(xt != null)
                 return xt.PrettyName();
 
             if(t.IsPrimitive || t.ToString().StartsWith("System."))
@@ -290,7 +284,7 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        private static string InternalDump(this CodeObject co)
+        static string InternalDump(this CodeObject co)
         {
             var cse = co as CodeSnippetExpression;
             if(cse != null)
@@ -299,7 +293,7 @@ namespace HWClassLibrary.Debug
             throw new NotImplementedException();
         }
 
-        private static string InternalDump(this IList xl)
+        static string InternalDump(this IList xl)
         {
             var result = "";
             for(var i = 0; i < xl.Count; i++)
@@ -311,7 +305,7 @@ namespace HWClassLibrary.Debug
             return "Count=" + xl.Count + result.Surround("{", "}");
         }
 
-        private static string InternalDump(this IDictionary xd)
+        static string InternalDump(this IDictionary xd)
         {
             var result = "";
             foreach(DictionaryEntry entry in xd)
@@ -323,7 +317,7 @@ namespace HWClassLibrary.Debug
             return result.Surround("{", "}");
         }
 
-        private static DumpClassAttribute DumpClassAttribute(this Type t)
+        static DumpClassAttribute DumpClassAttribute(this Type t)
         {
             var result = DumpClassAttributeClass(t);
             if(result != null)
@@ -336,7 +330,7 @@ namespace HWClassLibrary.Debug
             throw new NotImplementedException();
         }
 
-        private static DumpClassAttribute[] DumpClassAttributeInterfaces(this Type t)
+        static DumpClassAttribute[] DumpClassAttributeInterfaces(this Type t)
         {
             var al = new ArrayList();
             foreach(var i in t.GetInterfaces())
@@ -347,7 +341,7 @@ namespace HWClassLibrary.Debug
             return (DumpClassAttribute[]) al.ToArray();
         }
 
-        private static DumpClassAttribute DumpClassAttributeClass(this Type t)
+        static DumpClassAttribute DumpClassAttributeClass(this Type t)
         {
             var result = t.GetRecentAttribute<DumpClassAttribute>();
             if(result != null)
@@ -357,7 +351,7 @@ namespace HWClassLibrary.Debug
             return null;
         }
 
-        private static string InternalDumpData(this Type t, object x)
+        static string InternalDumpData(this Type t, object x)
         {
             var dumpData = t.GetAttribute<DumpDataClassAttribute>(false);
             if(dumpData != null)
@@ -377,7 +371,7 @@ namespace HWClassLibrary.Debug
             return fieldDump + "\n" + propertyDump;
         }
 
-        private static List<int> CheckMemberAttributes(MemberInfo[] f, object x)
+        static List<int> CheckMemberAttributes(MemberInfo[] f, object x)
         {
             var l = new List<int>();
             for(var i = 0; i < f.Length; i++)
@@ -394,7 +388,7 @@ namespace HWClassLibrary.Debug
             return l;
         }
 
-        private static bool CheckDumpDataAttribute(this MemberInfo m)
+        static bool CheckDumpDataAttribute(this MemberInfo m)
         {
             var dda = m.GetAttribute<DumpEnabledAttribute>(true);
             if(dda != null)
@@ -403,7 +397,7 @@ namespace HWClassLibrary.Debug
             return !IsPrivateOrDump(m);
         }
 
-        private static bool IsPrivateOrDump(this MemberInfo m)
+        static bool IsPrivateOrDump(this MemberInfo m)
         {
             if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
                 return true;
@@ -416,9 +410,9 @@ namespace HWClassLibrary.Debug
             return true;
         }
 
-        private static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
+        static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
 
-        private static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
+        static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
         {
             var result = "";
             for(var i = 0; i < l.Count; i++)
@@ -441,7 +435,7 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        private static bool CheckDumpExceptAttribute(this MemberInfo f, object x)
+        static bool CheckDumpExceptAttribute(this MemberInfo f, object x)
         {
             foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))
             {
@@ -451,7 +445,7 @@ namespace HWClassLibrary.Debug
             return true;
         }
 
-        private static string BaseDump(this Type t, object x)
+        static string BaseDump(this Type t, object x)
         {
             var baseDump = "";
             if(t.BaseType != null && t.BaseType.ToString() != "System.Object" &&
@@ -462,7 +456,7 @@ namespace HWClassLibrary.Debug
             return baseDump;
         }
 
-        private static object Value(this MemberInfo info, object x)
+        static object Value(this MemberInfo info, object x)
         {
             var fi = info as FieldInfo;
             if(fi != null)
@@ -484,7 +478,7 @@ namespace HWClassLibrary.Debug
         /// </summary>
         public static void IndentEnd() { _indentCount--; }
 
-        private static string IndentElem(int count)
+        static string IndentElem(int count)
         {
             var result = "";
             for(var i = 0; i < count; i++)
@@ -492,7 +486,7 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        private static string IndentLine(bool isLineStart, string s, int count)
+        static string IndentLine(bool isLineStart, string s, int count)
         {
             var indentElem = IndentElem(count);
             return (isLineStart ? indentElem : "") + s.Replace("\n", "\n" + indentElem);
@@ -563,7 +557,7 @@ namespace HWClassLibrary.Debug
                    + Indent(DumpMethodWithData(null, data), 1);
         }
 
-        private static string DumpMethodWithData(MethodBase m, object o, object[] p)
+        static string DumpMethodWithData(MethodBase m, object o, object[] p)
         {
             var result = "\n";
             result += "this=";
@@ -573,7 +567,7 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        private static string DumpMethodWithData(ParameterInfo[] infos, object[] p)
+        static string DumpMethodWithData(ParameterInfo[] infos, object[] p)
         {
             var result = "";
             var n = 0;
@@ -745,17 +739,17 @@ namespace HWClassLibrary.Debug
             Console.WriteLine(text);
         }
 
-        private sealed class AssertionFailedException : Exception
+        sealed class AssertionFailedException : Exception
         {
             public AssertionFailedException(string result)
                 : base(result) { }
         }
 
-        private sealed class BreakException : Exception
+        sealed class BreakException : Exception
         {}
 
         [DebuggerHidden]
-        private static void AssertionBreak(string result)
+        static void AssertionBreak(string result)
         {
             if(!Debugger.IsAttached || IsBreakDisabled)
                 throw new AssertionFailedException(result);
@@ -777,9 +771,12 @@ namespace HWClassLibrary.Debug
         public static string CallingMethodName() { return CallingMethodName(1); }
 
         public static int CurrentFrameCount(int depth) { return new StackTrace(true).FrameCount - depth; }
+
+        [DebuggerHidden]
+        public static void LaunchDebugger() { Debugger.Launch(); }
     }
 
-    internal interface IDumpExceptAttribute
+    interface IDumpExceptAttribute
     {
         bool IsException(object target);
     }

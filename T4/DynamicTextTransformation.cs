@@ -113,9 +113,10 @@ namespace HWClassLibrary.T4
 
         DTE ObtainDTE()
         {
-            if(Host.AsIServiceProvider() == null)
+            var provider = Host.AsIServiceProvider();
+            if(provider == null)
                 return null;
-            return (DTE) Host.AsIServiceProvider().GetService(typeof(DTE));
+            return (DTE) provider.GetService(typeof(DTE));
         }
 
         internal ProjectItem TemplateProjectItem()

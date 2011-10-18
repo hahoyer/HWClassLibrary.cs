@@ -78,6 +78,7 @@ namespace HWClassLibrary.T4
         {
             OnFilesChanging();
 
+            //Tracer.LaunchDebugger();
             var outputPath = Path.GetDirectoryName(_textTransformation.Host.TemplateFile) ?? "";
             foreach(var fileItem in _fileItems)
                 CreateFile(Path.Combine(outputPath, fileItem.Key), fileItem.Value.Content);
