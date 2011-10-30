@@ -11,7 +11,7 @@ namespace HWClassLibrary.DataBase
         private SQLiteConnection _connection;
         private readonly string _dbPath;
 
-        protected DataBase(string dbPath) { _dbPath = dbPath; }
+        public DataBase(string dbPath) { _dbPath = dbPath; }
 
         private SQLiteConnection Connection
         {
