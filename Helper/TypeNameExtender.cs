@@ -28,7 +28,7 @@ namespace HWClassLibrary.Helper
         private static string PrettyTypeName(Type type)
         {
             var result = type.Name;
-            if(type.IsGenericType)
+            if (result.Contains("`"))
                 result = result.Remove(result.IndexOf('`'));
 
             if (type.IsNested && !type.IsGenericParameter)
