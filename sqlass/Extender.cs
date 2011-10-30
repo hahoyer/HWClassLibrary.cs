@@ -17,25 +17,19 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.IO;
-using System.Text;
-using HWClassLibrary.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using System.Text;
+using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TextTemplating;
 
-namespace HWClassLibrary.T4
+namespace HWClassLibrary.sqlass
 {
     public static class Extender
     {
         [UsedImplicitly]
         public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
-        internal static bool IsFileContentDifferent(String fileName, string newContent) { return !(File.Exists(fileName) && File.ReadAllText(fileName) == newContent); }
     }
-}
-
-namespace HWClassLibrary.sqlass
-{
 }

@@ -69,6 +69,20 @@
     <Compile Include="Helper\TypeNameExtender.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
+    <Compile Include="sqlass\Context.cs" />
+    <Compile Include="sqlass\SQLContext.cs" />
+    <Compile Include="sqlass\SQLContext.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SQLContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sqlass\Extender.cs" />
+    <Compile Include="sqlass\Table.cs" />
+    <Compile Include="sqlass\Table.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Table.tt</DependentUpon>
+    </Compile>
     <Compile Include="T4\Extender.cs" />
     <Compile Include="T4\Context.cs" />
     <Compile Include="TreeStructure\Extender.cs" />
@@ -128,6 +142,19 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sqlass\SQLContext.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SQLContext.tt.cs</LastGenOutput>
+    </None>
+    <None Include="sqlass\Table.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Table.tt.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="sys.targets" />
 </Project>

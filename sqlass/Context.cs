@@ -17,7 +17,6 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.IO;
 using System.Text;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
@@ -26,16 +25,42 @@ using System;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TextTemplating;
 
-namespace HWClassLibrary.T4
-{
-    public static class Extender
-    {
-        [UsedImplicitly]
-        public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
-        internal static bool IsFileContentDifferent(String fileName, string newContent) { return !(File.Exists(fileName) && File.ReadAllText(fileName) == newContent); }
-    }
-}
-
 namespace HWClassLibrary.sqlass
 {
+    public sealed class Context : T4.Context
+    {
+        readonly List<Table> _tables = new List<Table>();
+
+        internal Context(StringBuilder text, ITextTemplatingEngineHost host)
+            : base(text, host)
+        {
+            
+        }
+
+        [UsedImplicitly]
+        public string AddTable<T>(Func<string, string> getTableName = null)
+        {
+            var table = new Table(this, typeof(T), getTableName);
+            _tables.Add(table);
+            File = table.FileName;
+            return table.TransformText();
+        }
+
+        [UsedImplicitly]
+        public new void ProcessFiles()
+        {
+            File = null;
+            AppendText(new SQLContext(this, _tables.ToArray()).TransformText());
+            base.ProcessFiles();
+        }
+    }
+
+    public class NullableAttribute : Attribute
+    {}
+
+    public class Reference<T>
+    {}
+
+    public class KeyAttribute : Attribute
+    {}
 }

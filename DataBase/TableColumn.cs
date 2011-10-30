@@ -6,7 +6,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.DataBase
 {
-    internal class TableColumn
+    internal sealed class TableColumn
     {
         private readonly FieldInfo _fieldInfo;
         public string Name { get { return _fieldInfo.Name; } }
@@ -14,9 +14,9 @@ namespace HWClassLibrary.DataBase
 
         public TableColumn(FieldInfo fieldInfo) { _fieldInfo = fieldInfo; }
 
-        public string CreateTableCommand { get { return Name + " " + DBType; } }
+        public string CreateTableCommand { get { return Name + " " + SQLType; } }
 
-        private string DBType
+        private string SQLType
         {
             get
             {
@@ -30,7 +30,7 @@ namespace HWClassLibrary.DataBase
         {
             var value = _fieldInfo.GetValue(o);
             var result = value.ToString();
-            if(DBType == "TEXT")
+            if(SQLType == "TEXT")
                 result = "'" + result.Replace("'", "''") + "'";
             return result;
         }

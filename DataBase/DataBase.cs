@@ -6,7 +6,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.DataBase
 {
-    public class DataBase
+    public class DataBase: Dumpable
     {
         private SQLiteConnection _connection;
         private readonly string _dbPath;

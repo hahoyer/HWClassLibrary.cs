@@ -17,25 +17,44 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.IO;
-using System.Text;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using JetBrains.Annotations;
-using Microsoft.VisualStudio.TextTemplating;
-
-namespace HWClassLibrary.T4
-{
-    public static class Extender
-    {
-        [UsedImplicitly]
-        public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
-        internal static bool IsFileContentDifferent(String fileName, string newContent) { return !(File.Exists(fileName) && File.ReadAllText(fileName) == newContent); }
-    }
-}
 
 namespace HWClassLibrary.sqlass
 {
+    partial class SQLContext
+    {
+        readonly Context _context;
+        readonly Table[] _tables;
+
+        internal SQLContext(Context context, Table[] tables)
+        {
+            _context = context;
+            _tables = tables;
+        }
+
+        string TableFields
+        {
+            get
+            {
+                return _tables
+                    .Select(t => t.FieldDeclaration)
+                    .Aggregate("", (s, n) => s + n)
+                    ;
+            }
+        }
+
+        string TableFieldInitializers
+        {
+            get
+            {
+                return _tables
+                    .Select(t => t.FieldInitializer)
+                    .Aggregate("", (s, n) => s + n)
+                    ;
+            }
+        }
+    }
 }

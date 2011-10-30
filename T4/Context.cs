@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.TextTemplating;
 
 namespace HWClassLibrary.T4
 {
-    public sealed class Context
+    public class Context
     {
         readonly DictionaryEx<string, Box<string>> _fileItems;
         readonly StringBuilder _text;
@@ -58,10 +58,19 @@ namespace HWClassLibrary.T4
         }
 
         [UsedImplicitly]
-        public string File { set { Files(value); } }
+        public string File
+        {
+            set
+            {
+                if(value == null)
+                    SetFiles();
+                else
+                    SetFiles(value);
+            }
+        }
 
         [UsedImplicitly]
-        public void Files(params string[] files)
+        public void SetFiles(params string[] files)
         {
             OnFilesChanging();
             Tracer.Assert(_currentFiles == null);
@@ -117,7 +126,7 @@ namespace HWClassLibrary.T4
         {
             if(DTE == null
                || DTE.SourceControl == null
-               || DTE.SourceControl.IsItemUnderSCC(fileName)
+               || !DTE.SourceControl.IsItemUnderSCC(fileName)
                || DTE.SourceControl.IsItemCheckedOut(fileName))
                 return;
 
@@ -159,5 +168,7 @@ namespace HWClassLibrary.T4
                 return null;
             return (DTE) provider.GetService(typeof(DTE));
         }
+
+        protected void AppendText(string text) { _text.Append(text); }
     }
 }
