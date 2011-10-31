@@ -43,13 +43,13 @@ namespace HWClassLibrary.sqlass.T4
             File = table.FileName;
             return table.TransformText();
         }
-
+                                                                   
         [UsedImplicitly]
-        public new void ProcessFiles()
+        public string ÂddContext()
         {
-            File = null;
-            AppendText(new SQLContext(this, _tables.ToArray()).TransformText());
             base.ProcessFiles();
+            File = null;
+            return new SQLContext(this, _tables.ToArray()).TransformText();
         }
     }
 
