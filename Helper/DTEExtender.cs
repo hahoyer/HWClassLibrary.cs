@@ -17,23 +17,24 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Text;
-using HWClassLibrary.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using JetBrains.Annotations;
-using Microsoft.VisualStudio.TextTemplating;
+using EnvDTE;
+using HWClassLibrary.Debug;
 
-namespace HWClassLibrary.T4
+namespace HWClassLibrary.Helper
 {
-    public static class Extender
+    static class DTEExtender
     {
-        [UsedImplicitly]
-        public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
-    }
-}
+        public static string[] ItemFileNames(this ProjectItem item)
+        {
+            var result = new List<string>();
+            for(short i = 0; i < item.FileCount; i++)
+                result.Add(item.FileNames[i]);
+            return result.ToArray();
+        }
 
-namespace HWClassLibrary.sqlass
-{
+        public static string FileName(this ProjectItem item) { return ItemFileNames(item).Single(); }
+    }
 }

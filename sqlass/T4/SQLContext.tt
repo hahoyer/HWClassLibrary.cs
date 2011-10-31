@@ -1,0 +1,38 @@
+﻿<#@ import namespace="global::HWClassLibrary.Helper" #>
+using HWClassLibrary.sqlass;
+using <#= _context.NameSpace #>.Tables;
+
+namespace <#= _context.NameSpace #>
+{
+    sealed public class Container
+    {<#
+	    foreach (var table in _tables)
+        {#> 
+        public <#= table.TableTypeName #> <#= table.ClassName #>;<#
+        }#>
+                        
+        
+        public Container(Context context)
+        {<#
+    	    foreach (var table in _tables)
+            {#> 
+            <#= table.ClassName #> = new <#= table.TableTypeName #>(context, <#= table.SQLTableName #>);<#
+            }#>
+
+        }
+    }
+
+    sealed public partial class Context: HWClassLibrary.sqlass.Context
+    {
+        public readonly Container Container;
+
+        public Context()
+        {
+            Container = new Container(this);
+        }
+    }
+}
+<#
+// ReSharper disable FieldCanBeMadeReadOnly.Local
+#>
+

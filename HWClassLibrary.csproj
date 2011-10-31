@@ -58,6 +58,7 @@
     <Compile Include="Helper\CSharpCompiler.cs" />
     <Compile Include="Helper\DateTimeExtender.cs" />
     <Compile Include="Helper\Dictionary.cs" />
+    <Compile Include="Helper\DTEExtender.cs" />
     <Compile Include="Helper\ListExtender.cs" />
     <Compile Include="Helper\LongExtender.cs" />
     <Compile Include="Helper\ReflectionExtender.cs" />
@@ -70,19 +71,37 @@
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
     <Compile Include="sqlass\Context.cs" />
-    <Compile Include="sqlass\SQLContext.cs" />
-    <Compile Include="sqlass\SQLContext.tt.cs">
+    <Compile Include="sqlass\Insert.cs" />
+    <Compile Include="sqlass\IPendingChange.cs" />
+    <Compile Include="sqlass\ISQLKeyProvider.cs" />
+    <Compile Include="sqlass\ISQLSupport.cs" />
+    <Compile Include="sqlass\ISQLSupportProvider.cs" />
+    <Compile Include="sqlass\T4\Context.cs" />
+    <Compile Include="sqlass\T4\Extender.cs" />
+    <Compile Include="sqlass\T4\KeyAttribute.cs" />
+    <Compile Include="sqlass\T4\NullableAttribute.cs" />
+    <Compile Include="sqlass\T4\SQLContext.cs" />
+    <Compile Include="sqlass\T4\SQLContext.tt.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SQLContext.tt</DependentUpon>
     </Compile>
+    <None Include="sqlass\T4\SQLContext.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SQLContext.tt.cs</LastGenOutput>
+    </None>
     <Compile Include="sqlass\Extender.cs" />
-    <Compile Include="sqlass\Table.cs" />
-    <Compile Include="sqlass\Table.tt.cs">
+    <Compile Include="sqlass\T4\SQLTable.cs" />
+    <Compile Include="sqlass\T4\SQLTable.tt.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Table.tt</DependentUpon>
+      <DependentUpon>SQLTable.tt</DependentUpon>
     </Compile>
+    <Compile Include="sqlass\T4\SQLTable.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SQLTable.tt.cs</LastGenOutput>
+    </Compile>
+    <Compile Include="sqlass\Table.cs" />
     <Compile Include="T4\Extender.cs" />
     <Compile Include="T4\Context.cs" />
     <Compile Include="TreeStructure\Extender.cs" />
@@ -142,16 +161,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="sqlass\SQLContext.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>SQLContext.tt.cs</LastGenOutput>
-    </None>
-    <None Include="sqlass\Table.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Table.tt.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

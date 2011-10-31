@@ -25,44 +25,25 @@ using System;
 
 namespace HWClassLibrary.sqlass
 {
-    public class Context
+    sealed class Insert<T> : Dumpable, IPendingChange
+        where T : ISQLSupportProvider
     {
-        public DbConnection Connection;
-        List<IPendingChange> _pending;
+        readonly T _data;
+        readonly string _tableName;
 
-        public void SaveChanges()
+        internal Insert(T data, string tableName)
         {
-            if(_pending == null)
-                return;
-
-            Connection.Open();
-            try
-            {
-                var transaction = Connection.BeginTransaction();
-                try
-                {
-                    foreach(var pendingChange in _pending)
-                        pendingChange.Apply(Connection);
-                    transaction.Commit();
-                    _pending = null;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-            finally
-            {
-                Connection.Close();
-            }
+            _data = data;
+            _tableName = tableName;
         }
 
-        internal void AddPendingChange(IPendingChange data)
+        void IPendingChange.Apply(DbConnection connection)
         {
-            if(_pending == null)
-                _pending = new List<IPendingChange>();
-            _pending.Add(data);
+            using(var command = connection.CreateCommand())
+            {
+                command.CommandText = _data.SQLSupport.Insert;
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

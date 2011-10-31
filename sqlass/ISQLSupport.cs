@@ -24,37 +24,8 @@ using System;
 
 namespace HWClassLibrary.sqlass
 {
-    partial class SQLContext
+    public interface ISQLSupport
     {
-        readonly Context _context;
-        readonly Table[] _tables;
-
-        internal SQLContext(Context context, Table[] tables)
-        {
-            _context = context;
-            _tables = tables;
-        }
-
-        string TableFields
-        {
-            get
-            {
-                return _tables
-                    .Select(t => t.FieldDeclaration)
-                    .Aggregate("", (s, n) => s + n)
-                    ;
-            }
-        }
-
-        string TableFieldInitializers
-        {
-            get
-            {
-                return _tables
-                    .Select(t => t.FieldInitializer)
-                    .Aggregate("", (s, n) => s + n)
-                    ;
-            }
-        }
+        string Insert { get; }
     }
 }

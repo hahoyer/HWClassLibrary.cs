@@ -7,48 +7,108 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace HWClassLibrary.sqlass
+namespace HWClassLibrary.sqlass.T4
 {
     using global::HWClassLibrary.Helper;
     using System;
     
     
-    #line 1 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\Table.tt"
+    #line 1 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "10.0.0.0")]
-    public partial class Table : TableBase
+    public partial class SQLContext : SQLContextBase
     {
         public virtual string TransformText()
         {
+            this.Write("using HWClassLibrary.sqlass;\r\nusing ");
             
-            #line 3 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\Table.tt"
- 
-            
-            #line default
-            #line hidden
-            this.Write("namespace ");
-            
-            #line 4 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\Table.tt"
+            #line 3 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_context.NameSpace));
             
             #line default
             #line hidden
-            this.Write(".Tables\r\n{\r\n    sealed public partial class ");
+            this.Write(".Tables;\r\n\r\nnamespace ");
             
-            #line 6 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\Table.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n    {");
-            
-            #line 7 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\Table.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Fields.Indent(2)));
+            #line 5 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(_context.NameSpace));
             
             #line default
             #line hidden
-            this.Write("\r\n    }\r\n}\r\n");
+            this.Write("\r\n{\r\n    sealed public class Container\r\n    {");
             
-            #line 10 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\Table.tt"
+            #line 8 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+
+	    foreach (var table in _tables)
+        {
+            
+            #line default
+            #line hidden
+            this.Write(" \r\n        public ");
+            
+            #line 11 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(table.TableTypeName));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 11 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(table.ClassName));
+            
+            #line default
+            #line hidden
+            this.Write(";");
+            
+            #line 11 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+
+        }
+            
+            #line default
+            #line hidden
+            this.Write("                        \r\n        \r\n        public Container(Context context)\r\n  " +
+                    "      {");
+            
+            #line 16 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+
+    	    foreach (var table in _tables)
+            {
+            
+            #line default
+            #line hidden
+            this.Write(" \r\n            ");
+            
+            #line 19 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(table.ClassName));
+            
+            #line default
+            #line hidden
+            this.Write(" = new ");
+            
+            #line 19 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(table.TableTypeName));
+            
+            #line default
+            #line hidden
+            this.Write("(context, ");
+            
+            #line 19 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(table.SQLTableName));
+            
+            #line default
+            #line hidden
+            this.Write(");");
+            
+            #line 19 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+
+            }
+            
+            #line default
+            #line hidden
+            this.Write("\r\n        }\r\n    }\r\n\r\n    sealed public partial class Context: HWClassLibrary.sql" +
+                    "ass.Context\r\n    {\r\n        public readonly Container Container;\r\n\r\n        publ" +
+                    "ic Context()\r\n        {\r\n            Container = new Container(this);\r\n        }" +
+                    "\r\n    }\r\n}\r\n");
+            
+            #line 35 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 
@@ -67,7 +127,7 @@ namespace HWClassLibrary.sqlass
     /// Base class for this transformation
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "10.0.0.0")]
-    public class TableBase
+    public class SQLContextBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

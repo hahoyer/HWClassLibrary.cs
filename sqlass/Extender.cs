@@ -20,16 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using HWClassLibrary.Debug;
-using JetBrains.Annotations;
-using Microsoft.VisualStudio.TextTemplating;
 
 namespace HWClassLibrary.sqlass
 {
     public static class Extender
     {
-        [UsedImplicitly]
-        public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
+        public static string SQLFormat(this int data) { return data.ToString(); }
+        public static string SQLFormat(this string data) { return "'" + data.Replace("'", "''") + "'"; }
+        public static string SQLFormat(this ISQLKeyProvider<int> data) { return data.SQLKey.SQLFormat(); }
     }
 }

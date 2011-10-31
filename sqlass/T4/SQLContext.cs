@@ -17,23 +17,22 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Text;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using JetBrains.Annotations;
-using Microsoft.VisualStudio.TextTemplating;
 
-namespace HWClassLibrary.T4
+namespace HWClassLibrary.sqlass.T4
 {
-    public static class Extender
+    partial class SQLContext
     {
-        [UsedImplicitly]
-        public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
-    }
-}
+        readonly Context _context;
+        readonly SQLTable[] _tables;
 
-namespace HWClassLibrary.sqlass
-{
+        internal SQLContext(Context context, SQLTable[] tables)
+        {
+            _context = context;
+            _tables = tables;
+        }
+    }
 }

@@ -17,23 +17,16 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Text;
+using System.Data.Common;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using JetBrains.Annotations;
-using Microsoft.VisualStudio.TextTemplating;
-
-namespace HWClassLibrary.T4
-{
-    public static class Extender
-    {
-        [UsedImplicitly]
-        public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
-    }
-}
 
 namespace HWClassLibrary.sqlass
 {
+    interface IPendingChange
+    {
+        void Apply(DbConnection connection);
+    }
 }

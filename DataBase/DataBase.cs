@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
 using HWClassLibrary.Debug;
@@ -19,14 +20,16 @@ namespace HWClassLibrary.DataBase
             {
                 if(_connection == null)
                 {
-                    _connection = new SQLiteConnection {ConnectionString = ConnectionString};
+                    _connection = CreateSQLiteConnection(_dbPath);
                     _connection.Open();
                 }
                 return _connection;
             }
         }
 
-        private string ConnectionString { get { return "Data Source=" + _dbPath + ";Version=3;"; } }
+        static SQLiteConnection CreateSQLiteConnection(string dbPath) { return new SQLiteConnection { ConnectionString = "Data Source=" + dbPath + ";Version=3;" }; }
+
+        public static DbConnection CreateConnection(string dbPath) { return new SQLiteConnection { ConnectionString = "Data Source=" + dbPath + ";Version=3;" }; }
 
         protected T[] Select<T>() where T : new()
         {

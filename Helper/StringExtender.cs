@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using HWClassLibrary.Debug;
 
@@ -130,5 +131,8 @@ namespace HWClassLibrary.Helper
             proc.Start();
             return proc.StandardOutput.ReadToEnd();
         }
+
+        public static IO.File FileHandle(this string name) { return IO.File.m(name); }
+        public static string PathCombine(this string head, params string[] tail) { return Path.Combine(head, Path.Combine(tail)); }
     }
 }

@@ -1,0 +1,66 @@
+﻿<#@ import namespace="global::HWClassLibrary.Helper" #>
+using HWClassLibrary.sqlass;
+
+namespace <#= _context.NameSpace #>.Tables
+{
+    sealed public partial class <#= ClassName #> 
+        : ISQLSupportProvider<#
+	if (HasSQLKey)
+    {#>
+        
+        , <#= SQLKeyProvider #><#
+    }#>
+    
+    {<# 
+	    foreach (var fi in Fields)                                           
+        {#> 
+        <#= ScopeModifier(fi) #><#= NameMapper(fi.FieldType) #> <#= fi.Name #>;<#
+        }#>
+
+
+        ISQLSupport ISQLSupportProvider.SQLSupport{get{return new SQLSupport.<#= ClassName #>(this);}} <#
+	if (HasSQLKey)
+    {#>
+
+        <#= SQLKeyType #> <#= SQLKeyProvider #>.SQLKey { get { return <#= SQLKeyValue #>; } }<# 
+    }#>
+    
+    }
+}
+
+namespace <#= _context.NameSpace #>.SQLSupport
+{
+    public partial class <#= ClassName #>: ISQLSupport
+    {
+        readonly Tables.<#= ClassName #> _target;
+        public <#= ClassName #>(Tables.<#= ClassName #> target){_target = target;}
+
+        string ISQLSupport.Insert
+        {
+            get
+            {
+                var result = "insert into <#= _sqlTableName #> values(";<# 
+            foreach (var fi in Fields)                                           
+            {#> 
+                result += _target.<#= fi.Name #>.SQLFormat();<#
+	            if (!IsLastField(fi))
+	            {#>
+
+                result += ", ";<#
+	            }
+	            else
+                {#>
+
+                result += ")";<#
+                }
+           }#>   
+
+                return result;
+            }
+        }
+    }
+}
+<#
+// ReSharper disable FieldCanBeMadeReadOnly.Local
+#>
+

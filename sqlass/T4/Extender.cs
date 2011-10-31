@@ -25,15 +25,11 @@ using System;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TextTemplating;
 
-namespace HWClassLibrary.T4
+namespace HWClassLibrary.sqlass.T4
 {
     public static class Extender
     {
         [UsedImplicitly]
         public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
     }
-}
-
-namespace HWClassLibrary.sqlass
-{
 }
