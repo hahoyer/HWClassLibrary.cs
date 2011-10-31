@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
@@ -97,10 +97,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SQLTable.tt</DependentUpon>
     </Compile>
-    <Compile Include="sqlass\T4\SQLTable.tt">
+    <None Include="sqlass\T4\SQLTable.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>SQLTable.tt.cs</LastGenOutput>
-    </Compile>
+    </None>
     <Compile Include="sqlass\Table.cs" />
     <Compile Include="T4\Extender.cs" />
     <Compile Include="T4\Context.cs" />
