@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Linq;
 using HWClassLibrary.Debug;
 
@@ -76,7 +76,7 @@ namespace HWClassLibrary.DataBase
             return newObjects.Aggregate("", (current, newObject) => current + (InsertCommand(newObject) + " "));
         }
 
-        public static void SetValues(object o, SQLiteDataReader reader)
+        public static void SetValues(object o, DbDataReader reader)
         {
             var columns = Columns;
             for(var i = 0; i < columns.Length; i++)

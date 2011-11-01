@@ -25,7 +25,7 @@ using System;
 
 namespace HWClassLibrary.sqlass
 {
-    public class Context
+    public class Context: Dumpable
     {
         public DbConnection Connection;
         List<IPendingChange> _pending;
@@ -69,14 +69,13 @@ namespace HWClassLibrary.sqlass
         {
             if (_pending != null)
                 throw new UnsavedChangedException();
-            
-            
+
             var methods = container
                 .GetType()
                 .GetMembers()
                 .ToArray();
 
-
+            NotImplementedMethod(container);
         }
     }
 

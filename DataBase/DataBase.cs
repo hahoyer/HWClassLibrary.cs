@@ -1,46 +1,43 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Linq;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.DataBase
 {
-    public class DataBase: Dumpable
+    public abstract class DataBase: Dumpable
     {
-        private SQLiteConnection _connection;
+        private DbConnection _connection;
         private readonly string _dbPath;
 
-        public DataBase(string dbPath) { _dbPath = dbPath; }
+        protected DataBase(string dbPath) { _dbPath = dbPath; }
 
-        private SQLiteConnection Connection
+        private DbConnection Connection
         {
             get
             {
                 if(_connection == null)
                 {
-                    _connection = CreateSQLiteConnection(_dbPath);
+                    _connection = CreateConnection(_dbPath);
                     _connection.Open();
                 }
                 return _connection;
             }
         }
 
-        static SQLiteConnection CreateSQLiteConnection(string dbPath) { return new SQLiteConnection { ConnectionString = "Data Source=" + dbPath + ";Version=3;" }; }
-
-        public static DbConnection CreateConnection(string dbPath) { return new SQLiteConnection { ConnectionString = "Data Source=" + dbPath + ";Version=3;" }; }
+        protected abstract DbConnection CreateConnection(string dbPath);
 
         protected T[] Select<T>() where T : new()
         {
             var command = Connection.CreateCommand();
             command.CommandText = SQLGenerator<T>.SelectCommand;
-            SQLiteDataReader reader;
+            DbDataReader reader;
             try
             {
                 reader = command.ExecuteReader();
             }
-            catch(SQLiteException e)
+            catch(Exception e)
             {
                 var expectedMessage = "SQLite error\r\nno such table: " + SQLGenerator<T>.TableName;
                 if(expectedMessage != e.Message)
