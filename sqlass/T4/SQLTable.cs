@@ -31,11 +31,11 @@ namespace HWClassLibrary.sqlass.T4
         readonly Context _context;
         readonly Type _type;
         readonly string _sqlTableName;
-        internal SQLTable(Context context, Type type, Func<string, string> getTableName)
+        internal SQLTable(Context context, Type type, string tableName)
         {
             _context = context;
             _type = type;
-            _sqlTableName = getTableName == null ? _type.Name : getTableName(_type.Name);
+            _sqlTableName = tableName ?? _type.Name;
         }
         internal string ClassName { get { return _type.Name; } }
         internal string FileName { get { return ClassName + ".cs"; } }

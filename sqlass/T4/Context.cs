@@ -19,7 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TextTemplating;
 
@@ -29,27 +32,33 @@ namespace HWClassLibrary.sqlass.T4
     {
         readonly List<SQLTable> _tables = new List<SQLTable>();
 
-        internal Context(StringBuilder text, ITextTemplatingEngineHost host)
-            : base(text, host)
+        [UsedImplicitly]
+        public static void Generate(StringBuilder text, ITextTemplatingEngineHost host, TextTransformation frame)
         {
-            
+            var context = new Context(text, host);
+            foreach(var type in frame.GetType().GetNestedTypes())
+                context.AddTable(type);
+            context.ÂddContext();
         }
 
-        [UsedImplicitly]
-        public string AddTable<T>(Func<string, string> getTableName = null)
+        Context(StringBuilder text, ITextTemplatingEngineHost host)
+            : base(text, host) { }
+
+        void AddTable(Type type)
         {
-            var table = new SQLTable(this, typeof(T), getTableName);
-            _tables.Add(table);
-            File = table.FileName;
-            return table.TransformText();
+            var attribute = type.GetAttribute<TableNameAttribute>(false);
+            string tableName = attribute == null ? null : attribute.Name; 
+                var table = new SQLTable(this, type, tableName);
+                _tables.Add(table);
+                File = table.FileName;
+                AppendText(table.TransformText());
         }
-                                                                   
-        [UsedImplicitly]
-        public string ÂddContext()
+
+        void ÂddContext()
         {
-            base.ProcessFiles();
             File = null;
-            return new SQLContext(this, _tables.ToArray()).TransformText();
+            AppendText(new SQLContext(this, _tables.ToArray()).TransformText());
+            base.ProcessFiles();
         }
     }
 

@@ -29,12 +29,10 @@ namespace HWClassLibrary.sqlass
         where T : ISQLSupportProvider
     {
         readonly T _data;
-        readonly string _tableName;
 
-        internal Insert(T data, string tableName)
+        internal Insert(T data)
         {
             _data = data;
-            _tableName = tableName;
         }
 
         void IPendingChange.Apply(DbConnection connection)

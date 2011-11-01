@@ -25,11 +25,8 @@ namespace <#= _context.NameSpace #>
     sealed public partial class Context: HWClassLibrary.sqlass.Context
     {
         public readonly Container Container;
-
-        public Context()
-        {
-            Container = new Container(this);
-        }
+        public Context(){Container = new Container(this);}
+        public void UpdateDatabase(){UpdateDatabase(Container);}
     }
 }
 <#

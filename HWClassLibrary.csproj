@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
@@ -77,7 +77,6 @@
     <Compile Include="sqlass\ISQLSupport.cs" />
     <Compile Include="sqlass\ISQLSupportProvider.cs" />
     <Compile Include="sqlass\T4\Context.cs" />
-    <Compile Include="sqlass\T4\Extender.cs" />
     <Compile Include="sqlass\T4\KeyAttribute.cs" />
     <Compile Include="sqlass\T4\NullableAttribute.cs" />
     <Compile Include="sqlass\T4\SQLContext.cs" />

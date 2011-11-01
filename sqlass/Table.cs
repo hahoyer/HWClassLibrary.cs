@@ -23,6 +23,7 @@ using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
@@ -71,6 +72,7 @@ namespace HWClassLibrary.sqlass
             }
         }
 
-        public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement, _sqlTableName)); }
+        [UsedImplicitly]
+        public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement)); }
     }
 }

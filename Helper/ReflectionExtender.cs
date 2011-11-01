@@ -1,9 +1,27 @@
-﻿using System;
+﻿// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HWClassLibrary.Debug;
-using HWClassLibrary.UnitTest;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
@@ -45,7 +63,7 @@ namespace HWClassLibrary.Helper
         public static TAttribute GetRecentAttribute<TAttribute>(this Type @this) where TAttribute : Attribute { return GetAttribute<TAttribute>(@this, false) ?? GetRecentAttributeBase<TAttribute>(@this.BaseType); }
 
         [CanBeNull]
-        private static TAttribute GetRecentAttributeBase<TAttribute>(this Type @this) where TAttribute : Attribute { return @this == null ? null : @this.GetRecentAttribute<TAttribute>(); }
+        static TAttribute GetRecentAttributeBase<TAttribute>(this Type @this) where TAttribute : Attribute { return @this == null ? null : @this.GetRecentAttribute<TAttribute>(); }
 
         [CanBeNull]
         public static TAttribute GetAttribute<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute
@@ -64,16 +82,16 @@ namespace HWClassLibrary.Helper
         public class MultipleAttributesException : Exception
         {
             [UsedImplicitly]
-            private readonly Type _attributeType;
+            readonly Type _attributeType;
 
             [UsedImplicitly]
-            private readonly object _this;
+            readonly object _this;
 
             [UsedImplicitly]
-            private readonly bool _inherit;
+            readonly bool _inherit;
 
             [UsedImplicitly]
-            private readonly Attribute[] _list;
+            readonly Attribute[] _list;
 
             public MultipleAttributesException(Type attributeType, object @this, bool inherit, Attribute[] list)
             {

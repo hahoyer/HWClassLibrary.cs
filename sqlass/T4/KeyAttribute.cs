@@ -24,6 +24,13 @@ using System;
 
 namespace HWClassLibrary.sqlass.T4
 {
-    public class KeyAttribute : Attribute
+    sealed public class KeyAttribute : Attribute
     {}
+
+    sealed public class TableNameAttribute : Attribute
+    {
+        readonly string _name;
+        public TableNameAttribute(string name) { _name = name; }
+        public string Name { get { return _name; } }
+    }
 }

@@ -103,12 +103,20 @@ namespace HWClassLibrary.sqlass.T4
             
             #line default
             #line hidden
-            this.Write("\r\n        }\r\n    }\r\n\r\n    sealed public partial class Context: HWClassLibrary.sql" +
-                    "ass.Context\r\n    {\r\n        public readonly Container Container;\r\n\r\n        publ" +
-                    "ic Context()\r\n        {\r\n            Container = new Container(this);\r\n        }" +
-                    "\r\n    }\r\n}\r\n");
+            this.Write(@"
+        }
+    }
+
+    sealed public partial class Context: HWClassLibrary.sqlass.Context
+    {
+        public readonly Container Container;
+        public Context(){Container = new Container(this);}
+        public void UpdateDatabase(){UpdateDatabase(Container);}
+    }
+}
+");
             
-            #line 35 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 32 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 

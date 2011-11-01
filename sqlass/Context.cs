@@ -64,5 +64,22 @@ namespace HWClassLibrary.sqlass
                 _pending = new List<IPendingChange>();
             _pending.Add(data);
         }
+
+        protected void UpdateDatabase(object container)
+        {
+            if (_pending != null)
+                throw new UnsavedChangedException();
+            
+            
+            var methods = container
+                .GetType()
+                .GetMembers()
+                .ToArray();
+
+
+        }
     }
+
+    sealed class UnsavedChangedException : Exception
+    {}
 }
