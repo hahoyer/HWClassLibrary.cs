@@ -18,6 +18,7 @@
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
 using System.Collections;
+using System.Data.Common;
 using System.Linq.Expressions;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    public sealed class Table<T> : Dumpable, IQueryable<T>
+    public sealed class Table<T> : Dumpable, IQueryable<T>, IMetaUpdateTableProvider
         where T : ISQLSupportProvider
     {
         readonly Context _context;
@@ -74,5 +75,13 @@ namespace HWClassLibrary.sqlass
 
         [UsedImplicitly]
         public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement)); }
+    }
+
+    public interface IMetaUpdateTableProvider
+    {}
+
+    public class MetaDataSupport
+    {
+        public string TableName;
     }
 }

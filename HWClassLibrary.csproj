@@ -76,6 +76,11 @@
     <Compile Include="sqlass\ISQLKeyProvider.cs" />
     <Compile Include="sqlass\ISQLSupport.cs" />
     <Compile Include="sqlass\ISQLSupportProvider.cs" />
+    <Compile Include="sqlass\MetaData\Ado.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Ado.tt</DependentUpon>
+    </Compile>
     <Compile Include="sqlass\T4\Context.cs" />
     <Compile Include="sqlass\T4\KeyAttribute.cs" />
     <Compile Include="sqlass\T4\NullableAttribute.cs" />
@@ -85,6 +90,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SQLContext.tt</DependentUpon>
     </Compile>
+    <None Include="sqlass\MetaData\Ado.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Ado.cs</LastGenOutput>
+    </None>
     <None Include="sqlass\T4\SQLContext.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>SQLContext.tt.cs</LastGenOutput>
@@ -132,6 +141,9 @@
     </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Data.SqlServerCe, Version=3.5.1.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />

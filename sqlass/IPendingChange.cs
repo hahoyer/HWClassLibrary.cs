@@ -27,6 +27,6 @@ namespace HWClassLibrary.sqlass
 {
     interface IPendingChange
     {
-        void Apply(DbConnection connection);
+        void Apply(Context connection);
     }
 }

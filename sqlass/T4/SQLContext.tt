@@ -1,4 +1,6 @@
 ﻿<#@ import namespace="global::HWClassLibrary.Helper" #>
+using System;
+using HWClassLibrary.Helper;
 using HWClassLibrary.sqlass;
 using <#= _context.NameSpace #>.Tables;
 
@@ -10,13 +12,12 @@ namespace <#= _context.NameSpace #>
         {#> 
         public <#= table.TableTypeName #> <#= table.ClassName #>;<#
         }#>
-                        
-        
+
         public Container(Context context)
         {<#
     	    foreach (var table in _tables)
             {#> 
-            <#= table.ClassName #> = new <#= table.TableTypeName #>(context, <#= table.SQLTableName #>);<#
+            <#= table.ClassName #> = new <#= table.TableTypeName #>(context, <#= table.SQLTableName.Quote() #>);<#
             }#>
 
         }
@@ -24,9 +25,22 @@ namespace <#= _context.NameSpace #>
 
     sealed public partial class Context: HWClassLibrary.sqlass.Context
     {
+        readonly DictionaryEx<Type, MetaDataSupport> _metaData;
         public readonly Container Container;
-        public Context(){Container = new Container(this);}
-        public void UpdateDatabase(){UpdateDatabase(Container);}
+
+        public Context()
+        {
+            Container = new Container(this);
+            _metaData = new DictionaryEx<Type, MetaDataSupport>
+                        {<#
+    	                    foreach (var table in _tables)
+                            {#> 
+                            {typeof(Tables.<#= table.ClassName #>), SQLSupport.Customer.MetaDataSupport},<#
+                            }#>
+                        };
+        }
+
+        public void UpdateDatabase() { UpdateDatabase(Container, _metaData); }
     }
 }
 <#

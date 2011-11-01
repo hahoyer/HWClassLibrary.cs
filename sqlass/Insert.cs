@@ -35,13 +35,9 @@ namespace HWClassLibrary.sqlass
             _data = data;
         }
 
-        void IPendingChange.Apply(DbConnection connection)
+        void IPendingChange.Apply(Context connection)
         {
-            using(var command = connection.CreateCommand())
-            {
-                command.CommandText = _data.SQLSupport.Insert;
-                command.ExecuteNonQuery();
-            }
+            connection.ExecuteNonQuery(_data.SQLSupport.Insert);
         }
     }
 }

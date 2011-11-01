@@ -1,8 +1,14 @@
 ﻿<#@ import namespace="global::HWClassLibrary.Helper" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using HWClassLibrary.Debug;
 using HWClassLibrary.sqlass;
 
 namespace <#= _context.NameSpace #>.Tables
 {
+    using <#= _context.NameSpace #>;
+
     sealed public partial class <#= ClassName #> 
         : ISQLSupportProvider<#
 	if (HasSQLKey)
@@ -30,6 +36,8 @@ namespace <#= _context.NameSpace #>.Tables
 
 namespace <#= _context.NameSpace #>.SQLSupport
 {
+    using <#= _context.NameSpace #>;
+
     public partial class <#= ClassName #>: ISQLSupport
     {
         readonly Tables.<#= ClassName #> _target;
@@ -39,7 +47,7 @@ namespace <#= _context.NameSpace #>.SQLSupport
         {
             get
             {
-                var result = "insert into <#= _sqlTableName #> values(";<# 
+                var result = "insert into <#= SQLTableName #> values(";<# 
             foreach (var fi in Fields)                                           
             {#> 
                 result += _target.<#= fi.Name #>.SQLFormat();<#
@@ -58,6 +66,8 @@ namespace <#= _context.NameSpace #>.SQLSupport
                 return result;
             }
         }
+
+        public static MetaDataSupport MetaDataSupport = new MetaDataSupport{TableName = <#= SQLTableName.Quote() #> };
     }
 }
 <#

@@ -42,7 +42,7 @@ namespace HWClassLibrary.sqlass.T4
 
         FieldInfo[] Fields { get { return _type.GetFields(); } }
 
-        internal string SQLTableName { get { return _sqlTableName.Quote(); } }
+        internal string SQLTableName { get { return _sqlTableName; } }
 
         internal string TableTypeName { get { return "Table<" + ClassName + ">"; } }
 

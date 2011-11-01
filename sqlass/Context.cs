@@ -17,17 +17,21 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+using System.Data;
 using System.Data.Common;
+using System.Data.SqlServerCe;
+using System.Reflection;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.sqlass
 {
-    public class Context: Dumpable
+    public class Context : Dumpable
     {
-        public DbConnection Connection;
+        DbConnection _connection;
         List<IPendingChange> _pending;
 
         public void SaveChanges()
@@ -35,26 +39,32 @@ namespace HWClassLibrary.sqlass
             if(_pending == null)
                 return;
 
-            Connection.Open();
+            var transaction = Connection.BeginTransaction();
             try
             {
-                var transaction = Connection.BeginTransaction();
-                try
-                {
-                    foreach(var pendingChange in _pending)
-                        pendingChange.Apply(Connection);
-                    transaction.Commit();
-                    _pending = null;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
+                foreach(var pendingChange in _pending)
+                    pendingChange.Apply(this);
+                transaction.Commit();
+                _pending = null;
             }
-            finally
+            catch
             {
-                Connection.Close();
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        public void SetSqlCeConnection (string dataSource) { Connection = new SqlCeConnection(@"Data Source=" + dataSource + ";"); }
+
+        public DbConnection Connection
+        {
+            private get { return _connection; }
+            set
+            {
+                if(_connection != null)
+                    _connection.Close();
+                _connection = value;
+                _connection.Open();
             }
         }
 
@@ -65,18 +75,42 @@ namespace HWClassLibrary.sqlass
             _pending.Add(data);
         }
 
-        protected void UpdateDatabase(object container)
+        protected void UpdateDatabase(object container, DictionaryEx<Type, MetaDataSupport> metaDataSupport)
         {
-            if (_pending != null)
+            if(_pending != null)
                 throw new UnsavedChangedException();
 
-            var methods = container
-                .GetType()
+            var type = container.GetType();
+            var target = typeof(Table<>);
+            var metaDataSupports = type
                 .GetMembers()
+                .Where(m => m.DeclaringType == type && m.MemberType == MemberTypes.Field)
+                .Cast<FieldInfo>()
+                .Where(fi => fi.FieldType.GetGenericTypeDefinition() == target)
+                .Select(fi => metaDataSupport[fi.FieldType.GetGenericArguments()[0]])
                 .ToArray();
 
-            NotImplementedMethod(container);
+            var sqlMetaData = new MetaData.MetaData(_connection);
+            var columns = sqlMetaData.Columns;
+
+            NotImplementedMethod(container, metaDataSupport);
+            foreach(var meta in metaDataSupports)
+            {
+                var tableName = meta.TableName;
+            }
         }
+
+        internal void ExecuteNonQuery(string text)
+        {
+            using(var command = Connection.CreateCommand())
+            {
+                command.CommandText = text;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public DataRow[] Schema { get { return Connection.GetSchema().Select(); } }
+        public DataTable SubSchema(string name) { return Connection.GetSchema(name); }
     }
 
     sealed class UnsavedChangedException : Exception
