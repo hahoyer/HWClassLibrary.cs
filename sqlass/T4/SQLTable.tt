@@ -67,7 +67,30 @@ namespace <#= _context.NameSpace #>.SQLSupport
             }
         }
 
-        public static MetaDataSupport MetaDataSupport = new MetaDataSupport{TableName = <#= SQLTableName.Quote() #> };
+        public static MetaDataSupport MetaDataSupport = new MetaDataSupport
+        {
+            TableName = <#= SQLTableName.Quote() #>,
+            CreateTable = "create table <#= SQLTableName #>\n"
+            + "(\n"<# 
+            foreach (var fi in Fields)                                           
+            {#> 
+            + "\t<#= fi.Name #> <#= SQLTypeMapper(fi.FieldType) #><# 
+	            if (IsKeyField(fi))
+	            {#> primary key<#
+	            } 
+	            if (IsNullableField(fi))
+	            {#> null<#
+	            }
+                else
+                {#> not null<#
+                } 
+	            if (!IsLastField(fi))
+	            {#>,<#
+	            }#>\n"<#
+            }#>   
+            + ")\n"
+            ,
+        };
     }
 }
 <#

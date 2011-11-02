@@ -83,5 +83,6 @@ namespace HWClassLibrary.sqlass
     public class MetaDataSupport
     {
         public string TableName;
+        public string CreateTable;
     }
 }

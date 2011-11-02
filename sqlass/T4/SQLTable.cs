@@ -58,8 +58,21 @@ namespace HWClassLibrary.sqlass.T4
                 return type.GetGenericArguments()[0].Name;
             return type.FullName;
         }
-        
-        static bool IsReferenceType(Type type) { return type.IsGenericType && type.Name.StartsWith("Reference"); }
+
+        string SQLTypeMapper(Type type)
+        {
+            if(type == typeof(int))
+                return "int";
+            if(type == typeof(string))
+                return "varchar";
+            if(IsReferenceType(type))
+                return SQLTypeMapper(KeyType(type));
+            return type.FullName;
+        }
+
+        Type KeyType(Type type) { return _context.SQLTable(type.GetGenericArguments()[0]).KeyTypes.Single(); }
+
+        static bool IsReferenceType(Type type) { return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Reference<>); }
 
         static string ScopeModifier(FieldInfo fi)
         {
@@ -72,7 +85,7 @@ namespace HWClassLibrary.sqlass.T4
 
         static string ValueName(FieldInfo fi)
         {
-            if (IsReferenceType(fi.FieldType))
+            if(IsReferenceType(fi.FieldType))
                 return fi.Name + ".Target";
             return fi.Name;
         }
@@ -83,13 +96,21 @@ namespace HWClassLibrary.sqlass.T4
         {
             get
             {
-                var keys = Fields
-                    .Where(fi => fi.GetAttribute<KeyAttribute>(true) != null)
-                    .Select(fi => NameMapper(fi.FieldType))
-                    .ToArray();
+                var keys = KeyTypes.Select(NameMapper).ToArray();
                 if(keys.Length == 0)
                     return "";
                 return "ISQLKeyProvider<" + keys.Format(", ") + ">";
+            }
+        }
+        Type[] KeyTypes
+        {
+            get
+            {
+                var keys = Fields
+                    .Where(IsKeyField)
+                    .Select(fi => fi.FieldType)
+                    .ToArray();
+                return keys;
             }
         }
 
@@ -97,11 +118,8 @@ namespace HWClassLibrary.sqlass.T4
         {
             get
             {
-                var keys = Fields
-                    .Where(fi => fi.GetAttribute<KeyAttribute>(true) != null)
-                    .Select(fi => NameMapper(fi.FieldType))
-                    .ToArray();
-                if (keys.Length == 1)
+                var keys = KeyTypes.Select(NameMapper).ToArray();
+                if(keys.Length == 1)
                     return keys[0];
                 return "Tuple<" + keys.Format(", ") + ">";
             }
@@ -112,14 +130,16 @@ namespace HWClassLibrary.sqlass.T4
             get
             {
                 var keys = Fields
-                    .Where(fi => fi.GetAttribute<KeyAttribute>(true) != null)
+                    .Where(IsKeyField)
                     .Select(fi => fi.Name)
                     .ToArray();
-                if (keys.Length == 1)
+                if(keys.Length == 1)
                     return keys[0];
                 return "new " + SQLKeyType + "(" + keys.Format(", ") + ")";
             }
         }
-    }
 
+        static bool IsKeyField(FieldInfo fi) { return fi.GetAttribute<KeyAttribute>(true) != null; }
+        bool IsNullableField(FieldInfo fi) { return fi.GetAttribute<NullableAttribute>(true) != null; }
+    }
 }

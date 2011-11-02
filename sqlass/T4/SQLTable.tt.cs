@@ -242,16 +242,101 @@ namespace HWClassLibrary.sqlass.T4
             #line default
             #line hidden
             this.Write("   \r\n\r\n                return result;\r\n            }\r\n        }\r\n\r\n        public" +
-                    " static MetaDataSupport MetaDataSupport = new MetaDataSupport{TableName = ");
+                    " static MetaDataSupport MetaDataSupport = new MetaDataSupport\r\n        {\r\n      " +
+                    "      TableName = ");
             
-            #line 70 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 72 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(SQLTableName.Quote()));
             
             #line default
             #line hidden
-            this.Write(" };\r\n    }\r\n}\r\n");
+            this.Write(",\r\n            CreateTable = \"create table ");
             
             #line 73 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(SQLTableName));
+            
+            #line default
+            #line hidden
+            this.Write("\\n\"\r\n            + \"(\\n\"");
+            
+            #line 74 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+ 
+            foreach (var fi in Fields)                                           
+            {
+            
+            #line default
+            #line hidden
+            this.Write(" \r\n            + \"\\t");
+            
+            #line 77 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(fi.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 77 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(SQLTypeMapper(fi.FieldType)));
+            
+            #line default
+            #line hidden
+            
+            #line 77 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+ 
+	            if (IsKeyField(fi))
+	            {
+            
+            #line default
+            #line hidden
+            this.Write(" primary key");
+            
+            #line 79 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+	            } 
+	            if (IsNullableField(fi))
+	            {
+            
+            #line default
+            #line hidden
+            this.Write(" null");
+            
+            #line 82 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+	            }
+                else
+                {
+            
+            #line default
+            #line hidden
+            this.Write(" not null");
+            
+            #line 85 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+                } 
+	            if (!IsLastField(fi))
+	            {
+            
+            #line default
+            #line hidden
+            this.Write(",");
+            
+            #line 88 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+	            }
+            
+            #line default
+            #line hidden
+            this.Write("\\n\"");
+            
+            #line 89 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+            }
+            
+            #line default
+            #line hidden
+            this.Write("   \r\n            + \")\\n\"\r\n            ,\r\n        };\r\n    }\r\n}\r\n");
+            
+            #line 96 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 

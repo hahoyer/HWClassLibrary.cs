@@ -31,6 +31,7 @@ namespace HWClassLibrary.sqlass.T4
     public sealed class Context : HWClassLibrary.T4.Context
     {
         readonly List<SQLTable> _tables = new List<SQLTable>();
+        readonly DictionaryEx<Type, SQLTable> _sqlTables;
 
         [UsedImplicitly]
         public static void Generate(StringBuilder text, ITextTemplatingEngineHost host, TextTransformation frame)
@@ -42,16 +43,23 @@ namespace HWClassLibrary.sqlass.T4
         }
 
         Context(StringBuilder text, ITextTemplatingEngineHost host)
-            : base(text, host) { }
+            : base(text, host) { _sqlTables = new DictionaryEx<Type, SQLTable>(ObtainSQLTable); }
+
+        internal SQLTable SQLTable(Type type) { return _sqlTables.Find(type); }
 
         void AddTable(Type type)
         {
+            var table = ObtainSQLTable(type);
+            _tables.Add(table);
+            File = table.FileName;
+            AppendText(table.TransformText());
+        }
+
+        SQLTable ObtainSQLTable(Type type)
+        {
             var attribute = type.GetAttribute<TableNameAttribute>(false);
-            string tableName = attribute == null ? null : attribute.Name; 
-                var table = new SQLTable(this, type, tableName);
-                _tables.Add(table);
-                File = table.FileName;
-                AppendText(table.TransformText());
+            var tableName = attribute == null ? null : attribute.Name;
+            return new SQLTable(this, type, tableName);
         }
 
         void ÂddContext()

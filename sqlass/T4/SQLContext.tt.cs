@@ -132,7 +132,14 @@ namespace HWClassLibrary.sqlass.T4
             
             #line default
             #line hidden
-            this.Write("), SQLSupport.Customer.MetaDataSupport},");
+            this.Write("), SQLSupport.");
+            
+            #line 38 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(table.ClassName));
+            
+            #line default
+            #line hidden
+            this.Write(".MetaDataSupport},");
             
             #line 38 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 

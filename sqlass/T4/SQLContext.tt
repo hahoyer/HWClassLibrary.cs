@@ -35,7 +35,7 @@ namespace <#= _context.NameSpace #>
                         {<#
     	                    foreach (var table in _tables)
                             {#> 
-                            {typeof(Tables.<#= table.ClassName #>), SQLSupport.Customer.MetaDataSupport},<#
+                            {typeof(Tables.<#= table.ClassName #>), SQLSupport.<#= table.ClassName #>.MetaDataSupport},<#
                             }#>
                         };
         }
