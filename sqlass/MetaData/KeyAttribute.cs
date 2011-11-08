@@ -17,17 +17,13 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System;
+using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
-using HWClassLibrary.Debug;
+using System;
 
-namespace HWClassLibrary.sqlass
+namespace HWClassLibrary.sqlass.MetaData
 {
-    public static class Extender
-    {
-        public static string SQLFormat(this int data) { return data.ToString(); }
-        public static string SQLFormat(this string data) { return "'" + data.Replace("'", "''") + "'"; }
-        public static string SQLFormat(this ISQLKeyProvider<int> data) { return data == null ? "null" : data.SQLKey.SQLFormat(); }
-    }
+    sealed public class KeyAttribute : Attribute
+    {}
 }

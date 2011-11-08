@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+﻿<#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
 <#@ Assembly Name="System.Xml.dll" #>
 <#@ Assembly Name="System.Data.dll" #>
@@ -9,45 +9,41 @@
 <#@ import namespace="global::System.Data.SQLite" #>
 <#@ import namespace="global::HWClassLibrary.sqlass" #>
 <#@ import namespace="global::HWClassLibrary.Helper" #>
+
 using System.Linq;
-using System.Data.Common;
 using HWClassLibrary.Helper;
 
-namespace HWClassLibrary.sqlass.MetaData
+namespace HWClassLibrary.sqlass.MetaData.Ado
 {
 <# 
 var context = new Context { Connection = new SQLiteConnection("Data Source=test.sqlite;Version=3;") };
 foreach (var metaTable in context.Schema) 
-{#> 
-    // <#=metaTable["CollectionName"] #> <#=metaTable["NumberOfRestrictions"] #> <#=metaTable["NumberOfIdentifierParts"] #> <#
-            
-	var columnCount = metaTable["NumberOfRestrictions"].ToInt32() + metaTable["NumberOfIdentifierParts"].ToInt32();
-    if(columnCount > 0)
-    {#> 
-    public sealed class <#=metaTable["CollectionName"].ToSingular() #> 
+{#>
+    public sealed class <#=metaTable["CollectionName"].ToSingular() #>Class 
     {<#
-	    var subTable = context.SubSchema(metaTable["CollectionName"].ToString());
-	    for (var i = 0; i < columnCount; i++)
-	    {#>
+	var columns = context.SubSchema(metaTable["CollectionName"].ToString()).Columns;	
+	foreach (DataColumn column in columns)
+	{#>
  
-        public <#= subTable.Columns[i].DataType.FullName #> <#= subTable.Columns[i].ColumnName #>;<#
-	    }#>
+        public <#= column.DataType.FullName #> <#= column.ColumnName #>;<#
+	}#>
 
 
-        static public <#=metaTable["CollectionName"].ToSingular() #>[] Initialize(DbConnection connection) 
+        static public <#=metaTable["CollectionName"].ToSingular() #>Class[] Initialize(Context context) 
         {
-            return connection
+            return context
+                .Connection
                 .GetSchema(<#= metaTable["CollectionName"].ToString().Quote() #>)
                 .Select()
                 .Select
                 (
-                    row=>new <#= metaTable["CollectionName"].ToSingular() #> 
+                    row=>new <#= metaTable["CollectionName"].ToSingular() #>Class 
                     {<#
-        for (var i = 0; i < columnCount; i++)
-	    {#>
+	foreach (DataColumn column in columns)
+	{#>
  
-                        <#= subTable.Columns[i].ColumnName #> = row[<#= subTable.Columns[i].ColumnName.Quote() #>].To<#= subTable.Columns[i].DataType.Name #>() ,<#
-	    }#>
+                        <#= column.ColumnName #> = row[<#= column.ColumnName.Quote() #>].To<#= column.DataType.Name #>() ,<#
+	}#>
             
                     }
                 )
@@ -57,31 +53,16 @@ foreach (var metaTable in context.Schema)
         public override string ToString()
         {
             return<#
-        for (var i = 0; i < columnCount; i++)
-	    {#>
+	var isFirst = true;
+	foreach (DataColumn column in columns)
+	{#>
  
-            <#=(i==0? "": " + \" \" + ") + subTable.Columns[i].ColumnName #>.ToString()<#
-	    }#>;            
+            <#=(isFirst? "": " + \" \" + ") + column.ColumnName #><#
+	    isFirst = false;
+	}#>;            
         }
     }
+
 <#
-	}        
-}
-#>
-
-    public sealed class MetaData
-    {
-        readonly DbConnection _connection;
-        public MetaData(DbConnection connection) { _connection = connection; }<#
-
-foreach (var metaTable in context.Schema) 
-{ 
-    if(metaTable["NumberOfRestrictions"].ToInt32() + metaTable["NumberOfIdentifierParts"].ToInt32() > 0)
-    {#> 
-        public <#=metaTable["CollectionName"].ToSingular() #>[] <#=metaTable["CollectionName"] #> {get{return <#=metaTable["CollectionName"].ToSingular() #>.Initialize(_connection);}}<#
-    }
-}
-#>
-
-    }
+}#>
 }

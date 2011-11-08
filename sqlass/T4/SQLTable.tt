@@ -5,10 +5,8 @@ using System.Linq;
 using HWClassLibrary.Debug;
 using HWClassLibrary.sqlass;
 
-namespace <#= _context.NameSpace #>.Tables
+namespace <#= _context.NameSpace #>.Tables<#= NameSpaceSuffix #>
 {
-    using <#= _context.NameSpace #>;
-
     sealed public partial class <#= ClassName #> 
         : ISQLSupportProvider<#
 	if (HasSQLKey)
@@ -18,9 +16,9 @@ namespace <#= _context.NameSpace #>.Tables
     }#>
     
     {<# 
-	    foreach (var fi in Fields)                                           
+	    foreach (var column in Columns)                                           
         {#> 
-        <#= ScopeModifier(fi) #><#= NameMapper(fi.FieldType) #> <#= fi.Name #>;<#
+        public <#= column.Type #> <#= column.Name #>;<#
         }#>
 
 
@@ -34,10 +32,8 @@ namespace <#= _context.NameSpace #>.Tables
     }
 }
 
-namespace <#= _context.NameSpace #>.SQLSupport
+namespace <#= _context.NameSpace #>.SQLSupport<#= NameSpaceSuffix #>
 {
-    using <#= _context.NameSpace #>;
-
     public partial class <#= ClassName #>: ISQLSupport
     {
         readonly Tables.<#= ClassName #> _target;
@@ -48,10 +44,10 @@ namespace <#= _context.NameSpace #>.SQLSupport
             get
             {
                 var result = "insert into <#= SQLTableName #> values(";<# 
-            foreach (var fi in Fields)                                           
+            foreach (var column in Columns)                                           
             {#> 
-                result += _target.<#= fi.Name #>.SQLFormat();<#
-	            if (!IsLastField(fi))
+                result += _target.<#= column.Name #>.SQLFormat();<#
+	            if (!IsLast(column))
 	            {#>
 
                 result += ", ";<#
@@ -66,31 +62,6 @@ namespace <#= _context.NameSpace #>.SQLSupport
                 return result;
             }
         }
-
-        public static MetaDataSupport MetaDataSupport = new MetaDataSupport
-        {
-            TableName = <#= SQLTableName.Quote() #>,
-            CreateTable = "create table <#= SQLTableName #>\n"
-            + "(\n"<# 
-            foreach (var fi in Fields)                                           
-            {#> 
-            + "\t<#= fi.Name #> <#= SQLTypeMapper(fi.FieldType) #><# 
-	            if (IsKeyField(fi))
-	            {#> primary key<#
-	            } 
-	            if (IsNullableField(fi))
-	            {#> null<#
-	            }
-                else
-                {#> not null<#
-                } 
-	            if (!IsLastField(fi))
-	            {#>,<#
-	            }#>\n"<#
-            }#>   
-            + ")\n"
-            ,
-        };
     }
 }
 <#

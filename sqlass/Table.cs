@@ -80,9 +80,4 @@ namespace HWClassLibrary.sqlass
     public interface IMetaUpdateTableProvider
     {}
 
-    public class MetaDataSupport
-    {
-        public string TableName;
-        public string CreateTable;
-    }
 }

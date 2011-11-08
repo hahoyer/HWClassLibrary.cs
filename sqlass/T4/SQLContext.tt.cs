@@ -109,13 +109,13 @@ namespace HWClassLibrary.sqlass.T4
 
     sealed public partial class Context: HWClassLibrary.sqlass.Context
     {
-        readonly DictionaryEx<Type, MetaDataSupport> _metaData;
+        readonly DictionaryEx<Type, HWClassLibrary.sqlass.MetaData.Table> _metaData;
         public readonly Container Container;
 
         public Context()
         {
             Container = new Container(this);
-            _metaData = new DictionaryEx<Type, MetaDataSupport>
+            _metaData = new DictionaryEx<Type, HWClassLibrary.sqlass.MetaData.Table>
                         {");
             
             #line 35 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"

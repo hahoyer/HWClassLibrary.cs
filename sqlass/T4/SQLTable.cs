@@ -23,30 +23,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using HWClassLibrary.Helper;
+using HWClassLibrary.sqlass.MetaData;
 
 namespace HWClassLibrary.sqlass.T4
 {
     partial class SQLTable
     {
         readonly Context _context;
-        readonly Type _type;
-        readonly string _sqlTableName;
-        internal SQLTable(Context context, Type type, string tableName)
+        readonly Table _table;
+        internal SQLTable(Context context, Table table)
         {
             _context = context;
-            _type = type;
-            _sqlTableName = tableName ?? _type.Name;
+            _table = table;
         }
-        internal string ClassName { get { return _type.Name; } }
+        internal string ClassName { get { return _table.Name; } }
         internal string FileName { get { return ClassName + ".cs"; } }
 
-        FieldInfo[] Fields { get { return _type.GetFields(); } }
+        internal string NameSpaceSuffix
+        {
+            get
+            {
+                var nameSpace = _table.NameSpace;
+                if(nameSpace == "")
+                    return "";
+                return "." + nameSpace;
+            }
+        }
 
-        internal string SQLTableName { get { return _sqlTableName; } }
+        static Type KeyType(Type type) { return Table.KeyType(type); }
+        bool IsLast(Column column) { return Columns.Last() == column; }
 
         internal string TableTypeName { get { return "Table<" + ClassName + ">"; } }
-
-        bool IsLastField(FieldInfo fi) { return Fields.Last() == fi; }
 
         string NameMapper(Type type)
         {
@@ -64,24 +71,13 @@ namespace HWClassLibrary.sqlass.T4
             if(type == typeof(int))
                 return "int";
             if(type == typeof(string))
-                return "varchar";
+                return "nvarchar(4000)";
             if(IsReferenceType(type))
                 return SQLTypeMapper(KeyType(type));
             return type.FullName;
         }
 
-        Type KeyType(Type type) { return _context.SQLTable(type.GetGenericArguments()[0]).KeyTypes.Single(); }
-
         static bool IsReferenceType(Type type) { return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Reference<>); }
-
-        static string ScopeModifier(FieldInfo fi)
-        {
-            if(fi.IsPublic)
-                return "public ";
-            if(!fi.IsPrivate)
-                return "internal ";
-            return "";
-        }
 
         static string ValueName(FieldInfo fi)
         {
@@ -90,35 +86,25 @@ namespace HWClassLibrary.sqlass.T4
             return fi.Name;
         }
 
-        bool HasSQLKey { get { return Fields.Any(fi => fi.GetAttribute<KeyAttribute>(true) != null); } }
+        bool HasSQLKey { get { return Columns.Any(column => column.IsKey); } }
 
         string SQLKeyProvider
         {
             get
             {
-                var keys = KeyTypes.Select(NameMapper).ToArray();
+                var keys = KeyTypes;
                 if(keys.Length == 0)
                     return "";
                 return "ISQLKeyProvider<" + keys.Format(", ") + ">";
             }
         }
-        Type[] KeyTypes
-        {
-            get
-            {
-                var keys = Fields
-                    .Where(IsKeyField)
-                    .Select(fi => fi.FieldType)
-                    .ToArray();
-                return keys;
-            }
-        }
+        string[] KeyTypes { get { return _table.KeyTypes; } }
 
         string SQLKeyType
         {
             get
             {
-                var keys = KeyTypes.Select(NameMapper).ToArray();
+                var keys = KeyTypes;
                 if(keys.Length == 1)
                     return keys[0];
                 return "Tuple<" + keys.Format(", ") + ">";
@@ -129,9 +115,9 @@ namespace HWClassLibrary.sqlass.T4
         {
             get
             {
-                var keys = Fields
-                    .Where(IsKeyField)
-                    .Select(fi => fi.Name)
+                var keys = Columns
+                    .Where(c => c.IsKey)
+                    .Select(c => c.Name)
                     .ToArray();
                 if(keys.Length == 1)
                     return keys[0];
@@ -139,7 +125,7 @@ namespace HWClassLibrary.sqlass.T4
             }
         }
 
-        static bool IsKeyField(FieldInfo fi) { return fi.GetAttribute<KeyAttribute>(true) != null; }
-        bool IsNullableField(FieldInfo fi) { return fi.GetAttribute<NullableAttribute>(true) != null; }
+        Column[] Columns { get { return _table.Columns; } }
+        internal string SQLTableName { get { return _table.SQLTableName; } }
     }
 }

@@ -4,6 +4,7 @@
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
     <AssemblyName>HWClassLibrary</AssemblyName>
     <TargetTypeEx>CSharp.Library</TargetTypeEx>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -16,7 +17,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -53,6 +53,7 @@
     <Compile Include="EF\Utility\MetadataLoader.cs" />
     <Compile Include="EF\Utility\MetadataTools.cs" />
     <Compile Include="EF\Utility\NullHost.cs" />
+    <Compile Include="Helper\AdoExtender.cs" />
     <Compile Include="Helper\BigRational.cs" />
     <Compile Include="Helper\Box.cs" />
     <Compile Include="Helper\CSharpCompiler.cs" />
@@ -81,9 +82,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Ado.tt</DependentUpon>
     </Compile>
+    <Compile Include="sqlass\MetaData\CatalogAttribute.cs" />
+    <Compile Include="sqlass\MetaData\Column.cs" />
+    <Compile Include="sqlass\MetaData\SchemaAttribute.cs" />
+    <Compile Include="sqlass\MetaData\SQLCompact.cs">
+      <DependentUpon>SQLCompact.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="sqlass\MetaData\MetaData.cs" />
+    <Compile Include="sqlass\MetaData\Table.cs" />
+    <Compile Include="sqlass\MetaData\TableColumn.cs" />
     <Compile Include="sqlass\T4\Context.cs" />
-    <Compile Include="sqlass\T4\KeyAttribute.cs" />
-    <Compile Include="sqlass\T4\NullableAttribute.cs" />
+    <Compile Include="sqlass\MetaData\KeyAttribute.cs" />
+    <Compile Include="sqlass\MetaData\NullableAttribute.cs" />
     <Compile Include="sqlass\T4\SQLContext.cs" />
     <Compile Include="sqlass\T4\SQLContext.tt.cs">
       <AutoGen>True</AutoGen>
@@ -93,6 +105,10 @@
     <None Include="sqlass\MetaData\Ado.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Ado.cs</LastGenOutput>
+    </None>
+    <None Include="sqlass\MetaData\SQLCompact.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SQLCompact.cs</LastGenOutput>
     </None>
     <None Include="sqlass\T4\SQLContext.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -139,11 +155,9 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Entity.Design" />
-    <Reference Include="System.Data.SqlServerCe, Version=3.5.1.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
@@ -165,6 +179,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.SQL.Server.Compact.3.5">
+      <Visible>False</Visible>
+      <ProductName>SQL Server Compact 3.5 SP2</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>
       <ProductName>Windows Installer 3.1</ProductName>
@@ -173,6 +192,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="sys.targets" />
 </Project>

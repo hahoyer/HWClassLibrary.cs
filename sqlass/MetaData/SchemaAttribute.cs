@@ -17,17 +17,25 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using System;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 
-namespace HWClassLibrary.sqlass
+namespace HWClassLibrary.sqlass.MetaData
 {
-    public static class Extender
+    public sealed class SchemaAttribute : Attribute
     {
-        public static string SQLFormat(this int data) { return data.ToString(); }
-        public static string SQLFormat(this string data) { return "'" + data.Replace("'", "''") + "'"; }
-        public static string SQLFormat(this ISQLKeyProvider<int> data) { return data == null ? "null" : data.SQLKey.SQLFormat(); }
+        readonly string _name;
+        public SchemaAttribute(string name) { _name = name; }
+
+        internal static string Get(Type type)
+        {
+            var result = type.GetAttribute<SchemaAttribute>(false);
+            if(result == null)
+                return null;
+            return result._name;
+        }
     }
 }

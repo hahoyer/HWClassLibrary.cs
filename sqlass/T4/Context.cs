@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
+using HWClassLibrary.sqlass.MetaData;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TextTemplating;
 
@@ -57,9 +58,7 @@ namespace HWClassLibrary.sqlass.T4
 
         SQLTable ObtainSQLTable(Type type)
         {
-            var attribute = type.GetAttribute<TableNameAttribute>(false);
-            var tableName = attribute == null ? null : attribute.Name;
-            return new SQLTable(this, type, tableName);
+            return new SQLTable(this, Table.FromMetaType(type));
         }
 
         void ÂddContext()

@@ -17,13 +17,25 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using HWClassLibrary.Debug;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System;
+using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 
-namespace HWClassLibrary.sqlass.T4
+namespace HWClassLibrary.sqlass.MetaData
 {
-    public class NullableAttribute : Attribute
-    {}
+    public sealed class CatalogAttribute : Attribute
+    {
+        readonly string _name;
+        public CatalogAttribute(string name) { _name = name; }
+
+        internal static string Get(Type type)
+        {
+            var result = type.GetAttribute<CatalogAttribute>(false);
+            if(result == null)
+                return null;
+            return result._name;
+        }
+    }
 }

@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using HWClassLibrary.Debug;
@@ -144,29 +143,33 @@ namespace HWClassLibrary.Helper
 
         public static Guid ToGuid(this object x)
         {
-            if (x is DBNull || x == null)
+            if(x is DBNull || x == null)
                 return Guid.Empty;
             return new Guid(x.ToString());
         }
-        public static int ToInt32(this object x) { return x is DBNull ? 0 : x == null ? 0 : (int)x; }
-        public static long ToInt64(this object x) { return x is DBNull ? 0 : x == null ? 0 : (long) x; }
-        public static bool ToBoolean(this object x)
-        {
-            if(x is DBNull || x == null)
-                return false;
-            return (bool) x;
-        }
+
+        public static T Convert<T>(this object x) { return (x is DBNull || x == null) ? default(T) : (T)x; }
+
+        public static DateTime ToDateTime(this object x) { return Convert<DateTime>(x); }
+        public static Decimal ToDecimal(this object x) { return Convert<decimal>(x); }
+        public static short ToInt16(this object x) { return Convert<short>(x); }
+        public static int ToInt32(this object x) { return Convert<int>(x); }
+        public static long ToInt64(this object x) { return Convert<long>(x); }
+        public static bool ToBoolean(this object x) { return Convert<bool>(x); }
+        public static Type ToType(this object x) { return Convert<Type>(x); }
+
         public static string ToSingular(this object x)
         {
             var plural = x.ToString();
-            if (plural.EndsWith("Tables"))
+            if(plural.EndsWith("Tables"))
+                return plural.Substring(0, plural.Length - 1);
+            if (plural.EndsWith("Types"))
                 return plural.Substring(0, plural.Length - 1);
             if (plural.EndsWith("es"))
                 return plural.Substring(0, plural.Length - 2);
-            if (plural.EndsWith("s"))
+            if(plural.EndsWith("s"))
                 return plural.Substring(0, plural.Length - 1);
-            Debugger.Break();
-            return plural;
+            return "OneOf" + plural;
         }
     }
 }

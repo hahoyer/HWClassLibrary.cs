@@ -19,7 +19,6 @@
 
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlServerCe;
 using System.Reflection;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
@@ -33,12 +32,16 @@ namespace HWClassLibrary.sqlass
     public class Context : Dumpable
     {
         DbConnection _connection;
+        public bool IsSqlCeConnectionBug;
         List<IPendingChange> _pending;
         readonly SimpleCache<MetaData.MetaData> _sqlMetaData;
 
-        public Context() { _sqlMetaData = new SimpleCache<MetaData.MetaData>(ObtainSQLMetaData); }
+        public Context()
+        {
+            _sqlMetaData = new SimpleCache<MetaData.MetaData>(ObtainSQLMetaData);
+        }
 
-        MetaData.MetaData ObtainSQLMetaData() { return new MetaData.MetaData(_connection); }
+        MetaData.MetaData ObtainSQLMetaData() { return new MetaData.MetaData(this); }
 
         public void SaveChanges()
         {
@@ -60,11 +63,9 @@ namespace HWClassLibrary.sqlass
             }
         }
 
-        public void SetSqlCeConnection(string dataSource) { Connection = new SqlCeConnection(@"Data Source=" + dataSource + ";"); }
-
         public DbConnection Connection
         {
-            private get { return _connection; }
+            internal get { return _connection; }
             set
             {
                 if(_connection != null)
@@ -81,7 +82,7 @@ namespace HWClassLibrary.sqlass
             _pending.Add(data);
         }
 
-        protected void UpdateDatabase(object container, DictionaryEx<Type, MetaDataSupport> metaDataSupport)
+        protected void UpdateDatabase(object container, DictionaryEx<Type, MetaData.Table> metaDataSupport)
         {
             if(_pending != null)
                 throw new UnsavedChangedException();
@@ -89,7 +90,7 @@ namespace HWClassLibrary.sqlass
             var type = container.GetType();
             var target = typeof(Table<>);
 
-            var knownTables = type
+            var modell = type
                 .GetMembers()
                 .Where(m => m.DeclaringType == type && m.MemberType == MemberTypes.Field)
                 .Cast<FieldInfo>()
@@ -97,38 +98,36 @@ namespace HWClassLibrary.sqlass
                 .Select(fi => metaDataSupport[fi.FieldType.GetGenericArguments()[0]])
                 .ToArray();
 
-            var sqlTables = _sqlMetaData.Value.Tables;
+            var dataBase = _sqlMetaData.Value.Tables;
 
-            var actions = knownTables.Merge(sqlTables, kt => kt.TableName, st => st.TABLE_NAME).ToArray();
+            var actions = modell.Merge(dataBase, kt => kt.Name, st => st.Name).ToArray();
             foreach(var action in actions)
                 UpdateDatabase(action.Item2, action.Item3);
         }
 
-        void UpdateDatabase(MetaDataSupport container, Table metaDataSupport)
+        void UpdateDatabase(MetaData.Table modell, Table dataBase)
         {
-            if(metaDataSupport == null)
+            if(dataBase == null)
             {
-                ExecuteNonQuery(container.CreateTable);
+                ExecuteNonQuery(modell.CreateTable);
                 return;
             }
-            if (container == null)
+
+            if(modell == null)
             {
-                ExecuteNonQuery("drop table " + metaDataSupport.TABLE_NAME);
+                ExecuteNonQuery("drop table " + dataBase.Name);
                 return;
             }
-            NotImplementedMethod(container, metaDataSupport);
+
+            var actions = modell.Columns.Merge(dataBase.Columns, mo => mo.Name, st => st.Name).ToArray();
+
+            NotImplementedMethod(modell, dataBase);
         }
 
-        internal void ExecuteNonQuery(string text)
-        {
-            using(var command = Connection.CreateCommand())
-            {
-                command.CommandText = text;
-                command.ExecuteNonQuery();
-            }
-        }
+        internal void ExecuteNonQuery(string text) { Connection.ToCommand(text).ExecuteNonQuery(); }
+        internal T[] Execute<T>(string text) where T : IReaderInitialize, new() { return Connection.ToArray<T>(text); }
+        public DataTable Schema(string text) { return Connection.Schema(text); }
 
-        public DataRow[] Schema { get { return Connection.GetSchema().Select(); } }
         public DataTable SubSchema(string name) { return Connection.GetSchema(name); }
     }
 

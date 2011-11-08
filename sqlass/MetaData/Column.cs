@@ -17,20 +17,19 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using HWClassLibrary.Debug;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System;
+using HWClassLibrary.Debug;
 
-namespace HWClassLibrary.sqlass.T4
+namespace HWClassLibrary.sqlass.MetaData
 {
-    sealed public class KeyAttribute : Attribute
-    {}
-
-    sealed public class TableNameAttribute : Attribute
+    public sealed class Column
     {
-        readonly string _name;
-        public TableNameAttribute(string name) { _name = name; }
-        public string Name { get { return _name; } }
+        public string Name;
+        public string Type;
+        public bool IsKey;
+        public bool IsNullable;
+        public Table ReferencedTable;
     }
 }
