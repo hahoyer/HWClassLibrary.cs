@@ -171,4 +171,160 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
         }
     }
 
+    public sealed class OneOfKeyColumnUsageClass : IReaderInitialize
+    { 
+        public System.String CONSTRAINT_CATALOG; 
+        public System.String CONSTRAINT_SCHEMA; 
+        public System.String CONSTRAINT_NAME; 
+        public System.String TABLE_CATALOG; 
+        public System.String TABLE_SCHEMA; 
+        public System.String TABLE_NAME; 
+        public System.String COLUMN_NAME; 
+        public System.Guid COLUMN_GUID; 
+        public System.Int32 COLUMN_PROPID; 
+        public System.Int32 ORDINAL_POSITION;
+
+        static public OneOfKeyColumnUsageClass[] Initialize(Context context) 
+        {
+            return context
+                .Execute<OneOfKeyColumnUsageClass>("SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE")
+                .ToArray();
+        }
+
+        public void Initialize(DbDataReader reader) 
+        { 
+            CONSTRAINT_CATALOG = reader["CONSTRAINT_CATALOG"].Convert<System.String>(); 
+            CONSTRAINT_SCHEMA = reader["CONSTRAINT_SCHEMA"].Convert<System.String>(); 
+            CONSTRAINT_NAME = reader["CONSTRAINT_NAME"].Convert<System.String>(); 
+            TABLE_CATALOG = reader["TABLE_CATALOG"].Convert<System.String>(); 
+            TABLE_SCHEMA = reader["TABLE_SCHEMA"].Convert<System.String>(); 
+            TABLE_NAME = reader["TABLE_NAME"].Convert<System.String>(); 
+            COLUMN_NAME = reader["COLUMN_NAME"].Convert<System.String>(); 
+            COLUMN_GUID = reader["COLUMN_GUID"].Convert<System.Guid>(); 
+            COLUMN_PROPID = reader["COLUMN_PROPID"].Convert<System.Int32>(); 
+            ORDINAL_POSITION = reader["ORDINAL_POSITION"].Convert<System.Int32>();            
+        }
+
+        public override string ToString()
+        {
+            return 
+            CONSTRAINT_CATALOG 
+             + " " + CONSTRAINT_SCHEMA 
+             + " " + CONSTRAINT_NAME 
+             + " " + TABLE_CATALOG 
+             + " " + TABLE_SCHEMA 
+             + " " + TABLE_NAME 
+             + " " + COLUMN_NAME 
+             + " " + COLUMN_GUID 
+             + " " + COLUMN_PROPID 
+             + " " + ORDINAL_POSITION;            
+        }
+    }
+
+    public sealed class ReferentialConstraintClass : IReaderInitialize
+    { 
+        public System.String CONSTRAINT_CATALOG; 
+        public System.String CONSTRAINT_SCHEMA; 
+        public System.String CONSTRAINT_TABLE_NAME; 
+        public System.String CONSTRAINT_NAME; 
+        public System.String UNIQUE_CONSTRAINT_CATALOG; 
+        public System.String UNIQUE_CONSTRAINT_SCHEMA; 
+        public System.String UNIQUE_CONSTRAINT_TABLE_NAME; 
+        public System.String UNIQUE_CONSTRAINT_NAME; 
+        public System.String MATCH_OPTION; 
+        public System.String UPDATE_RULE; 
+        public System.String DELETE_RULE; 
+        public System.String DESCRIPTION;
+
+        static public ReferentialConstraintClass[] Initialize(Context context) 
+        {
+            return context
+                .Execute<ReferentialConstraintClass>("SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS")
+                .ToArray();
+        }
+
+        public void Initialize(DbDataReader reader) 
+        { 
+            CONSTRAINT_CATALOG = reader["CONSTRAINT_CATALOG"].Convert<System.String>(); 
+            CONSTRAINT_SCHEMA = reader["CONSTRAINT_SCHEMA"].Convert<System.String>(); 
+            CONSTRAINT_TABLE_NAME = reader["CONSTRAINT_TABLE_NAME"].Convert<System.String>(); 
+            CONSTRAINT_NAME = reader["CONSTRAINT_NAME"].Convert<System.String>(); 
+            UNIQUE_CONSTRAINT_CATALOG = reader["UNIQUE_CONSTRAINT_CATALOG"].Convert<System.String>(); 
+            UNIQUE_CONSTRAINT_SCHEMA = reader["UNIQUE_CONSTRAINT_SCHEMA"].Convert<System.String>(); 
+            UNIQUE_CONSTRAINT_TABLE_NAME = reader["UNIQUE_CONSTRAINT_TABLE_NAME"].Convert<System.String>(); 
+            UNIQUE_CONSTRAINT_NAME = reader["UNIQUE_CONSTRAINT_NAME"].Convert<System.String>(); 
+            MATCH_OPTION = reader["MATCH_OPTION"].Convert<System.String>(); 
+            UPDATE_RULE = reader["UPDATE_RULE"].Convert<System.String>(); 
+            DELETE_RULE = reader["DELETE_RULE"].Convert<System.String>(); 
+            DESCRIPTION = reader["DESCRIPTION"].Convert<System.String>();            
+        }
+
+        public override string ToString()
+        {
+            return 
+            CONSTRAINT_CATALOG 
+             + " " + CONSTRAINT_SCHEMA 
+             + " " + CONSTRAINT_TABLE_NAME 
+             + " " + CONSTRAINT_NAME 
+             + " " + UNIQUE_CONSTRAINT_CATALOG 
+             + " " + UNIQUE_CONSTRAINT_SCHEMA 
+             + " " + UNIQUE_CONSTRAINT_TABLE_NAME 
+             + " " + UNIQUE_CONSTRAINT_NAME 
+             + " " + MATCH_OPTION 
+             + " " + UPDATE_RULE 
+             + " " + DELETE_RULE 
+             + " " + DESCRIPTION;            
+        }
+    }
+
+    public sealed class TableConstraintClass : IReaderInitialize
+    { 
+        public System.String CONSTRAINT_CATALOG; 
+        public System.String CONSTRAINT_SCHEMA; 
+        public System.String CONSTRAINT_NAME; 
+        public System.String TABLE_CATALOG; 
+        public System.String TABLE_SCHEMA; 
+        public System.String TABLE_NAME; 
+        public System.String CONSTRAINT_TYPE; 
+        public System.Boolean IS_DEFERRABLE; 
+        public System.Boolean INITIALLY_DEFERRED; 
+        public System.String DESCRIPTION;
+
+        static public TableConstraintClass[] Initialize(Context context) 
+        {
+            return context
+                .Execute<TableConstraintClass>("SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS")
+                .ToArray();
+        }
+
+        public void Initialize(DbDataReader reader) 
+        { 
+            CONSTRAINT_CATALOG = reader["CONSTRAINT_CATALOG"].Convert<System.String>(); 
+            CONSTRAINT_SCHEMA = reader["CONSTRAINT_SCHEMA"].Convert<System.String>(); 
+            CONSTRAINT_NAME = reader["CONSTRAINT_NAME"].Convert<System.String>(); 
+            TABLE_CATALOG = reader["TABLE_CATALOG"].Convert<System.String>(); 
+            TABLE_SCHEMA = reader["TABLE_SCHEMA"].Convert<System.String>(); 
+            TABLE_NAME = reader["TABLE_NAME"].Convert<System.String>(); 
+            CONSTRAINT_TYPE = reader["CONSTRAINT_TYPE"].Convert<System.String>(); 
+            IS_DEFERRABLE = reader["IS_DEFERRABLE"].Convert<System.Boolean>(); 
+            INITIALLY_DEFERRED = reader["INITIALLY_DEFERRED"].Convert<System.Boolean>(); 
+            DESCRIPTION = reader["DESCRIPTION"].Convert<System.String>();            
+        }
+
+        public override string ToString()
+        {
+            return 
+            CONSTRAINT_CATALOG 
+             + " " + CONSTRAINT_SCHEMA 
+             + " " + CONSTRAINT_NAME 
+             + " " + TABLE_CATALOG 
+             + " " + TABLE_SCHEMA 
+             + " " + TABLE_NAME 
+             + " " + CONSTRAINT_TYPE 
+             + " " + IS_DEFERRABLE 
+             + " " + INITIALLY_DEFERRED 
+             + " " + DESCRIPTION;            
+        }
+    }
+
 }

@@ -79,5 +79,4 @@ namespace HWClassLibrary.sqlass
 
     public interface IMetaUpdateTableProvider
     {}
-
 }

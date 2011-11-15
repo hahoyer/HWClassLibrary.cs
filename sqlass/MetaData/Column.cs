@@ -21,15 +21,50 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.sqlass.MetaData
 {
-    public sealed class Column
+    public sealed class Column : Dumpable
     {
         public string Name;
-        public string Type;
+        public Type Type;
         public bool IsKey;
         public bool IsNullable;
         public Table ReferencedTable;
+
+        [DisableDump]
+        public string FieldTypeName { get { return ReferencedTable != null ? ReferencedTable.Name : Type.PrettyName(); } }
+
+        [DisableDump]
+        public string CreateColumnSQL
+        {
+            get
+            {
+                var result = Name + " " + SQLType;
+                if(IsNullable)
+                    result += " null";
+                else
+                    result += " not null";
+                return
+                    result;
+            }
+        }
+
+        [DisableDump]
+        public string SQLType { get { return SQLTypeMapper.Instance.Find(Type); } set { Type = SQLTypeMapper.Instance.Find(value); } }
+
+        public bool DiffersFrom(Column other)
+        {
+            if (Type != other.Type)
+                return true;
+            if (IsKey != other.IsKey)
+                return true;
+            if (IsNullable != other.IsNullable)
+                return true;
+            if (ReferencedTable == null)
+                return other.ReferencedTable != null;
+            return ReferencedTable.DiffersFrom(other.ReferencedTable);
+        }
     }
 }

@@ -134,5 +134,17 @@ namespace HWClassLibrary.Helper
 
         public static IO.File FileHandle(this string name) { return IO.File.m(name); }
         public static string PathCombine(this string head, params string[] tail) { return Path.Combine(head, Path.Combine(tail)); }
+
+        public static string UnderScoreToCamelCase(this string name)
+        {
+            return name
+                .Split('_')
+                .Select(ToLowerFirstUpper)
+                .Format("");
+        }
+        
+        public static string ToLowerFirstUpper(this string text) { return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant(); }
+
+        public static string TableNameToClassName(this string name) { return name.UnderScoreToCamelCase().ToSingular(); }
     }
 }

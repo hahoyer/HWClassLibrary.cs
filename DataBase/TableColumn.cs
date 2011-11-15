@@ -6,7 +6,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.DataBase
 {
-    internal sealed class TableColumn
+    internal sealed class TableColumn: Dumpable
     {
         private readonly FieldInfo _fieldInfo;
         public string Name { get { return _fieldInfo.Name; } }

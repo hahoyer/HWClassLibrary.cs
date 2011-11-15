@@ -17,29 +17,17 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Linq;
-using System.Collections.Generic;
-using System;
-using HWClassLibrary.Debug;
-
 namespace HWClassLibrary.sqlass.MetaData
 {
-    sealed class TableColumn : Dumpable
+    public sealed class MetaDataSupport
     {
-        public TableName Table;
-        public string Name;
-        public string Type;
-        public bool IsKey;
-        public bool IsNullable;
-        public TableName Reference;
-        public override string ToString()
+        public readonly string TableName;
+        public readonly string CreateTable;
+
+        public MetaDataSupport(string tableName, string createTable)
         {
-            return
-                (IsKey ? "*" : "-")
-                + Table + "." + Name
-                + " Type = " + Type
-                + " " + (IsNullable ? " = 0" : "")
-                + (Reference == null ? "" : " ->" + Reference.ToString());
+            TableName = tableName;
+            CreateTable = createTable;
         }
     }
 }

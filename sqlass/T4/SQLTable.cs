@@ -17,7 +17,6 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Reflection;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +35,8 @@ namespace HWClassLibrary.sqlass.T4
             _context = context;
             _table = table;
         }
-        internal string ClassName { get { return _table.Name; } }
+        internal Table Table { get { return _table; } }
+        internal string ClassName { get { return _table.TableName.Name; } }
         internal string FileName { get { return ClassName + ".cs"; } }
 
         internal string NameSpaceSuffix
@@ -50,81 +50,16 @@ namespace HWClassLibrary.sqlass.T4
             }
         }
 
-        static Type KeyType(Type type) { return Table.KeyType(type); }
         bool IsLast(Column column) { return Columns.Last() == column; }
-
         internal string TableTypeName { get { return "Table<" + ClassName + ">"; } }
-
-        string NameMapper(Type type)
-        {
-            if(type == typeof(int))
-                return "int";
-            if(type == typeof(string))
-                return "string";
-            if(IsReferenceType(type))
-                return type.GetGenericArguments()[0].Name;
-            return type.FullName;
-        }
-
-        string SQLTypeMapper(Type type)
-        {
-            if(type == typeof(int))
-                return "int";
-            if(type == typeof(string))
-                return "nvarchar(4000)";
-            if(IsReferenceType(type))
-                return SQLTypeMapper(KeyType(type));
-            return type.FullName;
-        }
-
-        static bool IsReferenceType(Type type) { return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Reference<>); }
-
-        static string ValueName(FieldInfo fi)
-        {
-            if(IsReferenceType(fi.FieldType))
-                return fi.Name + ".Target";
-            return fi.Name;
-        }
-
         bool HasSQLKey { get { return Columns.Any(column => column.IsKey); } }
-
-        string SQLKeyProvider
+        string KeyProvider { get
         {
-            get
-            {
-                var keys = KeyTypes;
-                if(keys.Length == 0)
-                    return "";
-                return "ISQLKeyProvider<" + keys.Format(", ") + ">";
-            }
-        }
-        string[] KeyTypes { get { return _table.KeyTypes; } }
-
-        string SQLKeyType
-        {
-            get
-            {
-                var keys = KeyTypes;
-                if(keys.Length == 1)
-                    return keys[0];
-                return "Tuple<" + keys.Format(", ") + ">";
-            }
-        }
-
-        string SQLKeyValue
-        {
-            get
-            {
-                var keys = Columns
-                    .Where(c => c.IsKey)
-                    .Select(c => c.Name)
-                    .ToArray();
-                if(keys.Length == 1)
-                    return keys[0];
-                return "new " + SQLKeyType + "(" + keys.Format(", ") + ")";
-            }
-        }
-
+            //Tracer.LaunchDebugger();
+            return _table.KeyProvider.PrettyName();
+        } }
+        string KeyType { get { return _table.KeyType.PrettyName(); } }
+        string KeyValue { get { return _table.KeyValue; } }
         Column[] Columns { get { return _table.Columns; } }
         internal string SQLTableName { get { return _table.SQLTableName; } }
     }

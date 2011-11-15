@@ -29,6 +29,7 @@ using Microsoft.VisualStudio.TextTemplating;
 
 namespace HWClassLibrary.sqlass.T4
 {
+    [UsedImplicitly]
     public sealed class Context : HWClassLibrary.T4.Context
     {
         readonly List<SQLTable> _tables = new List<SQLTable>();
@@ -69,6 +70,7 @@ namespace HWClassLibrary.sqlass.T4
         }
     }
 
+    [UsedImplicitly]
     public sealed class Reference<T>
     {
         readonly T _target;

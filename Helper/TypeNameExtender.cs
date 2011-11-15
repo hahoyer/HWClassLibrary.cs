@@ -1,3 +1,22 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System.Reflection;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
@@ -8,9 +27,9 @@ namespace HWClassLibrary.Helper
 {
     public static class TypeNameExtender
     {
-        private static IEnumerable<Type> _referencedTypesCache;
+        static readonly SimpleCache<IEnumerable<Type>> _referencedTypesCache = new SimpleCache<IEnumerable<Type>>(ObtainReferencedTypes);
 
-        public static void OnModuleLoaded() { _referencedTypesCache = null; }
+        public static void OnModuleLoaded() { _referencedTypesCache.Reset(); }
 
         public static string PrettyName(this Type type)
         {
@@ -25,13 +44,13 @@ namespace HWClassLibrary.Helper
             return result;
         }
 
-        private static string PrettyTypeName(Type type)
+        static string PrettyTypeName(Type type)
         {
             var result = type.Name;
-            if (result.Contains("`"))
+            if(result.Contains("`"))
                 result = result.Remove(result.IndexOf('`'));
 
-            if (type.IsNested && !type.IsGenericParameter)
+            if(type.IsNested && !type.IsGenericParameter)
                 return type.DeclaringType.PrettyName() + "." + result;
 
             if(type.Namespace == null)
@@ -54,17 +73,17 @@ namespace HWClassLibrary.Helper
             return namespacePart + result;
         }
 
-        private static IEnumerable<Type> ReferencedTypes
+        static IEnumerable<Type> ObtainReferencedTypes()
         {
-            get
-            {
-                if(_referencedTypesCache == null)
-                    _referencedTypesCache = Assembly.GetEntryAssembly().GetReferencedTypes();
-                return _referencedTypesCache;
-            }
+            var assembly = 
+                Assembly.GetEntryAssembly() ?? 
+                Assembly.GetCallingAssembly();
+            return assembly.GetReferencedTypes();
         }
 
-        private static string PrettyNameForGeneric(Type[] types)
+        static IEnumerable<Type> ReferencedTypes { get { return _referencedTypesCache.Value; } }
+
+        static string PrettyNameForGeneric(Type[] types)
         {
             var result = "";
             var delim = "<";

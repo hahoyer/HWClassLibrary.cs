@@ -84,6 +84,7 @@
     </Compile>
     <Compile Include="sqlass\MetaData\CatalogAttribute.cs" />
     <Compile Include="sqlass\MetaData\Column.cs" />
+    <Compile Include="sqlass\MetaData\MetaDataSupport.cs" />
     <Compile Include="sqlass\MetaData\SchemaAttribute.cs" />
     <Compile Include="sqlass\MetaData\SQLCompact.cs">
       <DependentUpon>SQLCompact.tt</DependentUpon>
@@ -91,8 +92,10 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="sqlass\MetaData\MetaData.cs" />
+    <Compile Include="sqlass\MetaData\SQLTypeMapper.cs" />
     <Compile Include="sqlass\MetaData\Table.cs" />
     <Compile Include="sqlass\MetaData\TableColumn.cs" />
+    <Compile Include="sqlass\MetaData\TableName.cs" />
     <Compile Include="sqlass\T4\Context.cs" />
     <Compile Include="sqlass\MetaData\KeyAttribute.cs" />
     <Compile Include="sqlass\MetaData\NullableAttribute.cs" />

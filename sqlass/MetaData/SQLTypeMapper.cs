@@ -17,29 +17,33 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.sqlass.MetaData
 {
-    sealed class TableColumn : Dumpable
+    sealed class SQLTypeMapper
     {
-        public TableName Table;
-        public string Name;
-        public string Type;
-        public bool IsKey;
-        public bool IsNullable;
-        public TableName Reference;
-        public override string ToString()
+        readonly DictionaryEx<Type, string> _typeToString = new DictionaryEx<Type, string>();
+        readonly DictionaryEx<string, Type> _stringToType = new DictionaryEx<string, Type>();
+
+        public SQLTypeMapper()
         {
-            return
-                (IsKey ? "*" : "-")
-                + Table + "." + Name
-                + " Type = " + Type
-                + " " + (IsNullable ? " = 0" : "")
-                + (Reference == null ? "" : " ->" + Reference.ToString());
+            Add(typeof(int), "int");
+            Add(typeof(string), "nvarchar");
         }
+
+        void Add(Type type, string sqlType)
+        {
+            _typeToString.Add(type, sqlType);
+            _stringToType.Add(sqlType, type);
+        }
+
+        public static readonly SQLTypeMapper Instance = new SQLTypeMapper();
+        public string Find(Type type) { return _typeToString[type]; }
+        public Type Find(string value) { return _stringToType[value]; }
     }
 }

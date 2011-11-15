@@ -36,10 +36,7 @@ namespace HWClassLibrary.sqlass
         List<IPendingChange> _pending;
         readonly SimpleCache<MetaData.MetaData> _sqlMetaData;
 
-        public Context()
-        {
-            _sqlMetaData = new SimpleCache<MetaData.MetaData>(ObtainSQLMetaData);
-        }
+        public Context() { _sqlMetaData = new SimpleCache<MetaData.MetaData>(ObtainSQLMetaData); }
 
         MetaData.MetaData ObtainSQLMetaData() { return new MetaData.MetaData(this); }
 
@@ -82,7 +79,7 @@ namespace HWClassLibrary.sqlass
             _pending.Add(data);
         }
 
-        protected void UpdateDatabase(object container, DictionaryEx<Type, MetaData.Table> metaDataSupport)
+        protected void UpdateDatabase(object container, DictionaryEx<Type, Table> metaDataSupport)
         {
             if(_pending != null)
                 throw new UnsavedChangedException();
@@ -105,7 +102,7 @@ namespace HWClassLibrary.sqlass
                 UpdateDatabase(action.Item2, action.Item3);
         }
 
-        void UpdateDatabase(MetaData.Table modell, Table dataBase)
+        void UpdateDatabase(Table modell, Table dataBase)
         {
             if(dataBase == null)
             {
@@ -119,13 +116,31 @@ namespace HWClassLibrary.sqlass
                 return;
             }
 
-            var actions = modell.Columns.Merge(dataBase.Columns, mo => mo.Name, st => st.Name).ToArray();
+            var actions = modell
+                .Columns
+                .Merge(dataBase.Columns, mo => mo.Name, st => st.Name)
+                .Where(a=>a.Item2.DiffersFrom(a.Item3))
+                .ToArray();
+            if (actions.Length == 0)
+                return;
 
-            NotImplementedMethod(modell, dataBase);
+            foreach (var action in actions)
+            {
+                var sql = modell.UpdateDefinition(action.Item2, action.Item3);
+                ExecuteNonQuery(sql);
+            }
         }
 
-        internal void ExecuteNonQuery(string text) { Connection.ToCommand(text).ExecuteNonQuery(); }
-        internal T[] Execute<T>(string text) where T : IReaderInitialize, new() { return Connection.ToArray<T>(text); }
+        internal void ExecuteNonQuery(string text)
+        {
+            Tracer.FlaggedLine(1, text);
+            Connection.ToCommand(text).ExecuteNonQuery();
+        }
+        internal T[] Execute<T>(string text) where T : IReaderInitialize, new()
+        {
+            Tracer.FlaggedLine(1, text);
+            return Connection.ToArray<T>(text);
+        }
         public DataTable Schema(string text) { return Connection.Schema(text); }
 
         public DataTable SubSchema(string name) { return Connection.GetSchema(name); }

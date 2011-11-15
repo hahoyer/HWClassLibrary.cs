@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HWClassLibrary.Debug;
 using HWClassLibrary.sqlass;
+using HWClassLibrary.sqlass.MetaData;
 
 namespace <#= _context.NameSpace #>.Tables<#= NameSpaceSuffix #>
 {
@@ -12,13 +13,13 @@ namespace <#= _context.NameSpace #>.Tables<#= NameSpaceSuffix #>
 	if (HasSQLKey)
     {#>
         
-        , <#= SQLKeyProvider #><#
+        , <#= KeyProvider #><#
     }#>
     
     {<# 
 	    foreach (var column in Columns)                                           
         {#> 
-        public <#= column.Type #> <#= column.Name #>;<#
+        public <#= column.FieldTypeName #> <#= column.Name #>;<#
         }#>
 
 
@@ -26,7 +27,7 @@ namespace <#= _context.NameSpace #>.Tables<#= NameSpaceSuffix #>
 	if (HasSQLKey)
     {#>
 
-        <#= SQLKeyType #> <#= SQLKeyProvider #>.SQLKey { get { return <#= SQLKeyValue #>; } }<# 
+        <#= KeyType #> <#= KeyProvider #>.SQLKey { get { return <#= KeyValue #>; } }<# 
     }#>
     
     }
@@ -62,6 +63,32 @@ namespace <#= _context.NameSpace #>.SQLSupport<#= NameSpaceSuffix #>
                 return result;
             }
         }
+
+        public static Table MetaDataSupport = new Table
+        (
+            TableName.Find(<#= Table.TableName.Catalog.Quote() #>, <#= Table.TableName.Schema.Quote() #>, <#= Table.TableName.Name.Quote() #>),
+            () => new []
+            {<# 
+            foreach (var column in Columns)                                           
+            {#> 
+
+                new Column
+                {
+                    Name = <#= column.Name.Quote() #>,
+                    Type = typeof(<#= column.Type.PrettyName() #>),
+                    IsKey = <#=column.IsKey? "true":"false" #>,
+                    IsNullable = <#= column.IsNullable ? "true" : "false" #>,<#
+	            if (column.ReferencedTable != null)
+	            {#>
+                    
+                    ReferencedTable = <#= column.ReferencedTable.Name #>.MetaDataSupport<#
+                }#>
+
+                },<#
+            }#>   
+            
+            }
+        );
     }
 }
 <#
