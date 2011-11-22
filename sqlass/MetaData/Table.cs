@@ -48,7 +48,7 @@ namespace HWClassLibrary.sqlass.MetaData
                 var result
                     = "create table "
                       + SQLTableName
-                      + " as (\n"
+                      + " (\n"
                       + Columns.Select(c => c.CreateColumnSQL).Format(",\n");
                 if(HasKeys)
                     result

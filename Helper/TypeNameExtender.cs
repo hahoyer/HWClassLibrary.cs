@@ -17,17 +17,18 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Reflection;
-using HWClassLibrary.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using System.Reflection;
+using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Helper
 {
     public static class TypeNameExtender
     {
-        static readonly SimpleCache<IEnumerable<Type>> _referencedTypesCache = new SimpleCache<IEnumerable<Type>>(ObtainReferencedTypes);
+        static readonly SimpleCache<IEnumerable<Type>> _referencedTypesCache =
+            new SimpleCache<IEnumerable<Type>>(ObtainReferencedTypes);
 
         public static void OnModuleLoaded() { _referencedTypesCache.Reset(); }
 
@@ -75,8 +76,8 @@ namespace HWClassLibrary.Helper
 
         static IEnumerable<Type> ObtainReferencedTypes()
         {
-            var assembly = 
-                Assembly.GetEntryAssembly() ?? 
+            var assembly =
+                Assembly.GetEntryAssembly() ??
                 Assembly.GetCallingAssembly();
             return assembly.GetReferencedTypes();
         }

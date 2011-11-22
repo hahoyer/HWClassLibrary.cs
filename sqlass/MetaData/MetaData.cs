@@ -72,7 +72,7 @@ namespace HWClassLibrary.sqlass.MetaData
                          {
                              Table = TableName.Find(c.TABLE_CATALOG, c.TABLE_SCHEMA, c.TABLE_NAME),
                              Name = c.COLUMN_NAME,
-                             Type = c.DATA_TYPE,
+                             Type = ParseType(c),
                              IsKey = primaryKeys.Any
                                  (k
                                   => k.COLUMN_NAME == c.COLUMN_NAME
@@ -108,6 +108,15 @@ namespace HWClassLibrary.sqlass.MetaData
                     )
                     .ToArray();
             }
+        }
+
+        private string ParseType(ColumnClass c)
+        {
+            if (c.DATA_TYPE == "int")
+                return c.DATA_TYPE;
+            if (c.DATA_TYPE == "nvarchar")
+                return c.DATA_TYPE + "(" + c.CHARACTER_MAXIMUM_LENGTH + ")";
+            throw new NotImplementedException();
         }
 
         internal Table[] Tables

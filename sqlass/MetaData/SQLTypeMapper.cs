@@ -29,11 +29,11 @@ namespace HWClassLibrary.sqlass.MetaData
     {
         readonly DictionaryEx<Type, string> _typeToString = new DictionaryEx<Type, string>();
         readonly DictionaryEx<string, Type> _stringToType = new DictionaryEx<string, Type>();
-
+                                                                        
         public SQLTypeMapper()
         {
             Add(typeof(int), "int");
-            Add(typeof(string), "nvarchar");
+            Add(typeof(string), "nvarchar(4000)");
         }
 
         void Add(Type type, string sqlType)
