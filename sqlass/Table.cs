@@ -17,12 +17,13 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.Common;
 using System.Linq.Expressions;
 using HWClassLibrary.Debug;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
@@ -30,8 +31,8 @@ namespace HWClassLibrary.sqlass
     public sealed class Table<T> : Dumpable, IQueryable<T>, IMetaUpdateTableProvider
         where T : ISQLSupportProvider
     {
-        private readonly Context _context;
-        private readonly string _sqlTableName;
+        readonly Context _context;
+        readonly string _sqlTableName;
 
         public Table(Context context, string sqlTableName)
         {
@@ -47,8 +48,14 @@ namespace HWClassLibrary.sqlass
             return default(IEnumerator<T>);
         }
 
-        Expression IQueryable.Expression { get { return Expression.Constant(this); } }
-
+        Expression IQueryable.Expression
+        {
+            get
+            {
+                NotImplementedMethod();
+                return null;
+            }
+        }
         Type IQueryable.ElementType
         {
             get
@@ -57,53 +64,19 @@ namespace HWClassLibrary.sqlass
                 return null;
             }
         }
-
-        IQueryProvider IQueryable.Provider { get { return new Provider(); } }
+        IQueryProvider IQueryable.Provider
+        {
+            get
+            {
+                NotImplementedMethod();
+                return null;
+            }
+        }
 
         [UsedImplicitly]
         public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement)); }
     }
 
-    internal class Provider : IQueryProvider
-    {
-        IQueryable IQueryProvider.CreateQuery(Expression expression) { throw new NotImplementedException(); }
-
-        IQueryable<TElement> IQueryProvider.CreateQuery<TElement>(Expression expression) { return new Query<TElement>(this, expression);}
-
-        object IQueryProvider.Execute(Expression expression) { throw new NotImplementedException(); }
-
-        TResult IQueryProvider.Execute<TResult>(Expression expression)
-        {
-            var mce = expression as MethodCallExpression;
-            if(mce != null)
-            return Activator.CreateInstance() mce.Method.I
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class Query<T> : IQueryable<T>
-    {
-        private readonly Provider _provider;
-        private readonly Expression _expression;
-
-        public Query(Provider provider, Expression expression)
-        {
-            _provider = provider;
-            _expression = expression;
-        }
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() { throw new NotImplementedException(); }
-
-        IEnumerator IEnumerable.GetEnumerator() { return ((IEnumerable<T>)this).GetEnumerator(); }
-
-        Expression IQueryable.Expression { get { return _expression; } }
-
-        Type IQueryable.ElementType { get { throw new NotImplementedException(); } }
-
-        IQueryProvider IQueryable.Provider { get { return _provider; } }
-    }
-
     public interface IMetaUpdateTableProvider
-    {
-    }
+    {}
 }
