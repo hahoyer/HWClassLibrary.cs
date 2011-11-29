@@ -13,7 +13,7 @@ namespace HWClassLibrary.sqlass.T4
     using System;
     
     
-    #line 1 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+    #line 1 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "10.0.0.0")]
     public partial class SQLTable : SQLTableBase
     {
@@ -23,28 +23,28 @@ namespace HWClassLibrary.sqlass.T4
                     "ssLibrary.Debug;\r\nusing HWClassLibrary.sqlass;\r\nusing HWClassLibrary.sqlass.Meta" +
                     "Data;\r\n\r\nnamespace ");
             
-            #line 9 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 9 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_context.NameSpace));
             
             #line default
             #line hidden
             this.Write(".Tables");
             
-            #line 9 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 9 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpaceSuffix));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n    sealed public partial class ");
             
-            #line 11 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 11 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
             
             #line default
             #line hidden
             this.Write(" \r\n        : ISQLSupportProvider");
             
-            #line 12 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 12 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 	if (HasSQLKey)
     {
@@ -53,13 +53,13 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("        \r\n        , ");
             
-            #line 16 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 16 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(KeyProvider));
             
             #line default
             #line hidden
             
-            #line 16 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 16 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
     }
             
@@ -67,7 +67,7 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("    \r\n    {");
             
-            #line 19 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 19 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
  
 	    foreach (var column in Columns)                                           
         {
@@ -76,21 +76,21 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write(" \r\n        public ");
             
-            #line 22 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 22 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.FieldTypeName));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 22 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 22 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.Name));
             
             #line default
             #line hidden
             this.Write(";");
             
-            #line 22 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 22 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
         }
             
@@ -99,14 +99,14 @@ namespace HWClassLibrary.sqlass.T4
             this.Write("\r\n\r\n        ISQLSupport ISQLSupportProvider.SQLSupport{get{return new SQLSupport." +
                     "");
             
-            #line 26 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 26 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
             
             #line default
             #line hidden
             this.Write("(this);}} ");
             
-            #line 26 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 26 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 	if (HasSQLKey)
     {
@@ -115,28 +115,28 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("\r\n        ");
             
-            #line 30 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 30 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(KeyType));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 30 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 30 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(KeyProvider));
             
             #line default
             #line hidden
             this.Write(".SQLKey { get { return ");
             
-            #line 30 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 30 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(KeyValue));
             
             #line default
             #line hidden
             this.Write("; } }");
             
-            #line 30 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 30 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
  
     }
             
@@ -144,42 +144,42 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("    \r\n    }\r\n}\r\n\r\nnamespace ");
             
-            #line 36 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 36 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_context.NameSpace));
             
             #line default
             #line hidden
             this.Write(".SQLSupport");
             
-            #line 36 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 36 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpaceSuffix));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n    public partial class ");
             
-            #line 38 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 38 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
             
             #line default
             #line hidden
             this.Write(": ISQLSupport\r\n    {\r\n        readonly Tables.");
             
-            #line 40 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 40 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
             
             #line default
             #line hidden
             this.Write(" _target;\r\n        public ");
             
-            #line 41 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 41 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
             
             #line default
             #line hidden
             this.Write("(Tables.");
             
-            #line 41 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 41 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
             
             #line default
@@ -187,14 +187,14 @@ namespace HWClassLibrary.sqlass.T4
             this.Write(" target){_target = target;}\r\n\r\n        string ISQLSupport.Insert\r\n        {\r\n    " +
                     "        get\r\n            {\r\n                var result = \"insert into ");
             
-            #line 47 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 47 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(SQLTableName));
             
             #line default
             #line hidden
             this.Write(" values(\";");
             
-            #line 47 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 47 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
  
             foreach (var column in Columns)                                           
             {
@@ -203,14 +203,14 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write(" \r\n                result += _target.");
             
-            #line 50 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 50 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.Name));
             
             #line default
             #line hidden
             this.Write(".SQLFormat();");
             
-            #line 50 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 50 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 	            if (!IsLast(column))
 	            {
@@ -219,7 +219,7 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("\r\n                result += \", \";");
             
-            #line 54 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 54 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 	            }
 	            else
@@ -229,7 +229,7 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("\r\n                result += \")\";");
             
-            #line 59 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 59 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
                 }
            }
@@ -237,31 +237,31 @@ namespace HWClassLibrary.sqlass.T4
             #line default
             #line hidden
             this.Write("   \r\n\r\n                return result;\r\n            }\r\n        }\r\n\r\n        public" +
-                    " static Table MetaDataSupport = new Table\r\n        (\r\n            TableName.Find" +
-                    "(");
+                    " static readonly Table MetaDataSupport = new Table\r\n        (\r\n            Table" +
+                    "Name.Find(");
             
-            #line 69 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 69 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Table.TableName.Catalog.Quote()));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 69 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 69 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Table.TableName.Schema.Quote()));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 69 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 69 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Table.TableName.Name.Quote()));
             
             #line default
             #line hidden
             this.Write("),\r\n            () => new []\r\n            {");
             
-            #line 71 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 71 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
  
             foreach (var column in Columns)                                           
             {
@@ -270,35 +270,35 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write(" \r\n\r\n                new Column\r\n                {\r\n                    Name = ");
             
-            #line 77 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 77 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.Name.Quote()));
             
             #line default
             #line hidden
             this.Write(",\r\n                    Type = typeof(");
             
-            #line 78 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 78 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.Type.PrettyName()));
             
             #line default
             #line hidden
             this.Write("),\r\n                    IsKey = ");
             
-            #line 79 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 79 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.IsKey? "true":"false"));
             
             #line default
             #line hidden
             this.Write(",\r\n                    IsNullable = ");
             
-            #line 80 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 80 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.IsNullable ? "true" : "false"));
             
             #line default
             #line hidden
             this.Write(",");
             
-            #line 80 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 80 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 	            if (column.ReferencedTable != null)
 	            {
@@ -307,14 +307,14 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("                    \r\n                    ReferencedTable = ");
             
-            #line 84 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 84 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(column.ReferencedTable.Name));
             
             #line default
             #line hidden
             this.Write(".MetaDataSupport");
             
-            #line 84 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 84 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
                 }
             
@@ -322,7 +322,7 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("\r\n                },");
             
-            #line 87 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 87 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
             }
             
@@ -330,7 +330,7 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("   \r\n            \r\n            }\r\n        );\r\n    }\r\n}\r\n");
             
-            #line 94 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 94 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 

@@ -19,6 +19,7 @@
 
 using System.Data;
 using System.Data.Common;
+using System.Linq.Expressions;
 using System.Reflection;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ using HWClassLibrary.sqlass.MetaData;
 
 namespace HWClassLibrary.sqlass
 {
-    public class Context : Dumpable
+    public class Context : Dumpable, IQueryProvider
     {
         DbConnection _connection;
         public bool IsSqlCeConnectionBug;
@@ -72,6 +73,7 @@ namespace HWClassLibrary.sqlass
             }
         }
 
+
         internal void AddPendingChange(IPendingChange data)
         {
             if(_pending == null)
@@ -79,7 +81,7 @@ namespace HWClassLibrary.sqlass
             _pending.Add(data);
         }
 
-        protected void UpdateDatabase(object container, DictionaryEx<Type, Table> metaDataSupport)
+        protected void UpdateDatabase(object container)
         {
             if(_pending != null)
                 throw new UnsavedChangedException();
@@ -92,7 +94,7 @@ namespace HWClassLibrary.sqlass
                 .Where(m => m.DeclaringType == type && m.MemberType == MemberTypes.Field)
                 .Cast<FieldInfo>()
                 .Where(fi => fi.FieldType.GetGenericTypeDefinition() == target)
-                .Select(fi => metaDataSupport[fi.FieldType.GetGenericArguments()[0]])
+                .Select(fi => ((IMetaDataProvider) fi.GetValue(container)).MetaData)
                 .ToArray();
 
             var dataBase = _sqlMetaData.Value.Tables;
@@ -119,12 +121,12 @@ namespace HWClassLibrary.sqlass
             var actions = modell
                 .Columns
                 .Merge(dataBase.Columns, mo => mo.Name, st => st.Name)
-                .Where(a=>a.Item2.DiffersFrom(a.Item3))
+                .Where(a => a.Item2.DiffersFrom(a.Item3))
                 .ToArray();
-            if (actions.Length == 0)
+            if(actions.Length == 0)
                 return;
 
-            foreach (var action in actions)
+            foreach(var action in actions)
             {
                 var sql = modell.UpdateDefinition(action.Item2, action.Item3);
                 ExecuteNonQuery(sql);
@@ -144,6 +146,47 @@ namespace HWClassLibrary.sqlass
         public DataTable Schema(string text) { return Connection.Schema(text); }
 
         public DataTable SubSchema(string name) { return Connection.GetSchema(name); }
+
+        IQueryable IQueryProvider.CreateQuery(Expression expression)
+        {
+            NotImplementedMethod(expression);
+            return null;
+        }
+
+        IQueryable<T> IQueryProvider.CreateQuery<T>(Expression expression) { return new Query<T>(this, expression); }
+
+        object IQueryProvider.Execute(Expression expression)
+        {
+            NotImplementedMethod(expression);
+            return null;
+        }
+
+        T IQueryProvider.Execute<T>(Expression expression)
+        {
+            var mce = expression as MethodCallExpression;
+            if(mce != null)
+                return Execute<T>(mce.Method, mce.Arguments.ToArray());
+            NotImplementedMethod(expression);
+            return default(T);
+        }
+
+        T Execute<T>(MethodInfo method, Expression[] arguments)
+        {
+            var methodInfo = typeof(Handler<T>).GetMethod(method.Name);
+            if(methodInfo == null)
+                throw new MissingMethodException(method.Name);
+            return (T) methodInfo.Invoke(this, arguments.Cast<object>().ToArray());
+        }
+
+        internal IEnumerator<TElement> Enumerator<TElement>(Expression expression) { return new Enumerator<TElement>(Connection.ToDataReader(CreateSqlStatement(expression))); }
+
+        string CreateSqlStatement(Expression expression) { return expression.CreateString(); }
+
+        internal static T CreateObject<T>(object current)
+        {
+            DumpDataWithBreak("", current);
+            return default(T);
+        }
     }
 
     sealed class UnsavedChangedException : Exception

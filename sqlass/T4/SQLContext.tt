@@ -10,14 +10,14 @@ namespace <#= _context.NameSpace #>
     {<#
 	    foreach (var table in _tables)
         {#> 
-        public <#= table.TableTypeName #> <#= table.ClassName #>;<#
+        public readonly <#= table.TableTypeName #> <#= table.ClassName #>;<#
         }#>
 
         public Container(Context context)
         {<#
     	    foreach (var table in _tables)
             {#> 
-            <#= table.ClassName #> = new <#= table.TableTypeName #>(context, <#= table.SQLTableName.Quote() #>);<#
+            <#= table.ClassName #> = new <#= table.TableTypeName #>(context, SQLSupport.<#= table.ClassName #>.MetaDataSupport);<#
             }#>
 
         }
@@ -25,22 +25,9 @@ namespace <#= _context.NameSpace #>
 
     sealed public partial class Context: HWClassLibrary.sqlass.Context
     {
-        readonly DictionaryEx<Type, HWClassLibrary.sqlass.MetaData.Table> _metaData;
         public readonly Container Container;
-
-        public Context()
-        {
-            Container = new Container(this);
-            _metaData = new DictionaryEx<Type, HWClassLibrary.sqlass.MetaData.Table>
-                        {<#
-    	                    foreach (var table in _tables)
-                            {#> 
-                            {typeof(Tables.<#= table.ClassName #>), SQLSupport.<#= table.ClassName #>.MetaDataSupport},<#
-                            }#>
-                        };
-        }
-
-        public void UpdateDatabase() { UpdateDatabase(Container, _metaData); }
+        public Context(){Container = new Container(this);}
+        public void UpdateDatabase() { UpdateDatabase(Container); }
     }
 }
 <#

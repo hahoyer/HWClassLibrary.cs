@@ -18,29 +18,33 @@
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
 using System.Collections;
-using System.Data.Common;
 using System.Linq.Expressions;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using HWClassLibrary.Helper;
+using HWClassLibrary.sqlass.MetaData;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    public sealed class Table<T> : Dumpable, IQueryable<T>, IMetaUpdateTableProvider
+    public sealed class Table<T> : Dumpable, IQueryable<T>, ISelectStructure, IMetaDataProvider
         where T : ISQLSupportProvider
     {
         readonly Context _context;
-        readonly string _sqlTableName;
+        readonly Table _metaData;
 
-        public Table(Context context, string sqlTableName)
+        public Table(Context context, Table metaData)
         {
             _context = context;
-            _sqlTableName = sqlTableName;
+            _metaData = metaData;
         }
 
+        Expression IQueryable.Expression { get { return Expression.Constant(this); } }
+        IQueryProvider IQueryable.Provider { get { return _context; } }
         IEnumerator IEnumerable.GetEnumerator() { return ((IEnumerable<T>) this).GetEnumerator(); }
+        Table IMetaDataProvider.MetaData { get { return _metaData; } }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
@@ -48,14 +52,6 @@ namespace HWClassLibrary.sqlass
             return default(IEnumerator<T>);
         }
 
-        Expression IQueryable.Expression
-        {
-            get
-            {
-                NotImplementedMethod();
-                return null;
-            }
-        }
         Type IQueryable.ElementType
         {
             get
@@ -64,12 +60,16 @@ namespace HWClassLibrary.sqlass
                 return null;
             }
         }
-        IQueryProvider IQueryable.Provider
+
+        string ISelectStructure.String
         {
             get
             {
-                NotImplementedMethod();
-                return null;
+                return
+                    "select "
+                    + _metaData.Columns.Select(c => c.Name).Format(", ")
+                    + " from "
+                    + _metaData.TableName.SQLTableName;
             }
         }
 
@@ -77,6 +77,8 @@ namespace HWClassLibrary.sqlass
         public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement)); }
     }
 
-    public interface IMetaUpdateTableProvider
-    {}
+    public interface IMetaDataProvider
+    {
+        Table MetaData { get; }
+    }
 }

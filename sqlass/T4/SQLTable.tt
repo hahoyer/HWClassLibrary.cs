@@ -64,7 +64,7 @@ namespace <#= _context.NameSpace #>.SQLSupport<#= NameSpaceSuffix #>
             }
         }
 
-        public static Table MetaDataSupport = new Table
+        public static readonly Table MetaDataSupport = new Table
         (
             TableName.Find(<#= Table.TableName.Catalog.Quote() #>, <#= Table.TableName.Schema.Quote() #>, <#= Table.TableName.Name.Quote() #>),
             () => new []

@@ -85,7 +85,7 @@ namespace HWClassLibrary.Debug
         /// <param name = "value"></param>
         /// <returns></returns>
         [DebuggerHidden]
-        protected static void Dump(string name, object value)
+        public static void Dump(string name, object value)
         {
             if(IsMethodDumpTraceActive)
             {

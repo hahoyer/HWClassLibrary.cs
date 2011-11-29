@@ -525,11 +525,10 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
         /// </summary>
-        /// <param name = "text">some text</param>
         /// <param name = "parameter">parameter objects list for the frame</param>
-        public static void DumpStaticMethodWithData(string text, params object[] parameter)
+        public static void DumpStaticMethodWithData(params object[] parameter)
         {
-            var result = DumpMethodWithData(text, 1, null, parameter);
+            var result = DumpMethodWithData("", 1, null, parameter);
             Line(result);
         }
 

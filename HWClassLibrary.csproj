@@ -72,8 +72,11 @@
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
     <Compile Include="sqlass\Context.cs" />
+    <Compile Include="sqlass\Enumerator.cs" />
+    <Compile Include="sqlass\ILogicalStructure.cs" />
     <Compile Include="sqlass\Insert.cs" />
     <Compile Include="sqlass\IPendingChange.cs" />
+    <Compile Include="sqlass\ISelectStructure.cs" />
     <Compile Include="sqlass\ISQLKeyProvider.cs" />
     <Compile Include="sqlass\ISQLSupport.cs" />
     <Compile Include="sqlass\ISQLSupportProvider.cs" />
@@ -96,6 +99,9 @@
     <Compile Include="sqlass\MetaData\Table.cs" />
     <Compile Include="sqlass\MetaData\TableColumn.cs" />
     <Compile Include="sqlass\MetaData\TableName.cs" />
+    <Compile Include="sqlass\Handler.cs" />
+    <Compile Include="sqlass\Query.cs" />
+    <Compile Include="sqlass\SelectExtender.cs" />
     <Compile Include="sqlass\T4\Context.cs" />
     <Compile Include="sqlass\MetaData\KeyAttribute.cs" />
     <Compile Include="sqlass\MetaData\NullableAttribute.cs" />
@@ -195,9 +201,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
