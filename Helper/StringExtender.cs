@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using HWClassLibrary.Debug;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
 {
@@ -144,7 +145,9 @@ namespace HWClassLibrary.Helper
         }
         
         public static string ToLowerFirstUpper(this string text) { return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant(); }
-
         public static string TableNameToClassName(this string name) { return name.UnderScoreToCamelCase().ToSingular(); }
+        [StringFormatMethod("pattern")]
+        public static string ReplaceArgs(this string pattern, params object[] args) { return string.Format(pattern, args); }
+
     }
 }

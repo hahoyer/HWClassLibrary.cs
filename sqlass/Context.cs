@@ -180,7 +180,7 @@ namespace HWClassLibrary.sqlass
 
         internal IEnumerator<TElement> Enumerator<TElement>(Expression expression) { return new Enumerator<TElement>(Connection.ToDataReader(CreateSqlStatement(expression))); }
 
-        string CreateSqlStatement(Expression expression) { return expression.CreateString(); }
+        string CreateSqlStatement(Expression expression) { return new StringVisitor().Visit(expression); }
 
         internal static T CreateObject<T>(object current)
         {

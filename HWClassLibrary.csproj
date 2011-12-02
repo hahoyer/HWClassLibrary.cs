@@ -73,6 +73,7 @@
     <Compile Include="JetBrainsAnnotations.cs" />
     <Compile Include="sqlass\Context.cs" />
     <Compile Include="sqlass\Enumerator.cs" />
+    <Compile Include="sqlass\CollectionExpressionVisitor.cs" />
     <Compile Include="sqlass\ILogicalStructure.cs" />
     <Compile Include="sqlass\Insert.cs" />
     <Compile Include="sqlass\IPendingChange.cs" />
@@ -80,6 +81,8 @@
     <Compile Include="sqlass\ISQLKeyProvider.cs" />
     <Compile Include="sqlass\ISQLSupport.cs" />
     <Compile Include="sqlass\ISQLSupportProvider.cs" />
+    <Compile Include="sqlass\LambdaVisitor.cs" />
+    <Compile Include="sqlass\LogicalExpressionVisitor.cs" />
     <Compile Include="sqlass\MetaData\Ado.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

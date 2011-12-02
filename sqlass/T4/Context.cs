@@ -51,7 +51,7 @@ namespace HWClassLibrary.sqlass.T4
 
         void AddTable(Type type)
         {
-            var table = ObtainSQLTable(type);
+            var table = SQLTable(type);
             _tables.Add(table);
             File = table.FileName;
             AppendText(table.TransformText());

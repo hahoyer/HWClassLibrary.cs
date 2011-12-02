@@ -28,7 +28,7 @@ using HWClassLibrary.sqlass.T4;
 
 namespace HWClassLibrary.sqlass.MetaData
 {
-    public sealed class Table : Dumpable
+    public sealed class Table : Dumpable, IExpressionVisitorContext, IQualifier<string>
     {
         public readonly TableName TableName;
         readonly SimpleCache<Column[]> _columnsCache;
@@ -66,10 +66,10 @@ namespace HWClassLibrary.sqlass.MetaData
         {
             return
                 new Table
-                (
+                    (
                     TableName.Find(CatalogAttribute.Get(metaType), SchemaAttribute.Get(metaType), metaType.Name),
-                    ()=> ObtainColumns(metaType)
-                );
+                    () => ObtainColumns(metaType)
+                    );
         }
 
         static bool IsNullableField(FieldInfo fi) { return fi.GetAttribute<NullableAttribute>(true) != null; }
@@ -218,26 +218,41 @@ namespace HWClassLibrary.sqlass.MetaData
                     return null;
                 }
 
-                if (modell.ReferencedTable == null)
+                if(modell.ReferencedTable == null)
                 {
                     NotImplementedMethod(modell, dataBase);
                     return null;
                 }
 
-                if (modell.ReferencedTable.DiffersFrom(dataBase.ReferencedTable))
-                {
-
+                if(modell.ReferencedTable.DiffersFrom(dataBase.ReferencedTable))
                     return string.Format("alter table {0} add foreign key ({1}) references {2}({3})"
                                          , Name
                                          , modell.Name
                                          , modell.ReferencedTable.Name
                                          , modell.ReferencedTable.KeyNames
                         );
-                }
             }
             NotImplementedMethod(modell, dataBase);
             return null;
         }
         public bool DiffersFrom(Table other) { return other != null && TableName != other.TableName; }
+
+        internal string SelectString
+        {
+            get
+            {
+                return
+                    "select "
+                    + Columns.Select(c => c.Name).Format(", ")
+                    + " from "
+                    + TableName.SQLTableName;
+            }
+        }
+
+        string IQualifier<string>.Member(MemberInfo member)
+        {
+            Tracer.Assert(Columns.Count(c => c.Name == member.Name) == 1);
+            return member.Name;
+        }
     }
 }

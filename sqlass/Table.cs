@@ -23,13 +23,17 @@ using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using HWClassLibrary.Helper;
 using HWClassLibrary.sqlass.MetaData;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    public sealed class Table<T> : Dumpable, IQueryable<T>, ISelectStructure, IMetaDataProvider
+    public sealed class Table<T>
+        : Dumpable
+          , IQueryable<T>
+          , IMetaDataProvider
+          , IExpressionVisitorConstant<IQualifier<string>>
+          , IExpressionVisitorConstant<string>
         where T : ISQLSupportProvider
     {
         readonly Context _context;
@@ -61,20 +65,11 @@ namespace HWClassLibrary.sqlass
             }
         }
 
-        string ISelectStructure.String
-        {
-            get
-            {
-                return
-                    "select "
-                    + _metaData.Columns.Select(c => c.Name).Format(", ")
-                    + " from "
-                    + _metaData.TableName.SQLTableName;
-            }
-        }
-
         [UsedImplicitly]
         public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement)); }
+
+        string IExpressionVisitorConstant<string>.Qualifier { get { return _metaData.SelectString; } }
+        IQualifier<string> IExpressionVisitorConstant<IQualifier<string>>.Qualifier { get { return _metaData; } }
     }
 
     public interface IMetaDataProvider
