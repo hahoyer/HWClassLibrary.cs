@@ -38,6 +38,7 @@ namespace HWClassLibrary.sqlass
                 case ExpressionType.Constant:
                     return VisitConstant((ConstantExpression)expression);
             }
+            Tracer.FlaggedLine(expression.NodeType.ToString());
             NotImplementedMethod(expression);
             return default(T);
         }

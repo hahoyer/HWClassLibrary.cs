@@ -27,7 +27,7 @@ namespace HWClassLibrary.sqlass.MetaData
 {
     public sealed class Column : Dumpable
     {
-        public string Name;
+        public string Name;                                                                    
         public Type Type;
         public bool IsKey;
         public bool IsNullable;

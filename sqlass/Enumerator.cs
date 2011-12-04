@@ -30,15 +30,17 @@ namespace HWClassLibrary.sqlass
     {
         readonly IEnumerator _index;
         readonly DbDataReader _reader;
-        public Enumerator(DbDataReader reader)
+        readonly TableContext _context;
+        public Enumerator(DbDataReader reader, TableContext context)
         {
             _reader = reader;
+            _context = context;
             _index = _reader.GetEnumerator();
         }
         void IDisposable.Dispose() { NotImplementedMethod(); }
         bool IEnumerator.MoveNext() { return _index.MoveNext(); }
         void IEnumerator.Reset() { _index.Reset(); }
-        TElement IEnumerator<TElement>.Current { get { return Context.CreateObject<TElement>(_index.Current); } }
+        TElement IEnumerator<TElement>.Current { get { return (TElement) _context.CreateObject((DbDataRecord) _index.Current); } }
         object IEnumerator.Current { get { return ((IEnumerator<TElement>) this).Current; } }
     }
 }

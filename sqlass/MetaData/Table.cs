@@ -17,6 +17,7 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+using System.Data.Common;
 using System.Linq;
 using System.Collections.Generic;
 using System;
@@ -30,15 +31,18 @@ namespace HWClassLibrary.sqlass.MetaData
 {
     public sealed class Table : Dumpable, IExpressionVisitorContext, IQualifier<string>
     {
-        public readonly TableName TableName;
+        internal readonly TableName TableName;
         readonly SimpleCache<Column[]> _columnsCache;
-        public Table(TableName tableName, Func<Column[]> getColumns)
+        readonly Func<DbDataRecord, Context, object> _createObjectFunction;
+
+        public Table(TableName tableName, Func<Column[]> getColumns, Func<DbDataRecord, Context, object> createObjectFunction)
         {
             TableName = tableName;
+            _createObjectFunction = createObjectFunction;
             _columnsCache = new SimpleCache<Column[]>(getColumns);
         }
 
-        public Column[] Columns { get { return _columnsCache.Value; } }
+        internal Column[] Columns { get { return _columnsCache.Value; } }
 
         [DisableDump]
         internal string CreateTable
@@ -62,13 +66,14 @@ namespace HWClassLibrary.sqlass.MetaData
         }
 
 
-        public static Table FromMetaType(Type metaType)
+        internal static Table FromMetaType(Type metaType)
         {
             return
                 new Table
                     (
-                    TableName.Find(CatalogAttribute.Get(metaType), SchemaAttribute.Get(metaType), metaType.Name),
-                    () => ObtainColumns(metaType)
+                    TableName.Find(CatalogAttribute.Get(metaType), SchemaAttribute.Get(metaType), metaType.Name)
+                    , () => ObtainColumns(metaType)
+                    , null
                     );
         }
 
@@ -249,10 +254,6 @@ namespace HWClassLibrary.sqlass.MetaData
             }
         }
 
-        string IQualifier<string>.Member(MemberInfo member)
-        {
-            Tracer.Assert(Columns.Count(c => c.Name == member.Name) == 1);
-            return member.Name;
-        }
+        public object CreateObject(DbDataRecord current, Context context) { return _createObjectFunction(current, context); }
     }
 }

@@ -28,9 +28,9 @@ namespace HWClassLibrary.sqlass
 {
     sealed class Query<TElement> : Dumpable, IQueryable<TElement>
     {
-        readonly Context _context;
+        readonly TableContext _context;
         readonly Expression _expression;
-        public Query(Context context, Expression expression)
+        public Query(TableContext context, Expression expression)
         {
             _context = context;
             _expression = expression;

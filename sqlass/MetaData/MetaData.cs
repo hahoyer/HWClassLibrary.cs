@@ -149,7 +149,7 @@ namespace HWClassLibrary.sqlass.MetaData
 
         Table TableFound(IGrouping<TableName, TableColumn> t)
         {
-            var result = new Table(t.Key, () => CreateTableColumns(t));
+            var result = new Table(t.Key, () => CreateTableColumns(t), null);
             _tableCache.Add(result.TableName, result);
             return result;
         }

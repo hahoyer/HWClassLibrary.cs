@@ -30,7 +30,7 @@ using HWClassLibrary.sqlass.MetaData;
 
 namespace HWClassLibrary.sqlass
 {
-    public class Context : Dumpable, IQueryProvider
+    public class Context : Dumpable
     {
         DbConnection _connection;
         public bool IsSqlCeConnectionBug;
@@ -72,7 +72,6 @@ namespace HWClassLibrary.sqlass
                 _connection.Open();
             }
         }
-
 
         internal void AddPendingChange(IPendingChange data)
         {
@@ -147,46 +146,8 @@ namespace HWClassLibrary.sqlass
 
         public DataTable SubSchema(string name) { return Connection.GetSchema(name); }
 
-        IQueryable IQueryProvider.CreateQuery(Expression expression)
-        {
-            NotImplementedMethod(expression);
-            return null;
-        }
-
-        IQueryable<T> IQueryProvider.CreateQuery<T>(Expression expression) { return new Query<T>(this, expression); }
-
-        object IQueryProvider.Execute(Expression expression)
-        {
-            NotImplementedMethod(expression);
-            return null;
-        }
-
-        T IQueryProvider.Execute<T>(Expression expression)
-        {
-            var mce = expression as MethodCallExpression;
-            if(mce != null)
-                return Execute<T>(mce.Method, mce.Arguments.ToArray());
-            NotImplementedMethod(expression);
-            return default(T);
-        }
-
-        T Execute<T>(MethodInfo method, Expression[] arguments)
-        {
-            var methodInfo = typeof(Handler<T>).GetMethod(method.Name);
-            if(methodInfo == null)
-                throw new MissingMethodException(method.Name);
-            return (T) methodInfo.Invoke(this, arguments.Cast<object>().ToArray());
-        }
-
-        internal IEnumerator<TElement> Enumerator<TElement>(Expression expression) { return new Enumerator<TElement>(Connection.ToDataReader(CreateSqlStatement(expression))); }
-
         string CreateSqlStatement(Expression expression) { return new StringVisitor().Visit(expression); }
-
-        internal static T CreateObject<T>(object current)
-        {
-            DumpDataWithBreak("", current);
-            return default(T);
-        }
+        internal DbDataReader ToDataReader(Expression expression) { return Connection.ToDataReader(CreateSqlStatement(expression)); }
     }
 
     sealed class UnsavedChangedException : Exception

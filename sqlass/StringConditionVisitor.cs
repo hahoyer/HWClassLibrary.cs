@@ -21,28 +21,28 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.sqlass
 {
-    sealed class StringVisitor : CollectionExpressionVisitor<string>
+    sealed class StringConditionVisitor : LogicalExpressionVisitor<string>
     {
-        protected override string Visit(IExpressionVisitorConstant<string> target) { return target.Qualifier; }
+        protected override string Constant(int value) { return value.ToString(); }
+        protected override string CompareOperation(ExpressionType nodeType, string left, string right) { return "({0}){1}({2})".ReplaceArgs(left, Operator(nodeType), right); }
+        protected override string MemberAccess(string qualifier, MemberInfo member) { return qualifier + "." + member.Name; }
+        protected override string Parameter(string name) { return name; }
 
-        public override string VisitCallWhere(Expression arg0, Expression arg1)
+        string Operator(ExpressionType nodeType)
         {
-            var context = new WhereContextVisitor().Visit(arg1);
-            return "select * from ({0}) {1} where ({2})".ReplaceArgs(Visit(arg0), context.Item1, context.Item2);
-        }
-    }
-
-    sealed class WhereContextVisitor : LambdaExpressionVisitor<Tuple<string, string>>
-    {
-        protected override Tuple<string, string> VisitLambda(ParameterExpression[] parameters, Expression body)
-        {
-            Tracer.Assert(parameters.Length == 1);
-            return new Tuple<string, string>(parameters[0].Name, new StringConditionVisitor().Visit(body));
+            switch(nodeType)
+            {
+                case ExpressionType.Equal:
+                    return "=";
+            }
+            NotImplementedMethod(nodeType);
+            return null;
         }
     }
 }

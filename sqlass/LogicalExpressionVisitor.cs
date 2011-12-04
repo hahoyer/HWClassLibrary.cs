@@ -23,7 +23,6 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using HWClassLibrary.Debug;
-using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
@@ -33,102 +32,40 @@ namespace HWClassLibrary.sqlass
         {
             switch(expression.NodeType)
             {
-                case ExpressionType.Quote:
-                    return VisitQuote((UnaryExpression) expression);
-                case ExpressionType.Lambda:
-                    return VisitLambda(expression);
                 case ExpressionType.Equal:
                     return VisitCompareOperation((BinaryExpression) expression);
                 case ExpressionType.MemberAccess:
                     return VisitMemberAccess((MemberExpression) expression);
                 case ExpressionType.Constant:
-                    return VisitConstant((ConstantExpression)expression);
-            }
-
-            NotImplementedMethod(expression);
-            return default(T);
-        }
-        T VisitConstant(ConstantExpression expression) {
-            if (expression.Type == typeof(int))
-                return VisitConstant((int) expression.Value);
-            NotImplementedMethod(expression);
-            return default(T);
-        }
-
-        internal abstract T VisitConstant(int value);
-
-        T VisitMemberAccess(MemberExpression expression)
-        {
-            var qualifierExpression = VisitQualifier(expression.Expression);
-            var member = expression.Member;
-            return qualifierExpression.Member(member);
-        }
-
-        IQualifier<T> VisitQualifier(Expression expression)
-        {
-            switch(expression.NodeType)
-            {
+                    return VisitConstant((ConstantExpression) expression);
                 case ExpressionType.Parameter:
-                    return VisitQualifier((ParameterExpression) expression);
+                    return VisitParameter((ParameterExpression)expression);
             }
-
+            Tracer.FlaggedLine(expression.NodeType.ToString());
             NotImplementedMethod(expression);
-            return default(IQualifier<T>);
+            return default(T);
+        }
+        
+        T VisitParameter(ParameterExpression expression) { return Parameter(expression.Name); }
+
+        T VisitConstant(ConstantExpression expression)
+        {
+            if(expression.Type == typeof(int))
+                return Constant((int) expression.Value);
+            NotImplementedMethod(expression);
+            return default(T);
         }
 
-        internal abstract IQualifier<T> VisitQualifier(ParameterExpression expression);
-
+        T VisitMemberAccess(MemberExpression expression) { return MemberAccess(Visit(expression.Expression), expression.Member); }
+        
         T VisitCompareOperation(BinaryExpression expression) { return CompareOperation(expression.NodeType, Visit(expression.Left), Visit(expression.Right)); }
 
-        internal abstract T CompareOperation(ExpressionType nodeType, T left, T right);
-
-        T VisitLambda(Expression expression)
-        {
-            const BindingFlags bf = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-            var targetType = GetTargetType(expression);
-            var methodInfo = GetType().GetMethod("GenericVisitLambda", bf);
-            var genericMethod = methodInfo.MakeGenericMethod(targetType);
-            return 
-                (T)
-                genericMethod
-                    .Invoke(this, new object[] {expression});
-        }
-
-        static Type GetTargetType(Expression expression)
-        {
-            var type = expression.GetType();
-            var genericArguments = type.GetGenericArguments();
-            if(type.GetGenericTypeDefinition() != typeof(Expression<>) || genericArguments.Length != 1)
-                return null;
-
-            var func = genericArguments[0];
-            if(!func.Name.StartsWith("Func"))
-                return null;
-
-            var arguments = func.GetGenericArguments();
-            if(arguments.Length != 2)
-                return null;
-
-            if(arguments[1] != typeof(bool))
-                return null;
-
-            return arguments[0];
-        }
-
-        [UsedImplicitly]
-        protected T GenericVisitLambda<TExpression>(Expression<Func<TExpression, bool>> expression) { return GetLambdaVisitor(expression.Parameters.ToArray()).Visit(expression.Body); }
-
-        protected virtual LogicalExpressionVisitor<T> GetLambdaVisitor(ParameterExpression[] parameters) { return new LambdaVisitor<T>(this, parameters); }
-
-        T VisitQuote(UnaryExpression expression) { return Quote(Visit(expression.Operand)); }
-
-        protected abstract T Quote(T target);
-        internal abstract IQualifier<T> Qualifier(int value);
+        protected abstract T Constant(int value);
+        protected abstract T MemberAccess(T qualifier, MemberInfo member);
+        protected abstract T CompareOperation(ExpressionType nodeType, T left, T right);
+        protected abstract T Parameter(string name);
     }
 
     interface IQualifier<out T>
-    {
-        T Member(MemberInfo member);
-    }
-
+    {}
 }

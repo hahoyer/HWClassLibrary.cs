@@ -8,7 +8,7 @@ using HWClassLibrary.sqlass.MetaData;
 
 namespace <#= _context.NameSpace #>.Tables<#= NameSpaceSuffix #>
 {
-    sealed public partial class <#= ClassName #> 
+    public partial class <#= ClassName #> 
         : ISQLSupportProvider<#
 	if (HasSQLKey)
     {#>
@@ -87,6 +87,19 @@ namespace <#= _context.NameSpace #>.SQLSupport<#= NameSpaceSuffix #>
                 },<#
             }#>   
             
+            },
+            (record, context) => new Tables.<#= ClassName #>
+            {<#
+            foreach (var column in Columns)                                           
+            {#> 
+                <#= column.Name #> = <#
+                if(column.ReferencedTable != null)
+                {
+	                
+	             #>((Context)context).Container.<#= column.ReferencedTable.Name #>.Find<#
+                }
+                #>((<#= column.Type.PrettyName() #>) record[<#= column.Name.Quote() #>]),<#
+            }#>   
             }
         );
     }

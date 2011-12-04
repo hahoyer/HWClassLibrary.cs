@@ -31,24 +31,19 @@ namespace HWClassLibrary.sqlass
     public sealed class Table<T>
         : Dumpable
           , IQueryable<T>
-          , IMetaDataProvider
           , IExpressionVisitorConstant<IQualifier<string>>
+          , IMetaDataProvider
           , IExpressionVisitorConstant<string>
         where T : ISQLSupportProvider
     {
-        readonly Context _context;
-        readonly Table _metaData;
+        readonly TableContext _context;
 
-        public Table(Context context, Table metaData)
-        {
-            _context = context;
-            _metaData = metaData;
-        }
+        public Table(Context context, Table metaData) { _context = new TableContext(context, metaData); }
 
         Expression IQueryable.Expression { get { return Expression.Constant(this); } }
         IQueryProvider IQueryable.Provider { get { return _context; } }
         IEnumerator IEnumerable.GetEnumerator() { return ((IEnumerable<T>) this).GetEnumerator(); }
-        Table IMetaDataProvider.MetaData { get { return _metaData; } }
+        Table IMetaDataProvider.MetaData { get { return _context.MetaData; } }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
@@ -68,12 +63,23 @@ namespace HWClassLibrary.sqlass
         [UsedImplicitly]
         public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement)); }
 
-        string IExpressionVisitorConstant<string>.Qualifier { get { return _metaData.SelectString; } }
-        IQualifier<string> IExpressionVisitorConstant<IQualifier<string>>.Qualifier { get { return _metaData; } }
+        string IExpressionVisitorConstant<string>.Qualifier { get { return _context.MetaData.SelectString; } }
+        IQualifier<string> IExpressionVisitorConstant<IQualifier<string>>.Qualifier { get { return _context.MetaData; } }
+        
+        public T Find(int key)
+        {
+            NotImplementedMethod(key);
+            return default(T);
+        }
     }
 
     public interface IMetaDataProvider
     {
         Table MetaData { get; }
+    }
+
+    public sealed class Reference<T>
+    {
+        
     }
 }

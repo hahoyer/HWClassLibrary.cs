@@ -35,7 +35,7 @@ namespace HWClassLibrary.sqlass.T4
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n    sealed public partial class ");
+            this.Write("\r\n{\r\n    public partial class ");
             
             #line 11 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
@@ -328,9 +328,81 @@ namespace HWClassLibrary.sqlass.T4
             
             #line default
             #line hidden
-            this.Write("   \r\n            \r\n            }\r\n        );\r\n    }\r\n}\r\n");
+            this.Write("   \r\n            \r\n            },\r\n            (record, context) => new Tables.");
             
-            #line 94 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            #line 91 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n            {");
+            
+            #line 92 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+            foreach (var column in Columns)                                           
+            {
+            
+            #line default
+            #line hidden
+            this.Write(" \r\n                ");
+            
+            #line 95 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 95 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+                if(column.ReferencedTable != null)
+                {
+	                
+	             
+            
+            #line default
+            #line hidden
+            this.Write("((Context)context).Container.");
+            
+            #line 99 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.ReferencedTable.Name));
+            
+            #line default
+            #line hidden
+            this.Write(".Find");
+            
+            #line 99 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+                }
+                
+            
+            #line default
+            #line hidden
+            this.Write("((");
+            
+            #line 101 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.Type.PrettyName()));
+            
+            #line default
+            #line hidden
+            this.Write(") record[");
+            
+            #line 101 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.Name.Quote()));
+            
+            #line default
+            #line hidden
+            this.Write("]),");
+            
+            #line 101 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
+
+            }
+            
+            #line default
+            #line hidden
+            this.Write("   \r\n            }\r\n        );\r\n    }\r\n}\r\n");
+            
+            #line 107 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLTable.tt"
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 

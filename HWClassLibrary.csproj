@@ -81,7 +81,7 @@
     <Compile Include="sqlass\ISQLKeyProvider.cs" />
     <Compile Include="sqlass\ISQLSupport.cs" />
     <Compile Include="sqlass\ISQLSupportProvider.cs" />
-    <Compile Include="sqlass\LambdaVisitor.cs" />
+    <Compile Include="sqlass\LambdaExpressionVisitor.cs" />
     <Compile Include="sqlass\LogicalExpressionVisitor.cs" />
     <Compile Include="sqlass\MetaData\Ado.cs">
       <AutoGen>True</AutoGen>
@@ -105,6 +105,7 @@
     <Compile Include="sqlass\Handler.cs" />
     <Compile Include="sqlass\Query.cs" />
     <Compile Include="sqlass\SelectExtender.cs" />
+    <Compile Include="sqlass\StringConditionVisitor.cs" />
     <Compile Include="sqlass\T4\Context.cs" />
     <Compile Include="sqlass\MetaData\KeyAttribute.cs" />
     <Compile Include="sqlass\MetaData\NullableAttribute.cs" />
@@ -138,6 +139,7 @@
       <LastGenOutput>SQLTable.tt.cs</LastGenOutput>
     </None>
     <Compile Include="sqlass\Table.cs" />
+    <Compile Include="sqlass\TableContext.cs" />
     <Compile Include="T4\Extender.cs" />
     <Compile Include="T4\Context.cs" />
     <Compile Include="TreeStructure\Extender.cs" />
