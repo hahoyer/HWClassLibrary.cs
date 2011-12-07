@@ -75,8 +75,8 @@ namespace HWClassLibrary.Helper
 
         static IEnumerable<Type> ObtainReferencedTypes()
         {
-            var assembly = 
-                Assembly.GetEntryAssembly() ?? 
+            var assembly =
+                Assembly.GetEntryAssembly() ??
                 Assembly.GetCallingAssembly();
             return assembly.GetReferencedTypes();
         }

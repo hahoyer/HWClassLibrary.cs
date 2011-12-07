@@ -53,11 +53,14 @@ namespace HWClassLibrary.sqlass.T4
         bool IsLast(Column column) { return Columns.Last() == column; }
         internal string TableTypeName { get { return "Table<{0}, {1}>".ReplaceArgs(ClassName, KeyType); } }
         bool HasSQLKey { get { return Columns.Any(column => column.IsKey); } }
-        string KeyProvider { get
+        string KeyProvider
         {
-            //Tracer.LaunchDebugger();
-            return _table.KeyProvider.PrettyName();
-        } }
+            get
+            {
+                //Tracer.LaunchDebugger();
+                return _table.KeyProvider.PrettyName();
+            }
+        }
         string KeyType { get { return _table.KeyType.PrettyName(); } }
         string KeyValue { get { return _table.KeyValue; } }
         Column[] Columns { get { return _table.Columns; } }

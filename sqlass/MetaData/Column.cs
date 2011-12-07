@@ -27,7 +27,7 @@ namespace HWClassLibrary.sqlass.MetaData
 {
     public sealed class Column : Dumpable
     {
-        public string Name;                                                                    
+        public string Name;
         public Type Type;
         public bool IsKey;
         public bool IsNullable;
@@ -56,13 +56,13 @@ namespace HWClassLibrary.sqlass.MetaData
 
         public bool DiffersFrom(Column other)
         {
-            if (Type != other.Type)
+            if(Type != other.Type)
                 return true;
-            if (IsKey != other.IsKey)
+            if(IsKey != other.IsKey)
                 return true;
-            if (IsNullable != other.IsNullable)
+            if(IsNullable != other.IsNullable)
                 return true;
-            if (ReferencedTable == null)
+            if(ReferencedTable == null)
                 return other.ReferencedTable != null;
             return ReferencedTable.DiffersFrom(other.ReferencedTable);
         }

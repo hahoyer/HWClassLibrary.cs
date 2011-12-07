@@ -39,7 +39,7 @@ namespace HWClassLibrary.sqlass.MetaData
                 + Table + "." + Name
                 + " Type = " + Type
                 + " " + (IsNullable ? " = 0" : "")
-                + (Reference == null ? "" : " ->" + Reference.ToString());
+                + (Reference == null ? "" : " ->" + Reference);
         }
     }
 }

@@ -25,7 +25,7 @@ using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.sqlass.MetaData
 {
-    public sealed class TableName: Dumpable
+    public sealed class TableName : Dumpable
     {
         public readonly string Catalog;
         public readonly string Schema;
@@ -41,7 +41,7 @@ namespace HWClassLibrary.sqlass.MetaData
                 return Catalog + "." + Schema;
             }
         }
-        
+
         [DisableDump]
         internal string SQLTableName
         {
@@ -61,14 +61,14 @@ namespace HWClassLibrary.sqlass.MetaData
                                     (n => new TableName(c, s, n))
                           )
                 );
-        
+
         TableName(string catalog, string schema, string name)
         {
             Catalog = catalog;
             Schema = schema;
             Name = name;
         }
-        
+
         public static TableName Find(string catalog, string schema, string tableName)
         {
             return _dictionary

@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -27,12 +28,12 @@ namespace HWClassLibrary.Helper
     /// <summary>
     ///     Dicionary that does not allow null values
     /// </summary>
-    /// <typeparam name = "TKey"></typeparam>
-    /// <typeparam name = "TValue"></typeparam>
+    /// <typeparam name="TKey"> </typeparam>
+    /// <typeparam name="TValue"> </typeparam>
     [AdditionalNodeInfo("NodeDump")]
     public class DictionaryEx<TKey, TValue> : Dictionary<TKey, TValue>
     {
-        private readonly Func<TKey, TValue> _createValue;
+        readonly Func<TKey, TValue> _createValue;
 
         public DictionaryEx(Func<TKey, TValue> createValue) { _createValue = createValue; }
 
@@ -53,7 +54,7 @@ namespace HWClassLibrary.Helper
 
         public DictionaryEx() { _createValue = ThrowKeyNotFoundException; }
 
-        private static TValue ThrowKeyNotFoundException(TKey key) { throw new KeyNotFoundException(key.ToString()); }
+        static TValue ThrowKeyNotFoundException(TKey key) { throw new KeyNotFoundException(key.ToString()); }
 
 
         public DictionaryEx<TKey, TValue> Clone { get { return new DictionaryEx<TKey, TValue>(this); } }
@@ -64,8 +65,8 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Gets the or add.
         /// </summary>
-        /// <param name = "key">The key.</param>
-        /// <returns></returns>
+        /// <param name="key"> The key. </param>
+        /// <returns> </returns>
         /// created 13.01.2007 14:32
         public TValue Find(TKey key)
         {
@@ -114,28 +115,24 @@ namespace HWClassLibrary.Helper
         }
     }
 
-    internal sealed class NoCaseComparer : IEqualityComparer<string>
+    sealed class NoCaseComparer : IEqualityComparer<string>
     {
-        private static IEqualityComparer<string> _default;
+        static IEqualityComparer<string> _default;
 
         ///<summary>
         ///    Determines whether the specified objects are equal.
         ///</summary>
-        ///<returns>
-        ///    true if the specified objects are equal; otherwise, false.
-        ///</returns>
-        ///<param name = "y">The second object of type T to compare.</param>
-        ///<param name = "x">The first object of type T to compare.</param>
+        ///<returns> true if the specified objects are equal; otherwise, false. </returns>
+        ///<param name="y"> The second object of type T to compare. </param>
+        ///<param name="x"> The first object of type T to compare. </param>
         public bool Equals(string x, string y) { return x.ToUpperInvariant() == y.ToUpperInvariant(); }
 
         ///<summary>
         ///    When overridden in a derived class, serves as a hash function for the specified object for hashing algorithms and data structures, such as a hash table.
         ///</summary>
-        ///<returns>
-        ///    A hash code for the specified object.
-        ///</returns>
-        ///<param name = "obj">The object for which to get a hash code.</param>
-        ///<exception cref = "T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
+        ///<returns> A hash code for the specified object. </returns>
+        ///<param name="obj"> The object for which to get a hash code. </param>
+        ///<exception cref="T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
         public int GetHashCode(string obj) { return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant()); }
 
         public static IEqualityComparer<string> Default { get { return _default ?? (_default = new NoCaseComparer()); } }

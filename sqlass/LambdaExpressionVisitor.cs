@@ -61,25 +61,25 @@ namespace HWClassLibrary.sqlass
             return
                 (T)
                 genericMethod
-                    .Invoke(this, new object[] { expression });
+                    .Invoke(this, new object[] {expression});
         }
 
         static Type GetTargetType(Expression expression)
         {
             var type = expression.GetType();
             var genericArguments = type.GetGenericArguments();
-            if (type.GetGenericTypeDefinition() != typeof(Expression<>) || genericArguments.Length != 1)
+            if(type.GetGenericTypeDefinition() != typeof(Expression<>) || genericArguments.Length != 1)
                 return null;
 
             var func = genericArguments[0];
-            if (!func.Name.StartsWith("Func"))
+            if(!func.Name.StartsWith("Func"))
                 return null;
 
             var arguments = func.GetGenericArguments();
-            if (arguments.Length != 2)
+            if(arguments.Length != 2)
                 return null;
 
-            if (arguments[1] != typeof(bool))
+            if(arguments[1] != typeof(bool))
                 return null;
 
             return arguments[0];

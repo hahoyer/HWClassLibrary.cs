@@ -57,10 +57,7 @@ namespace HWClassLibrary.sqlass.T4
             AppendText(table.TransformText());
         }
 
-        SQLTable ObtainSQLTable(Type type)
-        {
-            return new SQLTable(this, Table.FromMetaType(type));
-        }
+        SQLTable ObtainSQLTable(Type type) { return new SQLTable(this, Table.FromMetaType(type)); }
 
         void ÂddContext()
         {

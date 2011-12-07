@@ -28,7 +28,7 @@ namespace HWClassLibrary.sqlass
 {
     abstract class ExpressionVisitor<T> : Dumpable
     {
-        virtual internal T Visit(Expression expression)
+        internal virtual T Visit(Expression expression)
         {
             switch(expression.NodeType)
             {
@@ -47,7 +47,7 @@ namespace HWClassLibrary.sqlass
             var method = expression.Method;
             var arguments = expression.Arguments.ToArray();
             if(!method.IsStatic)
-                arguments = new Expression[] {expression.Object}.Union(arguments).ToArray();
+                arguments = new[] {expression.Object}.Union(arguments).ToArray();
 
             var methodInfo = GetType().GetMethod("VisitCall" + method.Name);
             if(methodInfo == null)
@@ -68,16 +68,12 @@ namespace HWClassLibrary.sqlass
             return (T) methodInfo.Invoke(this, arguments.Cast<object>().ToArray());
         }
 
-        T VisitConstant(ConstantExpression expression)
-        {
-            return VisitConstant(expression.Type, expression.Value);
-
-        }
+        T VisitConstant(ConstantExpression expression) { return VisitConstant(expression.Type, expression.Value); }
 
         protected virtual T VisitConstant(Type type, object value)
         {
             var ssr = value as IExpressionVisitorConstant<T>;
-            if (ssr != null)
+            if(ssr != null)
                 return Visit(ssr);
 
             NotImplementedMethod(type, value);

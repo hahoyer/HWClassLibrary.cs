@@ -34,7 +34,7 @@ namespace HWClassLibrary.sqlass
             switch(expression.NodeType)
             {
                 case ExpressionType.Convert:
-                    return VisitConvert((UnaryExpression)expression);
+                    return VisitConvert((UnaryExpression) expression);
                 case ExpressionType.Equal:
                     return VisitCompareOperation((BinaryExpression) expression);
                 case ExpressionType.MemberAccess:

@@ -148,7 +148,7 @@ namespace HWClassLibrary.Helper
             return new Guid(x.ToString());
         }
 
-        public static T Convert<T>(this object x) { return (x is DBNull || x == null) ? default(T) : (T)x; }
+        public static T Convert<T>(this object x) { return (x is DBNull || x == null) ? default(T) : (T) x; }
 
         public static DateTime ToDateTime(this object x) { return Convert<DateTime>(x); }
         public static Decimal ToDecimal(this object x) { return Convert<decimal>(x); }
@@ -163,9 +163,9 @@ namespace HWClassLibrary.Helper
             var plural = x.ToString();
             if(plural.EndsWith("Tables"))
                 return plural.Substring(0, plural.Length - 1);
-            if (plural.EndsWith("Types"))
+            if(plural.EndsWith("Types"))
                 return plural.Substring(0, plural.Length - 1);
-            if (plural.EndsWith("es"))
+            if(plural.EndsWith("es"))
                 return plural.Substring(0, plural.Length - 2);
             if(plural.EndsWith("s"))
                 return plural.Substring(0, plural.Length - 1);

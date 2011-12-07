@@ -1,4 +1,23 @@
-﻿using System;
+﻿// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,14 +30,14 @@ namespace HWClassLibrary.UnitTest
 {
     public sealed class TestRunner : Dumpable
     {
-        private readonly TestType[] _testTypes;
+        readonly TestType[] _testTypes;
         public static bool IsModeErrorFocus;
-        private readonly File _configFile = File.m("Test.HWconfig");
-        private string _status = "Start";
-        private int _complete;
-        private string _currentMethodName = "";
+        readonly File _configFile = File.m("Test.HWconfig");
+        string _status = "Start";
+        int _complete;
+        string _currentMethodName = "";
 
-        private TestRunner(IEnumerable<TestType> testTypes)
+        TestRunner(IEnumerable<TestType> testTypes)
         {
             _testTypes = testTypes.ToArray();
             Tracer.Assert(_testTypes.IsCircuidFree(Dependants), () => Tracer.Dump(_testTypes.Circuids(Dependants).ToArray()));
@@ -28,7 +47,7 @@ namespace HWClassLibrary.UnitTest
 
         internal static void RunTests(Assembly rootAssembly) { new TestRunner(GetUnitTestTypes(rootAssembly)).Run(); }
 
-        private TestType[] Dependants(TestType type)
+        TestType[] Dependants(TestType type)
         {
             if(IsModeErrorFocus)
                 return new TestType[0];
@@ -38,7 +57,7 @@ namespace HWClassLibrary.UnitTest
                 .ToArray();
         }
 
-        private void Run()
+        void Run()
         {
             _status = "run";
             while(RunLevel())
@@ -47,7 +66,7 @@ namespace HWClassLibrary.UnitTest
             SaveConfiguration();
         }
 
-        private bool RunLevel()
+        bool RunLevel()
         {
             var openTests = _testTypes.Where(x => x.IsStartable).ToArray();
             if(openTests.Length == 0)
@@ -75,45 +94,45 @@ namespace HWClassLibrary.UnitTest
             return true;
         }
 
-        private string ConfigurationString
+        string ConfigurationString
         {
             get
             {
                 return HeaderText + "\n" +
-                    _testTypes
-                    .OrderBy(t => t.ConfigurationModePriority)
-                    .Aggregate("", (current, testType) => current + testType.ConfigurationString);
+                       _testTypes
+                           .OrderBy(t => t.ConfigurationModePriority)
+                           .Aggregate("", (current, testType) => current + testType.ConfigurationString);
             }
             set
             {
-                if (value == null)
+                if(value == null)
                     return;
                 var pairs = value.Split('\n')
-                    .Where((line,i) => i > 0 && line != "")
+                    .Where((line, i) => i > 0 && line != "")
                     .Join(_testTypes, line => line.Split(' ')[1], type => type.Type.FullName, (line, type) => new {line, type});
                 foreach(var pair in pairs)
                     pair.type.ConfigurationString = pair.line;
             }
         }
 
-        private string HeaderText { get { return DateTime.Now.Format() + " " + _status + " " + _complete + " of " + _testTypes.Length + " " + _currentMethodName; } }
+        string HeaderText { get { return DateTime.Now.Format() + " " + _status + " " + _complete + " of " + _testTypes.Length + " " + _currentMethodName; } }
 
-        private void SaveConfiguration()
+        void SaveConfiguration()
         {
             _configFile.String = ConfigurationString;
             ConfigFileMessage("Configuration saved");
         }
 
-        private void ConfigFileMessage(string flagText) { Tracer.Line(Tracer.FilePosn(_configFile.FullName, 1, 1, flagText)); }
+        void ConfigFileMessage(string flagText) { Tracer.Line(Tracer.FilePosn(_configFile.FullName, 1, 1, flagText)); }
 
 
-        private void LoadConfiguration()
+        void LoadConfiguration()
         {
             ConfigurationString = _configFile.String;
             ConfigFileMessage("Configuration loaded");
         }
 
-        private static IEnumerable<TestType> GetUnitTestTypes(Assembly rootAssembly)
+        static IEnumerable<TestType> GetUnitTestTypes(Assembly rootAssembly)
         {
             return rootAssembly
                 .GetReferencedTypes()
@@ -122,6 +141,6 @@ namespace HWClassLibrary.UnitTest
         }
     }
 
-    internal sealed class TestFailedException : Exception
+    sealed class TestFailedException : Exception
     {}
 }

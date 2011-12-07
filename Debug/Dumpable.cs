@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -32,12 +33,12 @@ namespace HWClassLibrary.Debug
     [Dump("Dump")]
     public class Dumpable
     {
-        private static readonly Stack<MethodDumpTraceItem> _methodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
+        static readonly Stack<MethodDumpTraceItem> _methodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
 
         /// <summary>
         ///     generate dump string to be shown in debug windows
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public virtual string DebuggerDump() { return Tracer.Dump(this); }
 
         /// <summary>
@@ -50,8 +51,8 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump with break,
         /// </summary>
-        /// <param name = "p"></param>
-        /// <returns></returns>
+        /// <param name="p"> </param>
+        /// <returns> </returns>
         [DebuggerHidden]
         public static void NotImplementedFunction(params object[] p)
         {
@@ -63,9 +64,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method start dump,
         /// </summary>
-        /// <param name = "trace"></param>
-        /// <param name = "p"></param>
-        /// <returns></returns>
+        /// <param name="trace"> </param>
+        /// <param name="p"> </param>
+        /// <returns> </returns>
         [DebuggerHidden]
         protected void StartMethodDump(bool trace, params object[] p)
         {
@@ -81,9 +82,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method start dump,
         /// </summary>
-        /// <param name = "name"></param>
-        /// <param name = "value"></param>
-        /// <returns></returns>
+        /// <param name="name"> </param>
+        /// <param name="value"> </param>
+        /// <returns> </returns>
         [DebuggerHidden]
         public static void Dump(string name, object value)
         {
@@ -97,9 +98,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump,
         /// </summary>
-        /// <param name = "rv"></param>
-        /// <param name="breakExecution"></param>
-        /// <returns></returns>
+        /// <param name="rv"> </param>
+        /// <param name="breakExecution"> </param>
+        /// <returns> </returns>
         [DebuggerHidden]
         protected static T ReturnMethodDump<T>(T rv, bool breakExecution = false)
         {
@@ -107,7 +108,7 @@ namespace HWClassLibrary.Debug
             {
                 Tracer.IndentEnd();
                 Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
-                if (breakExecution)
+                if(breakExecution)
                     Tracer.TraceBreak();
             }
             return rv;
@@ -123,7 +124,7 @@ namespace HWClassLibrary.Debug
             {
                 Tracer.IndentEnd();
                 Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
-                if (breakExecution)
+                if(breakExecution)
                     Tracer.TraceBreak();
             }
         }
@@ -141,16 +142,16 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         protected static void EndMethodDump()
         {
-            if (!Debugger.IsAttached)
+            if(!Debugger.IsAttached)
                 return;
 
             CheckDumpLevel(1);
             _methodDumpTraceSwitches.Pop();
         }
 
-        private static void CheckDumpLevel(int depth)
+        static void CheckDumpLevel(int depth)
         {
-            if (!Debugger.IsAttached)
+            if(!Debugger.IsAttached)
                 return;
             var top = _methodDumpTraceSwitches.Peek();
             Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
@@ -159,9 +160,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump with break,
         /// </summary>
-        /// <param name = "text"></param>
-        /// <param name = "p"></param>
-        /// <returns></returns>
+        /// <param name="text"> </param>
+        /// <param name="p"> </param>
+        /// <returns> </returns>
         [DebuggerHidden]
         protected void DumpMethodWithBreak(string text, params object[] p)
         {
@@ -173,9 +174,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump with break,
         /// </summary>
-        /// <param name = "text"></param>
-        /// <param name = "p"></param>
-        /// <returns></returns>
+        /// <param name="text"> </param>
+        /// <param name="p"> </param>
+        /// <returns> </returns>
         [DebuggerHidden]
         protected static void DumpDataWithBreak(string text, params object[] p)
         {
@@ -187,8 +188,8 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Method dump with break,
         /// </summary>
-        /// <param name = "p"></param>
-        /// <returns></returns>
+        /// <param name="p"> </param>
+        /// <returns> </returns>
         [DebuggerHidden]
         protected void NotImplementedMethod(params object[] p)
         {
@@ -221,18 +222,20 @@ namespace HWClassLibrary.Debug
         ///     Gets a value indicating whether this instance is in dump.
         /// </summary>
         /// <value>
-        ///     <c>true</c> if this instance is in dump; otherwise, <c>false</c>.
-        /// </value>
+        ///     <c>true</c>
+        ///     if this instance is in dump; otherwise,
+        ///     <c>false</c>
+        ///     .</value>
         /// created 23.09.2006 17:39
         [DisableDump]
         public bool IsInDump { get { return _isInDump; } }
 
-        private bool _isInDump;
+        bool _isInDump;
 
         /// <summary>
         ///     Default dump of data
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public virtual string DumpData()
         {
             string result;
@@ -249,18 +252,18 @@ namespace HWClassLibrary.Debug
 
         public void Dispose() { }
 
-        private static void StartMethodDump(int depth, bool trace)
+        static void StartMethodDump(int depth, bool trace)
         {
-            if (!Debugger.IsAttached)
+            if(!Debugger.IsAttached)
                 return;
             var frameCount = Tracer.CurrentFrameCount(depth + 1);
             _methodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
         }
 
-        private sealed class MethodDumpTraceItem
+        sealed class MethodDumpTraceItem
         {
-            private readonly int _frameCount;
-            private readonly bool _trace;
+            readonly int _frameCount;
+            readonly bool _trace;
 
             public MethodDumpTraceItem(int frameCount, bool trace)
             {
@@ -272,11 +275,11 @@ namespace HWClassLibrary.Debug
             internal bool Trace { get { return _trace; } }
         }
 
-        private static bool IsMethodDumpTraceActive
+        static bool IsMethodDumpTraceActive
         {
             get
             {
-                if (!Debugger.IsAttached)
+                if(!Debugger.IsAttached)
                     return false;
                 //CheckDumpLevel(2);
                 return _methodDumpTraceSwitches.Peek().Trace;

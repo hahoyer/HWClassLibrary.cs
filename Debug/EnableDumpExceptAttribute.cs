@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Set exception for value tha will not be dumped
         /// </summary>
-        /// <param name = "exception">dump this property or not</param>
+        /// <param name="exception"> dump this property or not </param>
         public EnableDumpExceptAttribute(object exception)
             : base(exception) { }
 
@@ -68,8 +69,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Set exception for value tha will not be dumped
         /// </summary>
-        /// <param name = "exception">dump this property or not</param>
-        public DisableDumpExceptAttribute(object exception) :base(exception){ }
+        /// <param name="exception"> dump this property or not </param>
+        public DisableDumpExceptAttribute(object exception)
+            : base(exception) { }
         bool IDumpExceptAttribute.IsException(object v) { return !IsException(v); }
     }
 }

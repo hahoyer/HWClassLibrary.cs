@@ -17,7 +17,6 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Data.Common;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,14 +29,8 @@ namespace HWClassLibrary.sqlass
     {
         readonly T _data;
 
-        internal Insert(T data)
-        {
-            _data = data;
-        }
+        internal Insert(T data) { _data = data; }
 
-        void IPendingChange.Apply(Context connection)
-        {
-            connection.ExecuteNonQuery(_data.SQLSupport.Insert);
-        }
+        void IPendingChange.Apply(Context connection) { connection.ExecuteNonQuery(_data.SQLSupport.Insert); }
     }
 }

@@ -17,6 +17,11 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using HWClassLibrary.Debug;
+
 namespace HWClassLibrary.sqlass.MetaData
 {
     public sealed class MetaDataSupport

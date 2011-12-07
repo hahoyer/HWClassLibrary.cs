@@ -86,7 +86,7 @@ namespace HWClassLibrary.T4
         string MainFileName { get { return Path.GetFileNameWithoutExtension(_host.TemplateFile); } }
         string MainPath { get { return Path.GetDirectoryName(_host.TemplateFile); } }
         static string Extension { get { return ".cs"; } }
-        string FullMainFileName { get { return MainPath.PathCombine(MainFileName)+Extension; } }
+        string FullMainFileName { get { return MainPath.PathCombine(MainFileName) + Extension; } }
 
         [UsedImplicitly]
         public void ProcessFiles()

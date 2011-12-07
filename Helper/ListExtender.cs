@@ -104,10 +104,10 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Checks if object starts with given object.
         /// </summary>
-        /// <typeparam name = "T"></typeparam>
-        /// <param name = "x">The x.</param>
-        /// <param name = "y">The y.</param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="x"> The x. </param>
+        /// <param name="y"> The y. </param>
+        /// <returns> </returns>
         public static bool StartsWith<T>(this IList<T> x, IList<T> y)
         {
             if(x.Count < y.Count)
@@ -121,10 +121,10 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Checks if object starts with given object and is longer.
         /// </summary>
-        /// <typeparam name = "T"></typeparam>
-        /// <param name = "x">The x.</param>
-        /// <param name = "y">The y.</param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="x"> The x. </param>
+        /// <param name="y"> The y. </param>
+        /// <returns> </returns>
         public static bool StartsWithAndNotEqual<T>(this IList<T> x, IList<T> y)
         {
             if(x.Count == y.Count)
@@ -190,7 +190,6 @@ namespace HWClassLibrary.Helper
             var leftCommon = left.Select(l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
             var rightCommon = right.Select(r => new Tuple<TKey, TLeft, TRight>(getRightKey(r), null, r));
             return leftCommon.Union(rightCommon).GroupBy(t => t.Item1).Select(Merge);
-
         }
 
         public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>(IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping)
@@ -203,9 +202,9 @@ namespace HWClassLibrary.Helper
                 case 1:
                     return list[0];
                 case 2:
-                    if (list[0].Item2 == null && list[1].Item3 == null)
+                    if(list[0].Item2 == null && list[1].Item3 == null)
                         return new Tuple<TKey, TLeft, TRight>(grouping.Key, list[1].Item2, list[0].Item3);
-                    if (list[1].Item2 == null && list[0].Item3 == null)
+                    if(list[1].Item2 == null && list[0].Item3 == null)
                         return new Tuple<TKey, TLeft, TRight>(grouping.Key, list[0].Item2, list[1].Item3);
                     break;
             }

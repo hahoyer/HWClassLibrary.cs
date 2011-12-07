@@ -24,6 +24,6 @@ using System;
 
 namespace HWClassLibrary.sqlass.MetaData
 {
-    sealed public class NullableAttribute : Attribute
+    public sealed class NullableAttribute : Attribute
     {}
 }

@@ -71,10 +71,7 @@ namespace HWClassLibrary.DataBase
             return result + ")" + valueList + ")";
         }
 
-        public static string InsertCommand(T[] newObjects)
-        {
-            return newObjects.Aggregate("", (current, newObject) => current + (InsertCommand(newObject) + " "));
-        }
+        public static string InsertCommand(T[] newObjects) { return newObjects.Aggregate("", (current, newObject) => current + (InsertCommand(newObject) + " ")); }
 
         public static void SetValues(object o, DbDataReader reader)
         {

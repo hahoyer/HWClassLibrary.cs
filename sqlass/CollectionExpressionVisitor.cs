@@ -30,8 +30,6 @@ namespace HWClassLibrary.sqlass
     {
         [UsedImplicitly]
         public abstract T VisitCallWhere(Expression arg0, Expression arg1);
-
-    
     }
 
     interface IExpressionVisitorConstant<out T>
@@ -39,6 +37,6 @@ namespace HWClassLibrary.sqlass
         T Qualifier { get; }
     }
 
-    internal interface IExpressionVisitorContext
-    { }
+    interface IExpressionVisitorContext
+    {}
 }

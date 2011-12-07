@@ -17,7 +17,6 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Data.Common;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;

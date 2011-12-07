@@ -110,11 +110,11 @@ namespace HWClassLibrary.sqlass.MetaData
             }
         }
 
-        private string ParseType(ColumnClass c)
+        string ParseType(ColumnClass c)
         {
-            if (c.DATA_TYPE == "int")
+            if(c.DATA_TYPE == "int")
                 return c.DATA_TYPE;
-            if (c.DATA_TYPE == "nvarchar")
+            if(c.DATA_TYPE == "nvarchar")
                 return c.DATA_TYPE + "(" + c.CHARACTER_MAXIMUM_LENGTH + ")";
             throw new NotImplementedException();
         }

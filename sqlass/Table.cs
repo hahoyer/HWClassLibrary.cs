@@ -29,7 +29,7 @@ using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    public sealed class Table<T,TKey>
+    public sealed class Table<T, TKey>
         : Dumpable
           , IQueryable<T>
           , IExpressionVisitorConstant<IQualifier<string>>
@@ -38,12 +38,12 @@ namespace HWClassLibrary.sqlass
         where T : ISQLSupportProvider, ISQLKeyProvider<TKey>
     {
         readonly TableContext _context;
-        readonly DictionaryEx<TKey, T> _cache; 
+        readonly DictionaryEx<TKey, T> _cache;
 
         public Table(Context context, Table metaData)
         {
             _context = new TableContext(context, metaData);
-            _cache = new DictionaryEx<TKey, T>(key=> this.Single(t => t.SQLKey.Equals(key)));
+            _cache = new DictionaryEx<TKey, T>(key => this.Single(t => t.SQLKey.Equals(key)));
         }
 
         Expression IQueryable.Expression { get { return Expression.Constant(this); } }
@@ -81,7 +81,5 @@ namespace HWClassLibrary.sqlass
     }
 
     public sealed class Reference<T>
-    {
-        
-    }
+    {}
 }

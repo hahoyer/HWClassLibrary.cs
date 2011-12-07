@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -34,24 +35,24 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Indent paramer by 4 spaces
         /// </summary>
-        /// <param name = "x">The x.</param>
-        /// <returns></returns>
+        /// <param name="x"> The x. </param>
+        /// <returns> </returns>
         public static string Indent(this string x) { return x.Replace("\n", "\n    "); }
 
         /// <summary>
         ///     Indent paramer by 4 times count spaces
         /// </summary>
-        /// <param name = "x">The x.</param>
-        /// <param name = "count">The count.</param>
-        /// <returns></returns>
+        /// <param name="x"> The x. </param>
+        /// <param name="count"> The count. </param>
+        /// <returns> </returns>
         public static string Indent(this string x, int count) { return x.Replace("\n", "\n" + Repeat("    ", count)); }
 
         /// <summary>
         ///     Repeats the specified s.
         /// </summary>
-        /// <param name = "s">The s.</param>
-        /// <param name = "count">The count.</param>
-        /// <returns></returns>
+        /// <param name="s"> The s. </param>
+        /// <param name="count"> The count. </param>
+        /// <returns> </returns>
         /// created 15.10.2006 14:38
         public static string Repeat(this string s, int count)
         {
@@ -62,13 +63,12 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
-        ///     Surrounds string by left and right parenthesis. 
-        ///     If string contains any carriage return, some indenting is done also
+        ///     Surrounds string by left and right parenthesis. If string contains any carriage return, some indenting is done also
         /// </summary>
-        /// <param name = "Left"></param>
-        /// <param name = "data"></param>
-        /// <param name = "Right"></param>
-        /// <returns></returns>
+        /// <param name="Left"> </param>
+        /// <param name="data"> </param>
+        /// <param name="Right"> </param>
+        /// <returns> </returns>
         public static string Surround(this string data, string Left, string Right)
         {
             if(data.IndexOf("\n") < 0)
@@ -79,8 +79,8 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Converts string to a string literal.
         /// </summary>
-        /// <param name = "x">The x.</param>
-        /// <returns></returns>
+        /// <param name="x"> The x. </param>
+        /// <returns> </returns>
         /// created 08.01.2007 18:37
         public static string Quote(this string x)
         {
@@ -92,8 +92,8 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Dumps the bytes as hex string.
         /// </summary>
-        /// <param name = "bytes">The bytes.</param>
-        /// <returns></returns>
+        /// <param name="bytes"> The bytes. </param>
+        /// <returns> </returns>
         public static string HexDump(this byte[] bytes)
         {
             var result = "";
@@ -143,11 +143,10 @@ namespace HWClassLibrary.Helper
                 .Select(ToLowerFirstUpper)
                 .Format("");
         }
-        
+
         public static string ToLowerFirstUpper(this string text) { return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant(); }
         public static string TableNameToClassName(this string name) { return name.UnderScoreToCamelCase().ToSingular(); }
         [StringFormatMethod("pattern")]
         public static string ReplaceArgs(this string pattern, params object[] args) { return string.Format(pattern, args); }
-
     }
 }

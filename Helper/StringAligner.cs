@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ namespace HWClassLibrary.Helper
         public Func<string, int, int> FindStartFailed;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref = "FloatingColumn" /> class.
+        ///     Initializes a new instance of the <see cref="FloatingColumn" /> class.
         /// </summary>
         /// created 15.10.2006 15:44
         protected FloatingColumn() { FindStartFailed = ((s, i) => s.Length); }
@@ -66,8 +67,8 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Formats the specified lines beginning at specified positions .
         /// </summary>
-        /// <param name = "lines">The lines, will be modified.</param>
-        /// <param name = "positions">The positions, will be set to end of part handled.</param>
+        /// <param name="lines"> The lines, will be modified. </param>
+        /// <param name="positions"> The positions, will be set to end of part handled. </param>
         /// created 15.10.2006 15:07
         public void Format(string[] lines, int[] positions)
         {
@@ -114,18 +115,18 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Finds the start.of column marker
         /// </summary>
-        /// <param name = "s">The string.</param>
-        /// <param name = "i">The old start position.</param>
-        /// <returns></returns>
+        /// <param name="s"> The string. </param>
+        /// <param name="i"> The old start position. </param>
+        /// <returns> </returns>
         /// created 15.10.2006 15:22
         public abstract int FindStart(string s, int i);
 
         /// <summary>
         ///     Finds the end.of column marker
         /// </summary>
-        /// <param name = "s">The string.</param>
-        /// <param name = "i">The old start position.</param>
-        /// <returns></returns>
+        /// <param name="s"> The string. </param>
+        /// <param name="i"> The old start position. </param>
+        /// <returns> </returns>
         /// created 15.10.2006 15:22
         public abstract int FindEnd(string s, int i);
     }
@@ -138,18 +139,18 @@ namespace HWClassLibrary.Helper
         readonly string[] _pattern;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref = "StringPattern" /> class.
+        ///     Initializes a new instance of the <see cref="StringPattern" /> class.
         /// </summary>
-        /// <param name = "pattern">The pattern.</param>
+        /// <param name="pattern"> The pattern. </param>
         /// created 15.10.2006 14:57
         public StringPattern(string[] pattern) { _pattern = pattern; }
 
         /// <summary>
         ///     Finds the start.of column marker
         /// </summary>
-        /// <param name = "s">The string.</param>
-        /// <param name = "start">The old start position.</param>
-        /// <returns></returns>
+        /// <param name="s"> The string. </param>
+        /// <param name="start"> The old start position. </param>
+        /// <returns> </returns>
         /// created 15.10.2006 15:22
         /// created 15.10.2006 15:23
         public override int FindStart(string s, int start)
@@ -171,9 +172,9 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Finds the end.of column marker
         /// </summary>
-        /// <param name = "s">The string.</param>
-        /// <param name = "start">The old start position.</param>
-        /// <returns></returns>
+        /// <param name="s"> The string. </param>
+        /// <param name="start"> The old start position. </param>
+        /// <returns> </returns>
         /// created 15.10.2006 15:22
         public override int FindEnd(string s, int start)
         {

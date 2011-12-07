@@ -24,6 +24,6 @@ using System;
 
 namespace HWClassLibrary.sqlass.MetaData
 {
-    sealed public class KeyAttribute : Attribute
+    public sealed class KeyAttribute : Attribute
     {}
 }

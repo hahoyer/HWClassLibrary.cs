@@ -1,3 +1,22 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,18 +27,16 @@ using JetBrains.Annotations;
 namespace HWClassLibrary.TreeStructure
 {
     /// <summary>
-    ///     Attribute to define a subnode for treeview. 
-    ///     Only for public properties. 
-    ///     Only the first attribute is considered
+    ///     Attribute to define a subnode for treeview. Only for public properties. Only the first attribute is considered
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property), MeansImplicitUse]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [MeansImplicitUse]
     public class NodeAttribute : Attribute
     {
         public readonly string IconKey;
 
         /// <summary>
-        ///     Default attribute to define a subnode for treeview. 
-        ///     Property name will be used as title of subnode
+        ///     Default attribute to define a subnode for treeview. Property name will be used as title of subnode
         /// </summary>
         /// created 06.02.2007 23:35
         public NodeAttribute() { }
@@ -27,7 +44,7 @@ namespace HWClassLibrary.TreeStructure
         /// <summary>
         ///     Attribute to define a subnode for treeview with title provided
         /// </summary>
-        /// <param name = "iconKey">The icon key.</param>
+        /// <param name="iconKey"> The icon key. </param>
         /// created 06.02.2007 23:35
         public NodeAttribute(string iconKey) { IconKey = iconKey; }
     }
@@ -38,12 +55,12 @@ namespace HWClassLibrary.TreeStructure
     [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
     public class AdditionalNodeInfoAttribute : Attribute
     {
-        private readonly string _property;
+        readonly string _property;
 
         /// <summary>
         ///     Initializes a new instance of the AdditionalNodeInfoAttribute class.
         /// </summary>
-        /// <param name = "property">The property.</param>
+        /// <param name="property"> The property. </param>
         /// created 07.02.2007 00:47
         public AdditionalNodeInfoAttribute(string property) { _property = property; }
 
