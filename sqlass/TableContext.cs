@@ -68,7 +68,7 @@ namespace HWClassLibrary.sqlass
             var methodInfo = typeof(Handler<T>).GetMethod(method.Name);
             if(methodInfo == null)
                 throw new MissingMethodException(method.Name);
-            return (T) methodInfo.Invoke(this, arguments.Cast<object>().ToArray());
+            return (T) methodInfo.Invoke(null, arguments.Cast<object>().ToArray());
         }
 
         internal void AddPendingChange(IPendingChange data) { _context.AddPendingChange(data); }

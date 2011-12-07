@@ -51,7 +51,7 @@ namespace HWClassLibrary.sqlass.T4
         }
 
         bool IsLast(Column column) { return Columns.Last() == column; }
-        internal string TableTypeName { get { return "Table<" + ClassName + ">"; } }
+        internal string TableTypeName { get { return "Table<{0}, {1}>".ReplaceArgs(ClassName, KeyType); } }
         bool HasSQLKey { get { return Columns.Any(column => column.IsKey); } }
         string KeyProvider { get
         {

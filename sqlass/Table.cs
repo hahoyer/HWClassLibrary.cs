@@ -23,22 +23,28 @@ using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using HWClassLibrary.Helper;
 using HWClassLibrary.sqlass.MetaData;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    public sealed class Table<T>
+    public sealed class Table<T,TKey>
         : Dumpable
           , IQueryable<T>
           , IExpressionVisitorConstant<IQualifier<string>>
           , IMetaDataProvider
           , IExpressionVisitorConstant<string>
-        where T : ISQLSupportProvider
+        where T : ISQLSupportProvider, ISQLKeyProvider<TKey>
     {
         readonly TableContext _context;
+        readonly DictionaryEx<TKey, T> _cache; 
 
-        public Table(Context context, Table metaData) { _context = new TableContext(context, metaData); }
+        public Table(Context context, Table metaData)
+        {
+            _context = new TableContext(context, metaData);
+            _cache = new DictionaryEx<TKey, T>(key=> this.Single(t => t.SQLKey.Equals(key)));
+        }
 
         Expression IQueryable.Expression { get { return Expression.Constant(this); } }
         IQueryProvider IQueryable.Provider { get { return _context; } }
@@ -65,12 +71,8 @@ namespace HWClassLibrary.sqlass
 
         string IExpressionVisitorConstant<string>.Qualifier { get { return _context.MetaData.SelectString; } }
         IQualifier<string> IExpressionVisitorConstant<IQualifier<string>>.Qualifier { get { return _context.MetaData; } }
-        
-        public T Find(int key)
-        {
-            NotImplementedMethod(key);
-            return default(T);
-        }
+
+        public T Find(TKey key) { return _cache.Find(key); }
     }
 
     public interface IMetaDataProvider

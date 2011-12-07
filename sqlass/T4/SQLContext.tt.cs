@@ -13,7 +13,7 @@ namespace HWClassLibrary.sqlass.T4
     using System;
     
     
-    #line 1 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+    #line 1 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "10.0.0.0")]
     public partial class SQLContext : SQLContextBase
     {
@@ -22,21 +22,21 @@ namespace HWClassLibrary.sqlass.T4
             this.Write("using System;\r\nusing HWClassLibrary.Helper;\r\nusing HWClassLibrary.sqlass;\r\nusing " +
                     "");
             
-            #line 5 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 5 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_context.NameSpace));
             
             #line default
             #line hidden
             this.Write(".Tables;\r\n\r\nnamespace ");
             
-            #line 7 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 7 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_context.NameSpace));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n    sealed public class Container\r\n    {");
             
-            #line 10 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 10 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 
 	    foreach (var table in _tables)
         {
@@ -45,21 +45,21 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write(" \r\n        public readonly ");
             
-            #line 13 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 13 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(table.TableTypeName));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 13 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 13 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(table.ClassName));
             
             #line default
             #line hidden
             this.Write(";");
             
-            #line 13 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 13 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 
         }
             
@@ -67,7 +67,7 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write("\r\n        public Container(Context context)\r\n        {");
             
-            #line 17 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 17 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 
     	    foreach (var table in _tables)
             {
@@ -76,28 +76,28 @@ namespace HWClassLibrary.sqlass.T4
             #line hidden
             this.Write(" \r\n            ");
             
-            #line 20 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 20 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(table.ClassName));
             
             #line default
             #line hidden
             this.Write(" = new ");
             
-            #line 20 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 20 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(table.TableTypeName));
             
             #line default
             #line hidden
             this.Write("(context, SQLSupport.");
             
-            #line 20 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 20 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(table.ClassName));
             
             #line default
             #line hidden
             this.Write(".MetaDataSupport);");
             
-            #line 20 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 20 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 
             }
             
@@ -116,7 +116,7 @@ namespace HWClassLibrary.sqlass.T4
 }
 ");
             
-            #line 33 "c:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
+            #line 33 "C:\disks\anne.data\data\develop\HWsqlass\src\HWClassLibrary\sqlass\T4\SQLContext.tt"
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 

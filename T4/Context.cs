@@ -172,7 +172,6 @@ namespace HWClassLibrary.T4
                 .Cast<ProjectItem>()
                 .ToDictionary(projectItem => projectItem.FileNames[0]);
 
-            //Tracer.LaunchDebugger();
             // Remove unused items from the project
             var toDelete = projectFiles
                 .Where(pair => !newFiles.Contains(pair.Key) && pair.Key != FullMainFileName);

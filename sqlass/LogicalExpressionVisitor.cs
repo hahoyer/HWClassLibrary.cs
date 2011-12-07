@@ -23,46 +23,47 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using HWClassLibrary.Debug;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    abstract class LogicalExpressionVisitor<T> : Dumpable
+    abstract class LogicalExpressionVisitor<T> : ExpressionVisitor<T>
     {
-        internal T Visit(Expression expression)
+        internal override T Visit(Expression expression)
         {
             switch(expression.NodeType)
             {
+                case ExpressionType.Convert:
+                    return VisitConvert((UnaryExpression)expression);
                 case ExpressionType.Equal:
                     return VisitCompareOperation((BinaryExpression) expression);
                 case ExpressionType.MemberAccess:
                     return VisitMemberAccess((MemberExpression) expression);
-                case ExpressionType.Constant:
-                    return VisitConstant((ConstantExpression) expression);
                 case ExpressionType.Parameter:
-                    return VisitParameter((ParameterExpression)expression);
+                    return VisitParameter((ParameterExpression) expression);
             }
-            Tracer.FlaggedLine(expression.NodeType.ToString());
-            NotImplementedMethod(expression);
-            return default(T);
+            return base.Visit(expression);
         }
-        
+
+
+        protected override T VisitConstant(Type type, object value)
+        {
+            if(type == typeof(int))
+                return Constant((int) value);
+            return base.VisitConstant(type, value);
+        }
+
+        T VisitCompareOperation(BinaryExpression expression) { return CompareOperation(expression.NodeType, Visit(expression.Left), Visit(expression.Right)); }
+        T VisitConvert(UnaryExpression expression) { return Visit(expression.Operand); }
+        T VisitMemberAccess(MemberExpression expression) { return MemberAccess(Visit(expression.Expression), expression.Member); }
         T VisitParameter(ParameterExpression expression) { return Parameter(expression.Name); }
 
-        T VisitConstant(ConstantExpression expression)
-        {
-            if(expression.Type == typeof(int))
-                return Constant((int) expression.Value);
-            NotImplementedMethod(expression);
-            return default(T);
-        }
+        [UsedImplicitly]
+        public T VisitCallEquals(Expression arg0, Expression arg1) { return CompareOperation(ExpressionType.Equal, Visit(arg0), Visit(arg1)); }
 
-        T VisitMemberAccess(MemberExpression expression) { return MemberAccess(Visit(expression.Expression), expression.Member); }
-        
-        T VisitCompareOperation(BinaryExpression expression) { return CompareOperation(expression.NodeType, Visit(expression.Left), Visit(expression.Right)); }
-
+        protected abstract T CompareOperation(ExpressionType nodeType, T left, T right);
         protected abstract T Constant(int value);
         protected abstract T MemberAccess(T qualifier, MemberInfo member);
-        protected abstract T CompareOperation(ExpressionType nodeType, T left, T right);
         protected abstract T Parameter(string name);
     }
 

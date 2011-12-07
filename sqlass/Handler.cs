@@ -29,9 +29,10 @@ namespace HWClassLibrary.sqlass
     static class Handler<T>
     {
         [UsedImplicitly]
-        public static T Single(Expression expression)
+        public static T Single(Expression table, Expression condition)
         {
-            Tracer.DumpStaticMethodWithData(expression);
+            var list = new StringVisitor().VisitCallWhere(table, condition);
+            Tracer.DumpStaticMethodWithData(table, condition);
             Tracer.TraceBreak();
             return default(T);
         }

@@ -44,5 +44,10 @@ namespace HWClassLibrary.sqlass
             NotImplementedMethod(nodeType);
             return null;
         }
+        protected override string Visit(IExpressionVisitorConstant<string> target)
+        {
+            NotImplementedMethod(target);
+            return null;
+        }
     }
 }

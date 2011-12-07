@@ -37,7 +37,7 @@ namespace HWClassLibrary.sqlass
             _context = context;
             _index = _reader.GetEnumerator();
         }
-        void IDisposable.Dispose() { NotImplementedMethod(); }
+        void IDisposable.Dispose() {}
         bool IEnumerator.MoveNext() { return _index.MoveNext(); }
         void IEnumerator.Reset() { _index.Reset(); }
         TElement IEnumerator<TElement>.Current { get { return (TElement) _context.CreateObject((DbDataRecord) _index.Current); } }

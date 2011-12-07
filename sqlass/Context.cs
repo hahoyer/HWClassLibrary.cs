@@ -86,7 +86,7 @@ namespace HWClassLibrary.sqlass
                 throw new UnsavedChangedException();
 
             var type = container.GetType();
-            var target = typeof(Table<>);
+            var target = typeof(Table<,>);
 
             var modell = type
                 .GetMembers()

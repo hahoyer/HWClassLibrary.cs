@@ -22,65 +22,16 @@ using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
 using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    abstract class CollectionExpressionVisitor<T> : Dumpable
+    abstract class CollectionExpressionVisitor<T> : ExpressionVisitor<T>
     {
-        internal T Visit(Expression expression)
-        {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.Call:
-                    return VisitCall((MethodCallExpression)expression);
-                case ExpressionType.Constant:
-                    return VisitConstant((ConstantExpression)expression);
-            }
-            Tracer.FlaggedLine(expression.NodeType.ToString());
-            NotImplementedMethod(expression);
-            return default(T);
-        }
-
-        T VisitConstant(ConstantExpression expression)
-        {
-            var value = expression.Value;
-            var ssr = value as IExpressionVisitorConstant<T>;
-            if (ssr != null)
-                return Visit(ssr);
-
-            NotImplementedMethod(expression);
-            return default(T);
-        }
-
-        protected abstract T Visit(IExpressionVisitorConstant<T> target);
-
-        T VisitCall(MethodCallExpression expression)
-        {
-            var method = expression.Method;
-            var arguments = expression.Arguments.ToArray();
-            var methodInfo = GetType().GetMethod("VisitCall" + method.Name);
-            if (methodInfo == null)
-            {
-                Tracer.FlaggedLine(
-                    "\n T VisitCall"
-                    + method.Name
-                    + "("
-                    + arguments.Length.Array(i => "Expression arg" + i).Format(", ")
-                    + ")\n{\nNotImplementedFunction("
-                    + arguments.Length.Array(i => "arg" + i).Format(", ")
-                    + ");\nreturn default(T);\n}\n\n"
-                    + arguments.Length.Array(i => "arg" + i + " = " + Tracer.Dump(arguments[i])).Format("\n")
-                    );
-                Tracer.TraceBreak();
-                throw new MissingMethodException(method.Name);
-            }
-            return (T)methodInfo.Invoke(this, arguments.Cast<object>().ToArray());
-        }
-
         [UsedImplicitly]
         public abstract T VisitCallWhere(Expression arg0, Expression arg1);
+
+    
     }
 
     interface IExpressionVisitorConstant<out T>

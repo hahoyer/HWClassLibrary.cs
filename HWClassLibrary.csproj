@@ -74,6 +74,7 @@
     <Compile Include="sqlass\Context.cs" />
     <Compile Include="sqlass\Enumerator.cs" />
     <Compile Include="sqlass\CollectionExpressionVisitor.cs" />
+    <Compile Include="sqlass\ExpressionVisitor.cs" />
     <Compile Include="sqlass\ILogicalStructure.cs" />
     <Compile Include="sqlass\Insert.cs" />
     <Compile Include="sqlass\IPendingChange.cs" />

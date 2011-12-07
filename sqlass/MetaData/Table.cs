@@ -21,10 +21,10 @@ using System.Data.Common;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Linq.Expressions;
 using System.Reflection;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
-using HWClassLibrary.sqlass.T4;
 
 
 namespace HWClassLibrary.sqlass.MetaData
@@ -79,7 +79,7 @@ namespace HWClassLibrary.sqlass.MetaData
 
         static bool IsNullableField(FieldInfo fi) { return fi.GetAttribute<NullableAttribute>(true) != null; }
         static bool IsKeyField(FieldInfo fi) { return fi.GetAttribute<KeyAttribute>(true) != null; }
-        static bool IsReferenceType(Type metaColumnType) { return metaColumnType.IsGenericType && metaColumnType.GetGenericTypeDefinition() == typeof(Reference<>); }
+        static bool IsReferenceType(Type metaColumnType) { return metaColumnType.IsGenericType && metaColumnType.GetGenericTypeDefinition() == typeof(T4.Reference<>); }
 
         static Column[] ObtainColumns(Type metaType)
         {
@@ -255,5 +255,6 @@ namespace HWClassLibrary.sqlass.MetaData
         }
 
         public object CreateObject(DbDataRecord current, Context context) { return _createObjectFunction(current, context); }
+        public bool KeyFilter(ISQLSupportProvider sqlSupportProvider, object key) { throw new NotImplementedException(); }
     }
 }
