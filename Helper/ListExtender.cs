@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using HWClassLibrary.Debug;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
 {
@@ -143,6 +144,7 @@ namespace HWClassLibrary.Helper
             where T : class
             where TResult : class { return target == default(T) ? default(TResult) : function(target); }
 
+        [NotNull]
         public static IEnumerable<T> Array<T>(this int count, Func<int, T> getValue) { return new ArrayQuery<T>(count, getValue); }
 
         sealed class ArrayQuery<T> : IEnumerable<T>
