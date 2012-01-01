@@ -1,43 +1,62 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Linq;
 using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.DataBase
 {
-    public class DataBase
+    public abstract class DataBase : Dumpable
     {
-        private SQLiteConnection _connection;
-        private readonly string _dbPath;
+        DbConnection _connection;
+        readonly string _dbPath;
 
         protected DataBase(string dbPath) { _dbPath = dbPath; }
 
-        private SQLiteConnection Connection
+        DbConnection Connection
         {
             get
             {
                 if(_connection == null)
                 {
-                    _connection = new SQLiteConnection {ConnectionString = ConnectionString};
+                    _connection = CreateConnection(_dbPath);
                     _connection.Open();
                 }
                 return _connection;
             }
         }
 
-        private string ConnectionString { get { return "Data Source=" + _dbPath + ";Version=3;"; } }
+        protected abstract DbConnection CreateConnection(string dbPath);
 
         protected T[] Select<T>() where T : new()
         {
             var command = Connection.CreateCommand();
             command.CommandText = SQLGenerator<T>.SelectCommand;
-            SQLiteDataReader reader;
+            DbDataReader reader;
             try
             {
                 reader = command.ExecuteReader();
             }
-            catch(SQLiteException e)
+            catch(Exception e)
             {
                 var expectedMessage = "SQLite error\r\nno such table: " + SQLGenerator<T>.TableName;
                 if(expectedMessage != e.Message)
@@ -71,7 +90,7 @@ namespace HWClassLibrary.DataBase
             Tracer.Assert(rowsAffected == 1);
         }
 
-        private void CreateTable<T>()
+        void CreateTable<T>()
         {
             var command = Connection.CreateCommand();
             command.CommandText = SQLGenerator<T>.CreateTableCommand;

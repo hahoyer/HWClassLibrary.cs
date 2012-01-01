@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -24,21 +25,20 @@ using HWClassLibrary.Debug;
 namespace HWClassLibrary.Debug
 {
     /// <summary>
-    ///     Used to control dump.
-    ///     Use ToString function
+    ///     Used to control dump. Use ToString function
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public sealed class DumpAttribute : DumpClassAttribute
     {
-        private readonly string _name;
+        readonly string _name;
 
         /// <summary>
         ///     set "ToString" as dump behaviour of class
         /// </summary>
-        /// <param name = "top">true if Dump has been called with that object, false if it is a recursive call within Dump process</param>
-        /// <param name = "t">the type to dump. Is the type of any base class of "x"</param>
-        /// <param name = "x">the object to dump</param>
-        /// <returns></returns>
+        /// <param name="top"> true if Dump has been called with that object, false if it is a recursive call within Dump process </param>
+        /// <param name="t"> the type to dump. Is the type of any base class of "x" </param>
+        /// <param name="x"> the object to dump </param>
+        /// <returns> </returns>
         public override string Dump(bool top, Type t, object x)
         {
             try
@@ -55,7 +55,7 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     ctor
         /// </summary>
-        /// <param name = "name"></param>
+        /// <param name="name"> </param>
         public DumpAttribute(string name) { _name = name; }
     }
 }

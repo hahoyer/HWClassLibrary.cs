@@ -1,3 +1,22 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -11,7 +30,7 @@ using Microsoft.CSharp;
 
 namespace HWClassLibrary.Helper
 {
-    internal static class CSharpCompiler
+    static class CSharpCompiler
     {
         public static object Exec(string fileName, string namespaceName, string typeName, string methodName, params object[] args)
         {
@@ -31,13 +50,13 @@ namespace HWClassLibrary.Helper
             return methodInfo.Invoke(null, args);
         }
 
-        private static MethodInfo FindMethod(_Assembly assembly, string namespaceName, string typeName, string methodName)
+        static MethodInfo FindMethod(_Assembly assembly, string namespaceName, string typeName, string methodName)
         {
             var type = FindType(assembly, namespaceName, typeName);
             return FindMethod(type, methodName);
         }
 
-        private static Type FindType(_Assembly assembly, string namespaceName, string typeName)
+        static Type FindType(_Assembly assembly, string namespaceName, string typeName)
         {
             if(namespaceName != "?" && typeName != "?")
             {
@@ -50,14 +69,14 @@ namespace HWClassLibrary.Helper
             return types.FirstOrDefault(t => IsMatch(t, namespaceName, typeName));
         }
 
-        private static bool IsMatch(Type type, string namespaceName, string typeName)
+        static bool IsMatch(Type type, string namespaceName, string typeName)
         {
             if(namespaceName != "?")
                 return type.Namespace == namespaceName;
             return type.Name == typeName;
         }
 
-        private static MethodInfo FindMethod(Type type, string methodName)
+        static MethodInfo FindMethod(Type type, string methodName)
         {
             if(methodName == "?")
                 return type.GetMethods()[0];
@@ -65,10 +84,10 @@ namespace HWClassLibrary.Helper
         }
     }
 
-    internal class CSharpCompilerErrors : Exception
+    class CSharpCompilerErrors : Exception
     {
         public CompilerErrorCollection CompilerErrorCollection { get { return _compilerErrorCollection; } }
-        private readonly CompilerErrorCollection _compilerErrorCollection;
+        readonly CompilerErrorCollection _compilerErrorCollection;
 
         public CSharpCompilerErrors(CompilerErrorCollection compilerErrorCollection) { _compilerErrorCollection = compilerErrorCollection; }
     }

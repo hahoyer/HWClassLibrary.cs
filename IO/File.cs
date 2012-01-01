@@ -1,3 +1,22 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,9 +33,9 @@ namespace HWClassLibrary.IO
     [Serializable]
     public class File
     {
-        private readonly string _name;
+        readonly string _name;
 
-        private Uri _uriCache;
+        Uri _uriCache;
 
         public Uri Uri
         {
@@ -33,10 +52,10 @@ namespace HWClassLibrary.IO
         /// <summary>
         ///     constructs a FileInfo
         /// </summary>
-        /// <param name = "name">the filename</param>
+        /// <param name="name"> the filename </param>
         public static File m(string name) { return new File(name); }
 
-        private File(string name) { _name = name; }
+        File(string name) { _name = name; }
 
         public File() { _name = ""; }
 
@@ -73,7 +92,7 @@ namespace HWClassLibrary.IO
             }
         }
 
-        private string StringFromHTTP
+        string StringFromHTTP
         {
             get
             {
@@ -162,19 +181,17 @@ namespace HWClassLibrary.IO
         /// </summary>
         public bool IsDirectory { get { return Directory.Exists(_name); } }
 
-        private FileSystemInfo _fileInfoCache;
+        FileSystemInfo _fileInfoCache;
 
-        private FileSystemInfo FileSystemInfo
+        FileSystemInfo FileSystemInfo
         {
             get
             {
                 if(_fileInfoCache == null)
-                {
                     if(IsDirectory)
                         _fileInfoCache = new DirectoryInfo(_name);
                     else
                         _fileInfoCache = new FileInfo(_name);
-                }
                 return _fileInfoCache;
             }
         }
@@ -184,7 +201,7 @@ namespace HWClassLibrary.IO
         /// </summary>
         public string DirectoryString { get { return GetDirectoryString(); } }
 
-        private string GetDirectoryString()
+        string GetDirectoryString()
         {
             var result = "";
             foreach(var fi in GetItems())
@@ -195,21 +212,21 @@ namespace HWClassLibrary.IO
             return result;
         }
 
-        private FileSystemInfo[] GetItems() { return ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray(); }
+        FileSystemInfo[] GetItems() { return ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray(); }
         public File[] Items { get { return GetItems().Select(f => m(f.FullName)).ToArray(); } }
 
         /// <summary>
         ///     Gets the directory of the source file that called this function
         /// </summary>
-        /// <param name = "depth">The depth.</param>
-        /// <returns></returns>
+        /// <param name="depth"> The depth. </param>
+        /// <returns> </returns>
         public static string SourcePath(int depth) { return new FileInfo(SourceFileName(depth + 1)).DirectoryName; }
 
         /// <summary>
         ///     Gets the name of the source file that called this function
         /// </summary>
-        /// <param name = "depth">stack depths of the function used.</param>
-        /// <returns></returns>
+        /// <param name="depth"> stack depths of the function used. </param>
+        /// <returns> </returns>
         public static string SourceFileName(int depth)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);

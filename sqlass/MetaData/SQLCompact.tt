@@ -1,0 +1,68 @@
+﻿<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Xml.dll" #>
+<#@ Assembly Name="System.Data.dll" #>
+<#@ Assembly Name="$(TargetDir)System.Data.SqlServerCe.dll" #>
+<#@ Assembly Name="$(TargetDir)HWClassLibrary.dll" #>
+<#@ import namespace="global::System.Data" #>
+<#@ import namespace="global::System.Data.SqlClient" #>
+<#@ import namespace="global::System.Data.SqlServerCe" #>
+<#@ import namespace="global::HWClassLibrary.sqlass" #>
+<#@ import namespace="global::HWClassLibrary.Helper" #>
+
+using System.Data.Common;
+using System.Linq;
+using HWClassLibrary.Helper;
+
+namespace HWClassLibrary.sqlass.MetaData.SQLCompact
+{
+<# 
+var context = new Context();
+context.Connection = new SqlCeConnection("Data Source=c:\\MSSQL.sdf");
+var tables = new[] { "Tables", "Columns", "KEY_COLUMN_USAGE", "REFERENTIAL_CONSTRAINTS", "TABLE_CONSTRAINTS" };
+foreach (var table in tables) 
+{#>
+    public sealed class <#=table.TableNameToClassName() #>Class : IReaderInitialize
+    {<#
+	var statement = "SELECT * FROM INFORMATION_SCHEMA." + table;
+    var columns = context.Schema(statement).Rows;	
+	foreach (DataRow column in columns)
+	{#>
+ 
+        public <#= column["DataType"] #> <#= column["ColumnName"] #>;<#
+	}#>
+
+
+        static public <#=table.TableNameToClassName() #>Class[] Initialize(Context context) 
+        {
+            return context
+                .Execute<<#=table.TableNameToClassName() #>Class>(<#= statement.Quote() #>)
+                .ToArray();
+        }
+
+        public void Initialize(DbDataReader reader) 
+        {<#
+	foreach (DataRow column in columns)
+	{#>
+ 
+            <#= column["ColumnName"] #> = reader[<#= column["ColumnName"].ToString().Quote() #>].Convert<<#= column["DataType"] #>>();<#
+	}#>
+            
+        }
+
+        public override string ToString()
+        {
+            return<#
+	var isFirst = true;
+	foreach (DataRow column in columns)
+	{#>
+ 
+            <#=(isFirst ? "" : " + \" \" + ") + column["ColumnName"] #><#
+	    isFirst = false;
+	}#>;            
+        }
+    }
+
+<#
+}#>
+}

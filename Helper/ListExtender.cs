@@ -1,5 +1,6 @@
-//     Compiler for programming language "Reni"
-//     Copyright (C) 2011 Harald Hoyer
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using HWClassLibrary.Debug;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
 {
@@ -104,10 +105,10 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Checks if object starts with given object.
         /// </summary>
-        /// <typeparam name = "T"></typeparam>
-        /// <param name = "x">The x.</param>
-        /// <param name = "y">The y.</param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="x"> The x. </param>
+        /// <param name="y"> The y. </param>
+        /// <returns> </returns>
         public static bool StartsWith<T>(this IList<T> x, IList<T> y)
         {
             if(x.Count < y.Count)
@@ -121,10 +122,10 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Checks if object starts with given object and is longer.
         /// </summary>
-        /// <typeparam name = "T"></typeparam>
-        /// <param name = "x">The x.</param>
-        /// <param name = "y">The y.</param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="x"> The x. </param>
+        /// <param name="y"> The y. </param>
+        /// <returns> </returns>
         public static bool StartsWithAndNotEqual<T>(this IList<T> x, IList<T> y)
         {
             if(x.Count == y.Count)
@@ -143,6 +144,7 @@ namespace HWClassLibrary.Helper
             where T : class
             where TResult : class { return target == default(T) ? default(TResult) : function(target); }
 
+        [NotNull]
         public static IEnumerable<T> Array<T>(this int count, Func<int, T> getValue) { return new ArrayQuery<T>(count, getValue); }
 
         sealed class ArrayQuery<T> : IEnumerable<T>
@@ -182,5 +184,36 @@ namespace HWClassLibrary.Helper
                 object IEnumerator.Current { get { return ((IEnumerator<T>) this).Current; } }
             }
         }
+
+        public static IEnumerable<Tuple<TKey, TLeft, TRight>> Merge<TKey, TLeft, TRight>(this IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> getLeftKey, Func<TRight, TKey> getRightKey)
+            where TLeft : class
+            where TRight : class
+        {
+            var leftCommon = left.Select(l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
+            var rightCommon = right.Select(r => new Tuple<TKey, TLeft, TRight>(getRightKey(r), null, r));
+            return leftCommon.Union(rightCommon).GroupBy(t => t.Item1).Select(Merge);
+        }
+
+        public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>(IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping)
+            where TLeft : class
+            where TRight : class
+        {
+            var list = grouping.ToArray();
+            switch(list.Length)
+            {
+                case 1:
+                    return list[0];
+                case 2:
+                    if(list[0].Item2 == null && list[1].Item3 == null)
+                        return new Tuple<TKey, TLeft, TRight>(grouping.Key, list[1].Item2, list[0].Item3);
+                    if(list[1].Item2 == null && list[0].Item3 == null)
+                        return new Tuple<TKey, TLeft, TRight>(grouping.Key, list[0].Item2, list[1].Item3);
+                    break;
+            }
+            throw new DuplicateKeyException();
+        }
     }
+
+    class DuplicateKeyException : Exception
+    {}
 }

@@ -1,3 +1,22 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2011 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,19 +29,23 @@ namespace HWClassLibrary.Helper
         where T : IComparable<T>
     {
         [EnableDump]
-        private readonly List<T> _data;
+        readonly List<T> _data;
 
         public Set()
             : this(new T[0]) { }
 
-        private Set(T[] ts) { _data = new List<T>(ts); }
+        Set(T[] ts) { _data = new List<T>(ts); }
 
-        private int Count { get { return _data.Count; } }
+        int Count { get { return _data.Count; } }
 
         /// <summary>
         ///     Returns true if the instance is empty.
         /// </summary>
-        /// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
+        /// <value>
+        ///     <c>true</c>
+        ///     if this instance is empty; otherwise,
+        ///     <c>false</c>
+        ///     .</value>
         /// created 14.07.2007 16:43 on HAHOYER-DELL by hh
         [DisableDump]
         public bool IsEmpty { get { return Count == 0; } }
@@ -32,7 +55,7 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Adds an element.
         /// </summary>
-        /// <param name = "t">The t.</param>
+        /// <param name="t"> The t. </param>
         /// created 14.07.2007 16:44 on HAHOYER-DELL by hh
         public void Add(T t)
         {
@@ -44,16 +67,14 @@ namespace HWClassLibrary.Helper
         public bool Contains(T t)
         {
             for(var i = 0; i < _data.Count; i++)
-            {
                 if(_data[i].CompareTo(t) == 0)
                     return true;
-            }
             return false;
         }
 
-        private Set<T> And(Set<T> other) { return _data.Where(other.Contains).ToSet(); }
+        Set<T> And(Set<T> other) { return _data.Where(other.Contains).ToSet(); }
 
-        private Set<T> Or(IEnumerable<T> other)
+        Set<T> Or(IEnumerable<T> other)
         {
             var result = new Set<T>(_data.ToArray());
             foreach(var value in other)
@@ -69,9 +90,9 @@ namespace HWClassLibrary.Helper
             return result;
         }
 
-        private Set<T> Without(Set<T> other) { return _data.Where(x => !other.Contains(x)).ToSet(); }
+        Set<T> Without(Set<T> other) { return _data.Where(x => !other.Contains(x)).ToSet(); }
 
-        private T this[int i] { get { return _data[i]; } }
+        T this[int i] { get { return _data[i]; } }
 
         public static Set<T> operator &(Set<T> a, Set<T> b) { return a.And(b); }
 

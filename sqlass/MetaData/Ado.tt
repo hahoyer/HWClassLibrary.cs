@@ -1,0 +1,68 @@
+﻿<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Xml.dll" #>
+<#@ Assembly Name="System.Data.dll" #>
+<#@ Assembly Name="$(TargetDir)System.Data.SQLite.dll" #>
+<#@ Assembly Name="$(TargetDir)HWClassLibrary.dll" #>
+<#@ import namespace="global::System.Data" #>
+<#@ import namespace="global::System.Data.SqlClient" #>
+<#@ import namespace="global::System.Data.SQLite" #>
+<#@ import namespace="global::HWClassLibrary.sqlass" #>
+<#@ import namespace="global::HWClassLibrary.Helper" #>
+
+using System.Linq;
+using HWClassLibrary.Helper;
+
+namespace HWClassLibrary.sqlass.MetaData.Ado
+{
+<# 
+var context = new Context { Connection = new SQLiteConnection("Data Source=test.sqlite;Version=3;") };
+foreach (var metaTable in context.Schema) 
+{#>
+    public sealed class <#=metaTable["CollectionName"].ToSingular() #>Class 
+    {<#
+	var columns = context.SubSchema(metaTable["CollectionName"].ToString()).Columns;	
+	foreach (DataColumn column in columns)
+	{#>
+ 
+        public <#= column.DataType.FullName #> <#= column.ColumnName #>;<#
+	}#>
+
+
+        static public <#=metaTable["CollectionName"].ToSingular() #>Class[] Initialize(Context context) 
+        {
+            return context
+                .Connection
+                .GetSchema(<#= metaTable["CollectionName"].ToString().Quote() #>)
+                .Select()
+                .Select
+                (
+                    row=>new <#= metaTable["CollectionName"].ToSingular() #>Class 
+                    {<#
+	foreach (DataColumn column in columns)
+	{#>
+ 
+                        <#= column.ColumnName #> = row[<#= column.ColumnName.Quote() #>].To<#= column.DataType.Name #>() ,<#
+	}#>
+            
+                    }
+                )
+                .ToArray();
+        }
+
+        public override string ToString()
+        {
+            return<#
+	var isFirst = true;
+	foreach (DataColumn column in columns)
+	{#>
+ 
+            <#=(isFirst? "": " + \" \" + ") + column.ColumnName #><#
+	    isFirst = false;
+	}#>;            
+        }
+    }
+
+<#
+}#>
+}
