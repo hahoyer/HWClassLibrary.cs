@@ -173,13 +173,16 @@ namespace HWClassLibrary.Debug
 
                 s = IndentLine(_isLineStart, s, _indentCount);
 
-                if(_writeInitiator.ThreadChanged)
-                    if(_isLineStart)
-                        s = _writeInitiator.ThreadFlagString + s;
-                    else if(s.Length > 0 && s[0] == '\n')
-                        s = "\n" + _writeInitiator.ThreadFlagString + s;
-                    else
-                        throw new NotImplementedException();
+                if (_writeInitiator.ThreadChanged && Debugger.IsAttached)
+                {
+                    var threadFlagString = _writeInitiator.ThreadFlagString;
+                    if(!_isLineStart)
+                        if(s.Length > 0 && s[0] == '\n')
+                            threadFlagString = "\n" + threadFlagString;
+                        else
+                            throw new NotImplementedException();
+                    System.Diagnostics.Debug.Write(threadFlagString);
+                }
 
                 Write(s, isLine);
 
