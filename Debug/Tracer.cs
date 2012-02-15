@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -173,7 +173,7 @@ namespace HWClassLibrary.Debug
 
                 s = IndentLine(_isLineStart, s, _indentCount);
 
-                if (_writeInitiator.ThreadChanged && Debugger.IsAttached)
+                if(_writeInitiator.ThreadChanged && Debugger.IsAttached)
                 {
                     var threadFlagString = _writeInitiator.ThreadFlagString;
                     if(!_isLineStart)
@@ -220,7 +220,6 @@ namespace HWClassLibrary.Debug
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="assembly"> </param>
         /// <param name="s"> the text </param>
         public static void FlaggedLine(int stackFrameDepth, string s) { Line(MethodHeader(stackFrameDepth + 1, false) + s); }
 
@@ -579,6 +578,7 @@ namespace HWClassLibrary.Debug
                 if(i > 0)
                     result += "\n";
                 Assert(infos != null);
+                Assert(infos[i] != null);
                 result += infos[i].Name;
                 result += "=";
                 result += Dump(p[i]);
@@ -676,7 +676,7 @@ namespace HWClassLibrary.Debug
         /// <param name="b"> if set to <c>true</c> [b]. </param>
         /// <param name="text"> The text. </param>
         [DebuggerHidden]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> text)
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b, Func<string> text)
         {
             if(b)
                 return;
@@ -690,7 +690,7 @@ namespace HWClassLibrary.Debug
         /// <param name="b"> if set to <c>true</c> [b]. </param>
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b)
         {
             if(b)
                 return;
@@ -704,7 +704,7 @@ namespace HWClassLibrary.Debug
         /// created 16.12.2006 18:27
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b) { Assert(1, b); }
+        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b) { Assert(1, b); }
 
         /// <summary>
         ///     Asserts the specified b.
@@ -714,11 +714,11 @@ namespace HWClassLibrary.Debug
         /// created 16.12.2006 18:29
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> s) { Assert(1, b, s); }
+        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b, Func<string> s) { Assert(1, b, s); }
 
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s) { Assert(1, b, () => s); }
+        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b, string s) { Assert(1, b, () => s); }
 
         /// <summary>
         ///     Assertions the failed.
