@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ namespace HWClassLibrary.Helper
         }
     }
 
-    class CSharpCompilerErrors : Exception
+    sealed class CSharpCompilerErrors : Exception
     {
         public CompilerErrorCollection CompilerErrorCollection { get { return _compilerErrorCollection; } }
         readonly CompilerErrorCollection _compilerErrorCollection;
@@ -93,7 +93,7 @@ namespace HWClassLibrary.Helper
     }
 
     [TestFixture]
-    public class Test
+    public sealed class Test
     {
         /// <summary>
         ///     Special test, will not work automatically.

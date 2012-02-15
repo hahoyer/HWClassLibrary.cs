@@ -79,7 +79,7 @@ namespace HWClassLibrary.Helper
             throw new MultipleAttributesException(typeof(TAttribute), @this, inherit, list.ToArray());
         }
 
-        public class MultipleAttributesException : Exception
+        public sealed class MultipleAttributesException : Exception
         {
             [UsedImplicitly]
             readonly Type _attributeType;

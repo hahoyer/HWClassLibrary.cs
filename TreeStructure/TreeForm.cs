@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.TreeStructure
 {
-    public partial class TreeForm : Form
+    public sealed partial class TreeForm : Form
     {
         object _target;
 

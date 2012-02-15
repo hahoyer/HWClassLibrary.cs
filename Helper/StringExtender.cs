@@ -71,7 +71,7 @@ namespace HWClassLibrary.Helper
         /// <returns> </returns>
         public static string Surround(this string data, string Left, string Right)
         {
-            if(data.IndexOf("\n") < 0)
+            if(data.IndexOf("\n", StringComparison.Ordinal) < 0)
                 return Left + data + Right;
             return "\n" + Left + Indent("\n" + data) + "\n" + Right;
         }
@@ -133,7 +133,7 @@ namespace HWClassLibrary.Helper
             return proc.StandardOutput.ReadToEnd();
         }
 
-        public static IO.File FileHandle(this string name) { return IO.File.m(name); }
+        public static IO.File FileHandle(this string name) { return IO.File.Create(name); }
         public static string PathCombine(this string head, params string[] tail) { return Path.Combine(head, Path.Combine(tail)); }
 
         public static string UnderScoreToCamelCase(this string name)

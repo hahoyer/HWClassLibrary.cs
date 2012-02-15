@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -51,9 +51,8 @@ namespace HWClassLibrary.Helper
 
         static bool AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
         {
-            foreach(var ai in a)
-                if(isEqual(ai, bi))
-                    return false;
+            if(a.Any(ai => isEqual(ai, bi)))
+                return false;
             a.Add(bi);
             return true;
         }
@@ -97,9 +96,7 @@ namespace HWClassLibrary.Helper
         public static TimeSpan Sum<T>(this IEnumerable<T> x, Func<T, TimeSpan> selector)
         {
             var result = new TimeSpan();
-            foreach(var element in x)
-                result += selector(element);
-            return result;
+            return x.Aggregate(result, (current, element) => current + selector(element));
         }
 
         /// <summary>
@@ -113,10 +110,7 @@ namespace HWClassLibrary.Helper
         {
             if(x.Count < y.Count)
                 return false;
-            for(var i = 0; i < y.Count; i++)
-                if(!Equals(x[i], y[i]))
-                    return false;
-            return true;
+            return !y.Where((t, i) => !Equals(x[i], t)).Any();
         }
 
         /// <summary>
@@ -214,6 +208,6 @@ namespace HWClassLibrary.Helper
         }
     }
 
-    class DuplicateKeyException : Exception
+    sealed class DuplicateKeyException : Exception
     {}
 }

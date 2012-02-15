@@ -32,7 +32,7 @@ namespace HWClassLibrary.UnitTest
     {
         readonly TestType[] _testTypes;
         public static bool IsModeErrorFocus;
-        readonly File _configFile = File.m("Test.HWconfig");
+        readonly File _configFile = "Test.HWconfig".FileHandle();
         string _status = "Start";
         int _complete;
         string _currentMethodName = "";

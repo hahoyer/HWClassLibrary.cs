@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -31,21 +31,13 @@ namespace HWClassLibrary.IO
     ///     Summary description for File.
     /// </summary>
     [Serializable]
-    public class File
+    public sealed class File
     {
         readonly string _name;
 
         Uri _uriCache;
 
-        public Uri Uri
-        {
-            get
-            {
-                if(_uriCache == null)
-                    _uriCache = new Uri(_name);
-                return _uriCache;
-            }
-        }
+        public Uri Uri { get { return _uriCache ?? (_uriCache = new Uri(_name)); } }
 
         public bool IsFTP { get { return Uri.Scheme == Uri.UriSchemeFtp; } }
 
@@ -53,7 +45,7 @@ namespace HWClassLibrary.IO
         ///     constructs a FileInfo
         /// </summary>
         /// <param name="name"> the filename </param>
-        public static File m(string name) { return new File(name); }
+        internal static File Create(string name) { return new File(name); }
 
         File(string name) { _name = name; }
 
@@ -62,7 +54,7 @@ namespace HWClassLibrary.IO
         /// <summary>
         ///     considers the file as a string. If file existe it should be a text file
         /// </summary>
-        /// <value>the content of the file if existing else null.</value>
+        /// <value> the content of the file if existing else null. </value>
         public string String
         {
             get
@@ -213,7 +205,7 @@ namespace HWClassLibrary.IO
         }
 
         FileSystemInfo[] GetItems() { return ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray(); }
-        public File[] Items { get { return GetItems().Select(f => m(f.FullName)).ToArray(); } }
+        public File[] Items { get { return GetItems().Select(f => Create(f.FullName)).ToArray(); } }
 
         /// <summary>
         ///     Gets the directory of the source file that called this function
