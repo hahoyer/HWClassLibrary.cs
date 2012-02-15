@@ -404,8 +404,9 @@ namespace HWClassLibrary.Debug
             if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
                 return true;
 
-            if(m is FieldInfo)
-                return ((FieldInfo) m).IsPrivate;
+            var fieldInfo = m as FieldInfo;
+            if(fieldInfo != null)
+                return fieldInfo.IsPrivate;
 
             if(((PropertyInfo) m).CanRead)
                 return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;

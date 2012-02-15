@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
 {
@@ -105,8 +106,8 @@ namespace HWClassLibrary.Helper
 
         public static bool operator ==(BigRational left, BigRational right) { return Equals(left, right); }
         public static bool operator !=(BigRational left, BigRational right) { return !Equals(left, right); }
-        public static bool operator ==(BigRational left, int right) { return left.Nominator == right && left.Denominator == 1; }
-        public static bool operator !=(BigRational left, int right) { return !(left == right); }
+        public static bool operator ==([NotNull] BigRational left, int right) { return left.Nominator == right && left.Denominator == 1; }
+        public static bool operator !=([NotNull] BigRational left, int right) { return !(left == right); }
         static BigRational Create(int value) { return new BigRational(value, 1); }
         static BigRational Create(BigInteger value) { return new BigRational(value, 1); }
         public static implicit operator BigRational(int value) { return Create(value); }

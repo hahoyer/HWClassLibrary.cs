@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ namespace HWClassLibrary.sqlass.T4
         {
             File = null;
             AppendText(new SQLContext(this, _tables.ToArray()).TransformText());
-            base.ProcessFiles();
+            ProcessFiles();
         }
     }
 

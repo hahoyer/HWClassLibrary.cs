@@ -91,6 +91,7 @@ namespace HWClassLibrary.IO
                 var req = WebRequest.Create(Uri.AbsoluteUri);
                 var resp = req.GetResponse();
                 var stream = resp.GetResponseStream();
+                Tracer.Assert(stream != null);
                 var streamReader = new StreamReader(stream);
                 var result = streamReader.ReadToEnd();
                 return result;

@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -32,8 +32,4 @@ namespace HWClassLibrary.T4
         [UsedImplicitly]
         public static Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new Context(text, host); }
     }
-}
-
-namespace HWClassLibrary.sqlass
-{
 }

@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ namespace HWClassLibrary.UnitTest
 
         void ShowException(Exception e)
         {
+            Tracer.Assert(_methodInfo.DeclaringType != null);
             Tracer.Line("*********************Exception: " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
             Tracer.Line(e.GetType().FullName);
             Tracer.Line(e.Message);
@@ -46,6 +47,7 @@ namespace HWClassLibrary.UnitTest
 
         public void Run()
         {
+            Tracer.Assert(_methodInfo.DeclaringType != null);
             Tracer.Line("Start " + _methodInfo.ReturnType.Name + " " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
             Tracer.IndentStart();
             try
@@ -69,6 +71,7 @@ namespace HWClassLibrary.UnitTest
             finally
             {
                 Tracer.IndentEnd();
+                Tracer.Assert(_methodInfo.DeclaringType != null);
                 Tracer.Line("End " + _methodInfo.ReturnType.Name + " " + _methodInfo.DeclaringType.FullName + "." + _methodInfo.Name);
             }
         }

@@ -62,7 +62,7 @@ namespace HWClassLibrary.sqlass
             get
             {
                 NotImplementedMethod();
-                return null;
+                return typeof(T);
             }
         }
 
