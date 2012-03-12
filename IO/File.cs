@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.IO
 {
@@ -82,6 +83,15 @@ namespace HWClassLibrary.IO
                 f.Write(value);
                 f.Close();
             }
+        }
+
+        public void AssumeDirectoryOfFileExists()
+        {
+            var fi = new FileInfo(_name);
+            var dn = fi.DirectoryName;
+            if(dn == null || dn.FileHandle().Exists)
+                return;
+            Directory.CreateDirectory(dn);
         }
 
         string StringFromHTTP
