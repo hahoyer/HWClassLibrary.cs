@@ -1,6 +1,6 @@
 ﻿// 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -170,6 +170,12 @@ namespace HWClassLibrary.Helper
             if(plural.EndsWith("s"))
                 return plural.Substring(0, plural.Length - 1);
             return "OneOf" + plural;
+        }
+
+        public static bool Implements(this Type type, Type interfaceType)
+        {
+            return type != null
+                   && type.GetInterfaces().Contains(interfaceType);
         }
     }
 }

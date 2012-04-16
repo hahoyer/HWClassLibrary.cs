@@ -27,9 +27,9 @@ using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    abstract class LambdaExpressionVisitor<T> : Dumpable
+    abstract class LambdaExpressionVisitor<T> : ExpressionVisitor<T>
     {
-        public T Visit(Expression expression)
+        internal override T Visit(Expression expression)
         {
             switch(expression.NodeType)
             {
@@ -37,13 +37,6 @@ namespace HWClassLibrary.sqlass
                     return VisitQuote((UnaryExpression) expression);
                 case ExpressionType.Lambda:
                     return VisitLambda(expression);
-                case ExpressionType.Equal:
-                    //return VisitCompareOperation((BinaryExpression)expression);
-                case ExpressionType.MemberAccess:
-                    //return VisitMemberAccess((MemberExpression)expression);
-                case ExpressionType.Constant:
-                    //return VisitConstant((ConstantExpression)expression);
-                    break;
             }
             Tracer.FlaggedLine(expression.NodeType.ToString());
             NotImplementedMethod(expression);
@@ -87,7 +80,18 @@ namespace HWClassLibrary.sqlass
 
         [UsedImplicitly]
         protected T GenericVisitLambda<TExpression>(Expression<Func<TExpression, bool>> expression) { return VisitLambda(expression.Parameters.ToArray(), expression.Body); }
-
         protected abstract T VisitLambda(ParameterExpression[] parameters, Expression body);
+        
+        protected override sealed T Constant(object value)
+        {
+            NotImplementedMethod(value);
+            return default(T);
+        }
+
+        protected override sealed T Visit(IExpressionVisitorConstant<T> target)
+        {
+            NotImplementedMethod(target);
+            return default(T);
+        }
     }
 }

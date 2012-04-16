@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -32,10 +32,10 @@ namespace HWClassLibrary.sqlass
     public sealed class Table<T, TKey>
         : Dumpable
           , IQueryable<T>
-          , IExpressionVisitorConstant<IQualifier<string>>
           , IMetaDataProvider
           , IExpressionVisitorConstant<string>
         where T : ISQLSupportProvider, ISQLKeyProvider<TKey>
+        where TKey : struct
     {
         readonly TableContext _context;
         readonly DictionaryEx<TKey, T> _cache;
@@ -43,7 +43,13 @@ namespace HWClassLibrary.sqlass
         public Table(Context context, Table metaData)
         {
             _context = new TableContext(context, metaData);
-            _cache = new DictionaryEx<TKey, T>(key => this.Single(t => t.SQLKey.Equals(key)));
+            _cache = new DictionaryEx<TKey, T>(FindRecent);
+        }
+
+        T FindRecent(TKey key)
+        {
+            var sql = _context.MetaData.SelectString + " where Id = " + key;
+            return _context.ExecuteSQLString<T>(sql).Single();
         }
 
         Expression IQueryable.Expression { get { return Expression.Constant(this); } }
@@ -54,7 +60,7 @@ namespace HWClassLibrary.sqlass
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             NotImplementedMethod();
-            return default(IEnumerator<T>);
+            return (IEnumerator<T>) new T[0].GetEnumerator();
         }
 
         Type IQueryable.ElementType
@@ -62,7 +68,7 @@ namespace HWClassLibrary.sqlass
             get
             {
                 NotImplementedMethod();
-                return null;
+                return typeof(object);
             }
         }
 
@@ -70,9 +76,13 @@ namespace HWClassLibrary.sqlass
         public void Add(T newElement) { _context.AddPendingChange(new Insert<T>(newElement)); }
 
         string IExpressionVisitorConstant<string>.Qualifier { get { return _context.MetaData.SelectString; } }
-        IQualifier<string> IExpressionVisitorConstant<IQualifier<string>>.Qualifier { get { return _context.MetaData; } }
 
-        public T Find(TKey key) { return _cache.Find(key); }
+        public T Find(TKey? key)
+        {
+            if(key == null)
+                return default(T);
+            return _cache.Find(key.Value);
+        }
     }
 
     public interface IMetaDataProvider

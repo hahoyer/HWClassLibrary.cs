@@ -24,6 +24,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 using HWClassLibrary.sqlass.MetaData;
 
 namespace HWClassLibrary.sqlass
@@ -63,7 +64,8 @@ namespace HWClassLibrary.sqlass
             NotImplementedMethod(expression);
             return default(T);
         }
-        T Execute<T>(MethodInfo method, Expression[] arguments)
+
+        static T Execute<T>(MethodInfo method, Expression[] arguments)
         {
             var methodInfo = typeof(Handler<T>).GetMethod(method.Name);
             if(methodInfo == null)
@@ -75,5 +77,11 @@ namespace HWClassLibrary.sqlass
 
         internal IEnumerator<TElement> Enumerator<TElement>(Expression expression) { return new Enumerator<TElement>(_context.ToDataReader(expression), this); }
         internal object CreateObject(DbDataRecord current) { return _metaData.CreateObject(current, _context); }
+        internal TElement[] ExecuteSQLString<TElement>(string text)
+        {
+            return _context
+                .ToDataReader(text)
+                .SelectFromReader(r => (TElement)CreateObject(r));
+        }
     }
 }

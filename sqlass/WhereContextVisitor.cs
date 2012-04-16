@@ -22,27 +22,15 @@ using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
 using HWClassLibrary.Debug;
-using JetBrains.Annotations;
 
 namespace HWClassLibrary.sqlass
 {
-    abstract class CollectionExpressionVisitor<T> : ExpressionVisitor<T>
+    sealed class WhereContextVisitor : LambdaExpressionVisitor<Tuple<string, string>>
     {
-        [UsedImplicitly]
-        public abstract T VisitCallWhere(Expression arg0, Expression arg1);
-        
-        protected override T Constant(object value)
+        protected override Tuple<string, string> VisitLambda(ParameterExpression[] parameters, Expression body)
         {
-            NotImplementedMethod(value);
-            return default(T);
+            Tracer.Assert(parameters.Length == 1);
+            return new Tuple<string, string>(parameters[0].Name, new StringConditionVisitor().Visit(body));
         }
     }
-
-    interface IExpressionVisitorConstant<out T>
-    {
-        T Qualifier { get; }
-    }
-
-    interface IExpressionVisitorContext
-    {}
 }

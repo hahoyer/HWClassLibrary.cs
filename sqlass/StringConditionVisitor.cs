@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
-using System.Reflection;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 
@@ -29,9 +28,34 @@ namespace HWClassLibrary.sqlass
 {
     sealed class StringConditionVisitor : LogicalExpressionVisitor<string>
     {
-        protected override string Constant(int value) { return value.ToString(); }
+        protected override string Constant(object value) { return value.ToString(); }
         protected override string CompareOperation(ExpressionType nodeType, string left, string right) { return "({0}){1}({2})".ReplaceArgs(left, Operator(nodeType), right); }
-        protected override string MemberAccess(string qualifier, MemberInfo member) { return qualifier + "." + member.Name; }
+
+        string MemberName(Type type, string name)
+        {
+            if (type.GetInterfaces().Contains(typeof(ISQLSupportProvider)))
+                return name;
+            NotImplementedMethod(type,name);
+            return null;
+
+        }
+
+        protected override string VisitMemberAccess(MemberExpression expression)
+        {
+            var member = expression.Member;
+            if (member.DeclaringType.Implements(typeof(ISQLSupportProvider)))
+            {
+                var qualifier = Visit(expression.Expression);
+                return qualifier
+                       + "."
+                       + member.Name;
+            }
+
+            NotImplementedMethod(expression);
+            return null;
+
+        }
+
         protected override string Parameter(string name) { return name; }
 
         string Operator(ExpressionType nodeType)

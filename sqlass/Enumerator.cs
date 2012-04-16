@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,16 @@ namespace HWClassLibrary.sqlass
         void IDisposable.Dispose() { }
         bool IEnumerator.MoveNext() { return _index.MoveNext(); }
         void IEnumerator.Reset() { _index.Reset(); }
-        TElement IEnumerator<TElement>.Current { get { return (TElement) _context.CreateObject((DbDataRecord) _index.Current); } }
+
+        TElement IEnumerator<TElement>.Current
+        {
+            get
+            {
+                var record = _index.Current;
+                return (TElement) _context.CreateObject((DbDataRecord) record);
+            }
+        }
+        
         object IEnumerator.Current { get { return ((IEnumerator<TElement>) this).Current; } }
     }
 }

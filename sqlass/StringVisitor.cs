@@ -36,13 +36,4 @@ namespace HWClassLibrary.sqlass
             return "select * from ({0}) {1} where ({2})".ReplaceArgs(Visit(arg0), context.Item1, context.Item2);
         }
     }
-
-    sealed class WhereContextVisitor : LambdaExpressionVisitor<Tuple<string, string>>
-    {
-        protected override Tuple<string, string> VisitLambda(ParameterExpression[] parameters, Expression body)
-        {
-            Tracer.Assert(parameters.Length == 1);
-            return new Tuple<string, string>(parameters[0].Name, new StringConditionVisitor().Visit(body));
-        }
-    }
 }
