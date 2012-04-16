@@ -1,6 +1,6 @@
 namespace HWClassLibrary.TreeStructure
 {
-    partial class TreeForm
+    sealed partial class TreeForm
     {
         /// <summary>
         /// Required designer variable.

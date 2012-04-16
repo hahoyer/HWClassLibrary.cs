@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ namespace HWClassLibrary.TreeStructure
         /// <param name="iconKey"> </param>
         /// <param name="isDefaultIcon"> </param>
         /// <returns> </returns>
-        public static TreeNode CreateNode(this object nodeData, string title, string iconKey, bool isDefaultIcon)
+        public static TreeNode CreateNode(this object nodeData, string title = "", string iconKey = null, bool isDefaultIcon = false)
         {
             var result = new TreeNode(title + nodeData.GetAdditionalInfo()) {Tag = nodeData};
             if(iconKey == null)
@@ -58,8 +58,6 @@ namespace HWClassLibrary.TreeStructure
             }
             return result;
         }
-
-        public static TreeNode CreateNode(this object nodeData) { return CreateNode(nodeData, "", null, false); }
 
         /// <summary>
         ///     Creates a treenode.with a given title from an object (format: &lt;title&gt;: &lt;nodeData.ToString()&gt;)
@@ -125,9 +123,7 @@ namespace HWClassLibrary.TreeStructure
             return result.ToArray();
         }
 
-        static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey) { return CreateNumberedNode(nodeData, i, iconKey, false); }
-
-        static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey, bool isDefaultIcon) { return nodeData.CreateNode("[" + i + "] ", iconKey, isDefaultIcon); }
+        static TreeNode CreateNumberedNode(object nodeData, int i, string iconKey, bool isDefaultIcon = false) { return nodeData.CreateNode("[" + i + "] ", iconKey, isDefaultIcon); }
 
         static TreeNode[] InternalCreateNodes(IList list)
         {
@@ -178,8 +174,9 @@ namespace HWClassLibrary.TreeStructure
             if(nodeData == null)
                 return "<null>";
 
-            if(nodeData is IAdditionalNodeInfoProvider)
-                return ((IAdditionalNodeInfoProvider) nodeData).AdditionalNodeInfo;
+            var additionalNodeInfoProvider = nodeData as IAdditionalNodeInfoProvider;
+            if(additionalNodeInfoProvider != null)
+                return additionalNodeInfoProvider.AdditionalNodeInfo;
             var attrs = nodeData.GetType().GetCustomAttributes(typeof(AdditionalNodeInfoAttribute), true);
             if(attrs.Length > 0)
             {
@@ -191,7 +188,8 @@ namespace HWClassLibrary.TreeStructure
             if(il != null)
                 return il.GetType().PrettyName() + "[" + ((IList) nodeData).Count + "]";
 
-            if(nodeData.GetType().Namespace.StartsWith("System"))
+            var nameSpace = nodeData.GetType().Namespace;
+            if(nameSpace != null && nameSpace.StartsWith("System"))
                 return nodeData.ToString();
 
             return "";

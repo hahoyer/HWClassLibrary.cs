@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using HWClassLibrary.Debug;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
 {
@@ -50,9 +51,8 @@ namespace HWClassLibrary.Helper
 
         static bool AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
         {
-            foreach(var ai in a)
-                if(isEqual(ai, bi))
-                    return false;
+            if(a.Any(ai => isEqual(ai, bi)))
+                return false;
             a.Add(bi);
             return true;
         }
@@ -72,7 +72,11 @@ namespace HWClassLibrary.Helper
             return true;
         }
 
-        public static string Dump<T>(this IEnumerable<T> x) { return x.Aggregate(x.ToArray().Length.ToString(), (a, xx) => a + " " + xx.ToString()); }
+        public static string Dump<T>(this IEnumerable<T> x)
+        {
+            var xArray = x.ToArray();
+            return xArray.Aggregate(xArray.Length.ToString(), (a, xx) => a + " " + xx.ToString());
+        }
 
         public static string DumpLines<T>(this IEnumerable<T> x)
             where T : Dumpable
@@ -96,9 +100,7 @@ namespace HWClassLibrary.Helper
         public static TimeSpan Sum<T>(this IEnumerable<T> x, Func<T, TimeSpan> selector)
         {
             var result = new TimeSpan();
-            foreach(var element in x)
-                result += selector(element);
-            return result;
+            return x.Aggregate(result, (current, element) => current + selector(element));
         }
 
         /// <summary>
@@ -112,10 +114,7 @@ namespace HWClassLibrary.Helper
         {
             if(x.Count < y.Count)
                 return false;
-            for(var i = 0; i < y.Count; i++)
-                if(!Equals(x[i], y[i]))
-                    return false;
-            return true;
+            return !y.Where((t, i) => !Equals(x[i], t)).Any();
         }
 
         /// <summary>
@@ -143,6 +142,7 @@ namespace HWClassLibrary.Helper
             where T : class
             where TResult : class { return target == default(T) ? default(TResult) : function(target); }
 
+        [NotNull]
         public static IEnumerable<T> Array<T>(this int count, Func<int, T> getValue) { return new ArrayQuery<T>(count, getValue); }
 
         sealed class ArrayQuery<T> : IEnumerable<T>
@@ -212,6 +212,6 @@ namespace HWClassLibrary.Helper
         }
     }
 
-    class DuplicateKeyException : Exception
+    sealed class DuplicateKeyException : Exception
     {}
 }

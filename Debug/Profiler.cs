@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ namespace HWClassLibrary.Debug
 {
     public class Profiler
     {
-        class Dumper
+        sealed class Dumper
         {
             readonly int? _count;
             readonly ProfileItem[] _data;
@@ -121,16 +121,6 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        ///     Formats the data accumulated so far. Same as <see cref="Format(System.Nullable{int},double)">Format(null, 0.1)</see>
-        /// </summary>
-        /// <returns> The formatted data </returns>
-        /// <remarks>
-        ///     The result contains one line for each measured expression, that is not ignored. Each line contains <para>- the file path, the line and the start column of the measuered expression in the source file,
-        ///                                                                                                            (The information is formatted in a way, that within VisualStudio doubleclicking on such a line will open it.)</para> <para>- the flag, if provided,</para> <para>- the ranking,</para> <para>- the execution count,</para> <para>- the average duration of one execution,</para> <para>- the duration,</para> of the expression. The the lines are sorted by descending duration. The expressions, that consumes less than 10 percent are not shown.
-        /// </remarks>
-        public static string Format() { return Format(null, 0.1); }
-
-        /// <summary>
         ///     Formats the data accumulated so far.
         /// </summary>
         /// <param name="count"> The number of measured expressions in result. </param>
@@ -141,7 +131,7 @@ namespace HWClassLibrary.Debug
         ///                                                                                                            (The information is formatted in a way, that within VisualStudio doubleclicking on such a line will open it.)</para> <para>- the flag, if provided,</para> <para>- the ranking,</para> <para>- the execution count,</para> <para>- the average duration of one execution,</para> <para>- the duration,</para> of the expression. The the lines are sorted by descending duration. by use of <paramref
         ///      name="count" /> and <paramref name="hidden" /> the number of lines can be restricted.
         /// </remarks>
-        public static string Format(int? count, double hidden)
+        public static string Format(int? count = null, double hidden = 0.1)
         {
             lock(_instance)
                 return new Dumper(_instance, count, hidden).Format();
@@ -213,7 +203,7 @@ namespace HWClassLibrary.Debug
         void InternalReset() { Tracer.Assert(_stack.Count == 0); }
     }
 
-    class ProfileItem
+    sealed class ProfileItem
     {
         readonly string _position;
         TimeSpan _duration;

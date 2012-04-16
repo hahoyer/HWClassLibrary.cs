@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ namespace HWClassLibrary.Helper
     /// <summary>
     ///     Floating column with string pattern. Spaces inserted before pattern.
     /// </summary>
-    public class StringPattern : FloatingColumn
+    public sealed class StringPattern : FloatingColumn
     {
         readonly string[] _pattern;
 
@@ -155,10 +155,10 @@ namespace HWClassLibrary.Helper
         /// created 15.10.2006 15:23
         public override int FindStart(string s, int start)
         {
-            var result = s.IndexOf(_pattern[0], start);
+            var result = s.IndexOf(_pattern[0], start, StringComparison.Ordinal);
             for(var i = 1; i < _pattern.Length; i++)
             {
-                var result1 = s.IndexOf(_pattern[i], start);
+                var result1 = s.IndexOf(_pattern[i], start, StringComparison.Ordinal);
                 if(result == -1 || result1 != -1 && result1 < result)
                     result = result1;
             }
@@ -178,11 +178,11 @@ namespace HWClassLibrary.Helper
         /// created 15.10.2006 15:22
         public override int FindEnd(string s, int start)
         {
-            var result = s.IndexOf(_pattern[0], start);
+            var result = s.IndexOf(_pattern[0], start, StringComparison.Ordinal);
             var ip = 0;
             for(var i = 1; i < _pattern.Length; i++)
             {
-                var result1 = s.IndexOf(_pattern[i], start);
+                var result1 = s.IndexOf(_pattern[i], start, StringComparison.Ordinal);
                 if(result == -1 || result1 != -1 && result1 < result)
                 {
                     ip = i;

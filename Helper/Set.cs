@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -41,11 +41,7 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Returns true if the instance is empty.
         /// </summary>
-        /// <value>
-        ///     <c>true</c>
-        ///     if this instance is empty; otherwise,
-        ///     <c>false</c>
-        ///     .</value>
+        /// <value> <c>true</c> if this instance is empty; otherwise, <c>false</c> . </value>
         /// created 14.07.2007 16:43 on HAHOYER-DELL by hh
         [DisableDump]
         public bool IsEmpty { get { return Count == 0; } }
@@ -64,13 +60,7 @@ namespace HWClassLibrary.Helper
             _data.Add(t);
         }
 
-        public bool Contains(T t)
-        {
-            for(var i = 0; i < _data.Count; i++)
-                if(_data[i].CompareTo(t) == 0)
-                    return true;
-            return false;
-        }
+        public bool Contains(T t) { return _data.Any(t1 => t1.CompareTo(t) == 0); }
 
         Set<T> And(Set<T> other) { return _data.Where(other.Contains).ToSet(); }
 

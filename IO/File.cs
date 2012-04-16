@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.IO
 {
@@ -31,21 +32,13 @@ namespace HWClassLibrary.IO
     ///     Summary description for File.
     /// </summary>
     [Serializable]
-    public class File
+    public sealed class File
     {
         readonly string _name;
 
         Uri _uriCache;
 
-        public Uri Uri
-        {
-            get
-            {
-                if(_uriCache == null)
-                    _uriCache = new Uri(_name);
-                return _uriCache;
-            }
-        }
+        public Uri Uri { get { return _uriCache ?? (_uriCache = new Uri(_name)); } }
 
         public bool IsFTP { get { return Uri.Scheme == Uri.UriSchemeFtp; } }
 
@@ -53,7 +46,7 @@ namespace HWClassLibrary.IO
         ///     constructs a FileInfo
         /// </summary>
         /// <param name="name"> the filename </param>
-        public static File m(string name) { return new File(name); }
+        internal static File Create(string name) { return new File(name); }
 
         File(string name) { _name = name; }
 
@@ -62,7 +55,7 @@ namespace HWClassLibrary.IO
         /// <summary>
         ///     considers the file as a string. If file existe it should be a text file
         /// </summary>
-        /// <value>the content of the file if existing else null.</value>
+        /// <value> the content of the file if existing else null. </value>
         public string String
         {
             get
@@ -92,6 +85,15 @@ namespace HWClassLibrary.IO
             }
         }
 
+        public void AssumeDirectoryOfFileExists()
+        {
+            var fi = new FileInfo(_name);
+            var dn = fi.DirectoryName;
+            if(dn == null || dn.FileHandle().Exists)
+                return;
+            Directory.CreateDirectory(dn);
+        }
+
         string StringFromHTTP
         {
             get
@@ -99,6 +101,7 @@ namespace HWClassLibrary.IO
                 var req = WebRequest.Create(Uri.AbsoluteUri);
                 var resp = req.GetResponse();
                 var stream = resp.GetResponseStream();
+                Tracer.Assert(stream != null);
                 var streamReader = new StreamReader(stream);
                 var result = streamReader.ReadToEnd();
                 return result;
@@ -213,7 +216,7 @@ namespace HWClassLibrary.IO
         }
 
         FileSystemInfo[] GetItems() { return ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray(); }
-        public File[] Items { get { return GetItems().Select(f => m(f.FullName)).ToArray(); } }
+        public File[] Items { get { return GetItems().Select(f => Create(f.FullName)).ToArray(); } }
 
         /// <summary>
         ///     Gets the directory of the source file that called this function

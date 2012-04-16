@@ -21,6 +21,7 @@ using HWClassLibrary.Debug;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using JetBrains.Annotations;
 
 namespace HWClassLibrary.Debug
 {
@@ -28,6 +29,7 @@ namespace HWClassLibrary.Debug
     ///     Used to control dump of data element
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [MeansImplicitUse]
     public sealed class EnableDumpExceptAttribute : DumpExceptAttribute, IDumpExceptAttribute
     {
         /// <summary>
@@ -41,6 +43,7 @@ namespace HWClassLibrary.Debug
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [MeansImplicitUse]
     public abstract class DumpExceptAttribute : DumpAttributeBase
     {
         readonly object _exception;
@@ -64,6 +67,7 @@ namespace HWClassLibrary.Debug
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [MeansImplicitUse]
     public sealed class DisableDumpExceptAttribute : DumpExceptAttribute, IDumpExceptAttribute
     {
         /// <summary>

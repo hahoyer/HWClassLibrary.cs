@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ namespace HWClassLibrary.TreeStructure
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     [MeansImplicitUse]
-    public class NodeAttribute : Attribute
+    public sealed class NodeAttribute : Attribute
     {
         public readonly string IconKey;
 
@@ -53,7 +53,7 @@ namespace HWClassLibrary.TreeStructure
     ///     Class attribute to define additional node info property, displayed after node title
     /// </summary>
     [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
-    public class AdditionalNodeInfoAttribute : Attribute
+    public sealed class AdditionalNodeInfoAttribute : Attribute
     {
         readonly string _property;
 
@@ -97,7 +97,7 @@ namespace HWClassLibrary.TreeStructure
         /// <summary>
         ///     Gets the icon key.
         /// </summary>
-        /// <value>The icon key.</value>
+        /// <value> The icon key. </value>
         string IconKey { get; }
     }
 

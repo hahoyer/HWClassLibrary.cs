@@ -1,3 +1,22 @@
+// 
+//     Project HWClassLibrary
+//     Copyright (C) 2011 - 2012 Harald Hoyer
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     
+//     Comments, bugs and suggestions to hahoyer at yahoo.de
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,97 +25,93 @@ using HWClassLibrary.Debug;
 namespace JetBrains.Annotations
 {
     /// <summary>
-    ///     Indicates that marked method builds string by format pattern and (optional) arguments. 
-    ///     Parameter, which contains format string, should be given in constructor.
-    ///     The format string should be in <see cref = "string.Format(IFormatProvider,string,object[])" /> -like form
+    ///     Indicates that marked method builds string by format pattern and (optional) arguments. Parameter, which contains format string, should be given in constructor. The format string should be in <see
+    ///      cref="string.Format(IFormatProvider,string,object[])" /> -like form
     /// </summary>
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public sealed class StringFormatMethodAttribute : Attribute
     {
-        private readonly string myFormatParameterName;
+        readonly string _formatParameterName;
 
         /// <summary>
         ///     Initializes new instance of StringFormatMethodAttribute
         /// </summary>
-        /// <param name = "formatParameterName">Specifies which parameter of an annotated method should be treated as format-string</param>
-        public StringFormatMethodAttribute(string formatParameterName) { myFormatParameterName = formatParameterName; }
+        /// <param name="formatParameterName"> Specifies which parameter of an annotated method should be treated as format-string </param>
+        public StringFormatMethodAttribute(string formatParameterName) { _formatParameterName = formatParameterName; }
 
         /// <summary>
         ///     Gets format parameter name
         /// </summary>
-        public string FormatParameterName { get { return myFormatParameterName; } }
+        public string FormatParameterName { get { return _formatParameterName; } }
     }
 
     /// <summary>
-    ///     Indicates that the function argument should be string literal and match one  of the parameters of the caller function.
-    ///     For example, <see cref = "ArgumentNullException" /> has such parameter.
+    ///     Indicates that the function argument should be string literal and match one of the parameters of the caller function. For example, <see
+    ///      cref="ArgumentNullException" /> has such parameter.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
     public sealed class InvokerParameterNameAttribute : Attribute
     {}
 
     /// <summary>
-    ///     Indicates that the marked method is assertion method, i.e. it halts control flow if one of the conditions is satisfied. 
-    ///     To set the condition, mark one of the parameters with <see cref = "AssertionConditionAttribute" /> attribute
+    ///     Indicates that the marked method is assertion method, i.e. it halts control flow if one of the conditions is satisfied. To set the condition, mark one of the parameters with <see
+    ///      cref="AssertionConditionAttribute" /> attribute
     /// </summary>
-    /// <seealso cref = "AssertionConditionAttribute" />
+    /// <seealso cref="AssertionConditionAttribute" />
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public sealed class AssertionMethodAttribute : Attribute
     {}
 
     /// <summary>
-    ///     Indicates the condition parameter of the assertion method. 
-    ///     The method itself should be marked by <see cref = "AssertionMethodAttribute" /> attribute.
-    ///     The mandatory argument of the attribute is the assertion type.
+    ///     Indicates the condition parameter of the assertion method. The method itself should be marked by <see
+    ///      cref="AssertionMethodAttribute" /> attribute. The mandatory argument of the attribute is the assertion type.
     /// </summary>
-    /// <seealso cref = "AssertionConditionType" />
+    /// <seealso cref="AssertionConditionType" />
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
     public sealed class AssertionConditionAttribute : Attribute
     {
-        private readonly AssertionConditionType myConditionType;
+        readonly AssertionConditionType _conditionType;
 
         /// <summary>
         ///     Initializes new instance of AssertionConditionAttribute
         /// </summary>
-        /// <param name = "conditionType">Specifies condition type</param>
-        public AssertionConditionAttribute(AssertionConditionType conditionType) { myConditionType = conditionType; }
+        /// <param name="conditionType"> Specifies condition type </param>
+        public AssertionConditionAttribute(AssertionConditionType conditionType) { _conditionType = conditionType; }
 
         /// <summary>
         ///     Gets condition type
         /// </summary>
-        public AssertionConditionType ConditionType { get { return myConditionType; } }
+        public AssertionConditionType ConditionType { get { return _conditionType; } }
     }
 
     /// <summary>
-    ///     Specifies assertion type. If the assertion method argument satisifes the condition, then the execution continues. 
-    ///     Otherwise, execution is assumed to be halted
+    ///     Specifies assertion type. If the assertion method argument satisifes the condition, then the execution continues. Otherwise, execution is assumed to be halted
     /// </summary>
     public enum AssertionConditionType
     {
         /// <summary>
         ///     Indicates that the marked parameter should be evaluated to true
         /// </summary>
-        IS_TRUE = 0,
+        IsTrue = 0,
 
         /// <summary>
         ///     Indicates that the marked parameter should be evaluated to false
         /// </summary>
-        IS_FALSE = 1,
+        IsFalse = 1,
 
         /// <summary>
         ///     Indicates that the marked parameter should be evaluated to null value
         /// </summary>
-        IS_NULL = 2,
+        IsNull = 2,
 
         /// <summary>
         ///     Indicates that the marked parameter should be evaluated to not null value
         /// </summary>
-        IS_NOT_NULL = 3,
+        IsNotNull = 3,
     }
 
     /// <summary>
-    ///     Indicates that the marked method unconditionally terminates control flow execution.
-    ///     For example, it could unconditionally throw exception
+    ///     Indicates that the marked method unconditionally terminates control flow execution. For example, it could unconditionally throw exception
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public sealed class TerminatesProgramAttribute : Attribute
@@ -121,8 +136,7 @@ namespace JetBrains.Annotations
     {}
 
     /// <summary>
-    ///     Indicates that the value of marked type (or its derivatives) cannot be compared using '==' or '!=' operators.
-    ///     There is only exception to compare with <c>null</c>, it is permitted
+    ///     Indicates that the value of marked type (or its derivatives) cannot be compared using '==' or '!=' operators. There is only exception to compare with <c>null</c> , it is permitted
     /// </summary>
     [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false
         , Inherited = true)]
@@ -130,30 +144,28 @@ namespace JetBrains.Annotations
     {}
 
     /// <summary>
-    ///     When applied to target attribute, specifies a requirement for any type which is marked with 
-    ///     target attribute to implement or inherit specific type or types
+    ///     When applied to target attribute, specifies a requirement for any type which is marked with target attribute to implement or inherit specific type or types
     /// </summary>
     /// <example>
-    ///     <code>
-    ///         [BaseTypeRequired(typeof(IComponent)] // Specify requirement
+    ///     <code>[BaseTypeRequired(typeof(IComponent)] // Specify requirement
     ///         public class ComponentAttribute : Attribute 
     ///         {}
     /// 
     ///         [Component] // ComponentAttribute requires implementing IComponent interface
     ///         public class MyComponent : IComponent
-    ///         {}
-    ///     </code>
+    ///         {}</code>
     /// </example>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true), BaseTypeRequired(typeof(Attribute)), CLSCompliant(false)]
-    
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+    [BaseTypeRequired(typeof(Attribute))]
+    [CLSCompliant(false)]
     public sealed class BaseTypeRequiredAttribute : Attribute
     {
-        private readonly Type[] _baseTypes;
+        readonly Type[] _baseTypes;
 
         /// <summary>
         ///     Initializes new instance of BaseTypeRequiredAttribute
         /// </summary>
-        /// <param name = "baseTypes">Specifies which types are required</param>
+        /// <param name="baseTypes"> Specifies which types are required </param>
         public BaseTypeRequiredAttribute(params Type[] baseTypes) { _baseTypes = baseTypes; }
 
         /// <summary>
@@ -163,11 +175,10 @@ namespace JetBrains.Annotations
     }
 
     /// <summary>
-    ///     Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),
-    ///     so this symbol will not be marked as unused (as well as by other usage inspections)
+    ///     Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library), so this symbol will not be marked as unused (as well as by other usage inspections)
     /// </summary>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = false)]
-    public class UsedImplicitlyAttribute : Attribute
+    public sealed class UsedImplicitlyAttribute : Attribute
     {
         /// <summary>
         ///     Gets value indicating what is meant to be used
@@ -184,7 +195,7 @@ namespace JetBrains.Annotations
         /// <summary>
         ///     Initializes new instance of UsedImplicitlyAttribute with specified flags
         /// </summary>
-        /// <param name = "flags">Value of type <see cref = "ImplicitUseFlags" /> indicating usage kind</param>
+        /// <param name="flags"> Value of type <see cref="ImplicitUseFlags" /> indicating usage kind </param>
         public UsedImplicitlyAttribute(ImplicitUseFlags flags) { Flags = flags; }
     }
 
@@ -192,7 +203,7 @@ namespace JetBrains.Annotations
     ///     Should be used on attributes and causes ReSharper to not mark symbols marked with such attributes as unused (as well as by other usage inspections)
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class MeansImplicitUseAttribute : Attribute
+    public sealed class MeansImplicitUseAttribute : Attribute
     {
         /// <summary>
         ///     Gets value indicating what is meant to be used
@@ -210,14 +221,14 @@ namespace JetBrains.Annotations
         /// <summary>
         ///     Initializes new instance of MeansImplicitUseAttribute with specified flags
         /// </summary>
-        /// <param name = "flags">Value of type <see cref = "ImplicitUseFlags" /> indicating usage kind</param>
+        /// <param name="flags"> Value of type <see cref="ImplicitUseFlags" /> indicating usage kind </param>
         [UsedImplicitly]
         public MeansImplicitUseAttribute(ImplicitUseFlags flags) { Flags = flags; }
     }
 
     /// <summary>
-    ///     Specify what is considered used implicitly when marked with <see cref = "MeansImplicitUseAttribute" /> or <see
-    ///      cref = "UsedImplicitlyAttribute" />
+    ///     Specify what is considered used implicitly when marked with <see cref="MeansImplicitUseAttribute" /> or <see
+    ///      cref="UsedImplicitlyAttribute" />
     /// </summary>
     [Flags]
     public enum ImplicitUseFlags

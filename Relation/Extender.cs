@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ namespace HWClassLibrary.Relation
             while(true)
             {
                 targets = targets.SelectMany(immediateParents).Except(types).ToArray();
-                if(targets.Count() == 0)
+                if(!targets.Any())
                     return types;
                 types = types.Union(targets).ToArray();
             }

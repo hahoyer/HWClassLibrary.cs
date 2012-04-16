@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -173,13 +173,16 @@ namespace HWClassLibrary.Debug
 
                 s = IndentLine(_isLineStart, s, _indentCount);
 
-                if(_writeInitiator.ThreadChanged)
-                    if(_isLineStart)
-                        s = _writeInitiator.ThreadFlagString + s;
-                    else if(s.Length > 0 && s[0] == '\n')
-                        s = "\n" + _writeInitiator.ThreadFlagString + s;
-                    else
-                        throw new NotImplementedException();
+                if(_writeInitiator.ThreadChanged && Debugger.IsAttached)
+                {
+                    var threadFlagString = _writeInitiator.ThreadFlagString;
+                    if(!_isLineStart)
+                        if(s.Length > 0 && s[0] == '\n')
+                            threadFlagString = "\n" + threadFlagString;
+                        else
+                            throw new NotImplementedException();
+                    System.Diagnostics.Debug.Write(threadFlagString);
+                }
 
                 Write(s, isLine);
 
@@ -217,7 +220,6 @@ namespace HWClassLibrary.Debug
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="assembly"> </param>
         /// <param name="s"> the text </param>
         public static void FlaggedLine(int stackFrameDepth, string s) { Line(MethodHeader(stackFrameDepth + 1, false) + s); }
 
@@ -402,8 +404,9 @@ namespace HWClassLibrary.Debug
             if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
                 return true;
 
-            if(m is FieldInfo)
-                return ((FieldInfo) m).IsPrivate;
+            var fieldInfo = m as FieldInfo;
+            if(fieldInfo != null)
+                return fieldInfo.IsPrivate;
 
             if(((PropertyInfo) m).CanRead)
                 return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
@@ -493,19 +496,12 @@ namespace HWClassLibrary.Debug
         }
 
         /// <summary>
-        ///     Indent paramer by 4 spaces
+        ///     Indent paramer by 4 * count spaces
         /// </summary>
         /// <param name="s"> </param>
         /// <param name="count"> </param>
         /// <returns> </returns>
-        public static string Indent(string s, int count) { return s.Replace("\n", "\n" + IndentElem(count)); }
-
-        /// <summary>
-        ///     Indent paramer by 4 spaces
-        /// </summary>
-        /// <param name="s"> </param>
-        /// <returns> </returns>
-        public static string Indent(string s) { return Indent(s, 1); }
+        public static string Indent(string s, int count = 1) { return s.Replace("\n", "\n" + IndentElem(count)); }
 
         /// <summary>
         ///     Surrounds string by left and right parenthesis. If string contains any carriage return, some indenting is done also
@@ -516,9 +512,9 @@ namespace HWClassLibrary.Debug
         /// <returns> </returns>
         public static string Surround(string left, string data, string right)
         {
-            if(data.IndexOf("\n") < 0)
+            if(data.IndexOf("\n", StringComparison.Ordinal) < 0)
                 return left + data + right;
-            return "\n" + left + Indent("\n" + data, 1) + "\n" + right;
+            return "\n" + left + Indent("\n" + data) + "\n" + right;
         }
 
         /// <summary>
@@ -536,7 +532,7 @@ namespace HWClassLibrary.Debug
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
                    + text
-                   + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter), 1);
+                   + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter));
         }
 
         /// <summary>
@@ -544,7 +540,6 @@ namespace HWClassLibrary.Debug
         /// </summary>
         /// <param name="text"> The text. </param>
         /// <param name="depth"> The stack depth. </param>
-        /// <param name="assembly"> </param>
         /// <param name="data"> The data, as name/value pair. </param>
         /// <returns> </returns>
         public static string DumpData(string text, int depth, object[] data)
@@ -552,7 +547,7 @@ namespace HWClassLibrary.Debug
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, DumpMethod(sf.GetMethod(), true))
                    + text
-                   + Indent(DumpMethodWithData(null, data), 1);
+                   + Indent(DumpMethodWithData(null, data));
         }
 
         static string DumpMethodWithData(MethodBase m, object o, object[] p)
@@ -576,6 +571,7 @@ namespace HWClassLibrary.Debug
                 if(i > 0)
                     result += "\n";
                 Assert(infos != null);
+                Assert(infos[i] != null);
                 result += infos[i].Name;
                 result += "=";
                 result += Dump(p[i]);
@@ -609,7 +605,6 @@ namespace HWClassLibrary.Debug
         ///     Check boolean expression
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="assembly"> </param>
         /// <param name="b"> if set to <c>true</c> [b]. </param>
         /// <param name="text"> The text. </param>
         [DebuggerHidden]
@@ -653,7 +648,6 @@ namespace HWClassLibrary.Debug
         ///     Function used in assertions
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="assembly"> </param>
         /// <param name="cond"> The cond. </param>
         /// <param name="data"> The data. </param>
         /// <returns> </returns>
@@ -673,7 +667,7 @@ namespace HWClassLibrary.Debug
         /// <param name="b"> if set to <c>true</c> [b]. </param>
         /// <param name="text"> The text. </param>
         [DebuggerHidden]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> text)
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b, Func<string> text)
         {
             if(b)
                 return;
@@ -687,7 +681,7 @@ namespace HWClassLibrary.Debug
         /// <param name="b"> if set to <c>true</c> [b]. </param>
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IS_TRUE)] bool b)
+        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b)
         {
             if(b)
                 return;
@@ -701,7 +695,7 @@ namespace HWClassLibrary.Debug
         /// created 16.12.2006 18:27
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b) { Assert(1, b); }
+        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b) { Assert(1, b); }
 
         /// <summary>
         ///     Asserts the specified b.
@@ -711,11 +705,11 @@ namespace HWClassLibrary.Debug
         /// created 16.12.2006 18:29
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, Func<string> s) { Assert(1, b, s); }
+        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b, Func<string> s) { Assert(1, b, s); }
 
         [DebuggerHidden]
         [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IS_TRUE)] bool b, string s) { Assert(1, b, () => s); }
+        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b, string s) { Assert(1, b, () => s); }
 
         /// <summary>
         ///     Assertions the failed.
