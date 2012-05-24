@@ -28,7 +28,7 @@ using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.sqlass.MetaData
 {
-    public sealed class Table : Dumpable, IExpressionVisitorContext, IQualifier<string>
+    public sealed class Table : Dumpable, IExpressionVisitorContext
     {
         internal readonly TableName TableName;
         readonly SimpleCache<Column[]> _columnsCache;

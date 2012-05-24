@@ -147,9 +147,12 @@ namespace HWClassLibrary.sqlass
         public DataTable SubSchema(string name) { return Connection.GetSchema(name); }
 
         string CreateSqlStatement(Expression expression) { return new StringVisitor().Visit(expression); }
-        internal DbDataReader ToDataReader(Expression expression) { return Connection.ToDataReader(CreateSqlStatement(expression)); }
+        internal DbDataReader ToDataReader(Expression expression) { return ToDataReader(CreateSqlStatement(expression)); }
+        internal DbDataReader ToDataReader(string text) { return Connection.ToDataReader(text); }
     }
 
     sealed class UnsavedChangedException : Exception
     {}
+
+
 }

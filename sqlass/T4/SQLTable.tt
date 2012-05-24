@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HWClassLibrary.Debug;
+using HWClassLibrary.Helper;
 using HWClassLibrary.sqlass;
 using HWClassLibrary.sqlass.MetaData;
 
@@ -98,7 +99,7 @@ namespace <#= _context.NameSpace #>.SQLSupport<#= NameSpaceSuffix #>
 	                
 	             #>((Context)context).Container.<#= column.ReferencedTable.Name #>.Find<#
                 }
-                #>((<#= column.Type.PrettyName() #>) record[<#= column.Name.Quote() #>]),<#
+                #>(record[<#= column.Name.Quote() #>].Convert< <#= column.Type.PrettyName() #><#= column.IsNullable ? "?" : "" #> >()),<#
             }#>   
             }
         );

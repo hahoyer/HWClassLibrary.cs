@@ -21,6 +21,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using HWClassLibrary.Debug;
 using HWClassLibrary.Helper;
 
@@ -76,10 +77,18 @@ namespace HWClassLibrary.sqlass
             if(ssr != null)
                 return Visit(ssr);
 
+            if (type.Name.StartsWith("<>"))
+                return VisitRuntime(type, value);
+
             NotImplementedMethod(type, value);
             return default(T);
         }
-
+        T VisitRuntime(Type type, object value)
+        {
+            var field = type.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.DeclaredOnly).Single();
+            return Constant(field.GetValue(value));
+        }
+        protected abstract T Constant(object value);
         protected abstract T Visit(IExpressionVisitorConstant<T> target);
     }
 }

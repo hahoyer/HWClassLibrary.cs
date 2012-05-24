@@ -56,6 +56,15 @@ namespace HWClassLibrary.Helper
             }
             return result.ToArray();
         }
+
+        public static T[] SelectFromReader<T>(this DbDataReader reader, Func<DbDataRecord, T> converter)
+        {
+            var result = new List<T>();
+            var e = reader.GetEnumerator();
+            while(e.MoveNext())
+                result.Add(converter((DbDataRecord) e.Current));
+            return result.ToArray();
+        }
     }
 
     public interface IReaderInitialize

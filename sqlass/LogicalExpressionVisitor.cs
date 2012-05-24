@@ -1,6 +1,6 @@
 // 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
-using System.Reflection;
 using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
@@ -53,20 +52,28 @@ namespace HWClassLibrary.sqlass
             return base.VisitConstant(type, value);
         }
 
-        T VisitCompareOperation(BinaryExpression expression) { return CompareOperation(expression.NodeType, Visit(expression.Left), Visit(expression.Right)); }
+        T VisitCompareOperation(BinaryExpression expression)
+        {
+            var left = Visit(expression.Left);
+            var right = Visit(expression.Right);
+            return CompareOperation(expression.NodeType, left, right);
+        }
         T VisitConvert(UnaryExpression expression) { return Visit(expression.Operand); }
-        T VisitMemberAccess(MemberExpression expression) { return MemberAccess(Visit(expression.Expression), expression.Member); }
+
+        protected abstract T VisitMemberAccess(MemberExpression expression);
+
         T VisitParameter(ParameterExpression expression) { return Parameter(expression.Name); }
 
         [UsedImplicitly]
-        public T VisitCallEquals(Expression arg0, Expression arg1) { return CompareOperation(ExpressionType.Equal, Visit(arg0), Visit(arg1)); }
+        public T VisitCallEquals(Expression arg0, Expression arg1)
+        {
+            if(arg0.Type == typeof(int))
+                return CompareOperation(ExpressionType.Equal, Visit(arg0), Visit(arg1));
+            NotImplementedMethod(arg0, arg1);
+            return default(T);
+        }
 
         protected abstract T CompareOperation(ExpressionType nodeType, T left, T right);
-        protected abstract T Constant(int value);
-        protected abstract T MemberAccess(T qualifier, MemberInfo member);
         protected abstract T Parameter(string name);
     }
-
-    interface IQualifier<out T>
-    {}
 }

@@ -95,7 +95,7 @@
     <Compile Include="sqlass\MetaData\TableName.cs" />
     <Compile Include="sqlass\Handler.cs" />
     <Compile Include="sqlass\Query.cs" />
-    <Compile Include="sqlass\SelectExtender.cs" />
+    <Compile Include="sqlass\StringVisitor.cs" />
     <Compile Include="sqlass\StringConditionVisitor.cs" />
     <Compile Include="sqlass\T4\Context.cs" />
     <Compile Include="sqlass\MetaData\KeyAttribute.cs" />
@@ -131,6 +131,7 @@
     </None>
     <Compile Include="sqlass\Table.cs" />
     <Compile Include="sqlass\TableContext.cs" />
+    <Compile Include="sqlass\WhereContextVisitor.cs" />
     <Compile Include="T4\Extender.cs" />
     <Compile Include="T4\Context.cs" />
     <Compile Include="TreeStructure\Extender.cs" />
