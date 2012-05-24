@@ -123,7 +123,7 @@ namespace HWClassLibrary.UnitTest
             ConfigFileMessage("Configuration saved");
         }
 
-        void ConfigFileMessage(string flagText) { Tracer.Line(Tracer.FilePosn(_configFile.FullName, 1, 1, flagText)); }
+        void ConfigFileMessage(string flagText) { Tracer.Line(Tracer.FilePosn(_configFile.FullName, 1, 1, FilePositionTag.Test) + flagText); }
 
 
         void LoadConfiguration()

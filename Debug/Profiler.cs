@@ -176,7 +176,7 @@ namespace HWClassLibrary.Debug
                 var start = _stopwatch.Elapsed;
                 _current.Suspend(start);
                 _stack.Push(_current);
-                var position = Tracer.MethodHeader(depth + 1) + flag;
+                var position = Tracer.MethodHeader(depth + 1, FilePositionTag.Profiler) + flag;
                 if(!_profileItems.TryGetValue(position, out _current))
                 {
                     _current = new ProfileItem(position);

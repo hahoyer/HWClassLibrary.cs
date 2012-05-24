@@ -134,12 +134,12 @@ namespace HWClassLibrary.sqlass
 
         internal void ExecuteNonQuery(string text)
         {
-            Tracer.FlaggedLine(1, text);
+            Tracer.FlaggedLine(1, FilePositionTag.Query, text);
             Connection.ToCommand(text).ExecuteNonQuery();
         }
         internal T[] Execute<T>(string text) where T : IReaderInitialize, new()
         {
-            Tracer.FlaggedLine(1, text);
+            Tracer.FlaggedLine(1, FilePositionTag.Query, text);
             return Connection.ToArray<T>(text);
         }
         public DataTable Schema(string text) { return Connection.Schema(text); }

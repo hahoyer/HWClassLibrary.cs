@@ -37,7 +37,7 @@ namespace HWClassLibrary.sqlass
                 case ExpressionType.Constant:
                     return VisitConstant((ConstantExpression) expression);
             }
-            Tracer.FlaggedLine(expression.NodeType.ToString());
+            Tracer.FlaggedLine(FilePositionTag.Debug, expression.NodeType.ToString());
             NotImplementedMethod(expression);
             return default(T);
         }
@@ -52,7 +52,7 @@ namespace HWClassLibrary.sqlass
             var methodInfo = GetType().GetMethod("VisitCall" + method.Name);
             if(methodInfo == null)
             {
-                Tracer.FlaggedLine(
+                Tracer.FlaggedLine(FilePositionTag.Debug, 
                     "\n[UsedImplicitly]\ninternal T VisitCall"
                     + method.Name
                     + "("

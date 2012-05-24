@@ -107,7 +107,7 @@ namespace HWClassLibrary.Debug
             if(IsMethodDumpTraceActive)
             {
                 Tracer.IndentEnd();
-                Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
+                Tracer.Line(Tracer.MethodHeader(1, FilePositionTag.Debug) + "[returns] " + Tracer.Dump(rv));
                 if(breakExecution)
                     Tracer.TraceBreak();
             }
@@ -123,7 +123,7 @@ namespace HWClassLibrary.Debug
             if(IsMethodDumpTraceActive)
             {
                 Tracer.IndentEnd();
-                Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
+                Tracer.Line(Tracer.MethodHeader(1, FilePositionTag.Debug) + "[returns]");
                 if(breakExecution)
                     Tracer.TraceBreak();
             }

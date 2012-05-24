@@ -45,7 +45,7 @@ namespace HWClassLibrary.sqlass
                     //return VisitConstant((ConstantExpression)expression);
                     break;
             }
-            Tracer.FlaggedLine(expression.NodeType.ToString());
+            Tracer.FlaggedLine(FilePositionTag.Debug, expression.NodeType.ToString());
             NotImplementedMethod(expression);
             return default(T);
         }
