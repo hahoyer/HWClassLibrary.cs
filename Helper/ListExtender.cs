@@ -1,4 +1,5 @@
-// 
+#region Copyright (C) 2012
+
 //     Project HWClassLibrary
 //     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System;
 using System.Collections;
@@ -104,6 +107,44 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
+        /// Returns index list of all elements, that have no other element, with "isInRelation(element, other)" is true 
+        /// For example if relation is "element ;&less; other" will return the maximal element
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="isInRelation"></param>
+        /// <returns></returns>
+        public static IEnumerable<int> FrameIndexList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
+        {
+            var listArray = list.ToArray();
+            return listArray
+                .Select((item, index) => new Tuple<T, int>(item, index))
+                .Where(element => !listArray.Any(other => isInRelation(element.Item1, other)))
+                .Select(element=>element.Item2);
+
+        }
+        /// <summary>
+        /// Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true 
+        /// For example if relation is "element ;&less; other" will return the maximal element
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="isInRelation"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> FrameElementList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
+        {
+            var listArray = list.ToArray();
+            return listArray
+                .FrameIndexList(isInRelation)
+                .Select(index=>listArray[index]);
+        }
+
+        public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list)
+            where T : IComparable<T> { return list.FrameIndexList((a, b) => a.CompareTo(b) < 0); }
+        public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list)
+            where T : IComparable<T> { return list.FrameIndexList((a, b) => a.CompareTo(b) > 0); }
+
+        /// <summary>
         ///     Checks if object starts with given object.
         /// </summary>
         /// <typeparam name="T"> </typeparam>
@@ -129,13 +170,6 @@ namespace HWClassLibrary.Helper
             if(x.Count == y.Count)
                 return false;
             return x.StartsWith(y);
-        }
-
-        public static T OnlyOne<T>(this IEnumerable<T> x)
-        {
-            var xx = x.ToArray();
-            Tracer.Assert(xx.Length == 1);
-            return xx[0];
         }
 
         public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
