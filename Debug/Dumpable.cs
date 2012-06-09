@@ -102,7 +102,7 @@ namespace HWClassLibrary.Debug
         /// <param name="breakExecution"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
-        protected static T ReturnMethodDump<T>(T rv, bool breakExecution = false)
+        protected static T ReturnMethodDump<T>(T rv, bool breakExecution = true)
         {
             if(IsMethodDumpTraceActive)
             {
@@ -118,7 +118,7 @@ namespace HWClassLibrary.Debug
         ///     Method dump,
         /// </summary>
         [DebuggerHidden]
-        protected static void ReturnVoidMethodDump(bool breakExecution = false)
+        protected static void ReturnVoidMethodDump(bool breakExecution = true)
         {
             if(IsMethodDumpTraceActive)
             {

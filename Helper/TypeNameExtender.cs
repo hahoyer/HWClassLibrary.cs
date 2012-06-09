@@ -1,6 +1,7 @@
-// 
+#region Copyright (C) 2012
+
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,6 +18,8 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System.Reflection;
 using HWClassLibrary.Debug;
 using System.Collections.Generic;
@@ -27,7 +30,8 @@ namespace HWClassLibrary.Helper
 {
     public static class TypeNameExtender
     {
-        static readonly SimpleCache<IEnumerable<Type>> _referencedTypesCache = new SimpleCache<IEnumerable<Type>>(ObtainReferencedTypes);
+        static readonly SimpleCache<TypeLibrary> _referencedTypesCache
+            = new SimpleCache<TypeLibrary>(ObtainReferencedTypes);
 
         public static void OnModuleLoaded() { _referencedTypesCache.Reset(); }
 
@@ -56,9 +60,7 @@ namespace HWClassLibrary.Helper
             if(type.Namespace == null)
                 return result;
 
-            var conflictingTypes = ReferencedTypes
-                .Where(definedType => definedType.Name == type.Name && definedType.Namespace != type.Namespace)
-                .ToArray();
+            var conflictingTypes = ReferencedTypes.ConflictingTypes(type);
 
             var namespaceParts = type.Namespace.Split('.').Reverse().ToArray();
             var namespacePart = "";
@@ -73,15 +75,15 @@ namespace HWClassLibrary.Helper
             return namespacePart + result;
         }
 
-        static IEnumerable<Type> ObtainReferencedTypes()
+        static TypeLibrary ObtainReferencedTypes()
         {
             var assembly =
                 Assembly.GetEntryAssembly() ??
                 Assembly.GetCallingAssembly();
-            return assembly.GetReferencedTypes();
+            return new TypeLibrary(assembly.GetReferencedTypes());
         }
 
-        static IEnumerable<Type> ReferencedTypes { get { return _referencedTypesCache.Value; } }
+        static TypeLibrary ReferencedTypes { get { return _referencedTypesCache.Value; } }
 
         static string PrettyNameForGeneric(Type[] types)
         {
@@ -94,6 +96,28 @@ namespace HWClassLibrary.Helper
                 result += t.PrettyName();
             }
             return result + ">";
+        }
+    }
+
+    sealed class TypeLibrary
+    {
+        readonly Dictionary<string, IGrouping<string, Type>> _data;
+
+        public TypeLibrary(IEnumerable<Type> types)
+        {
+            _data = types
+                .GroupBy(t => t.Name, t => t)
+                .ToDictionary(t => t.Key, t => t);
+        }
+        
+        internal Type[] ConflictingTypes(Type type)
+        {
+            IGrouping<string, Type> result;
+            if(!_data.TryGetValue(type.Name, out result))
+                return new Type[0];
+            return result
+                . Where(definedType => definedType.Namespace != type.Namespace)
+                .ToArray();
         }
     }
 }
