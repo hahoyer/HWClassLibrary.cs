@@ -1,6 +1,7 @@
-// 
+#region Copyright (C) 2012
+
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -33,4 +36,7 @@ namespace HWClassLibrary.UnitTest
             return found[0];
         }
     }
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class LowPriority : Attribute
+    {}
 }

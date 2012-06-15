@@ -1,6 +1,7 @@
-﻿// 
+﻿#region Copyright (C) 2012
+
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -36,9 +39,15 @@ namespace HWClassLibrary.UnitTest
         string _status = "Start";
         int _complete;
         string _currentMethodName = "";
+        
+        readonly Func<Type, bool>[] _testLevels;
+
+        static bool IsNormalPriority(Type type) { return type.GetAttribute<LowPriority>(true) == null; ; }
+        static bool IsLowPriority(Type type) { return true; }
 
         TestRunner(IEnumerable<TestType> testTypes)
         {
+            _testLevels = new Func<Type, bool>[] {IsNormalPriority, IsLowPriority};
             _testTypes = testTypes.ToArray();
             Tracer.Assert(_testTypes.IsCircuidFree(Dependants), () => Tracer.Dump(_testTypes.Circuids(Dependants).ToArray()));
             if(IsModeErrorFocus)
@@ -60,15 +69,22 @@ namespace HWClassLibrary.UnitTest
         void Run()
         {
             _status = "run";
-            while(RunLevel())
-                continue;
+            for(int index = 0; index < _testLevels.Length && AllIsFine; index++)
+            {
+                var level = _testLevels[index];
+                while(RunLevel(level))
+                    continue;
+            }
+
             _status = "ran";
             SaveConfiguration();
         }
 
-        bool RunLevel()
+        bool AllIsFine { get { return _testTypes.All(t => !t.IsStarted || t.IsSuccessfull); } }
+
+        bool RunLevel(Func<Type, bool> isLevel)
         {
-            var openTests = _testTypes.Where(x => x.IsStartable).ToArray();
+            var openTests = _testTypes.Where(x => x.IsStartable(isLevel)).ToArray();
             if(openTests.Length == 0)
                 return false;
 

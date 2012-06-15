@@ -35,7 +35,7 @@ namespace HWClassLibrary.UnitTest
 
         public IEnumerable<DependantAttribute> Dependants { get { return Type.GetAttributes<DependantAttribute>(true); } }
 
-        internal IEnumerable<TestMethod> UnitTestMethods
+        IEnumerable<TestMethod> UnitTestMethods
         {
             get
             {
@@ -48,7 +48,7 @@ namespace HWClassLibrary.UnitTest
 
         public bool IsStarted { get; set; }
 
-        public bool IsStartable { get { return !IsStarted && !_isSuspended; } }
+        public bool IsStartable(Func<Type, bool> isLevel) { return !IsStarted && !_isSuspended && isLevel(Type); }
 
         public bool IsComplete { get { return _isComplete; } }
 
@@ -130,16 +130,15 @@ namespace HWClassLibrary.UnitTest
 
         public void Run()
         {
-            foreach(var unitTestMethod in UnitTestMethods)
-                if(!unitTestMethod.IsSuspended)
-                    try
-                    {
-                        unitTestMethod.Run();
-                    }
-                    catch(TestFailedException)
-                    {
-                        _failedMethods.Add(unitTestMethod);
-                    }
+            foreach(var unitTestMethod in UnitTestMethods.Where(unitTestMethod => !unitTestMethod.IsSuspended))
+                try
+                {
+                    unitTestMethod.Run();
+                }
+                catch(TestFailedException)
+                {
+                    _failedMethods.Add(unitTestMethod);
+                }
             _isComplete = true;
         }
     }
