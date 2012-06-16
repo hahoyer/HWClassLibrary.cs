@@ -113,6 +113,7 @@ namespace HWClassLibrary.UnitTest
             }
         }
 
+        public override string ToString() { return ConfigurationString; }
         public int ConfigurationModePriority
         {
             get

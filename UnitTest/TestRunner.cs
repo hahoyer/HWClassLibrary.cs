@@ -88,7 +88,8 @@ namespace HWClassLibrary.UnitTest
             if(openTests.Length == 0)
                 return false;
 
-            foreach(var openTest in openTests)
+            bool hasAnyTestRan = false;
+            foreach(TestType openTest in openTests)
             {
                 var dependants = Dependants(openTest);
                 if(dependants.All(test => test.IsStarted))
@@ -104,10 +105,11 @@ namespace HWClassLibrary.UnitTest
                         }
                         openTest.Run();
                         _complete++;
+                        hasAnyTestRan = true;
                     }
                 }
             }
-            return true;
+            return hasAnyTestRan;
         }
 
         string ConfigurationString
