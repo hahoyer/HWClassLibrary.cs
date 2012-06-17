@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.Linq;
 using HWClassLibrary.Debug;
 using HWClassLibrary.TreeStructure;
-using Microsoft.VisualStudio.DebuggerVisualizers;
+//using Microsoft.VisualStudio.DebuggerVisualizers;
 
 namespace HWClassLibrary.Debug
 {
+#if false
     public class Visualizer : DialogDebuggerVisualizer
     {
         readonly TreeForm _treeForm = new TreeForm();
@@ -49,4 +50,5 @@ namespace HWClassLibrary.Debug
             myHost.ShowVisualizer();
         }
     }
+#endif
 }

@@ -47,7 +47,7 @@ namespace HWClassLibrary.DataBase
 
         protected abstract DbConnection CreateConnection(string dbPath);
 
-        protected T[] Select<T>() where T : new()
+        protected IEnumerable<T> Select<T>() where T : new()
         {
             var command = Connection.CreateCommand();
             command.CommandText = SQLGenerator<T>.SelectCommand;
@@ -62,16 +62,13 @@ namespace HWClassLibrary.DataBase
                 if(expectedMessage != e.Message)
                     throw;
                 CreateTable<T>();
-                return new T[0];
+                yield break;
             }
-            var result = new List<T>();
-            foreach(var dataReader in reader)
+            foreach(var @object in reader.Cast<object>().Select(dataReader => new T()))
             {
-                var @object = new T();
                 SQLGenerator<T>.SetValues(@object, reader);
-                result.Add(@object);
+                yield return (@object);
             }
-            return result.ToArray();
         }
 
         protected void Insert<T>(T[] newObjects)

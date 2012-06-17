@@ -103,7 +103,7 @@ namespace HWClassLibrary.TreeStructure
 
     public interface ITreeNodeSupport
     {
-        TreeNode[] CreateNodes();
+        IEnumerable<TreeNode> CreateNodes();
     }
 
     public interface IAdditionalNodeInfoProvider

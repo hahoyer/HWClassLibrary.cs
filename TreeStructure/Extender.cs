@@ -210,7 +210,7 @@ namespace HWClassLibrary.TreeStructure
 
             var xn = target as ITreeNodeSupport;
             if(xn != null)
-                return xn.CreateNodes();
+                return xn.CreateNodes().ToArray();
 
             var xl = target as IList;
             if(xl != null)

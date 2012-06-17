@@ -123,9 +123,18 @@ namespace HWClassLibrary.Helper
 
         public static IEnumerable<Type> GetReferencedTypes(this Assembly rootAssembly)
         {
-            return rootAssembly
-                .GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes());
+            return rootAssembly.GetAssemblies().SelectMany(GetTypes);
+        }
+        static Type[] GetTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException exception)
+            {
+                throw new Exception(assembly.FullName + "\n" + exception.LoaderExceptions.Format("\n"));
+            }
         }
 
 
