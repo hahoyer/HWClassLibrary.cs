@@ -231,6 +231,7 @@ namespace HWClassLibrary.Debug
         public bool IsInDump { get { return _isInDump; } }
 
         bool _isInDump;
+        public static bool? IsMethodDumpTraceInhibited;
 
         /// <summary>
         ///     Default dump of data
@@ -279,6 +280,8 @@ namespace HWClassLibrary.Debug
         {
             get
             {
+                if (IsMethodDumpTraceInhibited != null)
+                    return !IsMethodDumpTraceInhibited.Value;
                 if(!Debugger.IsAttached)
                     return false;
                 //CheckDumpLevel(2);

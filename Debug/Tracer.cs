@@ -785,7 +785,7 @@ namespace HWClassLibrary.Debug
         Query,
         Test,
         Profiler
-    }
+    }                                                
 
     interface IDumpExceptAttribute
     {
