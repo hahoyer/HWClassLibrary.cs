@@ -77,6 +77,7 @@ namespace HWClassLibrary.sqlass
 
         string IExpressionVisitorConstant<string>.Qualifier { get { return _context.MetaData.SelectString; } }
 
+        [Obsolete("Use Value")]
         public T Find(TKey? key)
         {
             if(key == null)
