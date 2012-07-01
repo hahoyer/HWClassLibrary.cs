@@ -1,6 +1,7 @@
-// 
+#region Copyright (C) 2012
+
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -63,12 +66,11 @@ namespace HWClassLibrary.Helper
         public string NodeDump { get { return GetType().PrettyName(); } }
 
         /// <summary>
-        ///     Gets the or add.
+        ///     Gets the value for the key given. If no entry is present it is created by calling the create value function.
         /// </summary>
         /// <param name="key"> The key. </param>
         /// <returns> </returns>
-        /// created 13.01.2007 14:32
-        public TValue Find(TKey key)
+        public TValue Value(TKey key)
         {
             TValue result;
             if(TryGetValue(key, out result))
@@ -87,7 +89,7 @@ namespace HWClassLibrary.Helper
         /// <summary>
         ///     Gets the value with the specified key
         /// </summary>
-        /// <value></value>
+        /// <value> </value>
         /// created 13.01.2007 15:43
         public new TValue this[TKey key]
         {

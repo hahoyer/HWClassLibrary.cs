@@ -72,9 +72,9 @@ namespace HWClassLibrary.sqlass.MetaData
         public static TableName Find(string catalog, string schema, string tableName)
         {
             return _dictionary
-                .Find(catalog ?? "")
-                .Find(schema ?? "")
-                .Find(tableName);
+                .Value(catalog ?? "")
+                .Value(schema ?? "")
+                .Value(tableName);
         }
 
         public override string ToString() { return SQLTableName; }

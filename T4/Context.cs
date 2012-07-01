@@ -118,7 +118,7 @@ namespace HWClassLibrary.T4
             {
                 foreach(var file in _currentFiles)
                 {
-                    var box = _fileItems.Find(file);
+                    var box = _fileItems.Value(file);
                     box.Content = box.Content + _text.ToString(_currentStart, _text.Length - _currentStart);
                 }
                 _text.Remove(_currentStart, _text.Length - _currentStart);
