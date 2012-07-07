@@ -102,7 +102,7 @@ namespace HWClassLibrary.Debug
         /// <param name="tag"> </param>
         /// <param name="showParam"> controls if parameter list is appended </param>
         /// <returns> string to inspect the method call </returns>
-        public static string MethodHeader(int depth, FilePositionTag tag, bool showParam)
+        public static string MethodHeader(int depth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
@@ -113,15 +113,6 @@ namespace HWClassLibrary.Debug
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return DumpMethod(sf.GetMethod(), false);
         }
-
-        /// <summary>
-        ///     creates a string to inspect the method call contained in current call stack (without parameter list)
-        /// </summary>
-        /// <param name="depth"> the index of stack frame </param>
-        /// <param name="flagText"> </param>
-        /// <returns> string to inspect the method call </returns>
-        [UsedImplicitly]
-        public static string MethodHeader(int depth, FilePositionTag flagText) { return MethodHeader(depth + 1, flagText, false); }
 
         [UsedImplicitly]
         public static string StackTrace(FilePositionTag tag) { return StackTrace(1, tag); }
@@ -211,25 +202,25 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method
         /// </summary>
-        /// <param name="flagText"> </param>
         /// <param name="s"> the text </param>
         /// <param name="showParam"> controls if parameter list is appended </param>
-        public static void FlaggedLine(FilePositionTag flagText, string s, bool showParam) { Line(MethodHeader(1, flagText, showParam) + s); }
+        /// <param name="flagText"> </param>
+        public static void FlaggedLine(string s, bool showParam, FilePositionTag flagText = FilePositionTag.Debug) { Line(MethodHeader(1, flagText, showParam) + s); }
 
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
-        /// <param name="flagText"> </param>
         /// <param name="s"> the text </param>
-        public static void FlaggedLine(FilePositionTag flagText, string s) { Line(MethodHeader(1, flagText, false) + s); }
+        /// <param name="flagText"> </param>
+        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug) { Line(MethodHeader(1, flagText) + s); }
 
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="flagText"> </param>
         /// <param name="s"> the text </param>
-        public static void FlaggedLine(int stackFrameDepth, FilePositionTag flagText, string s) { Line(MethodHeader(stackFrameDepth + 1, flagText, false) + s); }
+        /// <param name="flagText"> </param>
+        public static void FlaggedLine(int stackFrameDepth, string s, FilePositionTag flagText = FilePositionTag.Debug) { Line(MethodHeader(stackFrameDepth + 1, flagText) + s); }
 
         /// <summary>
         ///     generic dump function by use of reflection
@@ -606,8 +597,8 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void ConditionalBreak(int stackFrameDepth, string cond, Func<string> data)
         {
-            var result = "Conditional break: " + cond + "\nData: " + data();
-            FlaggedLine(stackFrameDepth + 1, FilePositionTag.Debug, result);
+            var result = "Conditional break: " + cond + "\nData: " + (data==null?"":data());
+            FlaggedLine(stackFrameDepth + 1, result);
             TraceBreak();
         }
 
@@ -625,7 +616,7 @@ namespace HWClassLibrary.Debug
         }
 
         [DebuggerHidden]
-        public static void ConditionalBreak(bool cond, Func<string> data)
+        public static void ConditionalBreak(bool cond, Func<string> data = null)
         {
             if(cond)
                 ConditionalBreak(1, true, data);
@@ -665,7 +656,7 @@ namespace HWClassLibrary.Debug
         public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data)
         {
             var result = "Assertion Failed: " + cond + "\nData: " + data();
-            FlaggedLine(stackFrameDepth + 1, FilePositionTag.Debug, result);
+            FlaggedLine(stackFrameDepth + 1, result);
             AssertionBreak(result);
             return result;
         }
@@ -737,7 +728,7 @@ namespace HWClassLibrary.Debug
         /// Created 09.09.07 12:03 by hh on HAHOYER-DELL
         public static void ConsoleOutput(string text)
         {
-            FlaggedLine(FilePositionTag.Output, text);
+            FlaggedLine(text, FilePositionTag.Output);
             Console.WriteLine(text);
         }
 

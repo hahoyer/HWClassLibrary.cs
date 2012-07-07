@@ -38,7 +38,7 @@ namespace HWClassLibrary.sqlass
                 case ExpressionType.Lambda:
                     return VisitLambda(expression);
             }
-            Tracer.FlaggedLine(FilePositionTag.Debug, expression.NodeType.ToString());
+            Tracer.FlaggedLine(expression.NodeType.ToString());
             NotImplementedMethod(expression);
             return default(T);
         }
