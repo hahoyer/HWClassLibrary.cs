@@ -65,23 +65,12 @@ namespace HWClassLibrary.Helper
         [DisableDump]
         public string NodeDump { get { return GetType().PrettyName(); } }
 
-        /// <summary>
-        ///     Gets the value for the key given. If no entry is present it is created by calling the create value function.
-        /// </summary>
-        /// <param name="key"> The key. </param>
-        /// <returns> </returns>
-        public TValue Value(TKey key)
+        public void Ensure(TKey key)
         {
-            TValue result;
-            if(TryGetValue(key, out result))
-            {
-                Tracer.Assert(!Equals(result, DefaultValue));
-                return result;
-            }
+            if(ContainsKey(key))
+                return;
             base[key] = DefaultValue;
-            result = _createValue(key);
-            base[key] = result;
-            return result;
+            base[key] = _createValue(key);
         }
 
         public readonly TValue DefaultValue;
@@ -95,10 +84,8 @@ namespace HWClassLibrary.Helper
         {
             get
             {
-                TValue result;
-                if(TryGetValue(key, out result))
-                    return result;
-                return default(TValue);
+                Ensure(key);
+                return base[key];
             }
             set { Add(key, value); }
         }

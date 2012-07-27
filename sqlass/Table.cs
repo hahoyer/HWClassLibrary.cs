@@ -82,7 +82,7 @@ namespace HWClassLibrary.sqlass
         {
             if(key == null)
                 return default(T);
-            return _cache.Value(key.Value);
+            return _cache[key.Value];
         }
     }
 

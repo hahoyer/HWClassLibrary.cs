@@ -47,7 +47,7 @@ namespace HWClassLibrary.sqlass.T4
         Context(StringBuilder text, ITextTemplatingEngineHost host)
             : base(text, host) { _sqlTables = new DictionaryEx<Type, SQLTable>(ObtainSQLTable); }
 
-        internal SQLTable SQLTable(Type type) { return _sqlTables.Value(type); }
+        internal SQLTable SQLTable(Type type) { return _sqlTables[type]; }
 
         void AddTable(Type type)
         {
