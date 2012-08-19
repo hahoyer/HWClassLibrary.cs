@@ -65,9 +65,33 @@ namespace HWClassLibrary.Debug
         /// <param name="fileName"> asis </param>
         /// <param name="lineNr"> asis </param>
         /// <param name="colNr"> asis </param>
-        /// <param name="flagText"> asis </param>
+        /// <param name="tag"> asis </param>
         /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
-        public static string FilePosn(string fileName, int lineNr, int colNr, FilePositionTag flagText) { return fileName + "(" + (lineNr + 1) + "," + colNr + "): " + flagText + ": "; }
+        public static string FilePosn(string fileName, int lineNr, int colNr, FilePositionTag tag)
+        {
+            var tagText = tag.ToString();
+            return FilePosn(fileName, lineNr, colNr, tagText);
+        }
+
+        /// <summary>
+        ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
+        /// </summary>
+        /// <param name="fileName"> asis </param>
+        /// <param name="lineNr"> asis </param>
+        /// <param name="colNr"> asis </param>
+        /// <param name="tagText"> asis </param>
+        /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
+        public static string FilePosn(string fileName, int lineNr, int colNr, string tagText)
+        {
+            return fileName
+                   + "("
+                   + (lineNr + 1)
+                   + ","
+                   + colNr
+                   + "): "
+                   + tagText
+                   + ": ";
+        }
 
         /// <summary>
         ///     creates a string to inspect a method
@@ -597,7 +621,7 @@ namespace HWClassLibrary.Debug
         [DebuggerHidden]
         public static void ConditionalBreak(int stackFrameDepth, string cond, Func<string> data)
         {
-            var result = "Conditional break: " + cond + "\nData: " + (data==null?"":data());
+            var result = "Conditional break: " + cond + "\nData: " + (data == null ? "" : data());
             FlaggedLine(stackFrameDepth + 1, result);
             TraceBreak();
         }
@@ -776,7 +800,7 @@ namespace HWClassLibrary.Debug
         Query,
         Test,
         Profiler
-    }                                                
+    }
 
     interface IDumpExceptAttribute
     {
