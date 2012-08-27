@@ -125,6 +125,7 @@ namespace HWClassLibrary.Helper
         {
             return rootAssembly.GetAssemblies().SelectMany(GetTypes);
         }
+        
         static Type[] GetTypes(Assembly assembly)
         {
             try
