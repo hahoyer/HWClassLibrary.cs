@@ -1,4 +1,5 @@
-// 
+#region Copyright (C) 2012
+
 //     Project HWClassLibrary
 //     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System;
 using System.Collections;
@@ -136,10 +139,10 @@ namespace HWClassLibrary.TreeStructure
         static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry)
         {
             return new[]
-                   {
-                       dictionaryEntry.Key.CreateTaggedNode("key", "Key", true),
-                       dictionaryEntry.Value.CreateTaggedNode("value")
-                   };
+            {
+                dictionaryEntry.Key.CreateTaggedNode("key", "Key", true),
+                dictionaryEntry.Value.CreateTaggedNode("value")
+            };
         }
 
         /// <summary>
@@ -237,9 +240,9 @@ namespace HWClassLibrary.TreeStructure
 
         static TreeNode[] CreateFieldNodes(object nodeData)
         {
-            var type = nodeData.GetType();
-            return type
-                .GetFields(DefaultBindingFlags)
+            return nodeData
+                .GetType()
+                .GetFieldInfos()
                 .Select(fieldInfo => CreateTreeNode(nodeData, fieldInfo))
                 .Where(treeNode => treeNode != null)
                 .ToArray();
@@ -264,19 +267,17 @@ namespace HWClassLibrary.TreeStructure
 
         static TreeNode CreateTreeNode(MemberInfo memberInfo, Func<object> getValue)
         {
-            var attrs = memberInfo.GetCustomAttributes(typeof(NodeAttribute), true);
-            if(attrs.Length == 0)
+            var attribute = memberInfo.GetAttribute<NodeAttribute>(true);
+            if(attribute == null)
                 return null;
 
-            var attr = (NodeAttribute) attrs[0];
             var value = CatchedEval(getValue);
             if(value == null)
                 return null;
 
-            var result = CreateNamedNode(value, memberInfo.Name, attr.IconKey);
+            var result = CreateNamedNode(value, memberInfo.Name, attribute.IconKey);
 
-            var smartNode = (SmartNodeAttribute[]) memberInfo.GetCustomAttributes(typeof(SmartNodeAttribute), true);
-            if(smartNode.Length == 0)
+            if(memberInfo.GetAttribute<SmartNodeAttribute>(true) == null)
                 return result;
 
             return SmartNodeAttribute.Process(result);

@@ -1,4 +1,5 @@
-﻿// 
+﻿#region Copyright (C) 2012
+
 //     Project HWClassLibrary
 //     Copyright (C) 2011 - 2012 Harald Hoyer
 // 
@@ -17,11 +18,14 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HWClassLibrary.Debug;
+using HWClassLibrary.TreeStructure;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
@@ -79,6 +83,7 @@ namespace HWClassLibrary.Helper
             throw new MultipleAttributesException(typeof(TAttribute), @this, inherit, list.ToArray());
         }
 
+
         public sealed class MultipleAttributesException : Exception
         {
             [UsedImplicitly]
@@ -121,18 +126,15 @@ namespace HWClassLibrary.Helper
             return result;
         }
 
-        public static IEnumerable<Type> GetReferencedTypes(this Assembly rootAssembly)
-        {
-            return rootAssembly.GetAssemblies().SelectMany(GetTypes);
-        }
-        
+        public static IEnumerable<Type> GetReferencedTypes(this Assembly rootAssembly) { return rootAssembly.GetAssemblies().SelectMany(GetTypes); }
+
         static Type[] GetTypes(Assembly assembly)
         {
             try
             {
                 return assembly.GetTypes();
             }
-            catch (ReflectionTypeLoadException exception)
+            catch(ReflectionTypeLoadException exception)
             {
                 throw new Exception(assembly.FullName + "\n" + exception.LoaderExceptions.Format("\n"));
             }
@@ -186,6 +188,24 @@ namespace HWClassLibrary.Helper
         {
             return type != null
                    && type.GetInterfaces().Contains(interfaceType);
+        }
+
+        static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+
+        static IEnumerable<Type> ThisAndBias(this Type type)
+        {
+            var t = type;
+            while(t != null)
+            {
+                yield return t;
+                t = t.BaseType;
+            }
+        }
+
+        internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type)
+        {
+            return type.ThisAndBias().SelectMany(t => t.GetFields(AnyBinding));
+
         }
     }
 }
