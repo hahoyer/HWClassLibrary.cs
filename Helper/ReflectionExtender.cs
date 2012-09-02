@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HWClassLibrary.Debug;
-using HWClassLibrary.TreeStructure;
 using JetBrains.Annotations;
 
 namespace HWClassLibrary.Helper
@@ -60,6 +59,7 @@ namespace HWClassLibrary.Helper
                 case 1:
                     return list[0];
             }
+
             throw new MultipleAttributesException(typeof(TAttribute), @this, inherit, list.ToArray());
         }
 
@@ -190,8 +190,6 @@ namespace HWClassLibrary.Helper
                    && type.GetInterfaces().Contains(interfaceType);
         }
 
-        static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
-
         static IEnumerable<Type> ThisAndBias(this Type type)
         {
             var t = type;
@@ -204,8 +202,11 @@ namespace HWClassLibrary.Helper
 
         internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type)
         {
-            return type.ThisAndBias().SelectMany(t => t.GetFields(AnyBinding));
-
+            return type
+                .ThisAndBias()
+                .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly));
         }
+
+        public static T Parse<T>(this string title) { return (T) Enum.Parse(typeof(T), title); }
     }
 }

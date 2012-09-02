@@ -215,6 +215,11 @@ namespace HWClassLibrary.TreeStructure
             if(xn != null)
                 return xn.CreateNodes().ToArray();
 
+            return CreateAutomaticNodes(target);
+        }
+
+        public static TreeNode[] CreateAutomaticNodes(this object target)
+        {
             var xl = target as IList;
             if(xl != null)
                 return InternalCreateNodes(xl);
@@ -332,5 +337,6 @@ namespace HWClassLibrary.TreeStructure
         internal static void CreateNodeList(this TreeNode node) { CreateNodeList(node.Nodes, node.Tag); }
 
         static void BeforeExpand(object sender, TreeViewCancelEventArgs e) { AddSubNodes(e.Node.Nodes); }
+        
     }
 }

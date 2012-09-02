@@ -80,7 +80,7 @@ namespace HWClassLibrary.TreeStructure
             {
                 case 0:
                     return null;
-                case -1:
+                case 1:
                     var node = treeNode.Nodes[0];
                     node.Text = treeNode.Text + " \\ " + node.Text;
                     return Process(node);
