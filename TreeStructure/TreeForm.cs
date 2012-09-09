@@ -62,7 +62,7 @@ namespace HWClassLibrary.TreeStructure
         }
         static Rectangle EnsureVisible(Rectangle value)
         {
-            if (Screen.AllScreens.Any(s => s.Bounds.IntersectsWith(value)))
+            if(Screen.AllScreens.Any(s => s.Bounds.IntersectsWith(value)))
                 return value;
             var closestScreen = Screen.FromRectangle(value);
             throw new NotImplementedException();
@@ -70,16 +70,25 @@ namespace HWClassLibrary.TreeStructure
 
         protected override void OnLocationChanged(EventArgs e)
         {
-            if(_initialLocationSet)
-                _positionConfig.Position = Bounds;
+            SavePosition();
             base.OnLocationChanged(e);
         }
 
         protected override void OnSizeChanged(EventArgs e)
         {
-            _positionConfig.Position = Bounds;
-            _positionConfig.WindowState = WindowState;
+            SavePosition();
             base.OnSizeChanged(e);
+        }
+
+        void SavePosition()
+        {
+            if(!_initialLocationSet)
+                return;
+            
+            if(WindowState == FormWindowState.Normal)
+                _positionConfig.Position = Bounds;
+            
+            _positionConfig.WindowState = WindowState;
         }
     }
 
@@ -87,35 +96,42 @@ namespace HWClassLibrary.TreeStructure
     {
         readonly string _name;
         public PositionConfig(string name) { _name = name; }
+
         internal Rectangle? Position
         {
             get
             {
-                var content = _name.FileHandle().String;
-                if(content == null)
-                    return null;
-
-                return (Rectangle?) new RectangleConverter().ConvertFromString(content.Split(' ')[0]);
+                return Convert
+                    (0
+                     , null
+                     , s => (Rectangle?) new RectangleConverter().ConvertFromString(s)
+                    );
             }
             set { Save(value, WindowState); }
+        }
+
+        string[] ParameterStrings
+        {
+            get
+            {
+                var content = _name.FileHandle().String;
+                return content == null ? null : content.Split('\n');
+            }
         }
 
         void Save(Rectangle? position, FormWindowState state)
         {
             _name.FileHandle().String
-                = new RectangleConverter().ConvertToString(position) + " " + state;
+                = new RectangleConverter().ConvertToString(position) + "\n" + state;
         }
 
-        internal FormWindowState WindowState
+        internal FormWindowState WindowState { get { return Convert(1, FormWindowState.Normal, s => s.Parse<FormWindowState>()); } set { Save(Position, value); } }
+
+        T Convert<T>(int position, T defaultValue, Func<string, T> converter)
         {
-            get
-            {
-                var content = _name.FileHandle().String;
-                if(content == null)
-                    return FormWindowState.Normal;
-                return content.Split(' ')[1].Parse<FormWindowState>();
-            }
-            set { Save(Position, value); }
+            if(ParameterStrings == null)
+                return defaultValue;
+            return converter(ParameterStrings[position]);
         }
 
     }
