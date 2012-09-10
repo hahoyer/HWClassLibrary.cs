@@ -50,22 +50,8 @@ namespace HWClassLibrary.TreeStructure
 
         protected override void OnLoad(EventArgs e)
         {
-            if(_positionConfig.Position != null)
-            {
-                SuspendLayout();
-                StartPosition = FormStartPosition.Manual;
-                Bounds = EnsureVisible(_positionConfig.Position.Value);
-                WindowState = _positionConfig.WindowState;
-                ResumeLayout(true);
-            }
-            _initialLocationSet = true;
-        }
-        static Rectangle EnsureVisible(Rectangle value)
-        {
-            if(Screen.AllScreens.Any(s => s.Bounds.IntersectsWith(value)))
-                return value;
-            var closestScreen = Screen.FromRectangle(value);
-            throw new NotImplementedException();
+            base.OnLoad(e);
+            LoadPosition();
         }
 
         protected override void OnLocationChanged(EventArgs e)
@@ -80,14 +66,35 @@ namespace HWClassLibrary.TreeStructure
             base.OnSizeChanged(e);
         }
 
+        void LoadPosition()
+        {
+            if(_positionConfig.Position != null)
+            {
+                SuspendLayout();
+                StartPosition = FormStartPosition.Manual;
+                Bounds = EnsureVisible(_positionConfig.Position.Value);
+                WindowState = _positionConfig.WindowState;
+                ResumeLayout(true);
+            }
+            _initialLocationSet = true;
+        }
+
+        static Rectangle EnsureVisible(Rectangle value)
+        {
+            if (Screen.AllScreens.Any(s => s.Bounds.IntersectsWith(value)))
+                return value;
+            var closestScreen = Screen.FromRectangle(value);
+            throw new NotImplementedException();
+        }
+
         void SavePosition()
         {
             if(!_initialLocationSet)
                 return;
-            
+
             if(WindowState == FormWindowState.Normal)
                 _positionConfig.Position = Bounds;
-            
+
             _positionConfig.WindowState = WindowState;
         }
     }
@@ -133,6 +140,5 @@ namespace HWClassLibrary.TreeStructure
                 return defaultValue;
             return converter(ParameterStrings[position]);
         }
-
     }
 }
