@@ -50,6 +50,7 @@
     <Compile Include="Helper\DateTimeExtender.cs" />
     <Compile Include="Helper\Dictionary.cs" />
     <Compile Include="Helper\DTEExtender.cs" />
+    <Compile Include="Helper\EnumEx.cs" />
     <Compile Include="Helper\ListExtender.cs" />
     <Compile Include="Helper\LongExtender.cs" />
     <Compile Include="Helper\ReflectionExtender.cs" />
