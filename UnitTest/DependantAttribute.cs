@@ -29,13 +29,9 @@ namespace HWClassLibrary.UnitTest
 {
     public abstract class DependantAttribute : Attribute
     {
-        internal TestType AsTestType(IEnumerable<TestType> testTypes)
-        {
-            var found = testTypes.Where(x => x.Type == GetType()).ToArray();
-            Tracer.Assert(found.Length == 1);
-            return found[0];
-        }
+        internal TestType AsTestType(IEnumerable<TestType> testTypes) { return testTypes.Single(x => x.Type == GetType()); }
     }
+
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class LowPriority : Attribute
     {}
