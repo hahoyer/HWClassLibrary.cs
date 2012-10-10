@@ -29,7 +29,7 @@ using HWClassLibrary.UnitTest;
 
 namespace HWClassLibrary.Helper
 {
-    public abstract class EnumEx
+    public abstract class EnumEx: Dumpable
     {
         static IEnumerable<MemberInfo> AllMemberInfos(Type type) { return type.GetMembers().Where(memberInfo => IsValue(memberInfo, type)); }
         static IEnumerable<EnumEx> AllInstances(Type type) { return AllMemberInfos(type).Select(Instance); }
@@ -67,6 +67,7 @@ namespace HWClassLibrary.Helper
                 return null;
             }
         }
+        protected override string Dump(bool isRecursion) { return GetType().PrettyName() + "."+ Tag; }
     }
 
     [TestFixture]
