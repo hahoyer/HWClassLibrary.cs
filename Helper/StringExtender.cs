@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
@@ -148,5 +149,6 @@ namespace HWClassLibrary.Helper
         public static string TableNameToClassName(this string name) { return name.UnderScoreToCamelCase().ToSingular(); }
         [StringFormatMethod("pattern")]
         public static string ReplaceArgs(this string pattern, params object[] args) { return string.Format(pattern, args); }
+        public static bool Matches(this string input, string pattern) { return new Regex(pattern).IsMatch(input); }
     }
 }
