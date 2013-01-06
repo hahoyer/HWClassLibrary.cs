@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
@@ -90,14 +91,16 @@ namespace HWClassLibrary.Helper
 
         public static string Format<T>(this IEnumerable<T> x, string separator)
         {
-            var result = "";
+            var result = new StringBuilder();
+            var isNext = false;
             foreach(var element in x)
             {
-                if(result != "")
-                    result += separator;
-                result += element.ToString();
+                if(isNext)
+                    result.Append(separator);
+                isNext = true;
+                result.Append(element);
             }
-            return result;
+            return result.ToString();
         }
 
         public static TimeSpan Sum<T>(this IEnumerable<T> x, Func<T, TimeSpan> selector)
