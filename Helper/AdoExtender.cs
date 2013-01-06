@@ -1,6 +1,7 @@
-// 
+#region Copyright (C) 2013
+
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System.Data;
 using System.Data.Common;
@@ -64,6 +67,14 @@ namespace HWClassLibrary.Helper
             while(e.MoveNext())
                 result.Add(converter((DbDataRecord) e.Current));
             return result.ToArray();
+        }
+
+        public static string[] Columns(this DbDataReader reader)
+        {
+            var result = new string[reader.FieldCount];
+            for(var i = 0; i < reader.FieldCount; i++)
+                result[i] = reader.GetName(i);
+            return result;
         }
     }
 

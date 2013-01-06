@@ -79,19 +79,14 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
         public String TABLE_SCHEMA;
         public String TABLE_NAME;
         public String COLUMN_NAME;
-        public Guid COLUMN_GUID;
-        public Int32 COLUMN_PROPID;
         public Int32 ORDINAL_POSITION;
-        public Boolean COLUMN_HASDEFAULT;
         public String COLUMN_DEFAULT;
-        public Int32 COLUMN_FLAGS;
         public String IS_NULLABLE;
         public String DATA_TYPE;
-        public Guid TYPE_GUID;
         public Int32 CHARACTER_MAXIMUM_LENGTH;
         public Int32 CHARACTER_OCTET_LENGTH;
-        public Int16 NUMERIC_PRECISION;
-        public Int16 NUMERIC_SCALE;
+        public byte NUMERIC_PRECISION;
+        public Int32 NUMERIC_SCALE;
         public Int32 DATETIME_PRECISION;
         public String CHARACTER_SET_CATALOG;
         public String CHARACTER_SET_SCHEMA;
@@ -102,12 +97,6 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
         public String DOMAIN_CATALOG;
         public String DOMAIN_SCHEMA;
         public String DOMAIN_NAME;
-        public String DESCRIPTION;
-        public Int64 AUTOINC_MIN;
-        public Int64 AUTOINC_MAX;
-        public Int64 AUTOINC_NEXT;
-        public Int64 AUTOINC_SEED;
-        public Int64 AUTOINC_INCREMENT;
 
         public static ColumnClass[] Initialize(Context context)
         {
@@ -122,19 +111,14 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
             TABLE_SCHEMA = reader["TABLE_SCHEMA"].Convert<String>();
             TABLE_NAME = reader["TABLE_NAME"].Convert<String>();
             COLUMN_NAME = reader["COLUMN_NAME"].Convert<String>();
-            COLUMN_GUID = reader["COLUMN_GUID"].Convert<Guid>();
-            COLUMN_PROPID = reader["COLUMN_PROPID"].Convert<Int32>();
             ORDINAL_POSITION = reader["ORDINAL_POSITION"].Convert<Int32>();
-            COLUMN_HASDEFAULT = reader["COLUMN_HASDEFAULT"].Convert<Boolean>();
             COLUMN_DEFAULT = reader["COLUMN_DEFAULT"].Convert<String>();
-            COLUMN_FLAGS = reader["COLUMN_FLAGS"].Convert<Int32>();
             IS_NULLABLE = reader["IS_NULLABLE"].Convert<String>();
             DATA_TYPE = reader["DATA_TYPE"].Convert<String>();
-            TYPE_GUID = reader["TYPE_GUID"].Convert<Guid>();
             CHARACTER_MAXIMUM_LENGTH = reader["CHARACTER_MAXIMUM_LENGTH"].Convert<Int32>();
             CHARACTER_OCTET_LENGTH = reader["CHARACTER_OCTET_LENGTH"].Convert<Int32>();
-            NUMERIC_PRECISION = reader["NUMERIC_PRECISION"].Convert<Int16>();
-            NUMERIC_SCALE = reader["NUMERIC_SCALE"].Convert<Int16>();
+            NUMERIC_PRECISION = reader["NUMERIC_PRECISION"].Convert<byte>();
+            NUMERIC_SCALE = reader["NUMERIC_SCALE"].Convert<int>();
             DATETIME_PRECISION = reader["DATETIME_PRECISION"].Convert<Int32>();
             CHARACTER_SET_CATALOG = reader["CHARACTER_SET_CATALOG"].Convert<String>();
             CHARACTER_SET_SCHEMA = reader["CHARACTER_SET_SCHEMA"].Convert<String>();
@@ -145,12 +129,6 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
             DOMAIN_CATALOG = reader["DOMAIN_CATALOG"].Convert<String>();
             DOMAIN_SCHEMA = reader["DOMAIN_SCHEMA"].Convert<String>();
             DOMAIN_NAME = reader["DOMAIN_NAME"].Convert<String>();
-            DESCRIPTION = reader["DESCRIPTION"].Convert<String>();
-            AUTOINC_MIN = reader["AUTOINC_MIN"].Convert<Int64>();
-            AUTOINC_MAX = reader["AUTOINC_MAX"].Convert<Int64>();
-            AUTOINC_NEXT = reader["AUTOINC_NEXT"].Convert<Int64>();
-            AUTOINC_SEED = reader["AUTOINC_SEED"].Convert<Int64>();
-            AUTOINC_INCREMENT = reader["AUTOINC_INCREMENT"].Convert<Int64>();
         }
 
         public override string ToString()
@@ -160,15 +138,10 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
                 + " " + TABLE_SCHEMA
                 + " " + TABLE_NAME
                 + " " + COLUMN_NAME
-                + " " + COLUMN_GUID
-                + " " + COLUMN_PROPID
                 + " " + ORDINAL_POSITION
-                + " " + COLUMN_HASDEFAULT
                 + " " + COLUMN_DEFAULT
-                + " " + COLUMN_FLAGS
                 + " " + IS_NULLABLE
                 + " " + DATA_TYPE
-                + " " + TYPE_GUID
                 + " " + CHARACTER_MAXIMUM_LENGTH
                 + " " + CHARACTER_OCTET_LENGTH
                 + " " + NUMERIC_PRECISION
@@ -182,13 +155,7 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
                 + " " + COLLATION_NAME
                 + " " + DOMAIN_CATALOG
                 + " " + DOMAIN_SCHEMA
-                + " " + DOMAIN_NAME
-                + " " + DESCRIPTION
-                + " " + AUTOINC_MIN
-                + " " + AUTOINC_MAX
-                + " " + AUTOINC_NEXT
-                + " " + AUTOINC_SEED
-                + " " + AUTOINC_INCREMENT;
+                + " " + DOMAIN_NAME;
         }
     }
 
@@ -201,8 +168,6 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
         public String TABLE_SCHEMA;
         public String TABLE_NAME;
         public String COLUMN_NAME;
-        public Guid COLUMN_GUID;
-        public Int32 COLUMN_PROPID;
         public Int32 ORDINAL_POSITION;
 
         public static OneOfKeyColumnUsageClass[] Initialize(Context context)
@@ -221,8 +186,6 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
             TABLE_SCHEMA = reader["TABLE_SCHEMA"].Convert<String>();
             TABLE_NAME = reader["TABLE_NAME"].Convert<String>();
             COLUMN_NAME = reader["COLUMN_NAME"].Convert<String>();
-            COLUMN_GUID = reader["COLUMN_GUID"].Convert<Guid>();
-            COLUMN_PROPID = reader["COLUMN_PROPID"].Convert<Int32>();
             ORDINAL_POSITION = reader["ORDINAL_POSITION"].Convert<Int32>();
         }
 
@@ -236,8 +199,6 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
                 + " " + TABLE_SCHEMA
                 + " " + TABLE_NAME
                 + " " + COLUMN_NAME
-                + " " + COLUMN_GUID
-                + " " + COLUMN_PROPID
                 + " " + ORDINAL_POSITION;
         }
     }
@@ -309,7 +270,6 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
         public String CONSTRAINT_TYPE;
         public Boolean IS_DEFERRABLE;
         public Boolean INITIALLY_DEFERRED;
-        public String DESCRIPTION;
 
         public static TableConstraintClass[] Initialize(Context context)
         {
@@ -327,9 +287,8 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
             TABLE_SCHEMA = reader["TABLE_SCHEMA"].Convert<String>();
             TABLE_NAME = reader["TABLE_NAME"].Convert<String>();
             CONSTRAINT_TYPE = reader["CONSTRAINT_TYPE"].Convert<String>();
-            IS_DEFERRABLE = reader["IS_DEFERRABLE"].Convert<Boolean>();
-            INITIALLY_DEFERRED = reader["INITIALLY_DEFERRED"].Convert<Boolean>();
-            DESCRIPTION = reader["DESCRIPTION"].Convert<String>();
+            IS_DEFERRABLE = reader["IS_DEFERRABLE"].ToBoolean(new[]{"NO","YES"});
+            INITIALLY_DEFERRED = reader["INITIALLY_DEFERRED"].ToBoolean(new[] { "NO", "YES" }); 
         }
 
         public override string ToString()
@@ -343,8 +302,7 @@ namespace HWClassLibrary.sqlass.MetaData.SQLCompact
                 + " " + TABLE_NAME
                 + " " + CONSTRAINT_TYPE
                 + " " + IS_DEFERRABLE
-                + " " + INITIALLY_DEFERRED
-                + " " + DESCRIPTION;
+                + " " + INITIALLY_DEFERRED;
         }
     }
 }

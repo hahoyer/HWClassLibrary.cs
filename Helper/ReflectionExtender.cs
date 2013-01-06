@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using HWClassLibrary.Debug;
@@ -160,7 +161,17 @@ namespace HWClassLibrary.Helper
             return new Guid(x.ToString());
         }
 
-        public static T Convert<T>(this object x) { return (x is DBNull || x == null) ? default(T) : (T) x; }
+        public static T Convert<T>(this object x) { return x is DBNull || x == null ? default(T) : (T) x; }
+
+        static readonly bool[] _boolean = new[] { false, true };
+
+        public static bool ToBoolean(this object x, string[] values)
+        {
+            for(int i = 0; i < values.Length; i++)
+                if(values[i].Equals((string) x, StringComparison.OrdinalIgnoreCase))
+                    return _boolean[i];
+            throw new InvalidDataException();
+        }
 
         public static DateTime ToDateTime(this object x) { return Convert<DateTime>(x); }
         public static Decimal ToDecimal(this object x) { return Convert<decimal>(x); }
