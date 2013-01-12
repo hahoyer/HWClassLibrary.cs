@@ -137,7 +137,7 @@ namespace HWClassLibrary.Helper
             }
             catch(ReflectionTypeLoadException exception)
             {
-                throw new Exception(assembly.FullName + "\n" + exception.LoaderExceptions.Format("\n"));
+                throw new Exception(assembly.FullName + "\n" + exception.LoaderExceptions.Stringify("\n"));
             }
         }
 

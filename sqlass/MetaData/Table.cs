@@ -52,7 +52,7 @@ namespace HWClassLibrary.sqlass.MetaData
                     = "create table "
                       + SQLTableName
                       + " (\n"
-                      + Columns.Select(c => c.CreateColumnSQL).Format(",\n");
+                      + Columns.Select(c => c.CreateColumnSQL).Stringify(",\n");
                 if(HasKeys)
                     result
                         += ", primary key("
@@ -158,7 +158,7 @@ namespace HWClassLibrary.sqlass.MetaData
                 return Columns
                     .Where(c => c.IsKey)
                     .Select(c => c.Name)
-                    .Format(", ");
+                    .Stringify(", ");
             }
         }
         [DisableDump]
@@ -172,7 +172,7 @@ namespace HWClassLibrary.sqlass.MetaData
                     .ToArray();
                 if(keys.Length == 1)
                     return keys[0];
-                return "new " + KeyType + "(" + keys.Format(", ") + ")";
+                return "new " + KeyType + "(" + keys.Stringify(", ") + ")";
             }
         }
 
@@ -247,7 +247,7 @@ namespace HWClassLibrary.sqlass.MetaData
             {
                 return
                     "select "
-                    + Columns.Select(c => c.Name).Format(", ")
+                    + Columns.Select(c => c.Name).Stringify(", ")
                     + " from "
                     + TableName.SQLTableName;
             }

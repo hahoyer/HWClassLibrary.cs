@@ -142,7 +142,7 @@ namespace HWClassLibrary.Helper
             return name
                 .Split('_')
                 .Select(ToLowerFirstUpper)
-                .Format("");
+                .Stringify("");
         }
 
         public static string ToLowerFirstUpper(this string text) { return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant(); }

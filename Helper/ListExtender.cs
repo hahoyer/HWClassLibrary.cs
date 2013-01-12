@@ -89,7 +89,10 @@ namespace HWClassLibrary.Helper
             return x.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
         }
 
-        public static string Format<T>(this IEnumerable<T> x, string separator)
+        [Obsolete("use Stringify")]
+        public static string Format<T>(this IEnumerable<T> x, string separator) { return Stringify(x, separator); }
+
+        public static string Stringify<T>(this IEnumerable<T> x, string separator)
         {
             var result = new StringBuilder();
             var isNext = false;
