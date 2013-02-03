@@ -1,7 +1,7 @@
-﻿#region Copyright (C) 2012
+﻿#region Copyright (C) 2013
 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Copyright (C) 2011 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -163,11 +163,11 @@ namespace HWClassLibrary.Helper
 
         public static T Convert<T>(this object x) { return x is DBNull || x == null ? default(T) : (T) x; }
 
-        static readonly bool[] _boolean = new[] { false, true };
+        static readonly bool[] _boolean = new[] {false, true};
 
         public static bool ToBoolean(this object x, string[] values)
         {
-            for(int i = 0; i < values.Length; i++)
+            for(var i = 0; i < values.Length; i++)
                 if(values[i].Equals((string) x, StringComparison.OrdinalIgnoreCase))
                     return _boolean[i];
             throw new InvalidDataException();
@@ -195,13 +195,30 @@ namespace HWClassLibrary.Helper
             return "OneOf" + plural;
         }
 
-        public static bool Implements(this Type type, Type interfaceType)
+        public static bool Is(this Type type, Type otherType)
         {
-            return type != null
-                   && type.GetInterfaces().Contains(interfaceType);
+            if(type == null)
+                return false;
+            if(type == otherType)
+                return true;
+            if(type.IsSubclassOf(otherType))
+                return true;
+            return type.GetInterfaces().Contains(otherType);
         }
 
-        static IEnumerable<Type> ThisAndBias(this Type type)
+        public static bool Is<T>(this Type type) { return Is(type, typeof(T)); }
+
+        public static Type[] GetDirectInterfaces(this Type type)
+        {
+            return type
+                .GetInterfaces()
+                .Except((type.BaseType ?? typeof(object)).GetInterfaces())
+                .ToArray();
+        }
+
+        public static Type GetGenericType(this Type type) { return type.IsGenericType ? type.GetGenericTypeDefinition() : null; }
+
+        public static IEnumerable<Type> ThisAndBias(this Type type)
         {
             var t = type;
             while(t != null)

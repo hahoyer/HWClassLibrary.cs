@@ -1,6 +1,7 @@
-// 
+#region Copyright (C) 2013
+
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Copyright (C) 2011 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System.Linq;
 using System.Collections.Generic;
@@ -33,27 +36,25 @@ namespace HWClassLibrary.sqlass
 
         string MemberName(Type type, string name)
         {
-            if (type.GetInterfaces().Contains(typeof(ISQLSupportProvider)))
+            if(type.GetInterfaces().Contains(typeof(ISQLSupportProvider)))
                 return name;
-            NotImplementedMethod(type,name);
+            NotImplementedMethod(type, name);
             return null;
-
         }
 
         protected override string VisitMemberAccess(MemberExpression expression)
         {
             var member = expression.Member;
-            if (member.DeclaringType.Implements(typeof(ISQLSupportProvider)))
+            if(member.DeclaringType.Is<ISQLSupportProvider>())
             {
                 var qualifier = Visit(expression.Expression);
                 return qualifier
-                       + "."
-                       + member.Name;
+                    + "."
+                    + member.Name;
             }
 
             NotImplementedMethod(expression);
             return null;
-
         }
 
         protected override string Parameter(string name) { return name; }
