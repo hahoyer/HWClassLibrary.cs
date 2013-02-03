@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Copyright (C) 2011 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -113,8 +113,8 @@ namespace HWClassLibrary.Helper
         }
 
         /// <summary>
-        /// Returns index list of all elements, that have no other element, with "isInRelation(element, other)" is true 
-        /// For example if relation is "element ;&less; other" will return the maximal element
+        ///     Returns index list of all elements, that have no other element, with "isInRelation(element, other)" is true
+        ///     For example if relation is "element ;&less; other" will return the maximal element
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -126,12 +126,11 @@ namespace HWClassLibrary.Helper
             return listArray
                 .Select((item, index) => new Tuple<T, int>(item, index))
                 .Where(element => !listArray.Any(other => isInRelation(element.Item1, other)))
-                .Select(element=>element.Item2);
-
+                .Select(element => element.Item2);
         }
         /// <summary>
-        /// Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true 
-        /// For example if relation is "element ;&less; other" will return the maximal element
+        ///     Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true
+        ///     For example if relation is "element ;&less; other" will return the maximal element
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -142,7 +141,7 @@ namespace HWClassLibrary.Helper
             var listArray = list.ToArray();
             return listArray
                 .FrameIndexList(isInRelation)
-                .Select(index=>listArray[index]);
+                .Select(index => listArray[index]);
         }
 
         public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list)
@@ -250,6 +249,8 @@ namespace HWClassLibrary.Helper
             }
             throw new DuplicateKeyException();
         }
+
+        public static DictionaryEx<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>(this IEnumerable<T> list, Func<T, TKey> selector) { return new DictionaryEx<TKey, IEnumerable<T>>(key => list.Where(item => Equals(selector(item), key))); }
     }
 
     sealed class DuplicateKeyException : Exception
