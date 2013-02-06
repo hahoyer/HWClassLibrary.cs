@@ -1,6 +1,7 @@
-// 
+#region Copyright (C) 2013
+
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+//     Copyright (C) 2011 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -16,6 +17,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -45,7 +48,7 @@ namespace HWClassLibrary.Helper
             }
         }
 
-        public void Ensure()
+        void Ensure()
         {
             Tracer.Assert(!_isBusy);
             if(_isValid)
@@ -57,7 +60,7 @@ namespace HWClassLibrary.Helper
             _isBusy = false;
         }
 
-        public void Reset()
+        void Reset()
         {
             Tracer.Assert(!_isBusy);
             if(!_isValid)
@@ -70,7 +73,17 @@ namespace HWClassLibrary.Helper
         }
 
         [Node]
-        public bool IsValid { get { return _isValid; } }
+        public bool IsValid
+        {
+            get { return _isValid; }
+            set
+            {
+                if(value)
+                    Ensure();
+                else
+                    Reset();
+            }
+        }
 
         [EnableDumpExcept(false)]
         public bool IsBusy { get { return _isBusy; } }

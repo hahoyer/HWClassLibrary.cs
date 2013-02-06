@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Copyright (C) 2011 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -65,15 +65,24 @@ namespace HWClassLibrary.Helper
         [DisableDump]
         public string NodeDump { get { return GetType().PrettyName(); } }
 
-        public void Ensure(TKey key)
+        void Ensure(TKey key)
         {
-            if(ContainsKey(key))
+            if(base.ContainsKey(key))
                 return;
             base[key] = DefaultValue;
             base[key] = _createValue(key);
         }
 
         public readonly TValue DefaultValue;
+
+        public bool IsValid(TKey key) { return base.ContainsKey(key); }
+        public void IsValid(TKey key, bool value)
+        {
+            if(value)
+                Ensure(key);
+            else if(base.ContainsKey(key))
+                Remove(key);
+        }
 
         /// <summary>
         ///     Gets the value with the specified key
@@ -108,20 +117,20 @@ namespace HWClassLibrary.Helper
     {
         static IEqualityComparer<string> _default;
 
-        ///<summary>
-        ///    Determines whether the specified objects are equal.
-        ///</summary>
-        ///<returns> true if the specified objects are equal; otherwise, false. </returns>
-        ///<param name="y"> The second object of type T to compare. </param>
-        ///<param name="x"> The first object of type T to compare. </param>
+        /// <summary>
+        ///     Determines whether the specified objects are equal.
+        /// </summary>
+        /// <returns> true if the specified objects are equal; otherwise, false. </returns>
+        /// <param name="y"> The second object of type T to compare. </param>
+        /// <param name="x"> The first object of type T to compare. </param>
         public bool Equals(string x, string y) { return x.ToUpperInvariant() == y.ToUpperInvariant(); }
 
-        ///<summary>
-        ///    When overridden in a derived class, serves as a hash function for the specified object for hashing algorithms and data structures, such as a hash table.
-        ///</summary>
-        ///<returns> A hash code for the specified object. </returns>
-        ///<param name="obj"> The object for which to get a hash code. </param>
-        ///<exception cref="T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
+        /// <summary>
+        ///     When overridden in a derived class, serves as a hash function for the specified object for hashing algorithms and data structures, such as a hash table.
+        /// </summary>
+        /// <returns> A hash code for the specified object. </returns>
+        /// <param name="obj"> The object for which to get a hash code. </param>
+        /// <exception cref="T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
         public int GetHashCode(string obj) { return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant()); }
 
         public static IEqualityComparer<string> Default { get { return _default ?? (_default = new NoCaseComparer()); } }

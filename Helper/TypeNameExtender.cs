@@ -33,7 +33,7 @@ namespace HWClassLibrary.Helper
         static readonly SimpleCache<TypeLibrary> _referencedTypesCache
             = new SimpleCache<TypeLibrary>(ObtainReferencedTypes);
 
-        public static void OnModuleLoaded() { _referencedTypesCache.Reset(); }
+        public static void OnModuleLoaded() { _referencedTypesCache.IsValid = false; }
 
         public static string PrettyName(this Type type)
         {
