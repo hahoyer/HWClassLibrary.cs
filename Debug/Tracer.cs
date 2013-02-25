@@ -105,6 +105,15 @@ namespace HWClassLibrary.Debug
             result += m.Name;
             if(!showParam)
                 return result;
+            if(m.IsGenericMethod)
+            {
+                result += "<";
+                result += m
+                    .GetGenericArguments()
+                    .Select(t => t.PrettyName())
+                    .Stringify(", ");
+                result += ">";
+            }
             result += "(";
             for(int i = 0, n = m.GetParameters().Length; i < n; i++)
             {
