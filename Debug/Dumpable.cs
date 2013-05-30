@@ -31,6 +31,7 @@ namespace HWClassLibrary.Debug
     ///     Summary description for Dumpable.
     /// </summary>
     [Dump("Dump")]
+    [DebuggerDisplay("{DebuggerDumpString}")]
     public class Dumpable
     {
         static readonly Stack<MethodDumpTraceItem> _methodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
@@ -205,9 +206,14 @@ namespace HWClassLibrary.Debug
         {
             var oldIsInDump = _isInDump;
             _isInDump = true;
-            var result = Dump(oldIsInDump);
-            _isInDump = oldIsInDump;
-            return result;
+            try
+            {
+                return Dump(oldIsInDump);
+            }
+            finally
+            {
+                _isInDump = oldIsInDump;
+            }
         }
 
         protected virtual string Dump(bool isRecursion)

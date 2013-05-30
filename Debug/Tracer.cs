@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -275,9 +275,15 @@ namespace HWClassLibrary.Debug
             var xl = x as IList;
             if(xl != null)
                 return InternalDump(xl);
+
             var xd = x as IDictionary;
             if(xd != null)
                 return InternalDump(xd);
+
+            var xc = x as ICollection;
+            if(xc != null)
+                return InternalDump(xc);
+
             var co = x as CodeObject;
             if(co != null)
                 return InternalDump(co);
@@ -309,6 +315,17 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
+        static string InternalDump(ICollection xc)
+        {
+            return "Count="
+                   + xc.Count
+                   + xc
+                         .Cast<object>()
+                         .Select(Dump)
+                         .Stringify("\n", true)
+                         .Surround("{", "}");
+        }
+
         static string InternalDump(this CodeObject co)
         {
             var cse = co as CodeSnippetExpression;
@@ -320,26 +337,23 @@ namespace HWClassLibrary.Debug
 
         static string InternalDump(this IList xl)
         {
-            var result = "";
-            for(var i = 0; i < xl.Count; i++)
-            {
-                if(i > 0)
-                    result += "\n";
-                result += "[" + i + "] " + Dump(xl[i]);
-            }
-            return "Count=" + xl.Count + result.Surround("{", "}");
+            return "Count="
+                   + xl.Count
+                   + xl
+                         .Cast<object>()
+                         .Select(Dump)
+                         .Stringify("\n", true)
+                         .Surround("{", "}");
         }
 
         static string InternalDump(this IDictionary xd)
         {
-            var result = "";
-            foreach(DictionaryEntry entry in xd)
-            {
-                if(result != "")
-                    result += "\n";
-                result += "[" + Dump(entry.Key) + "] " + Dump(entry.Value);
-            }
-            return result.Surround("{", "}");
+            var keys = xd.Keys.Cast<object>();
+            var dictionaryEntries = keys.Select(key=>new {Key=key, Value=xd[key]}).ToArray();
+            return dictionaryEntries
+                .Select(entry => "[" + Dump(entry.Key) + "] " + Dump(entry.Value))
+                .Stringify("\n")
+                .Surround("{", "}");
         }
 
         static DumpClassAttribute DumpClassAttribute(this Type t)
@@ -630,7 +644,9 @@ namespace HWClassLibrary.Debug
         ///     Check boolean expression
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="b"> if set to <c>true</c> [b]. </param>
+        /// <param name="b">
+        ///     if set to <c>true</c> [b].
+        /// </param>
         /// <param name="text"> The text. </param>
         [DebuggerHidden]
         public static void ConditionalBreak(int stackFrameDepth, bool b, Func<string> text)
@@ -689,7 +705,9 @@ namespace HWClassLibrary.Debug
         ///     Check boolean expression
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="b"> if set to <c>true</c> [b]. </param>
+        /// <param name="b">
+        ///     if set to <c>true</c> [b].
+        /// </param>
         /// <param name="text"> The text. </param>
         [DebuggerHidden]
         public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b, Func<string> text)
@@ -703,7 +721,9 @@ namespace HWClassLibrary.Debug
         ///     Check boolean expression
         /// </summary>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="b"> if set to <c>true</c> [b]. </param>
+        /// <param name="b">
+        ///     if set to <c>true</c> [b].
+        /// </param>
         [DebuggerHidden]
         [AssertionMethod]
         public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b)
@@ -716,7 +736,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Asserts the specified b.
         /// </summary>
-        /// <param name="b"> if set to <c>true</c> [b]. </param>
+        /// <param name="b">
+        ///     if set to <c>true</c> [b].
+        /// </param>
         /// created 16.12.2006 18:27
         [DebuggerHidden]
         [AssertionMethod]
@@ -725,7 +747,9 @@ namespace HWClassLibrary.Debug
         /// <summary>
         ///     Asserts the specified b.
         /// </summary>
-        /// <param name="b"> if set to <c>true</c> [b]. </param>
+        /// <param name="b">
+        ///     if set to <c>true</c> [b].
+        /// </param>
         /// <param name="s"> The s. </param>
         /// created 16.12.2006 18:29
         [DebuggerHidden]

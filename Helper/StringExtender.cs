@@ -148,7 +148,18 @@ namespace HWClassLibrary.Helper
         public static string ToLowerFirstUpper(this string text) { return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant(); }
         public static string TableNameToClassName(this string name) { return name.UnderScoreToCamelCase().ToSingular(); }
         [StringFormatMethod("pattern")]
-        public static string ReplaceArgs(this string pattern, params object[] args) { return string.Format(pattern, args); }
+        public static string ReplaceArgs(this string pattern, params object[] args) { return String.Format(pattern, args); }
         public static bool Matches(this string input, string pattern) { return new Regex(pattern).IsMatch(input); }
+
+        public static IEnumerable<string> Split(this string target, params int[] sizes)
+        {
+            var start = 0;
+            foreach (var length in sizes.Select(size => Math.Max(0, Math.Min(target.Length - start, size))))
+            {
+                yield return target.Substring(start, length);
+                start += length;
+            }
+            yield return target.Substring(start);
+        }
     }
 }

@@ -68,7 +68,7 @@ namespace HWClassLibrary.Helper
             {
                 namespacePart = namespaceParts[i] + "." + namespacePart;
                 conflictingTypes = conflictingTypes
-                    .Where(conflictingType => (conflictingType.Namespace + ".").EndsWith(namespacePart))
+                    .Where(conflictingType => ("." + conflictingType.Namespace + ".").EndsWith("." + namespacePart))
                     .ToArray();
             }
 

@@ -33,7 +33,7 @@ namespace HWClassLibrary.Helper
     {
         public static DataTable Schema(this DbConnection connection, string text) { return connection.ToDataReader(text).Schema(); }
         public static DbDataReader ToDataReader(this DbConnection connection, string text) { return connection.ToCommand(text).ExecuteReader(); }
-        public static T[] ToArray<T>(this DbConnection connection, string text) where T : IReaderInitialize, new() { return connection.ToDataReader(text).ToArray<T>(); }
+        public static T[] XToArray<T>(this DbConnection connection, string text) where T : IReaderInitialize, new() { return connection.ToDataReader(text).XToArray<T>(); }
 
         public static DataTable Schema(this DbDataReader reader)
         {
@@ -48,7 +48,7 @@ namespace HWClassLibrary.Helper
             return command;
         }
 
-        public static T[] ToArray<T>(this DbDataReader reader) where T : IReaderInitialize, new()
+        public static T[] XToArray<T>(this DbDataReader reader) where T : IReaderInitialize, new()
         {
             var result = new List<T>();
             while(reader.Read())
