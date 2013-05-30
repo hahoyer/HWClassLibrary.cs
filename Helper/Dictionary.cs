@@ -52,6 +52,9 @@ namespace HWClassLibrary.Helper
         public DictionaryEx(DictionaryEx<TKey, TValue> x, IEqualityComparer<TKey> comparer)
             : base(x, comparer) { _createValue = x._createValue; }
 
+        public DictionaryEx(DictionaryEx<TKey, TValue> x, Func<TKey, TValue> createValue)
+            : base(x) { _createValue = createValue; }
+
         public DictionaryEx(DictionaryEx<TKey, TValue> x)
             : base(x) { _createValue = x._createValue; }
 
