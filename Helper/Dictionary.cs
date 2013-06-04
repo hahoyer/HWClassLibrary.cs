@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -52,13 +52,15 @@ namespace HWClassLibrary.Helper
         public DictionaryEx(DictionaryEx<TKey, TValue> x, IEqualityComparer<TKey> comparer)
             : base(x, comparer) { _createValue = x._createValue; }
 
+        public DictionaryEx(DictionaryEx<TKey, TValue> x, Func<TKey, TValue> createValue)
+            : base(x) { _createValue = createValue; }
+
         public DictionaryEx(DictionaryEx<TKey, TValue> x)
             : base(x) { _createValue = x._createValue; }
 
         public DictionaryEx() { _createValue = ThrowKeyNotFoundException; }
 
         static TValue ThrowKeyNotFoundException(TKey key) { throw new KeyNotFoundException(key.ToString()); }
-
 
         public DictionaryEx<TKey, TValue> Clone { get { return new DictionaryEx<TKey, TValue>(this); } }
 

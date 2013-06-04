@@ -31,7 +31,11 @@ namespace HWClassLibrary.Helper
 {
     public abstract class EnumEx: Dumpable
     {
-        static IEnumerable<MemberInfo> AllMemberInfos(Type type) { return type.GetMembers().Where(memberInfo => IsValue(memberInfo, type)); }
+        static IEnumerable<MemberInfo> AllMemberInfos(Type type)
+        {
+            var memberInfos = type.GetMembers(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
+            return memberInfos.Where(memberInfo => IsValue(memberInfo, type));
+        }
         static IEnumerable<EnumEx> AllInstances(Type type) { return AllMemberInfos(type).Select(Instance); }
         static EnumEx Instance(MemberInfo memberInfo) { return (EnumEx) ((FieldInfo) memberInfo).GetValue(null); }
         protected static IEnumerable<T> AllInstances<T>() { return AllInstances(typeof(T)).Cast<T>(); }
@@ -54,7 +58,7 @@ namespace HWClassLibrary.Helper
             return true;
         }
         public override string ToString() { return Tag; }
-        public string Tag
+        virtual public string Tag
         {
             get
             {

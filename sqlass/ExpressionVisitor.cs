@@ -56,11 +56,11 @@ namespace HWClassLibrary.sqlass
                 Tracer.FlaggedLine("\n[UsedImplicitly]\ninternal T VisitCall"
                                    + method.Name
                                    + "("
-                                   + arguments.Length.Array(i => "Expression arg" + i).Stringify(", ")
+                                   + arguments.Length.Select(i => "Expression arg" + i).Stringify(", ")
                                    + ")\n{\nNotImplementedFunction("
-                                   + arguments.Length.Array(i => "arg" + i).Stringify(", ")
+                                   + arguments.Length.Select(i => "arg" + i).Stringify(", ")
                                    + ");\nreturn default(T);\n}\n\n"
-                                   + arguments.Length.Array(i => "arg" + i + " = " + Tracer.Dump(arguments[i])).Stringify("\n"));
+                                   + arguments.Length.Select(i => "arg" + i + " = " + Tracer.Dump(arguments[i])).Stringify("\n"));
                 Tracer.TraceBreak();
                 throw new MissingMethodException(method.Name);
             }

@@ -26,7 +26,7 @@ using HWClassLibrary.Helper;
 
 namespace HWClassLibrary.Debug
 {
-    public class Profiler
+    public sealed class Profiler
     {
         sealed class Dumper
         {
