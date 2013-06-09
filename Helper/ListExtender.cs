@@ -182,7 +182,9 @@ namespace HWClassLibrary.Helper
             where TResult : class { return target == default(T) ? default(TResult) : function(target); }
 
         [NotNull]
-        public static IEnumerable<T> Array<T>(this int count, Func<int, T> getValue) { return new ArrayQuery<T>(count, getValue); }
+        public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue) { return new ArrayQuery<T>(count, getValue); }
+        [Obsolete("use Select",true)]
+        public static IEnumerable<T> Array<T>(this int count, Func<int, T> getValue) { return Select(count, getValue); }
 
         sealed class ArrayQuery<T> : IEnumerable<T>
         {

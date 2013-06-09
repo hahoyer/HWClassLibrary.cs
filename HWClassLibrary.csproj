@@ -62,6 +62,14 @@
     <Compile Include="Helper\TypeNameExtender.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="JetBrainsAnnotations.cs" />
+    <Compile Include="Parser\PrioTable.cs" />
+    <Compile Include="Parser\Extension.cs" />
+    <Compile Include="Parser\IOperator.cs" />
+    <Compile Include="Parser\IPart.cs" />
+    <Compile Include="Parser\IPosition.cs" />
+    <Compile Include="Parser\Item.cs" />
+    <Compile Include="Parser\IType.cs" />
+    <Compile Include="Parser\OpenItem.cs" />
     <Compile Include="sqlass\Context.cs" />
     <Compile Include="sqlass\Enumerator.cs" />
     <Compile Include="sqlass\CollectionExpressionVisitor.cs" />
