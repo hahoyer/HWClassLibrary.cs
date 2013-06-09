@@ -35,10 +35,10 @@ namespace HWClassLibrary.Parser
     /// </summary>
     public sealed class PrioTable
     {
-        internal const string Any = "(any)";
-        internal const string EndOfText = "(eot)";
-        internal const string BeginOfText = "(bot)";
-        internal const string Error = "(err)";
+        public const string Any = "(any)";
+        public const string EndOfText = "(eot)";
+        public const string BeginOfText = "(bot)";
+        public const string Error = "(err)";
 
         readonly string[] _token;
         readonly SimpleCache<char[,]> _dataCache;
@@ -269,7 +269,7 @@ namespace HWClassLibrary.Parser
         //     Obtain the index in token list. 
         //     Empty string is considered as "end" in angle brackets. 
         //     If name is not found the entry "common" in angle brackets is used
-        public int Index(string name)
+        int Index(string name)
         {
             for(var i = 0; i < Length; i++)
                 if(_token[i] == name)
@@ -324,7 +324,7 @@ namespace HWClassLibrary.Parser
         /// <param name="lToken"> list of strings that play the role of left parenthesis </param>
         /// <param name="rToken"> list of strings that play the role of right parenthesis </param>
         /// <returns> </returns>
-        internal PrioTable Level(string[] data, string[] lToken, string[] rToken) { return new PrioTable(this, data, lToken, rToken); }
+        public PrioTable Level(string[] data, string[] lToken, string[] rToken) { return new PrioTable(this, data, lToken, rToken); }
 
         public PrioTable ParenthesisLevel(string[] lToken, string[] rToken) { return Level(_parenthesisTable, lToken, rToken); }
         public PrioTable ThenElseLevel(string[] lToken, string[] rToken) { return Level(_thenElseTable, lToken, rToken); }
@@ -437,6 +437,7 @@ namespace HWClassLibrary.Parser
             while(SortOne())
                 continue;
         }
+        
         bool SortOne()
         {
             var comparer = new PrioComparer(this);
