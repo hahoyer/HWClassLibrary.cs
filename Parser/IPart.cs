@@ -27,6 +27,6 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Parser
 {
-    interface IPart<T>
+    public interface IPart<T>
     {}
 }

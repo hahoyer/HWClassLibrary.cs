@@ -27,11 +27,14 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Parser
 {
-    interface IOperator<T>
+    public interface IOperator<T>
     {
-        T Terminal(IPart<T> token);
-        T Prefix(IPart<T> token, T right);
-        T Suffix(T left, IPart<T> token);
-        T Infix(T left, IPart<T> token, T right);
+        T Terminal(IOperatorPart token);
+        T Prefix(IOperatorPart token, T right);
+        T Suffix(T left, IOperatorPart token);
+        T Infix(T left, IOperatorPart token, T right);
     }
+
+    public interface IOperatorPart
+    {}
 }

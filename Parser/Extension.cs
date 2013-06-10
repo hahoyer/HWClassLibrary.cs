@@ -27,9 +27,9 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Parser
 {
-    static class Extension
+    public static class Extension
     {
-        internal static T Parse<T>(this IPosition<T> current, PrioTable prioTable, Stack<OpenItem<T>> stack = null)
+        public static T Parse<T>(this IPosition<T> current, PrioTable prioTable, Stack<OpenItem<T>> stack = null)
             where T : class
         {
             if(stack == null)
@@ -62,7 +62,7 @@ namespace HWClassLibrary.Parser
             } while(true);
         }
 
-        internal static T Operation<T>(this IOperator<T> @operator, T left, IPart<T> token, T right)
+        public static T Operation<T>(this IOperator<T> @operator, T left, IOperatorPart token, T right)
             where T : class
         {
             return

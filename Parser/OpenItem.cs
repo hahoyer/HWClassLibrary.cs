@@ -27,7 +27,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Parser
 {
-    sealed class OpenItem<T>
+    public sealed class OpenItem<T>
         where T : class
     {
         internal readonly T Left;

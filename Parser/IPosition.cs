@@ -27,7 +27,7 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Parser
 {
-    interface IPosition<T>
+    public interface IPosition<T>
         where T : class
     {
         Item<T> GetItemAndAdvance(Stack<OpenItem<T>> stack);

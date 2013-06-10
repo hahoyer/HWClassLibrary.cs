@@ -27,21 +27,21 @@ using HWClassLibrary.Debug;
 
 namespace HWClassLibrary.Parser
 {
-    sealed class Item<T>
+    public sealed class Item<T>
         where T : class
     {
-        internal readonly IType<T> Type;
-        internal readonly IPart<T> Part;
+        public readonly IType<T> Type;
+        public readonly IPart<T> Part;
 
-        internal Item(IType<T> type, IPart<T> part)
+        public Item(IType<T> type, IPart<T> part)
         {
             Type = type;
             Part = part;
         }
 
-        internal string Name { get { return Type == null ? PrioTable.BeginOfText : Type.PrioTableName(Part); } }
+        public string Name { get { return Type == null ? PrioTable.BeginOfText : Type.PrioTableName; } }
         public bool IsEnd { get { return Type != null && Type.IsEnd; } }
-        internal T Create(T left, T right)
+        public T Create(T left, T right)
         {
             if(Type != null)
                 return Type.Create(left, Part, right);
