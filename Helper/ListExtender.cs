@@ -94,6 +94,18 @@ namespace HWClassLibrary.Helper
                 yield return subResult.ToArray();
         }
 
+        [CanBeNull]
+        public static T Aggregate<T>(this IEnumerable<T> x)
+            where T: class, IAggregateable<T> 
+        {
+            var xx = x.ToArray();
+            if(!xx.Any())
+                return null;
+            var result = xx[0];
+            for(var i = 1; i < xx.Length; i++)
+                result = result.Aggregate(xx[i]);
+            return result;
+        }
 
         public static string Dump<T>(this IEnumerable<T> x)
         {
@@ -234,6 +246,14 @@ namespace HWClassLibrary.Helper
         }
 
         [NotNull]
+        public static IEnumerable<int> Where(Func<int, bool> getValue)
+        {
+            for(var i = 0; getValue(i); i++)
+                yield return i;
+        }
+
+
+        [NotNull]
         public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue)
         {
             for (var i = 0; i < count; i++)
@@ -282,6 +302,11 @@ namespace HWClassLibrary.Helper
             foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
                 target.Add(item);
         }
+    }
+
+    public interface IAggregateable<T>
+    {
+        T Aggregate(T other);
     }
 
     sealed class DuplicateKeyException : Exception
