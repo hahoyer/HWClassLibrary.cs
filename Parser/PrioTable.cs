@@ -441,7 +441,7 @@ namespace HWClassLibrary.Parser
         bool SortOne()
         {
             var comparer = new PrioComparer(this);
-            var newOrder = Length.Select(i => i).OrderBy(d => d, comparer);
+            var newOrder = Length.Select().OrderBy(d => d, comparer);
             var toDo = newOrder
                 .Select((iOld, iNew) => new {iOld, iNew})
                 .FirstOrDefault(x => x.iOld != x.iNew);
