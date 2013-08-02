@@ -236,5 +236,8 @@ namespace HWClassLibrary.Helper
         }
 
         public static T Parse<T>(this string title) { return (T) Enum.Parse(typeof(T), title); }
+
+        public static void ToStatement<T>(this T any) { }
+
     }
 }

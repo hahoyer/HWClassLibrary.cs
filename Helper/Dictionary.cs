@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
 //     Project HWClassLibrary
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -61,7 +61,6 @@ namespace HWClassLibrary.Helper
         public DictionaryEx() { _createValue = ThrowKeyNotFoundException; }
 
         static TValue ThrowKeyNotFoundException(TKey key) { throw new KeyNotFoundException(key.ToString()); }
-
 
         public DictionaryEx<TKey, TValue> Clone { get { return new DictionaryEx<TKey, TValue>(this); } }
 

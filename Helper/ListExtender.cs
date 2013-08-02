@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,6 +75,28 @@ namespace HWClassLibrary.Helper
             return true;
         }
 
+        static public IEnumerable<IEnumerable<T>> Separate<T>(this IEnumerable<T> x, Func<T, bool> isHead)
+        {
+            var subResult = new List<T>();
+
+            foreach(var xx in x)
+            {
+                if(isHead(xx))
+                {
+                    if(subResult.Count > 0)
+                    {
+                        yield return subResult.ToArray();
+                        subResult=new List<T>();
+                    }
+                }
+                subResult.Add(xx);
+            }
+
+            if(subResult.Count > 0)
+                yield return subResult.ToArray();
+        }
+
+
         public static string Dump<T>(this IEnumerable<T> x)
         {
             var xArray = x.ToArray();
@@ -92,16 +113,20 @@ namespace HWClassLibrary.Helper
         [Obsolete("use Stringify")]
         public static string Format<T>(this IEnumerable<T> x, string separator) { return Stringify(x, separator); }
 
-        public static string Stringify<T>(this IEnumerable<T> x, string separator)
+        public static string Stringify<T>(this IEnumerable<T> x, string separator, bool showNumbers = false)
         {
             var result = new StringBuilder();
+            var i = 0;
             var isNext = false;
             foreach(var element in x)
             {
                 if(isNext)
                     result.Append(separator);
+                if(showNumbers)
+                    result.Append("[" + i + "] ");
                 isNext = true;
                 result.Append(element);
+                i++;
             }
             return result.ToString();
         }
@@ -181,48 +206,52 @@ namespace HWClassLibrary.Helper
             where T : class
             where TResult : class { return target == default(T) ? default(TResult) : function(target); }
 
+        public static TResult AssertValue<TResult>(this TResult? target)
+            where TResult : struct
+        {
+            Tracer.Assert(target != null);
+            return target.Value;
+        }
         [NotNull]
         public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue) { return new ArrayQuery<T>(count, getValue); }
         [Obsolete("use Select",true)]
         public static IEnumerable<T> Array<T>(this int count, Func<int, T> getValue) { return Select(count, getValue); }
 
-        sealed class ArrayQuery<T> : IEnumerable<T>
+        public static TResult AssertNotNull<TResult>(this TResult target)
+            where TResult : class
         {
-            readonly int _count;
-            readonly Func<int, T> _getValue;
-            public ArrayQuery(int count, Func<int, T> getValue)
-            {
-                _count = count;
-                _getValue = getValue;
+            Tracer.Assert(target != null);
+            return target;
             }
 
-            IEnumerator IEnumerable.GetEnumerator() { return ((IEnumerable<T>) this).GetEnumerator(); }
-            IEnumerator<T> IEnumerable<T>.GetEnumerator() { return new Enumerator(this); }
 
-            sealed class Enumerator : IEnumerator<T>
+        [NotNull]
+        public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue)
             {
-                readonly ArrayQuery<T> _arrayQuery;
-                int? _index;
-                public Enumerator(ArrayQuery<T> arrayQuery) { _arrayQuery = arrayQuery; }
+            for(var i = 0; i < count; i++)
+                yield return getValue(i);
+        }
 
-                void IDisposable.Dispose() { }
-                bool IEnumerator.MoveNext()
+        [NotNull]
+        public static IEnumerable<int> Select(this int count)
                 {
-                    if(_index == null)
-                        _index = 0;
-                    else
-                        _index++;
+            for (var i = 0; i < count; i++)
+                yield return i;
+        }
 
-                    return _index < _arrayQuery._count;
+        [NotNull]
+        public static IEnumerable<long> Select(this long count)
+        {
+            for (long i = 0; i < count; i++)
+                yield return i;
                 }
 
-                void IEnumerator.Reset() { _index = null; }
-// ReSharper disable PossibleInvalidOperationException
-                T IEnumerator<T>.Current { get { return _arrayQuery._getValue(_index.Value); } } // should throw an exception if _index is null
-// ReSharper restore PossibleInvalidOperationException
-                object IEnumerator.Current { get { return ((IEnumerator<T>) this).Current; } }
+        [NotNull]
+        public static IEnumerable<T> Select<T>(this long count, Func<long, T> getValue)
+        {
+            for(long i = 0; i < count; i++)
+                yield return getValue(i);
             }
-        }
 
         public static IEnumerable<Tuple<TKey, TLeft, TRight>> Merge<TKey, TLeft, TRight>(this IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> getLeftKey, Func<TRight, TKey> getRightKey)
             where TLeft : class
@@ -253,6 +282,12 @@ namespace HWClassLibrary.Helper
         }
 
         public static DictionaryEx<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>(this IEnumerable<T> list, Func<T, TKey> selector) { return new DictionaryEx<TKey, IEnumerable<T>>(key => list.Where(item => Equals(selector(item), key))); }
+
+        public static void AddRange<TKey, TValue>(this IDictionary<TKey, TValue> target, IEnumerable<KeyValuePair<TKey, TValue>> newEntries)
+        {
+            foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
+                target.Add(item);
+    }
     }
 
     sealed class DuplicateKeyException : Exception

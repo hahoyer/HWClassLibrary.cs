@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.TextTemplating;
 
 namespace HWClassLibrary.T4
 {
-    public class Context
+    public sealed class Context
     {
         const string RegionName = "Generated Code";
         const string RegionFrame = "#region {0}\n\n{1}#endregion {0}\n";
@@ -116,11 +116,8 @@ namespace HWClassLibrary.T4
         {
             if(_currentFiles != null)
             {
-                foreach(var file in _currentFiles)
-                {
-                    var box = _fileItems[file];
-                    box.Content = box.Content + _text.ToString(_currentStart, _text.Length - _currentStart);
-                }
+                foreach(var box in _currentFiles.Select(file => _fileItems[file]))
+                    box.Content += _text.ToString(_currentStart, _text.Length - _currentStart);
                 _text.Remove(_currentStart, _text.Length - _currentStart);
             }
 
@@ -191,7 +188,6 @@ namespace HWClassLibrary.T4
             return (DTE) provider.GetService(typeof(DTE));
         }
 
-
-        protected void AppendText(string text) { _text.Append(text); }
+        void AppendText(string text) { _text.Append(text); }
     }
 }
