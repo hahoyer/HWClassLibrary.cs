@@ -77,8 +77,6 @@
     <Compile Include="Parser\Item.cs" />
     <Compile Include="Parser\IType.cs" />
     <Compile Include="Parser\OpenItem.cs" />
-    <Compile Include="sqlass\Context.cs" />
-    <Compile Include="sqlass\Enumerator.cs" />
     <Compile Include="sqlass\CollectionExpressionVisitor.cs" />
     <Compile Include="sqlass\ExpressionVisitor.cs" />
     <Compile Include="sqlass\ILogicalStructure.cs" />

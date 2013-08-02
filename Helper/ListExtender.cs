@@ -75,20 +75,18 @@ namespace HWClassLibrary.Helper
             return true;
         }
 
-        static public IEnumerable<IEnumerable<T>> Separate<T>(this IEnumerable<T> x, Func<T, bool> isHead)
+        public static IEnumerable<IEnumerable<T>> Separate<T>(this IEnumerable<T> x, Func<T, bool> isHead)
         {
             var subResult = new List<T>();
 
             foreach(var xx in x)
             {
                 if(isHead(xx))
-                {
                     if(subResult.Count > 0)
                     {
                         yield return subResult.ToArray();
-                        subResult=new List<T>();
+                        subResult = new List<T>();
                     }
-                }
                 subResult.Add(xx);
             }
 
@@ -212,46 +210,42 @@ namespace HWClassLibrary.Helper
             Tracer.Assert(target != null);
             return target.Value;
         }
-        [NotNull]
-        public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue) { return new ArrayQuery<T>(count, getValue); }
-        [Obsolete("use Select",true)]
-        public static IEnumerable<T> Array<T>(this int count, Func<int, T> getValue) { return Select(count, getValue); }
 
         public static TResult AssertNotNull<TResult>(this TResult target)
             where TResult : class
         {
             Tracer.Assert(target != null);
             return target;
-            }
-
-
-        [NotNull]
-        public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue)
-            {
-            for(var i = 0; i < count; i++)
-                yield return getValue(i);
         }
+
 
         [NotNull]
         public static IEnumerable<int> Select(this int count)
-                {
-            for (var i = 0; i < count; i++)
+        {
+            for(var i = 0; i < count; i++)
                 yield return i;
         }
 
         [NotNull]
         public static IEnumerable<long> Select(this long count)
         {
-            for (long i = 0; i < count; i++)
+            for(long i = 0; i < count; i++)
                 yield return i;
-                }
+        }
+
+        [NotNull]
+        public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue)
+        {
+            for (var i = 0; i < count; i++)
+                yield return getValue(i);
+        }
 
         [NotNull]
         public static IEnumerable<T> Select<T>(this long count, Func<long, T> getValue)
         {
             for(long i = 0; i < count; i++)
                 yield return getValue(i);
-            }
+        }
 
         public static IEnumerable<Tuple<TKey, TLeft, TRight>> Merge<TKey, TLeft, TRight>(this IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> getLeftKey, Func<TRight, TKey> getRightKey)
             where TLeft : class
@@ -287,7 +281,7 @@ namespace HWClassLibrary.Helper
         {
             foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
                 target.Add(item);
-    }
+        }
     }
 
     sealed class DuplicateKeyException : Exception
