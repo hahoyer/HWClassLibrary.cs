@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
     <AssemblyName>HWClassLibrary</AssemblyName>
-    <TargetTypeEx>CSharp.Library</TargetTypeEx>
+    <TargetTypeEx>NuGetPackage</TargetTypeEx>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -37,38 +37,38 @@
     <Compile Include="DataBase\SQLGenerator.cs" />
     <Compile Include="DataBase\DataBase.cs" />
     <Compile Include="DataBase\TableColumn.cs" />
-    <Compile Include="Debug\DisableDumpAttribute.cs" />
-    <Compile Include="Debug\Dumpable.cs" />
-    <Compile Include="Debug\DumpClassAttribute.cs" />
-    <Compile Include="Debug\DumpDataClassAttribute.cs" />
-    <Compile Include="Debug\DumpEnabledAttribute.cs" />
-    <Compile Include="Debug\EnableDumpExceptAttribute.cs" />
-    <Compile Include="Debug\DumpAttribute.cs" />
-    <Compile Include="Debug\DumpToStringAttribute.cs" />
-    <Compile Include="Debug\EnableDumpAttribute.cs" />
-    <Compile Include="Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
-    <Compile Include="Debug\Profiler.cs" />
-    <Compile Include="Debug\Tracer.cs" />
+    <Compile Include="hwHelper\Debug\DisableDumpAttribute.cs" />
+    <Compile Include="hwHelper\Debug\Dumpable.cs" />
+    <Compile Include="hwHelper\Debug\DumpClassAttribute.cs" />
+    <Compile Include="hwHelper\Debug\DumpDataClassAttribute.cs" />
+    <Compile Include="hwHelper\Debug\DumpEnabledAttribute.cs" />
+    <Compile Include="hwHelper\Debug\EnableDumpExceptAttribute.cs" />
+    <Compile Include="hwHelper\Debug\DumpAttribute.cs" />
+    <Compile Include="hwHelper\Debug\DumpToStringAttribute.cs" />
+    <Compile Include="hwHelper\Debug\EnableDumpAttribute.cs" />
+    <Compile Include="hwHelper\Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
+    <Compile Include="hwHelper\Debug\Profiler.cs" />
+    <Compile Include="hwHelper\Debug\Tracer.cs" />
     <Compile Include="Debug\Visualizer.cs" />
     <Compile Include="Helper\AdoExtender.cs" />
     <Compile Include="Helper\BigRational.cs" />
     <Compile Include="Helper\Box.cs" />
     <Compile Include="Helper\CSharpCompiler.cs" />
-    <Compile Include="Helper\DateTimeExtender.cs" />
-    <Compile Include="Helper\FunctionCache.cs" />
+    <Compile Include="hwHelper\Helper\DateTimeExtender.cs" />
+    <Compile Include="hwHelper\Helper\FunctionCache.cs" />
     <Compile Include="Helper\DTEExtender.cs" />
-    <Compile Include="Helper\EnumEx.cs" />
-    <Compile Include="Helper\ListExtender.cs" />
-    <Compile Include="Helper\LongExtender.cs" />
-    <Compile Include="Helper\ReflectionExtender.cs" />
-    <Compile Include="Helper\StringExtender.cs" />
+    <Compile Include="hwHelper\Helper\EnumEx.cs" />
+    <Compile Include="hwHelper\Helper\ListExtender.cs" />
+    <Compile Include="hwHelper\Helper\LongExtender.cs" />
+    <Compile Include="hwHelper\Helper\ReflectionExtender.cs" />
+    <Compile Include="hwHelper\Helper\StringExtender.cs" />
     <Compile Include="Helper\Number.cs" />
     <Compile Include="Helper\Set.cs" />
-    <Compile Include="Helper\ValueCache.cs" />
-    <Compile Include="Helper\StringAligner.cs" />
-    <Compile Include="Helper\TypeNameExtender.cs" />
+    <Compile Include="hwHelper\Helper\ValueCache.cs" />
+    <Compile Include="hwHelper\Helper\StringAligner.cs" />
+    <Compile Include="hwHelper\Helper\TypeNameExtender.cs" />
     <Compile Include="IO\File.cs" />
-    <Compile Include="JetBrainsAnnotations.cs" />
+    <Compile Include="hwHelper\JetBrainsAnnotations.cs" />
     <Compile Include="Parser\PrioTable.cs" />
     <Compile Include="Parser\Extension.cs" />
     <Compile Include="Parser\IOperator.cs" />
@@ -97,6 +97,7 @@
     <Compile Include="sqlass\StringConditionVisitor.cs" />
     <Compile Include="sqlass\MetaData\KeyAttribute.cs" />
     <Compile Include="sqlass\MetaData\NullableAttribute.cs" />
+    <None Include="hwHelper.nuspec" />
     <None Include="LICENSE" />
     <None Include="README" />
     <Compile Include="sqlass\Extender.cs" />
@@ -112,7 +113,7 @@
     </Compile>
     <Compile Include="TreeStructure\Helper.cs">
     </Compile>
-    <Compile Include="UnitTest\CategoryAttribute.cs" />
+    <Compile Include="hwHelper\UnitTest\CategoryAttribute.cs" />
     <Compile Include="Relation\Extender.cs" />
     <Compile Include="UnitTest\DependantAttribute.cs" />
     <Compile Include="UnitTest\TestExtender.cs" />
@@ -173,4 +174,5 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="sys.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
