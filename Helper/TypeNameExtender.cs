@@ -30,8 +30,8 @@ namespace HWClassLibrary.Helper
 {
     public static class TypeNameExtender
     {
-        static readonly SimpleCache<TypeLibrary> _referencedTypesCache
-            = new SimpleCache<TypeLibrary>(ObtainReferencedTypes);
+        static readonly ValueCache<TypeLibrary> _referencedTypesCache
+            = new ValueCache<TypeLibrary>(ObtainReferencedTypes);
 
         public static void OnModuleLoaded() { _referencedTypesCache.IsValid = false; }
 

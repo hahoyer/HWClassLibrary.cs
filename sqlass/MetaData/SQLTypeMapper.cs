@@ -27,8 +27,8 @@ namespace HWClassLibrary.sqlass.MetaData
 {
     sealed class SQLTypeMapper
     {
-        readonly DictionaryEx<Type, string> _typeToString = new DictionaryEx<Type, string>();
-        readonly DictionaryEx<string, Type> _stringToType = new DictionaryEx<string, Type>();
+        readonly FunctionCache<Type, string> _typeToString = new FunctionCache<Type, string>();
+        readonly FunctionCache<string, Type> _stringToType = new FunctionCache<string, Type>();
 
         public SQLTypeMapper()
         {

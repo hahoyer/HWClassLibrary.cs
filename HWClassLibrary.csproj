@@ -55,7 +55,7 @@
     <Compile Include="Helper\Box.cs" />
     <Compile Include="Helper\CSharpCompiler.cs" />
     <Compile Include="Helper\DateTimeExtender.cs" />
-    <Compile Include="Helper\Dictionary.cs" />
+    <Compile Include="Helper\FunctionCache.cs" />
     <Compile Include="Helper\DTEExtender.cs" />
     <Compile Include="Helper\EnumEx.cs" />
     <Compile Include="Helper\ListExtender.cs" />
@@ -64,7 +64,7 @@
     <Compile Include="Helper\StringExtender.cs" />
     <Compile Include="Helper\Number.cs" />
     <Compile Include="Helper\Set.cs" />
-    <Compile Include="Helper\SimpleCache.cs" />
+    <Compile Include="Helper\ValueCache.cs" />
     <Compile Include="Helper\StringAligner.cs" />
     <Compile Include="Helper\TypeNameExtender.cs" />
     <Compile Include="IO\File.cs" />

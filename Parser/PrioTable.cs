@@ -41,7 +41,7 @@ namespace HWClassLibrary.Parser
         public const string Error = "(err)";
 
         readonly string[] _token;
-        readonly SimpleCache<char[,]> _dataCache;
+        readonly ValueCache<char[,]> _dataCache;
 
         public override bool Equals(object obj)
         {
@@ -174,7 +174,7 @@ namespace HWClassLibrary.Parser
             return x.Length;
         }
 
-        PrioTable() { _dataCache = new SimpleCache<char[,]>(AllocData); }
+        PrioTable() { _dataCache = new ValueCache<char[,]>(AllocData); }
 
         PrioTable(char data, string[] token)
             : this()

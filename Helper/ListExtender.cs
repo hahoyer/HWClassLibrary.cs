@@ -295,7 +295,7 @@ namespace HWClassLibrary.Helper
             throw new DuplicateKeyException();
         }
 
-        public static DictionaryEx<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>(this IEnumerable<T> list, Func<T, TKey> selector) { return new DictionaryEx<TKey, IEnumerable<T>>(key => list.Where(item => Equals(selector(item), key))); }
+        public static FunctionCache<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>(this IEnumerable<T> list, Func<T, TKey> selector) { return new FunctionCache<TKey, IEnumerable<T>>(key => list.Where(item => Equals(selector(item), key))); }
 
         public static void AddRange<TKey, TValue>(this IDictionary<TKey, TValue> target, IEnumerable<KeyValuePair<TKey, TValue>> newEntries)
         {

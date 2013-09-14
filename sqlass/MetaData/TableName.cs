@@ -57,10 +57,10 @@ namespace HWClassLibrary.sqlass.MetaData
             }
         }
 
-        static readonly DictionaryEx<string, DictionaryEx<string, DictionaryEx<string, TableName>>> _dictionary =
-            new DictionaryEx<string, DictionaryEx<string, DictionaryEx<string, TableName>>>
-                (c => new DictionaryEx<string, DictionaryEx<string, TableName>>
-                          (s => new DictionaryEx<string, TableName>
+        static readonly FunctionCache<string, FunctionCache<string, FunctionCache<string, TableName>>> _dictionary =
+            new FunctionCache<string, FunctionCache<string, FunctionCache<string, TableName>>>
+                (c => new FunctionCache<string, FunctionCache<string, TableName>>
+                          (s => new FunctionCache<string, TableName>
                                     (n => new TableName(c, s, n))
                           )
                 );
