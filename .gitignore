@@ -2,3 +2,4 @@
 /obj
 *.t4properties
 /HWClassLibrary.csproj.user
+*.DotSettings
