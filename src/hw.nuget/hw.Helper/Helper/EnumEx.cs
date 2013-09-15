@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,20 +20,20 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using HWClassLibrary.Debug;
-using HWClassLibrary.UnitTest;
+using hw.Debug;
+using hw.UnitTest;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
-    public abstract class EnumEx: Dumpable
+    public abstract class EnumEx : Dumpable
     {
         static IEnumerable<MemberInfo> AllMemberInfos(Type type)
         {
-            var memberInfos = type.GetMembers(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
+            var memberInfos = type.GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
             return memberInfos.Where(memberInfo => IsValue(memberInfo, type));
         }
         static IEnumerable<EnumEx> AllInstances(Type type) { return AllMemberInfos(type).Select(Instance); }
@@ -58,7 +58,8 @@ namespace HWClassLibrary.Helper
             return true;
         }
         public override string ToString() { return Tag; }
-        virtual public string Tag
+
+        public virtual string Tag
         {
             get
             {
@@ -71,7 +72,8 @@ namespace HWClassLibrary.Helper
                 return null;
             }
         }
-        protected override string Dump(bool isRecursion) { return GetType().PrettyName() + "."+ Tag; }
+
+        protected override string Dump(bool isRecursion) { return GetType().PrettyName() + "." + Tag; }
     }
 
     [TestFixture]

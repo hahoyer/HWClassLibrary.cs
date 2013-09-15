@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Debug;
+using hw.Helper;
 
-namespace Reni.Parser
+namespace hw.Scanner
 {
     sealed class Source : Dumpable
     {
@@ -53,19 +53,9 @@ namespace Reni.Parser
             return Tracer.FilePosn(_file.FullName, LineNr(i), ColNr(i) + 1, tag ?? FilePositionTag.Debug.ToString()) + flagText;
         }
 
-        int LineNr(int iEnd)
-        {
-            return _data
-                .Take(iEnd)
-                .Count(c => c == '\n');
-        }
+        int LineNr(int iEnd) { return _data.Take(iEnd).Count(c => c == '\n'); }
 
-        int ColNr(int iEnd)
-        {
-            return _data
-                .Take(iEnd)
-                .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
-        }
+        int ColNr(int iEnd) { return _data.Take(iEnd).Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1); }
 
         protected override string Dump(bool isRecursion) { return FilePosn(0, "see there"); }
 

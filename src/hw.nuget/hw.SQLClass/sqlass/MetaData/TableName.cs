@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using System.Collections.Generic;
+using System.Linq;
+using hw.Debug;
+using hw.Helper;
 
-namespace HWClassLibrary.sqlass.MetaData
+namespace hw.sqlass.MetaData
 {
     public sealed class TableName : Dumpable
     {
@@ -57,13 +57,7 @@ namespace HWClassLibrary.sqlass.MetaData
             }
         }
 
-        static readonly FunctionCache<string, FunctionCache<string, FunctionCache<string, TableName>>> _dictionary =
-            new FunctionCache<string, FunctionCache<string, FunctionCache<string, TableName>>>
-                (c => new FunctionCache<string, FunctionCache<string, TableName>>
-                          (s => new FunctionCache<string, TableName>
-                                    (n => new TableName(c, s, n))
-                          )
-                );
+        static readonly FunctionCache<string, FunctionCache<string, FunctionCache<string, TableName>>> _dictionary = new FunctionCache<string, FunctionCache<string, FunctionCache<string, TableName>>>(c => new FunctionCache<string, FunctionCache<string, TableName>>(s => new FunctionCache<string, TableName>(n => new TableName(c, s, n))));
 
         TableName(string catalog, string schema, string name)
         {
@@ -72,13 +66,7 @@ namespace HWClassLibrary.sqlass.MetaData
             Name = name;
         }
 
-        public static TableName Find(string catalog, string schema, string tableName)
-        {
-            return _dictionary
-                [catalog ?? ""]
-                [schema ?? ""]
-                [tableName];
-        }
+        public static TableName Find(string catalog, string schema, string tableName) { return _dictionary[catalog ?? ""][schema ?? ""][tableName]; }
 
         public override string ToString() { return SQLTableName; }
     }

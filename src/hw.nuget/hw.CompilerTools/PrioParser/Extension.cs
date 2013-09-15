@@ -1,6 +1,6 @@
 ﻿#region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -20,17 +20,15 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using HWClassLibrary.Debug;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace HWClassLibrary.Parser
+namespace hw.PrioParser
 {
     public static class Extension
     {
-        public static T Parse<T>(this IPosition<T> current, PrioTable prioTable, Stack<OpenItem<T>> stack = null)
-            where T : class
+        public static T Parse<T>(this IPosition<T> current, PrioTable prioTable, Stack<OpenItem<T>> stack = null) where T : class
         {
             if(stack == null)
             {
@@ -62,21 +60,6 @@ namespace HWClassLibrary.Parser
             } while(true);
         }
 
-        public static T Operation<T>(this IOperator<T> @operator, T left, IOperatorPart token, T right)
-            where T : class
-        {
-            return
-                left == null ?
-                    (
-                        right == null ?
-                            @operator.Terminal(token) :
-                            @operator.Prefix(token, right)
-                    ) :
-                    (
-                        right == null ?
-                            @operator.Suffix(left, token) :
-                            @operator.Infix(left, token, right)
-                    );
-        }
+        public static T Operation<T>(this IOperator<T> @operator, T left, IOperatorPart token, T right) where T : class { return left == null ? (right == null ? @operator.Terminal(token) : @operator.Prefix(token, right)) : (right == null ? @operator.Suffix(left, token) : @operator.Infix(left, token, right)); }
     }
 }

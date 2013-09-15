@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,14 +20,13 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using System.Collections.Generic;
-using System;
-using HWClassLibrary.Debug;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     public static class AdoExtender
     {

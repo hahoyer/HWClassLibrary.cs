@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2012 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,14 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Parser;
+using System.Collections.Generic;
+using System.Linq;
+using hw.Debug;
+using hw.PrioParser;
+using hw.Scanner;
 
-namespace Reni.Parser
+namespace hw.Parser
 {
     abstract class Scanner : Dumpable
     {
@@ -40,11 +41,7 @@ namespace Reni.Parser
             try
             {
                 sourcePosn.Position += WhiteSpace(sourcePosn);
-                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?) 0 : null, tokenFactory.EndOfText)
-                    ?? CreateAndAdvance(sourcePosn, Number, tokenFactory.Number)
-                    ?? CreateAndAdvance(sourcePosn, Text, tokenFactory.Text)
-                    ?? CreateAndAdvance(sourcePosn, Any, tokenFactory.TokenClass)
-                    ?? WillReturnNull(sourcePosn);
+                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?) 0 : null, tokenFactory.EndOfText) ?? CreateAndAdvance(sourcePosn, Number, tokenFactory.Number) ?? CreateAndAdvance(sourcePosn, Text, tokenFactory.Text) ?? CreateAndAdvance(sourcePosn, Any, tokenFactory.TokenClass) ?? WillReturnNull(sourcePosn);
             }
             catch(Exception exception)
             {
@@ -73,18 +70,14 @@ namespace Reni.Parser
 
         static Item<IParsedSyntax> CreateAndAdvance(SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType<IParsedSyntax> tokenClass) { return CreateAndAdvance(sourcePosn, getLength, (sp, l) => tokenClass); }
         static Item<IParsedSyntax> CreateAndAdvance(SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType<IParsedSyntax>> getTokenClass) { return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass(sp.SubString(0, l))); }
-       
+
         static Item<IParsedSyntax> CreateAndAdvance(SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<SourcePosn, int, IType<IParsedSyntax>> getTokenClass)
         {
             var length = getLength(sourcePosn);
             if(length == null)
                 return null;
 
-            var result = new Item<IParsedSyntax>
-                (
-                getTokenClass(sourcePosn, length.Value), 
-                TokenData.Span(sourcePosn, length.Value  )
-                );
+            var result = new Item<IParsedSyntax>(getTokenClass(sourcePosn, length.Value), TokenData.Span(sourcePosn, length.Value));
             sourcePosn.Position += length.Value;
             return result;
         }

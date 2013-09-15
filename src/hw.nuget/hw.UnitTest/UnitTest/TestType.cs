@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,13 +18,15 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Debug;
+using hw.Helper;
 
-namespace HWClassLibrary.UnitTest
+namespace hw.UnitTest
 {
     sealed class TestType : Dumpable
     {
@@ -35,16 +38,7 @@ namespace HWClassLibrary.UnitTest
 
         public IEnumerable<DependantAttribute> Dependants { get { return Type.GetAttributes<DependantAttribute>(true); } }
 
-        IEnumerable<TestMethod> UnitTestMethods
-        {
-            get
-            {
-                return Type
-                    .GetMethods()
-                    .Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null)
-                    .Select(methodInfo => new TestMethod(methodInfo));
-            }
-        }
+        IEnumerable<TestMethod> UnitTestMethods { get { return Type.GetMethods().Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null).Select(methodInfo => new TestMethod(methodInfo)); } }
 
         public bool IsStarted { get; set; }
 
@@ -56,16 +50,7 @@ namespace HWClassLibrary.UnitTest
 
         public string ConfigurationString
         {
-            get
-            {
-                return
-                    ConfigurationMode
-                    + " "
-                    + Type.FullName
-                    + " "
-                    + FailedMethodNames
-                    + "\n";
-            }
+            get { return ConfigurationMode + " " + Type.FullName + " " + FailedMethodNames + "\n"; }
             set
             {
                 var elements = value.Split(' ');
@@ -77,17 +62,10 @@ namespace HWClassLibrary.UnitTest
 
         string FailedMethodNames
         {
-            get
-            {
-                return _failedMethods
-                    .Aggregate("", (current, testMethod) => current + testMethod.ConfigurationString);
-            }
+            get { return _failedMethods.Aggregate("", (current, testMethod) => current + testMethod.ConfigurationString); }
             set
             {
-                var forcedMethods = value
-                    .Split(',')
-                    .Join(UnitTestMethods, name => name, method => method.Name, (name, method) => method)
-                    .ToArray();
+                var forcedMethods = value.Split(',').Join(UnitTestMethods, name => name, method => method.Name, (name, method) => method).ToArray();
                 foreach(var notForcedMethod in UnitTestMethods.Except(forcedMethods))
                     notForcedMethod.IsSuspended = true;
             }
@@ -114,6 +92,7 @@ namespace HWClassLibrary.UnitTest
         }
 
         public override string ToString() { return ConfigurationString; }
+
         public int ConfigurationModePriority
         {
             get

@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -22,16 +22,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using HWClassLibrary.Debug;
-using Reni.Parser;
 
-namespace Reni.Graphics.SVG
+namespace hw.Graphics.SVG
 {
     [XmlRoot("div")]
     public sealed class Root
@@ -41,11 +38,7 @@ namespace Reni.Graphics.SVG
         public string SerializeObject()
         {
             var sb = new StringBuilder();
-            var settings = new XmlWriterSettings
-            {
-                OmitXmlDeclaration = true,
-                Indent = true
-            };
+            var settings = new XmlWriterSettings {OmitXmlDeclaration = true, Indent = true};
             var writer = XmlWriter.Create(sb, settings);
             var namespaces = new XmlSerializerNamespaces();
             namespaces.Add("", "");
@@ -63,7 +56,5 @@ namespace Reni.Graphics.SVG
         }
 
         public static Root Create(IGraphTarget target) { return new SyntaxDrawer(target).Draw(); }
-
     }
-
 }

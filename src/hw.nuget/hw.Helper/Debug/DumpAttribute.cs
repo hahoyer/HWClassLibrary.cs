@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,12 +18,13 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HWClassLibrary.Debug;
 
-namespace HWClassLibrary.Debug
+namespace hw.Debug
 {
     /// <summary>
     ///     Used to control dump. Use ToString function

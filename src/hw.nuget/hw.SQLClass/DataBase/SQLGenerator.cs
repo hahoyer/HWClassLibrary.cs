@@ -1,6 +1,7 @@
-﻿// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+﻿#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,13 +18,14 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using HWClassLibrary.Debug;
 
-namespace HWClassLibrary.DataBase
+namespace hw.DataBase
 {
     static class SQLGenerator<T>
     {
@@ -45,16 +47,7 @@ namespace HWClassLibrary.DataBase
         }
 
         public static string TableName { get { return typeof(T).Name; } }
-        public static TableColumn[] Columns
-        {
-            get
-            {
-                return typeof(T)
-                    .GetFields()
-                    .Select(fieldInfo => new TableColumn(fieldInfo))
-                    .ToArray();
-            }
-        }
+        public static TableColumn[] Columns { get { return typeof(T).GetFields().Select(fieldInfo => new TableColumn(fieldInfo)).ToArray(); } }
 
         public static string InsertCommand(T newObject)
         {

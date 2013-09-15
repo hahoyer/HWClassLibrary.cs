@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,15 +20,15 @@
 
 #endregion
 
-using HWClassLibrary.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using HWClassLibrary.Helper;
-using HWClassLibrary.Parser;
-using HWClassLibrary.TreeStructure;
+using hw.Debug;
+using hw.Helper;
+using hw.PrioParser;
+using hw.TreeStructure;
 
-namespace Reni.Parser
+namespace hw.Parser
 {
     abstract class TokenClass : DumpableObject, IIconKeyProvider, ITokenClass
     {
@@ -39,15 +39,17 @@ namespace Reni.Parser
             : base(_nextObjectId++) { StopByObjectId(-31); }
 
         string IIconKeyProvider.IconKey { get { return "Symbol"; } }
+
         [EnableDumpExcept(null)]
         protected virtual ITokenFactory NewTokenFactory { get { return null; } }
+
         string INameProvider.Name { set { Name = value; } }
 
         IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right) { return Create(left, part, right); }
         string IType<IParsedSyntax>.PrioTableName { get { return Name; } }
         bool IType<IParsedSyntax>.IsEnd { get { return IsEnd; } }
 
-        abstract protected IParsedSyntax Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right);
+        protected abstract IParsedSyntax Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right);
 
         protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }
 

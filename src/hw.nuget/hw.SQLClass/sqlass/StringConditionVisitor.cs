@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,14 +20,13 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Helper;
 
-namespace HWClassLibrary.sqlass
+namespace hw.sqlass
 {
     sealed class StringConditionVisitor : LogicalExpressionVisitor<string>
     {
@@ -48,9 +47,7 @@ namespace HWClassLibrary.sqlass
             if(member.DeclaringType.Is<ISQLSupportProvider>())
             {
                 var qualifier = Visit(expression.Expression);
-                return qualifier
-                    + "."
-                    + member.Name;
+                return qualifier + "." + member.Name;
             }
 
             NotImplementedMethod(expression);

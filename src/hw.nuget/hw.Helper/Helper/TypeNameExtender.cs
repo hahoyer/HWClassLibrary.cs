@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,18 +20,16 @@
 
 #endregion
 
-using System.Reflection;
-using HWClassLibrary.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using System.Reflection;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     public static class TypeNameExtender
     {
-        static readonly ValueCache<TypeLibrary> _referencedTypesCache
-            = new ValueCache<TypeLibrary>(ObtainReferencedTypes);
+        static readonly ValueCache<TypeLibrary> _referencedTypesCache = new ValueCache<TypeLibrary>(ObtainReferencedTypes);
 
         public static void OnModuleLoaded() { _referencedTypesCache.IsValid = false; }
 
@@ -67,9 +65,7 @@ namespace HWClassLibrary.Helper
             for(var i = 0; i < namespaceParts.Length && conflictingTypes.Length > 0; i++)
             {
                 namespacePart = namespaceParts[i] + "." + namespacePart;
-                conflictingTypes = conflictingTypes
-                    .Where(conflictingType => ("." + conflictingType.Namespace + ".").EndsWith("." + namespacePart))
-                    .ToArray();
+                conflictingTypes = conflictingTypes.Where(conflictingType => ("." + conflictingType.Namespace + ".").EndsWith("." + namespacePart)).ToArray();
             }
 
             return namespacePart + result;
@@ -77,9 +73,7 @@ namespace HWClassLibrary.Helper
 
         static TypeLibrary ObtainReferencedTypes()
         {
-            var assembly =
-                Assembly.GetEntryAssembly() ??
-                Assembly.GetCallingAssembly();
+            var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
             return new TypeLibrary(assembly.GetReferencedTypes());
         }
 
@@ -103,21 +97,14 @@ namespace HWClassLibrary.Helper
     {
         readonly Dictionary<string, IGrouping<string, Type>> _data;
 
-        public TypeLibrary(IEnumerable<Type> types)
-        {
-            _data = types
-                .GroupBy(t => t.Name, t => t)
-                .ToDictionary(t => t.Key, t => t);
-        }
-        
+        public TypeLibrary(IEnumerable<Type> types) { _data = types.GroupBy(t => t.Name, t => t).ToDictionary(t => t.Key, t => t); }
+
         internal Type[] ConflictingTypes(Type type)
         {
             IGrouping<string, Type> result;
             if(!_data.TryGetValue(type.Name, out result))
                 return new Type[0];
-            return result
-                . Where(definedType => definedType.Namespace != type.Namespace)
-                .ToArray();
+            return result.Where(definedType => definedType.Namespace != type.Namespace).ToArray();
         }
     }
 }

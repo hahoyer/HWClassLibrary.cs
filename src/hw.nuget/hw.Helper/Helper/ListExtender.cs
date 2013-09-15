@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using HWClassLibrary.Debug;
+using hw.Debug;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     public static class ListExtender
     {
@@ -95,8 +95,7 @@ namespace HWClassLibrary.Helper
         }
 
         [CanBeNull]
-        public static T Aggregate<T>(this IEnumerable<T> x)
-            where T: class, IAggregateable<T> 
+        public static T Aggregate<T>(this IEnumerable<T> x) where T : class, IAggregateable<T>
         {
             var xx = x.ToArray();
             if(!xx.Any())
@@ -113,8 +112,7 @@ namespace HWClassLibrary.Helper
             return xArray.Aggregate(xArray.Length.ToString(), (a, xx) => a + " " + xx.ToString());
         }
 
-        public static string DumpLines<T>(this IEnumerable<T> x)
-            where T : Dumpable
+        public static string DumpLines<T>(this IEnumerable<T> x) where T : Dumpable
         {
             var i = 0;
             return x.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
@@ -158,10 +156,7 @@ namespace HWClassLibrary.Helper
         public static IEnumerable<int> FrameIndexList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
         {
             var listArray = list.ToArray();
-            return listArray
-                .Select((item, index) => new Tuple<T, int>(item, index))
-                .Where(element => !listArray.Any(other => isInRelation(element.Item1, other)))
-                .Select(element => element.Item2);
+            return listArray.Select((item, index) => new Tuple<T, int>(item, index)).Where(element => !listArray.Any(other => isInRelation(element.Item1, other))).Select(element => element.Item2);
         }
         /// <summary>
         ///     Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true
@@ -174,15 +169,11 @@ namespace HWClassLibrary.Helper
         public static IEnumerable<T> FrameElementList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
         {
             var listArray = list.ToArray();
-            return listArray
-                .FrameIndexList(isInRelation)
-                .Select(index => listArray[index]);
+            return listArray.FrameIndexList(isInRelation).Select(index => listArray[index]);
         }
 
-        public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list)
-            where T : IComparable<T> { return list.FrameIndexList((a, b) => a.CompareTo(b) < 0); }
-        public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list)
-            where T : IComparable<T> { return list.FrameIndexList((a, b) => a.CompareTo(b) > 0); }
+        public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list) where T : IComparable<T> { return list.FrameIndexList((a, b) => a.CompareTo(b) < 0); }
+        public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list) where T : IComparable<T> { return list.FrameIndexList((a, b) => a.CompareTo(b) > 0); }
 
         /// <summary>
         ///     Checks if object starts with given object.
@@ -212,19 +203,15 @@ namespace HWClassLibrary.Helper
             return x.StartsWith(y);
         }
 
-        public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
-            where T : class
-            where TResult : class { return target == default(T) ? default(TResult) : function(target); }
+        public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function) where T : class where TResult : class { return target == default(T) ? default(TResult) : function(target); }
 
-        public static TResult AssertValue<TResult>(this TResult? target)
-            where TResult : struct
+        public static TResult AssertValue<TResult>(this TResult? target) where TResult : struct
         {
             Tracer.Assert(target != null);
             return target.Value;
         }
 
-        public static TResult AssertNotNull<TResult>(this TResult target)
-            where TResult : class
+        public static TResult AssertNotNull<TResult>(this TResult target) where TResult : class
         {
             Tracer.Assert(target != null);
             return target;
@@ -256,7 +243,7 @@ namespace HWClassLibrary.Helper
         [NotNull]
         public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue)
         {
-            for (var i = 0; i < count; i++)
+            for(var i = 0; i < count; i++)
                 yield return getValue(i);
         }
 
@@ -267,18 +254,14 @@ namespace HWClassLibrary.Helper
                 yield return getValue(i);
         }
 
-        public static IEnumerable<Tuple<TKey, TLeft, TRight>> Merge<TKey, TLeft, TRight>(this IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> getLeftKey, Func<TRight, TKey> getRightKey)
-            where TLeft : class
-            where TRight : class
+        public static IEnumerable<Tuple<TKey, TLeft, TRight>> Merge<TKey, TLeft, TRight>(this IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> getLeftKey, Func<TRight, TKey> getRightKey) where TLeft : class where TRight : class
         {
             var leftCommon = left.Select(l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
             var rightCommon = right.Select(r => new Tuple<TKey, TLeft, TRight>(getRightKey(r), null, r));
             return leftCommon.Union(rightCommon).GroupBy(t => t.Item1).Select(Merge);
         }
 
-        public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>(IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping)
-            where TLeft : class
-            where TRight : class
+        public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>(IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping) where TLeft : class where TRight : class
         {
             var list = grouping.ToArray();
             switch(list.Length)

@@ -1,6 +1,6 @@
 #region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -28,11 +28,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Helper;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.Debug
+namespace hw.Debug
 {
     /// <summary>
     ///     Summary description for Tracer.
@@ -81,17 +80,7 @@ namespace HWClassLibrary.Debug
         /// <param name="colNr"> asis </param>
         /// <param name="tagText"> asis </param>
         /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
-        public static string FilePosn(string fileName, int lineNr, int colNr, string tagText)
-        {
-            return fileName
-                   + "("
-                   + (lineNr + 1)
-                   + ","
-                   + colNr
-                   + "): "
-                   + tagText
-                   + ": ";
-        }
+        public static string FilePosn(string fileName, int lineNr, int colNr, string tagText) { return fileName + "(" + (lineNr + 1) + "," + colNr + "): " + tagText + ": "; }
 
         /// <summary>
         ///     creates a string to inspect a method
@@ -108,10 +97,7 @@ namespace HWClassLibrary.Debug
             if(m.IsGenericMethod)
             {
                 result += "<";
-                result += m
-                    .GetGenericArguments()
-                    .Select(t => t.PrettyName())
-                    .Stringify(", ");
+                result += m.GetGenericArguments().Select(t => t.PrettyName()).Stringify(", ");
                 result += ">";
             }
             result += "(";
@@ -324,16 +310,7 @@ namespace HWClassLibrary.Debug
             return result;
         }
 
-        static string InternalDump(ICollection xc)
-        {
-            return "Count="
-                   + xc.Count
-                   + xc
-                         .Cast<object>()
-                         .Select(Dump)
-                         .Stringify("\n", true)
-                         .Surround("{", "}");
-        }
+        static string InternalDump(ICollection xc) { return "Count=" + xc.Count + xc.Cast<object>().Select(Dump).Stringify("\n", true).Surround("{", "}"); }
 
         static string InternalDump(this CodeObject co)
         {
@@ -344,25 +321,13 @@ namespace HWClassLibrary.Debug
             throw new NotImplementedException();
         }
 
-        static string InternalDump(this IList xl)
-        {
-            return "Count="
-                   + xl.Count
-                   + xl
-                         .Cast<object>()
-                         .Select(Dump)
-                         .Stringify("\n", true)
-                         .Surround("{", "}");
-        }
+        static string InternalDump(this IList xl) { return "Count=" + xl.Count + xl.Cast<object>().Select(Dump).Stringify("\n", true).Surround("{", "}"); }
 
         static string InternalDump(this IDictionary xd)
         {
             var keys = xd.Keys.Cast<object>();
-            var dictionaryEntries = keys.Select(key=>new {Key=key, Value=xd[key]}).ToArray();
-            return dictionaryEntries
-                .Select(entry => "[" + Dump(entry.Key) + "] " + Dump(entry.Value))
-                .Stringify("\n")
-                .Surround("{", "}");
+            var dictionaryEntries = keys.Select(key => new {Key = key, Value = xd[key]}).ToArray();
+            return dictionaryEntries.Select(entry => "[" + Dump(entry.Key) + "] " + Dump(entry.Value)).Stringify("\n").Surround("{", "}");
         }
 
         static DumpClassAttribute DumpClassAttribute(this Type t)
@@ -497,8 +462,7 @@ namespace HWClassLibrary.Debug
         static string BaseDump(this Type t, object x)
         {
             var baseDump = "";
-            if(t.BaseType != null && t.BaseType.ToString() != "System.Object" &&
-               t.BaseType.ToString() != "System.ValueType")
+            if(t.BaseType != null && t.BaseType.ToString() != "System.Object" && t.BaseType.ToString() != "System.ValueType")
                 baseDump = InternalDump(false, t.BaseType, x);
             if(baseDump != "")
                 baseDump = "\nBase:" + baseDump;
@@ -576,10 +540,7 @@ namespace HWClassLibrary.Debug
         internal static string DumpMethodWithData(string text, int depth, object thisObject, object[] parameter)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
-            return FilePosn(sf, FilePositionTag.Debug)
-                   + (DumpMethod(sf.GetMethod(), true))
-                   + text
-                   + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter));
+            return FilePosn(sf, FilePositionTag.Debug) + (DumpMethod(sf.GetMethod(), true)) + text + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter));
         }
 
         /// <summary>
@@ -592,10 +553,7 @@ namespace HWClassLibrary.Debug
         public static string DumpData(string text, int depth, object[] data)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
-            return FilePosn(sf, FilePositionTag.Debug)
-                   + DumpMethod(sf.GetMethod(), true)
-                   + text
-                   + Indent(DumpMethodWithData(null, data));
+            return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text + Indent(DumpMethodWithData(null, data));
         }
 
         static string DumpMethodWithData(MethodBase m, object o, object[] p)
@@ -719,7 +677,8 @@ namespace HWClassLibrary.Debug
         /// </param>
         /// <param name="text"> The text. </param>
         [DebuggerHidden]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b, Func<string> text)
+        [ContractAnnotation("b: false => halt")]
+        public static void Assert(int stackFrameDepth, bool b, Func<string> text)
         {
             if(b)
                 return;
@@ -734,8 +693,8 @@ namespace HWClassLibrary.Debug
         ///     if set to <c>true</c> [b].
         /// </param>
         [DebuggerHidden]
-        [AssertionMethod]
-        public static void Assert(int stackFrameDepth, [AssertionCondition(AssertionConditionType.IsTrue)] bool b)
+        [ContractAnnotation("b: false => halt")]
+        public static void Assert(int stackFrameDepth, bool b)
         {
             if(b)
                 return;
@@ -750,8 +709,8 @@ namespace HWClassLibrary.Debug
         /// </param>
         /// created 16.12.2006 18:27
         [DebuggerHidden]
-        [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b) { Assert(1, b); }
+        [ContractAnnotation("b: false => halt")]
+        public static void Assert(bool b) { Assert(1, b); }
 
         /// <summary>
         ///     Asserts the specified b.
@@ -762,12 +721,12 @@ namespace HWClassLibrary.Debug
         /// <param name="s"> The s. </param>
         /// created 16.12.2006 18:29
         [DebuggerHidden]
-        [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b, Func<string> s) { Assert(1, b, s); }
+        [ContractAnnotation("b: false => halt")]
+        public static void Assert(bool b, Func<string> s) { Assert(1, b, s); }
 
         [DebuggerHidden]
-        [AssertionMethod]
-        public static void Assert([AssertionCondition(AssertionConditionType.IsTrue)] bool b, string s) { Assert(1, b, () => s); }
+        [ContractAnnotation("b: false => halt")]
+        public static void Assert(bool b, string s) { Assert(1, b, () => s); }
 
         /// <summary>
         ///     Assertions the failed.

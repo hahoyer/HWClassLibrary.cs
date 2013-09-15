@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -25,10 +25,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Helper;
 
-namespace HWClassLibrary.TreeStructure
+namespace hw.TreeStructure
 {
     public sealed partial class TreeForm : Form
     {
@@ -81,7 +80,7 @@ namespace HWClassLibrary.TreeStructure
 
         static Rectangle EnsureVisible(Rectangle value)
         {
-            if (Screen.AllScreens.Any(s => s.Bounds.IntersectsWith(value)))
+            if(Screen.AllScreens.Any(s => s.Bounds.IntersectsWith(value)))
                 return value;
             var closestScreen = Screen.FromRectangle(value);
             throw new NotImplementedException();
@@ -104,18 +103,7 @@ namespace HWClassLibrary.TreeStructure
         readonly string _name;
         public PositionConfig(string name) { _name = name; }
 
-        internal Rectangle? Position
-        {
-            get
-            {
-                return Convert
-                    (0
-                     , null
-                     , s => (Rectangle?) new RectangleConverter().ConvertFromString(s)
-                    );
-            }
-            set { Save(value, WindowState); }
-        }
+        internal Rectangle? Position { get { return Convert(0, null, s => (Rectangle?) new RectangleConverter().ConvertFromString(s)); } set { Save(value, WindowState); } }
 
         string[] ParameterStrings
         {
@@ -126,11 +114,7 @@ namespace HWClassLibrary.TreeStructure
             }
         }
 
-        void Save(Rectangle? position, FormWindowState state)
-        {
-            _name.FileHandle().String
-                = new RectangleConverter().ConvertToString(position) + "\n" + state;
-        }
+        void Save(Rectangle? position, FormWindowState state) { _name.FileHandle().String = new RectangleConverter().ConvertToString(position) + "\n" + state; }
 
         internal FormWindowState WindowState { get { return Convert(1, FormWindowState.Normal, s => s.Parse<FormWindowState>()); } set { Save(Position, value); } }
 

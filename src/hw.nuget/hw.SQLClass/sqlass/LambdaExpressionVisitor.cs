@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,15 +18,17 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Linq;
-using System.Collections.Generic;
+#endregion
+
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using HWClassLibrary.Debug;
+using hw.Debug;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.sqlass
+namespace hw.sqlass
 {
     abstract class LambdaExpressionVisitor<T> : ExpressionVisitor<T>
     {
@@ -51,10 +54,7 @@ namespace HWClassLibrary.sqlass
             var targetType = GetTargetType(expression);
             var methodInfo = GetType().GetMethod("GenericVisitLambda", bf);
             var genericMethod = methodInfo.MakeGenericMethod(targetType);
-            return
-                (T)
-                genericMethod
-                    .Invoke(this, new object[] {expression});
+            return (T) genericMethod.Invoke(this, new object[] {expression});
         }
 
         static Type GetTargetType(Expression expression)
@@ -81,7 +81,7 @@ namespace HWClassLibrary.sqlass
         [UsedImplicitly]
         protected T GenericVisitLambda<TExpression>(Expression<Func<TExpression, bool>> expression) { return VisitLambda(expression.Parameters.ToArray(), expression.Body); }
         protected abstract T VisitLambda(ParameterExpression[] parameters, Expression body);
-        
+
         protected override sealed T Constant(object value)
         {
             NotImplementedMethod(value);

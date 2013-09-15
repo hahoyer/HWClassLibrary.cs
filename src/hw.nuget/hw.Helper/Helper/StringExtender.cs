@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,16 +18,18 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HWClassLibrary.Debug;
+using hw.Debug;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     /// <summary>
     ///     String helper functions.
@@ -123,12 +126,7 @@ namespace HWClassLibrary.Helper
 
         public static string ExecuteCommand(this string command)
         {
-            var procStartInfo = new ProcessStartInfo("cmd", "/c " + command)
-                                {
-                                    RedirectStandardOutput = true,
-                                    UseShellExecute = false,
-                                    CreateNoWindow = true
-                                };
+            var procStartInfo = new ProcessStartInfo("cmd", "/c " + command) {RedirectStandardOutput = true, UseShellExecute = false, CreateNoWindow = true};
             var proc = new Process {StartInfo = procStartInfo};
             proc.Start();
             return proc.StandardOutput.ReadToEnd();
@@ -137,13 +135,7 @@ namespace HWClassLibrary.Helper
         public static File FileHandle(this string name) { return File.Create(name); }
         public static string PathCombine(this string head, params string[] tail) { return Path.Combine(head, Path.Combine(tail)); }
 
-        public static string UnderScoreToCamelCase(this string name)
-        {
-            return name
-                .Split('_')
-                .Select(ToLowerFirstUpper)
-                .Stringify("");
-        }
+        public static string UnderScoreToCamelCase(this string name) { return name.Split('_').Select(ToLowerFirstUpper).Stringify(""); }
 
         public static string ToLowerFirstUpper(this string text) { return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant(); }
         public static string TableNameToClassName(this string name) { return name.UnderScoreToCamelCase().ToSingular(); }
@@ -154,7 +146,7 @@ namespace HWClassLibrary.Helper
         public static IEnumerable<string> Split(this string target, params int[] sizes)
         {
             var start = 0;
-            foreach (var length in sizes.Select(size => Math.Max(0, Math.Min(target.Length - start, size))))
+            foreach(var length in sizes.Select(size => Math.Max(0, Math.Min(target.Length - start, size))))
             {
                 yield return target.Substring(start, length);
                 start += length;

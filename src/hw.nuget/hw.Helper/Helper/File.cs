@@ -1,6 +1,6 @@
 #region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using HWClassLibrary.Debug;
+using hw.Debug;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     /// <summary>
     ///     Summary description for File.

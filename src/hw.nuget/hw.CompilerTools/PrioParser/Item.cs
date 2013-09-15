@@ -1,6 +1,6 @@
 ﻿#region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -20,12 +20,12 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using HWClassLibrary.Debug;
+using System.Collections.Generic;
+using System.Linq;
+using hw.Debug;
 
-namespace HWClassLibrary.Parser
+namespace hw.PrioParser
 {
     public sealed class Item<T>
         where T : class

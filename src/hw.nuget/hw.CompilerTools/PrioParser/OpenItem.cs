@@ -1,6 +1,6 @@
 ﻿#region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -20,12 +20,11 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using HWClassLibrary.Debug;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace HWClassLibrary.Parser
+namespace hw.PrioParser
 {
     public sealed class OpenItem<T>
         where T : class
@@ -42,14 +41,6 @@ namespace HWClassLibrary.Parser
         internal char Relation(string newTokenName, PrioTable prioTable) { return prioTable.Relation(newTokenName, Item.Name); }
         internal T Create(T args) { return Item.Create(Left, args); }
 
-        internal static OpenItem<T> StartItem(IPosition<T> start)
-        {
-            return
-                new OpenItem<T>
-                    (
-                    default(T),
-                    new Item<T>(null, start.Span(start))
-                    );
-        }
+        internal static OpenItem<T> StartItem(IPosition<T> start) { return new OpenItem<T>(default(T), new Item<T>(null, start.Span(start))); }
     }
 }

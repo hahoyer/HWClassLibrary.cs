@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,17 +20,17 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using EnvDTE;
-using HWClassLibrary.Debug;
-using System.Collections.Generic;
-using System.Linq;
-using System;
+using hw.Debug;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TextTemplating;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     public sealed class T4Context
     {
@@ -54,14 +54,7 @@ namespace HWClassLibrary.Helper
         }
 
         [UsedImplicitly]
-        public string NameSpace
-        {
-            get
-            {
-                return _host.ResolveParameterValue("directiveId", "namespaceDirectiveProcessor", "namespaceHint")
-                    ?? "";
-            }
-        }
+        public string NameSpace { get { return _host.ResolveParameterValue("directiveId", "namespaceDirectiveProcessor", "namespaceHint") ?? ""; } }
 
         [UsedImplicitly]
         public string File
@@ -147,10 +140,7 @@ namespace HWClassLibrary.Helper
 
         void CheckoutFileIfRequired(string fileName)
         {
-            if(DTE == null
-                || DTE.SourceControl == null
-                || !DTE.SourceControl.IsItemUnderSCC(fileName)
-                || DTE.SourceControl.IsItemCheckedOut(fileName))
+            if(DTE == null || DTE.SourceControl == null || !DTE.SourceControl.IsItemUnderSCC(fileName) || DTE.SourceControl.IsItemCheckedOut(fileName))
                 return;
 
             Action<string> checkOutAction = name => DTE.SourceControl.CheckOutItem(name);
@@ -166,14 +156,10 @@ namespace HWClassLibrary.Helper
             if(item == null || item.ProjectItems == null)
                 return;
 
-            var projectFiles = item
-                .ProjectItems
-                .Cast<ProjectItem>()
-                .ToDictionary(projectItem => projectItem.FileNames[0]);
+            var projectFiles = item.ProjectItems.Cast<ProjectItem>().ToDictionary(projectItem => projectItem.FileNames[0]);
 
             // Remove unused items from the project
-            var toDelete = projectFiles
-                .Where(pair => !newFiles.Contains(pair.Key) && pair.Key != FullMainFileName);
+            var toDelete = projectFiles.Where(pair => !newFiles.Contains(pair.Key) && pair.Key != FullMainFileName);
             foreach(var pair in toDelete)
                 pair.Value.Delete();
 

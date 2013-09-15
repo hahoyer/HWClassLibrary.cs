@@ -1,6 +1,6 @@
 #region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -23,10 +23,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.TreeStructure;
+using hw.Debug;
+using hw.TreeStructure;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     /// <summary>
     ///     Dicionary that does not allow null values
@@ -34,7 +34,7 @@ namespace HWClassLibrary.Helper
     /// <typeparam name="TKey"> </typeparam>
     /// <typeparam name="TValue"> </typeparam>
     [AdditionalNodeInfo("NodeDump")]
-    sealed public class FunctionCache<TKey, TValue> : Dictionary<TKey, TValue>
+    public sealed class FunctionCache<TKey, TValue> : Dictionary<TKey, TValue>
     {
         readonly Func<TKey, TValue> _createValue;
 
@@ -114,27 +114,28 @@ namespace HWClassLibrary.Helper
             }
         }
 
-    sealed class NoCaseComparer : IEqualityComparer<string>
-    {
-        static IEqualityComparer<string> _default;
+        sealed class NoCaseComparer : IEqualityComparer<string>
+        {
+            static IEqualityComparer<string> _default;
 
-        /// <summary>
-        ///     Determines whether the specified objects are equal.
-        /// </summary>
-        /// <returns> true if the specified objects are equal; otherwise, false. </returns>
-        /// <param name="y"> The second object of type T to compare. </param>
-        /// <param name="x"> The first object of type T to compare. </param>
-        public bool Equals(string x, string y) { return x.ToUpperInvariant() == y.ToUpperInvariant(); }
+            /// <summary>
+            ///     Determines whether the specified objects are equal.
+            /// </summary>
+            /// <returns> true if the specified objects are equal; otherwise, false. </returns>
+            /// <param name="y"> The second object of type T to compare. </param>
+            /// <param name="x"> The first object of type T to compare. </param>
+            public bool Equals(string x, string y) { return x.ToUpperInvariant() == y.ToUpperInvariant(); }
 
-        /// <summary>
-        ///     When overridden in a derived class, serves as a hash function for the specified object for hashing algorithms and data structures, such as a hash table.
-        /// </summary>
-        /// <returns> A hash code for the specified object. </returns>
-        /// <param name="obj"> The object for which to get a hash code. </param>
-        /// <exception cref="T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
-        public int GetHashCode(string obj) { return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant()); }
+            /// <summary>
+            ///     When overridden in a derived class, serves as a hash function for the specified object for hashing algorithms and
+            ///     data structures, such as a hash table.
+            /// </summary>
+            /// <returns> A hash code for the specified object. </returns>
+            /// <param name="obj"> The object for which to get a hash code. </param>
+            /// <exception cref="T:System.ArgumentNullException">The type of obj is a reference type and obj is null.</exception>
+            public int GetHashCode(string obj) { return EqualityComparer<string>.Default.GetHashCode(obj.ToUpperInvariant()); }
 
-        public static IEqualityComparer<string> Default { get { return _default ?? (_default = new NoCaseComparer()); } }
-    }
+            public static IEqualityComparer<string> Default { get { return _default ?? (_default = new NoCaseComparer()); } }
+        }
     }
 }

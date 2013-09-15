@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,14 +18,15 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Collections.Generic;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Helper;
 
-namespace HWClassLibrary.Debug
+namespace hw.Debug
 {
     public sealed class Profiler
     {
@@ -69,12 +71,7 @@ namespace HWClassLibrary.Debug
                 result = "\n=========== Profile ==================\n" + stringAligner.Format(result);
                 result += "Total:\t" + _sumAll.Format3Digits();
                 if(_index < _data.Length)
-                    result +=
-                        " ("
-                        + (_data.Length - _index)
-                        + " not-shown-items "
-                        + (_sumAll - _sum).Format3Digits()
-                        + ")";
+                    result += " (" + (_data.Length - _index) + " not-shown-items " + (_sumAll - _sum).Format3Digits() + ")";
                 result += "\n======================================\n";
                 return result;
             }
@@ -127,9 +124,20 @@ namespace HWClassLibrary.Debug
         /// <param name="hidden"> The relative amount of time that will be hidden in result. </param>
         /// <returns> The formatted data. </returns>
         /// <remarks>
-        ///     The result contains one line for each measured expression, that is not ignored. Each line contains <para>- the file path, the line and the start column of the measuered expression in the source file,
-        ///                                                                                                            (The information is formatted in a way, that within VisualStudio doubleclicking on such a line will open it.)</para> <para>- the flag, if provided,</para> <para>- the ranking,</para> <para>- the execution count,</para> <para>- the average duration of one execution,</para> <para>- the duration,</para> of the expression. The the lines are sorted by descending duration. by use of <paramref
-        ///      name="count" /> and <paramref name="hidden" /> the number of lines can be restricted.
+        ///     The result contains one line for each measured expression, that is not ignored. Each line contains
+        ///     <para>
+        ///         - the file path, the line and the start column of the measuered expression in the source file,
+        ///         (The information is formatted in a way, that within VisualStudio doubleclicking on such a line will open it.)
+        ///     </para>
+        ///     <para>- the flag, if provided,</para>
+        ///     <para>- the ranking,</para>
+        ///     <para>- the execution count,</para>
+        ///     <para>- the average duration of one execution,</para>
+        ///     <para>- the duration,</para>
+        ///     of the expression. The the lines are sorted by descending duration. by use of
+        ///     <paramref
+        ///         name="count" />
+        ///     and <paramref name="hidden" /> the number of lines can be restricted.
         /// </remarks>
         public static string Format(int? count = null, double hidden = 0.1)
         {
@@ -237,16 +245,7 @@ namespace HWClassLibrary.Debug
         public string Format(string tag)
         {
             Tracer.Assert(IsValid);
-            return _position
-                   + " #"
-                   + tag
-                   + ":  "
-                   + _countEnd.Format3Digits()
-                   + "x  "
-                   + AverageDuration.Format3Digits()
-                   + "  "
-                   + _duration.Format3Digits()
-                   + "\n";
+            return _position + " #" + tag + ":  " + _countEnd.Format3Digits() + "x  " + AverageDuration.Format3Digits() + "  " + _duration.Format3Digits() + "\n";
         }
 
         public void Suspend(TimeSpan start)

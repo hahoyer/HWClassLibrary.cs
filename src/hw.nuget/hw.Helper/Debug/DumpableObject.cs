@@ -24,11 +24,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
-using HWClassLibrary.TreeStructure;
+using hw.Helper;
+using hw.TreeStructure;
 
-namespace Reni
+namespace hw.Debug
 {
     [AdditionalNodeInfo("NodeDump")]
     [DebuggerDisplay("{NodeDump}")]

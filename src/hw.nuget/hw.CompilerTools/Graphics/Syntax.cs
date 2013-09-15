@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Collections.Generic;
-using System;
-using HWClassLibrary.Debug;
+using hw.Debug;
 
-namespace Reni.Graphics
+namespace hw.Graphics
 {
     sealed class Syntax : DumpableObject
     {
@@ -75,10 +75,7 @@ namespace Reni.Graphics
             for(var index = 0; index < _children.Length; index++)
                 if(_children[index] != null)
                 {
-                    _drawer.DrawLine
-                        (origin + Anchor
-                         , origin + offsets[index] + _children[index].Anchor
-                        );
+                    _drawer.DrawLine(origin + Anchor, origin + offsets[index] + _children[index].Anchor);
                     _children[index].Draw(origin + offsets[index]);
                 }
         }
@@ -105,10 +102,7 @@ namespace Reni.Graphics
             {
                 Tracer.Assert(HasChildren);
                 var gapWidth = _drawer.Gap.Width * (_children.Length - 1);
-                var effectiveChildrenWidth
-                    = _children
-                        .Select(SaveWidth)
-                        .Sum();
+                var effectiveChildrenWidth = _children.Select(SaveWidth).Sum();
                 return gapWidth + effectiveChildrenWidth;
             }
         }
@@ -131,14 +125,12 @@ namespace Reni.Graphics
                 if(HasChildren)
                 {
                     var childAnchors = _children.Select(SaveAnchorWidth);
-                    result = ChildOffsets
-                                 .Select((o, i) => o.Width + childAnchors.ElementAt(i))
-                                 .Sum()
-                             / _children.Length;
+                    result = ChildOffsets.Select((o, i) => o.Width + childAnchors.ElementAt(i)).Sum() / _children.Length;
                 }
                 return Math.Max(result, NodeWidth / 2);
             }
         }
+
         internal static Syntax Create(IGraphTarget syntax, ISyntaxDrawer syntaxDrawer) { return syntax == null ? null : new Syntax(syntaxDrawer, syntax.Title, syntax.Children); }
     }
 

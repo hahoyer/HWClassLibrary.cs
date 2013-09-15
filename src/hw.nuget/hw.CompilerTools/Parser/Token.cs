@@ -1,7 +1,7 @@
 #region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -24,11 +24,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Parser;
+using hw.Debug;
+using hw.PrioParser;
+using hw.Scanner;
 using JetBrains.Annotations;
 
-namespace Reni.Parser
+namespace hw.Parser
 {
     [DebuggerDisplay("{NodeDump} {DumpBeforeCurrent}[{DumpCurrent}]{DumpAfterCurrent}")]
     sealed class TokenData : Dumpable, IPart<IParsedSyntax>, IOperatorPart
@@ -46,13 +47,18 @@ namespace Reni.Parser
 
         [DisableDump]
         Source Source { get { return _source; } }
+
         [DisableDump]
         int Position { get { return _position; } }
+
         [DisableDump]
         int Length { get { return _length; } }
+
         internal string Name { get { return Source.SubString(Position, Length); } }
+
         [DisableDump]
         internal string FilePosition { get { return "\n" + Source.FilePosn(Position, Name); } }
+
         internal string FileErrorPosition(string errorTag) { return "\n" + Source.FilePosn(Position, Name, "error " + errorTag); }
 
         [UsedImplicitly]
@@ -87,6 +93,7 @@ namespace Reni.Parser
                 return result;
             }
         }
+
         public TokenData Combine(TokenData other)
         {
             Tracer.Assert(Source == other.Source);
@@ -96,7 +103,7 @@ namespace Reni.Parser
 
         internal static TokenData Span(SourcePosn first, IPosition<IParsedSyntax> other)
         {
-            var length = ((Position)other).SourcePosn - first;
+            var length = ((Position) other).SourcePosn - first;
             return new TokenData(first.Source, first.Position, length);
             throw new NotImplementedException();
         }

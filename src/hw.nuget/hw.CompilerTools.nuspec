@@ -1,25 +1,31 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>hw.CompilerTools</id>
-    <version>0.1.0.3</version>
-    <title>hw.CompilerTools</title>
-    <authors>hahoyer</authors>
-    <description>
-      Provides support for building compilers.
-    </description>
-    <summary>
-        Compiler building
-    </summary>
-    <language>en-US</language>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-      <copyright>Copyright Harald Hoyer 2013</copyright>
 
-      <dependencies>
-          <dependency id="hw.Helper.Core"/>
-      </dependencies>      
-  </metadata>
-  <files>
-    <file src="hw.CompilerTools\" target="content\hw" />
-  </files>
+<package>
+    <metadata>
+        <id>hw.CompilerTools</id>
+        <title>hw.CompilerTools</title>
+        <authors>hahoyer</authors>
+        <description>
+            Provides support for building compilers.
+        </description>
+        <summary>
+            Compiler building
+        </summary>
+        <language>en-US</language>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Copyright Harald Hoyer 2013</copyright>
+
+        <version>0.2.1-alpha</version>
+        <releaseNotes>
+            - namespaces aligned
+            - file headers updated
+        </releaseNotes>
+        <dependencies>
+            <dependency id="hw.Helper.Core" version="0.2.1-alpha" />
+        </dependencies>
+
+    </metadata>
+    <files>
+        <file src="hw.CompilerTools\" target="content\hw" />
+    </files>
 </package>

@@ -1,6 +1,6 @@
 ﻿#region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -23,12 +23,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
-using HWClassLibrary.TreeStructure;
+using hw.Debug;
+using hw.Helper;
+using hw.TreeStructure;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.Parser
+namespace hw.PrioParser
 {
     /// <summary>
     ///     Priority table used in parsing to create the syntax tree.
@@ -116,16 +116,10 @@ namespace HWClassLibrary.Parser
                         result += Right(data);
                         break;
                     case "parlevel":
-                        result = result.ParenthesisLevel
-                            (data.Take(tokenCount).ToArray()
-                             , data.Skip(tokenCount).Take(tokenCount).ToArray()
-                            );
+                        result = result.ParenthesisLevel(data.Take(tokenCount).ToArray(), data.Skip(tokenCount).Take(tokenCount).ToArray());
                         break;
                     case "televel":
-                        result = result.ThenElseLevel
-                            (data.Take(tokenCount).ToArray()
-                             , data.Skip(tokenCount).Take(tokenCount).ToArray()
-                            );
+                        result = result.ThenElseLevel(data.Take(tokenCount).ToArray(), data.Skip(tokenCount).Take(tokenCount).ToArray());
                         break;
                     case "-":
                     case "+":
@@ -142,7 +136,7 @@ namespace HWClassLibrary.Parser
 
         char[,] AllocData()
         {
-            var data = new char[Length,Length];
+            var data = new char[Length, Length];
             for(var i = 0; i < Length; i++)
                 for(var j = 0; j < Length; j++)
                     data[i, j] = ' ';
@@ -228,8 +222,7 @@ namespace HWClassLibrary.Parser
             for(var i = 0; i < right.Length; i++)
                 for(var j = 0; j < left.Length; j++)
                 {
-                    _dataCache.Value[i + left.Length + x._token.Length, j]
-                        = i < j ? '+' : i > j ? '-' : '=';
+                    _dataCache.Value[i + left.Length + x._token.Length, j] = i < j ? '+' : i > j ? '-' : '=';
                     _dataCache.Value[j, i + left.Length + x._token.Length] = data[0][2];
                 }
 
@@ -398,6 +391,7 @@ namespace HWClassLibrary.Parser
         //For debug only
         [Node]
         public string[] Token { get { return _token; } }
+
         public IEnumerable<string> NewToken { get { return _token.Where(t => t != BeginOfText); } }
         public IEnumerable<string> RecentToken { get { return _token.Where(t => t != EndOfText); } }
 
@@ -418,33 +412,21 @@ namespace HWClassLibrary.Parser
             }
         }
 
-        static readonly string[] _parenthesisTable = new[]
-        {
-            "++-",
-            "+?-",
-            "?--"
-        };
+        static readonly string[] _parenthesisTable = new[] {"++-", "+?-", "?--"};
 
-        static readonly string[] _thenElseTable = new[]
-        {
-            "+--",
-            "+?+",
-            "?-+"
-        };
+        static readonly string[] _thenElseTable = new[] {"+--", "+?+", "?-+"};
 
         void Sort()
         {
             while(SortOne())
                 continue;
         }
-        
+
         bool SortOne()
         {
             var comparer = new PrioComparer(this);
             var newOrder = Length.Select().OrderBy(d => d, comparer);
-            var toDo = newOrder
-                .Select((iOld, iNew) => new {iOld, iNew})
-                .FirstOrDefault(x => x.iOld != x.iNew);
+            var toDo = newOrder.Select((iOld, iNew) => new {iOld, iNew}).FirstOrDefault(x => x.iOld != x.iNew);
             if(toDo == null)
                 return false;
 

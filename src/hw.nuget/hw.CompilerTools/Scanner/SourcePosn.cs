@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using HWClassLibrary.Debug;
+using hw.Debug;
 using JetBrains.Annotations;
 
-namespace Reni.Parser
+namespace hw.Scanner
 {
     /// <summary>
     ///     Source and position for compilation process
@@ -118,6 +118,7 @@ namespace Reni.Parser
                 return result;
             }
         }
+
         public SourcePosn Clone { get { return new SourcePosn(Source, Position); } }
 
         public static SourcePosn operator +(SourcePosn x, int y) { return x.Source + (x.Position + y); }
@@ -133,8 +134,7 @@ namespace Reni.Parser
         public bool StartsWith(string data)
         {
             var length = data.Length;
-            return !Source.IsEnd(Position + length - 1)
-                && Source.SubString(Position, length) == data;
+            return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length) == data;
         }
     }
 }

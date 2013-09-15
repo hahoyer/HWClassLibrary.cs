@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
-using HWClassLibrary.Parser;
+using hw.Debug;
+using hw.Helper;
+using hw.PrioParser;
 
-namespace Reni.Parser
+namespace hw.Parser
 {
     abstract class TokenFactory<TTokenClass> : Dumpable, ITokenFactory
         where TTokenClass : class, IType<IParsedSyntax>, INameProvider

@@ -1,6 +1,6 @@
 ﻿#region Copyright (C) 2013
 
-//     Project HWClassLibrary
+//     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -24,10 +24,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Debug;
+using hw.Helper;
 
-namespace HWClassLibrary.UnitTest
+namespace hw.UnitTest
 {
     public sealed class TestRunner : Dumpable
     {
@@ -62,10 +62,7 @@ namespace HWClassLibrary.UnitTest
         {
             if(IsModeErrorFocus)
                 return new TestType[0];
-            return type
-                .Dependants
-                .Select(attribute => attribute.AsTestType(_testTypes))
-                .ToArray();
+            return type.Dependants.Select(attribute => attribute.AsTestType(_testTypes)).ToArray();
         }
 
         void Run()
@@ -116,20 +113,12 @@ namespace HWClassLibrary.UnitTest
 
         string ConfigurationString
         {
-            get
-            {
-                return HeaderText + "\n" +
-                    _testTypes
-                        .OrderBy(t => t.ConfigurationModePriority)
-                        .Aggregate("", (current, testType) => current + testType.ConfigurationString);
-            }
+            get { return HeaderText + "\n" + _testTypes.OrderBy(t => t.ConfigurationModePriority).Aggregate("", (current, testType) => current + testType.ConfigurationString); }
             set
             {
                 if(value == null)
                     return;
-                var pairs = value.Split('\n')
-                    .Where((line, i) => i > 0 && line != "")
-                    .Join(_testTypes, line => line.Split(' ')[1], type => type.Type.FullName, (line, type) => new {line, type});
+                var pairs = value.Split('\n').Where((line, i) => i > 0 && line != "").Join(_testTypes, line => line.Split(' ')[1], type => type.Type.FullName, (line, type) => new {line, type});
                 foreach(var pair in pairs)
                     pair.type.ConfigurationString = pair.line;
             }
@@ -152,13 +141,7 @@ namespace HWClassLibrary.UnitTest
             ConfigFileMessage("Configuration loaded");
         }
 
-        static IEnumerable<TestType> GetUnitTestTypes(Assembly rootAssembly)
-        {
-            return rootAssembly
-                .GetReferencedTypes()
-                .Where(type => !(type.IsAbstract || type.GetAttribute<TestFixtureAttribute>(true) == null))
-                .Select(methodInfo => new TestType(methodInfo));
-        }
+        static IEnumerable<TestType> GetUnitTestTypes(Assembly rootAssembly) { return rootAssembly.GetReferencedTypes().Where(type => !(type.IsAbstract || type.GetAttribute<TestFixtureAttribute>(true) == null)).Select(methodInfo => new TestType(methodInfo)); }
     }
 
     sealed class TestFailedException : Exception

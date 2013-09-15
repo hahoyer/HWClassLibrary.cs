@@ -76,7 +76,10 @@
             <PackageFiles Include="$(PackageOutputDir)\*.nupkg" Exclude="$(PackageOutputDir)\*.symbols.nupkg" />
         </ItemGroup>
 
-        <Exec Command="$(NuGetCommand) setApiKey a5f7f807-2780-44f4-8346-648338424192" />
+        <Exec 
+            Condition="'$(Configuration)' == 'Release'"
+            Command="$(NuGetCommand) setApiKey a5f7f807-2780-44f4-8346-648338424192" 
+            />
         
         <Exec  
             Condition="'$(Configuration)' == 'Release'"
@@ -88,7 +91,11 @@
             <Output TaskParameter="ConsoleOutput" PropertyName="ConsoleOutput" />
         </Exec>
 
-        <Error Condition="$(ExitCode) != 0" Text="$(ConsoleOutput)" File="%(PackageSpecs.Identity)"/>
+        <Error 
+            Condition="$(ExitCode) != 0 And '$(Configuration)' == 'Release'" 
+            Text="$(ConsoleOutput)" 
+            File="%(PackageSpecs.Identity)"
+            />
 
     </Target>
 

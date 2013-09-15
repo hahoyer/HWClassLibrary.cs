@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,12 +18,14 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Linq;
-using System.Collections.Generic;
-using System;
-using HWClassLibrary.Debug;
+#endregion
 
-namespace HWClassLibrary.sqlass.MetaData
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using hw.Debug;
+
+namespace hw.sqlass.MetaData
 {
     sealed class TableColumn : Dumpable
     {
@@ -32,14 +35,6 @@ namespace HWClassLibrary.sqlass.MetaData
         public bool IsKey;
         public bool IsNullable;
         public TableName Reference;
-        public override string ToString()
-        {
-            return
-                (IsKey ? "*" : "-")
-                + Table + "." + Name
-                + " Type = " + Type
-                + " " + (IsNullable ? " = 0" : "")
-                + (Reference == null ? "" : " ->" + Reference);
-        }
+        public override string ToString() { return (IsKey ? "*" : "-") + Table + "." + Name + " Type = " + Type + " " + (IsNullable ? " = 0" : "") + (Reference == null ? "" : " ->" + Reference); }
     }
 }

@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,15 +20,15 @@
 
 #endregion
 
-using HWClassLibrary.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using HWClassLibrary.TreeStructure;
+using hw.Debug;
+using hw.Graphics;
+using hw.TreeStructure;
 using JetBrains.Annotations;
-using Reni.Graphics;
 
-namespace Reni.Parser
+namespace hw.Parser
 {
     abstract class ParsedSyntaxBase : DumpableObject, IParsedSyntax, IGraphTarget
     {

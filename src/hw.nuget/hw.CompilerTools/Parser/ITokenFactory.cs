@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,12 @@
 
 #endregion
 
-using HWClassLibrary.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using HWClassLibrary.Parser;
+using hw.PrioParser;
 
-namespace Reni.Parser
+namespace hw.Parser
 {
     interface ITokenFactory
     {

@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
-using HWClassLibrary.Debug;
+using hw.Debug;
 
-namespace Reni.Graphics
+namespace hw.Graphics
 {
     sealed class SyntaxDrawer : DumpableObject, ISyntaxDrawer
     {
@@ -63,7 +63,7 @@ namespace Reni.Graphics
         }
 
         internal static Image DrawBitmap(IGraphTarget syntax) { return new SyntaxDrawer(syntax).Draw(); }
-        
+
         Image Draw()
         {
             _syntax.Draw(new Point(_sizeBase / 2, _sizeBase / 2));
@@ -87,23 +87,13 @@ namespace Reni.Graphics
             _graphics.FillPath(_nodeBrush, r);
             _graphics.DrawPath(_linePen, r);
 
-            var s = new StringFormat
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
-            };
+            var s = new StringFormat {Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center};
             _graphics.DrawString(nodeName, _font, _lineBrush, new Rectangle(origin, size), s);
         }
 
         void ISyntaxDrawer.DrawLine(Point start, Point end) { _graphics.DrawLine(_linePen, start, end); }
 
-        int TextWidth(string nodeName)
-        {
-            return (int)
-                   _graphics
-                       .MeasureString(nodeName, _font, new PointF(0, 0), _stringFormat)
-                       .Width;
-        }
+        int TextWidth(string nodeName) { return (int) _graphics.MeasureString(nodeName, _font, new PointF(0, 0), _stringFormat).Width; }
 
         Size NodeSize(string nodeName) { return new Size(((ISyntaxDrawer) this).NodeWidth(nodeName), ((ISyntaxDrawer) this).NodeHeight(nodeName)); }
         int ISyntaxDrawer.NodeHeight(string nodeName) { return _sizeBase * 2; }

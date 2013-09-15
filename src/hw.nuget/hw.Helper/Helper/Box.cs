@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,12 +18,13 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using HWClassLibrary.Debug;
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     sealed class Box<T>
     {

@@ -1,25 +1,31 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>hw.TreeView</id>
-    <version>0.1.0.0</version>
-    <title>hw.TreeView</title>
-    <authors>hahoyer</authors>
-    <description>
-      Provides a tree view controlled by attributes.
-    </description>
-    <summary>
-        Tree view
-    </summary>
-    <language>en-US</language>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-      <copyright>Copyright Harald Hoyer 2013</copyright>
 
-      <dependencies>
-          <dependency id="hw.Helper.Core"/>
-      </dependencies>      
-  </metadata>
-  <files>
-    <file src="hw.TreeView\" target="content\hw" />
-  </files>
+<package>
+    <metadata>
+        <id>hw.TreeView</id>
+        <title>hw.TreeView</title>
+        <authors>hahoyer</authors>
+        <description>
+            Provides a tree view controlled by attributes.
+        </description>
+        <summary>
+            Tree view
+        </summary>
+        <language>en-US</language>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Copyright Harald Hoyer 2013</copyright>
+
+        <version>0.2.1-alpha</version>
+        <releaseNotes>
+            - namespaces aligned
+            - file headers updated
+        </releaseNotes>
+        <dependencies>
+            <dependency id="hw.Helper.Core" version="0.2.1-alpha" />
+        </dependencies>
+
+    </metadata>
+    <files>
+        <file src="hw.TreeView\" target="content\hw" />
+    </files>
 </package>

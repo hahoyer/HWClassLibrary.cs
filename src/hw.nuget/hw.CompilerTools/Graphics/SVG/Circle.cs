@@ -20,13 +20,12 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
-using HWClassLibrary.Debug;
 
-namespace Reni.Graphics.SVG
+namespace hw.Graphics.SVG
 {
     public sealed class Circle : Content
     {

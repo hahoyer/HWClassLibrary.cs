@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Collections.Generic;
-using System;
-using HWClassLibrary.Debug;
+using hw.Debug;
 
-namespace Reni.Graphics.SVG
+namespace hw.Graphics.SVG
 {
     sealed class SyntaxDrawer : DumpableObject, ISyntaxDrawer
     {
@@ -64,7 +64,7 @@ namespace Reni.Graphics.SVG
             return _root;
         }
 
-        int SizeBase { get { return (int)(_tick * 10); } }
+        int SizeBase { get { return (int) (_tick * 10); } }
         Size ISyntaxDrawer.Gap { get { return new Size(SizeBase, SizeBase); } }
         int ISyntaxDrawer.NodeHeight(string nodeName) { return Math.Max(TextSize(nodeName).Height, SizeBase) + SizeBase; }
         int ISyntaxDrawer.NodeWidth(string nodeName) { return Math.Max(TextSize(nodeName).Width, SizeBase) + SizeBase; }
@@ -74,22 +74,7 @@ namespace Reni.Graphics.SVG
             var size = NodeSize(nodeName);
             var bodyWidth = size.Width - 2 * SizeBase;
 
-            _root.Svg.Items.Add
-                (
-                    new Path
-                    {
-                        PathData = (origin + new Size(SizeBase, 0))
-                        .CloseAndFormat
-                        (bodyWidth.HorizontalLine()
-                         , SizeBase.Arc(new Size(0, SizeBase * 2), false, true)
-                         , (-bodyWidth).HorizontalLine()
-                         , SizeBase.Arc(new Size(0, -SizeBase * 2), false, true)
-                        ),
-                        Fill = _fillColor,
-                        Stroke = _stroke,
-                        StrokeWidth = _tick
-                    }
-                );
+            _root.Svg.Items.Add(new Path {PathData = (origin + new Size(SizeBase, 0)).CloseAndFormat(bodyWidth.HorizontalLine(), SizeBase.Arc(new Size(0, SizeBase * 2), false, true), (-bodyWidth).HorizontalLine(), SizeBase.Arc(new Size(0, -SizeBase * 2), false, true)), Fill = _fillColor, Stroke = _stroke, StrokeWidth = _tick});
 
             _root.Svg.Items.Add(CreateText(nodeName, origin + new Size(size.Width / 2, size.Height / 2)));
         }
@@ -98,32 +83,14 @@ namespace Reni.Graphics.SVG
         {
             var size = TextSize(text);
 
-            var start =
-                center
-                - new Size(size.Width / 2, size.Height / 2)
-                + new Size(0, size.Height * 4 / 5);
+            var start = center - new Size(size.Width / 2, size.Height / 2) + new Size(0, size.Height * 4 / 5);
 
-            return new Text
-            {
-                Data = text,
-                Start = start,
-                FontFamily = _font.FontFamily.Name,
-                Size = _font.Size * 7 / 5,
-                Fill = _stroke
-            };
+            return new Text {Data = text, Start = start, FontFamily = _font.FontFamily.Name, Size = _font.Size * 7 / 5, Fill = _stroke};
         }
 
         void ISyntaxDrawer.DrawLine(Point start, Point end) { _root.Svg.Items.Add(CreateLine(start, end)); }
 
-        Content CreateLine(Point start, Point end)
-        {
-            return new Path
-            {
-                PathData = start.Format(new Size(end.X - start.X, end.Y - start.Y).LineTo()),
-                Stroke = _stroke,
-                StrokeWidth = _tick
-            };
-        }
+        Content CreateLine(Point start, Point end) { return new Path {PathData = start.Format(new Size(end.X - start.X, end.Y - start.Y).LineTo()), Stroke = _stroke, StrokeWidth = _tick}; }
 
         Size TextSize(string nodeName)
         {
@@ -134,9 +101,7 @@ namespace Reni.Graphics.SVG
         Size NodeSize(string nodeName)
         {
             var textSize = TextSize(nodeName);
-            return new Size
-                (Math.Max(textSize.Width, SizeBase) + SizeBase
-                 , SizeBase * 2);
+            return new Size(Math.Max(textSize.Width, SizeBase) + SizeBase, SizeBase * 2);
         }
     }
 }

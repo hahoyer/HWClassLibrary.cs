@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using HWClassLibrary.Debug;
+using System.Collections.Generic;
+using System.Linq;
+using hw.Debug;
 
-namespace Reni.Parser
+namespace hw.Scanner
 {
     interface IMatch
     {
@@ -100,7 +100,7 @@ namespace Reni.Parser
                 var otherResult = _other.Match(sourcePosn + result.Value);
                 if(otherResult == null)
                     return null;
-                
+
                 return result.Value + otherResult.Value;
             }
         }

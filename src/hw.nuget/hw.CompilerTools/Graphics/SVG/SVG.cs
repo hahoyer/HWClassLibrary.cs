@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project RootSite
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,12 @@
 
 #endregion
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
-using HWClassLibrary.Debug;
 
-namespace Reni.Graphics.SVG
+namespace hw.Graphics.SVG
 {
     public sealed class SVG
     {
@@ -38,6 +37,7 @@ namespace Reni.Graphics.SVG
         public string ViewBox;
 
         readonly List<Content> _content = new List<Content>();
+
         [XmlElement("rect", typeof(Rect))]
         [XmlElement("circle", typeof(Circle))]
         [XmlElement("path", typeof(Path))]

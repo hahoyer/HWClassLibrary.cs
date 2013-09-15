@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
-    <AssemblyName>HWClassLibrary</AssemblyName>
+    <AssemblyName>hw.nuget</AssemblyName>
     <TargetTypeEx>NuGetPackage</TargetTypeEx>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -32,6 +32,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>hw</RootNamespace>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
     <Compile Include="hw.CompilerTools\Graphics\IGraphTarget.cs" />
@@ -60,43 +63,44 @@
     <Compile Include="hw.CompilerTools\Scanner\Source.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePosn.cs" />
     <Compile Include="hw.Helper\Debug\DumpableObject.cs" />
-    <Compile Include="hw.Proof\AndSyntax.cs" />
-    <Compile Include="hw.Proof\AssociativeSyntax.cs" />
-    <Compile Include="hw.Proof\ClauseSyntax.cs" />
-    <Compile Include="hw.Proof\EqualSyntax.cs" />
-    <Compile Include="hw.Proof\FactorSyntax.cs" />
-    <Compile Include="hw.Proof\Holder.cs" />
-    <Compile Include="hw.Proof\IntegerSyntax.cs" />
-    <Compile Include="hw.Proof\IsolateAndReplaceStrategy.cs" />
-    <Compile Include="hw.Proof\IssueId.cs" />
-    <Compile Include="hw.Proof\IStrategy.cs" />
-    <Compile Include="hw.Proof\LeftParenthesisSyntax.cs" />
-    <Compile Include="hw.Proof\Main.cs" />
-    <Compile Include="hw.Proof\NumberSyntax.cs" />
-    <Compile Include="hw.Proof\PairSyntax.cs" />
-    <Compile Include="hw.Proof\ParsedSyntax.cs" />
-    <Compile Include="hw.Proof\ParsedSyntaxExtender.cs" />
-    <Compile Include="hw.Proof\PlusSyntax.cs" />
-    <Compile Include="hw.Proof\ReniScanner.cs" />
-    <Compile Include="hw.Proof\SyntaxError.cs" />
-    <Compile Include="hw.Proof\TokenClasses\And.cs" />
-    <Compile Include="hw.Proof\TokenClasses\Caret.cs" />
-    <Compile Include="hw.Proof\TokenClasses\Element.cs" />
-    <Compile Include="hw.Proof\TokenClasses\Equal.cs" />
-    <Compile Include="hw.Proof\TokenClasses\GreatesCommonDenominator.cs" />
-    <Compile Include="hw.Proof\TokenClasses\Integer.cs" />
-    <Compile Include="hw.Proof\TokenClasses\LeftParenthesis.cs" />
-    <Compile Include="hw.Proof\TokenClasses\List.cs" />
-    <Compile Include="hw.Proof\TokenClasses\Minus.cs" />
-    <Compile Include="hw.Proof\TokenClasses\Number.cs" />
-    <Compile Include="hw.Proof\TokenClasses\PairToken.cs" />
-    <Compile Include="hw.Proof\TokenClasses\Plus.cs" />
-    <Compile Include="hw.Proof\TokenClasses\RightParenthesis.cs" />
-    <Compile Include="hw.Proof\TokenClasses\TokenClass.cs" />
-    <Compile Include="hw.Proof\TokenClasses\UserSymbol.cs" />
-    <Compile Include="hw.Proof\TokenFactory.cs" />
-    <Compile Include="hw.Proof\TrueSyntax.cs" />
-    <Compile Include="hw.Proof\VariableSyntax.cs" />
+    <Compile Include="hw.Proof\Helper\BigRational.cs" />
+    <Compile Include="hw.Proof\Proof\AndSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\AssociativeSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\ClauseSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\EqualSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\FactorSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\Holder.cs" />
+    <Compile Include="hw.Proof\Proof\IntegerSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\IsolateAndReplaceStrategy.cs" />
+    <Compile Include="hw.Proof\Proof\IssueId.cs" />
+    <Compile Include="hw.Proof\Proof\IStrategy.cs" />
+    <Compile Include="hw.Proof\Proof\LeftParenthesisSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\Main.cs" />
+    <Compile Include="hw.Proof\Proof\NumberSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\PairSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\ParsedSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\ParsedSyntaxExtender.cs" />
+    <Compile Include="hw.Proof\Proof\PlusSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\ReniScanner.cs" />
+    <Compile Include="hw.Proof\Proof\SyntaxError.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\And.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Caret.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Element.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Equal.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\GreatesCommonDenominator.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Integer.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\LeftParenthesis.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\List.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Minus.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Number.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\PairToken.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Plus.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\RightParenthesis.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\TokenClass.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\UserSymbol.cs" />
+    <Compile Include="hw.Proof\Proof\TokenFactory.cs" />
+    <Compile Include="hw.Proof\Proof\TrueSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\VariableSyntax.cs" />
     <Compile Include="hw.SQLClass\DataBase\SQLGenerator.cs" />
     <Compile Include="hw.SQLClass\DataBase\DataBase.cs" />
     <Compile Include="hw.SQLClass\DataBase\TableColumn.cs" />
@@ -112,20 +116,16 @@
     <Compile Include="hw.Helper\Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
     <Compile Include="hw.Helper\Debug\Profiler.cs" />
     <Compile Include="hw.Helper\Debug\Tracer.cs" />
-    <Compile Include="Debug\Visualizer.cs" />
     <Compile Include="hw.SQLClass\Helper\AdoExtender.cs" />
-    <Compile Include="Helper\BigRational.cs" />
     <Compile Include="hw.Helper\Helper\Box.cs" />
-    <Compile Include="Helper\CSharpCompiler.cs" />
     <Compile Include="hw.Helper\Helper\DateTimeExtender.cs" />
     <Compile Include="hw.Helper\Helper\FunctionCache.cs" />
-    <Compile Include="Helper\DTEExtender.cs" />
     <Compile Include="hw.Helper\Helper\EnumEx.cs" />
     <Compile Include="hw.Helper\Helper\ListExtender.cs" />
     <Compile Include="hw.Helper\Helper\LongExtender.cs" />
     <Compile Include="hw.Helper\Helper\ReflectionExtender.cs" />
     <Compile Include="hw.Helper\Helper\StringExtender.cs" />
-    <Compile Include="hw.Proof\Set.cs" />
+    <Compile Include="hw.Proof\Proof\Set.cs" />
     <Compile Include="hw.Helper\Helper\ValueCache.cs" />
     <Compile Include="hw.Helper\Helper\StringAligner.cs" />
     <Compile Include="hw.Helper\Helper\TypeNameExtender.cs" />

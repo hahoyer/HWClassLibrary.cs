@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project Reni2
-//     Copyright (C) 2012 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Collections.Generic;
-using System;
 using System.Xml.Serialization;
-using HWClassLibrary.Debug;
+using hw.Debug;
 
-namespace Reni.Graphics.SVG
+namespace hw.Graphics.SVG
 {
     public sealed class Path : Content
     {
@@ -58,23 +58,7 @@ namespace Reni.Graphics.SVG
             }
 
             internal override Size Size { get { return _end; } }
-            internal override string FormatElement
-            {
-                get
-                {
-                    return
-                        "a"
-                        + _radii.FormatPair()
-                        + " "
-                        + _xAxisRotation
-                        + " "
-                        + (_largeArcFlag ? 1 : 0)
-                        + " "
-                        + (_sweepFlag ? 1 : 0)
-                        + " "
-                        + FormatSize;
-                }
-            }
+            internal override string FormatElement { get { return "a" + _radii.FormatPair() + " " + _xAxisRotation + " " + (_largeArcFlag ? 1 : 0) + " " + (_sweepFlag ? 1 : 0) + " " + FormatSize; } }
         }
 
         sealed class Home : Element
@@ -137,13 +121,13 @@ namespace Reni.Graphics.SVG
     static class PathExtension
     {
         internal static Path.Element MoveTo(this Size end) { return new Path.Line(end, isVisible: false); }
-        internal static Path.Element MoveTo(this Point end) { return new Path.Line(new Size(end.X,end.Y), isVisible: false); }
+        internal static Path.Element MoveTo(this Point end) { return new Path.Line(new Size(end.X, end.Y), isVisible: false); }
         internal static Path.Element LineTo(this Size end) { return new Path.Line(end); }
         internal static Path.Element HorizontalLine(this int length) { return new Path.HorizontalLine(length); }
         internal static Path.Element VerticalLine(this int length) { return new Path.VerticalLine(length); }
         internal static Path.Element Arc(this Size radii, Size end, bool largeArcFlag, bool sweepFlag, int xAxisRotation = 0) { return new Path.Arc(radii, end, largeArcFlag, sweepFlag, xAxisRotation); }
         internal static Path.Element Arc(this int radius, Size end, bool largeArcFlag, bool sweepFlag, int xAxisRotation = 0) { return new Path.Arc(new Size(radius, radius), end, largeArcFlag, sweepFlag, xAxisRotation); }
-        
+
         internal static string Format(this Point start, params Path.Element[] path)
         {
             var current = start;
@@ -157,7 +141,7 @@ namespace Reni.Graphics.SVG
 
             return result;
         }
-        
+
         internal static string CloseAndFormat(this Point start, params Path.Element[] path) { return Format(start, path) + " Z"; }
         internal static string FormatPair(this Size size) { return size.Width + "," + size.Height; }
         internal static string FormatPair(this Point point) { return point.X + "," + point.Y; }

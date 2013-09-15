@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,15 +18,16 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Helper;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.Debug
+namespace hw.Debug
 {
     /// <summary>
     ///     Summary description for Dumpable.
@@ -231,7 +233,8 @@ namespace HWClassLibrary.Debug
         ///     <c>true</c>
         ///     if this instance is in dump; otherwise,
         ///     <c>false</c>
-        ///     .</value>
+        ///     .
+        /// </value>
         /// created 23.09.2006 17:39
         [DisableDump]
         public bool IsInDump { get { return _isInDump; } }
@@ -286,7 +289,7 @@ namespace HWClassLibrary.Debug
         {
             get
             {
-                if (IsMethodDumpTraceInhibited != null)
+                if(IsMethodDumpTraceInhibited != null)
                     return !IsMethodDumpTraceInhibited.Value;
                 if(!Debugger.IsAttached)
                     return false;

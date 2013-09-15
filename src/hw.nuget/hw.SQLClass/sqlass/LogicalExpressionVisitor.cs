@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,14 +18,15 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Linq;
-using System.Collections.Generic;
+#endregion
+
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.sqlass
+namespace hw.sqlass
 {
     abstract class LogicalExpressionVisitor<T> : ExpressionVisitor<T>
     {

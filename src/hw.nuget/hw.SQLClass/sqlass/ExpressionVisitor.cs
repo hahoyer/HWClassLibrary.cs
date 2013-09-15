@@ -1,6 +1,7 @@
-// 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2011 Harald Hoyer
+#region Copyright (C) 2013
+
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -17,15 +18,17 @@
 //     
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
-using System.Linq;
-using System.Collections.Generic;
+#endregion
+
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Debug;
+using hw.Helper;
 
-namespace HWClassLibrary.sqlass
+namespace hw.sqlass
 {
     abstract class ExpressionVisitor<T> : Dumpable
     {
@@ -53,14 +56,7 @@ namespace HWClassLibrary.sqlass
             var methodInfo = GetType().GetMethod("VisitCall" + method.Name);
             if(methodInfo == null)
             {
-                Tracer.FlaggedLine("\n[UsedImplicitly]\ninternal T VisitCall"
-                                   + method.Name
-                                   + "("
-                                   + arguments.Length.Select(i => "Expression arg" + i).Stringify(", ")
-                                   + ")\n{\nNotImplementedFunction("
-                                   + arguments.Length.Select(i => "arg" + i).Stringify(", ")
-                                   + ");\nreturn default(T);\n}\n\n"
-                                   + arguments.Length.Select(i => "arg" + i + " = " + Tracer.Dump(arguments[i])).Stringify("\n"));
+                Tracer.FlaggedLine("\n[UsedImplicitly]\ninternal T VisitCall" + method.Name + "(" + arguments.Length.Select(i => "Expression arg" + i).Stringify(", ") + ")\n{\nNotImplementedFunction(" + arguments.Length.Select(i => "arg" + i).Stringify(", ") + ");\nreturn default(T);\n}\n\n" + arguments.Length.Select(i => "arg" + i + " = " + Tracer.Dump(arguments[i])).Stringify("\n"));
                 Tracer.TraceBreak();
                 throw new MissingMethodException(method.Name);
             }
@@ -75,7 +71,7 @@ namespace HWClassLibrary.sqlass
             if(ssr != null)
                 return Visit(ssr);
 
-            if (type.Name.StartsWith("<>"))
+            if(type.Name.StartsWith("<>"))
                 return VisitRuntime(type, value);
 
             NotImplementedMethod(type, value);
@@ -83,7 +79,7 @@ namespace HWClassLibrary.sqlass
         }
         T VisitRuntime(Type type, object value)
         {
-            var field = type.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.DeclaredOnly).Single();
+            var field = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).Single();
             return Constant(field.GetValue(value));
         }
         protected abstract T Constant(object value);

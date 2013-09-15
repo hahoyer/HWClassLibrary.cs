@@ -1,7 +1,7 @@
-#region Copyright (C) 2012
+#region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2012 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -22,16 +22,15 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
-using HWClassLibrary.Debug;
-using HWClassLibrary.Helper;
+using hw.Helper;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.TreeStructure
+namespace hw.TreeStructure
 {
     public static class Extender
     {
@@ -136,14 +135,7 @@ namespace HWClassLibrary.TreeStructure
             return result.ToArray();
         }
 
-        static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry)
-        {
-            return new[]
-            {
-                dictionaryEntry.Key.CreateTaggedNode("key", "Key", true),
-                dictionaryEntry.Value.CreateTaggedNode("value")
-            };
-        }
+        static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry) { return new[] {dictionaryEntry.Key.CreateTaggedNode("key", "Key", true), dictionaryEntry.Value.CreateTaggedNode("value")}; }
 
         /// <summary>
         ///     Gets the name of the icon.
@@ -233,34 +225,11 @@ namespace HWClassLibrary.TreeStructure
             return InternalCreateNodes(target);
         }
 
-        static TreeNode[] CreatePropertyNodes(object nodeData)
-        {
-            return nodeData
-                .GetType()
-                .GetProperties(DefaultBindingFlags)
-                .Select(propertyInfo => CreateTreeNode(nodeData, propertyInfo))
-                .Where(treeNode => treeNode != null)
-                .ToArray();
-        }
+        static TreeNode[] CreatePropertyNodes(object nodeData) { return nodeData.GetType().GetProperties(DefaultBindingFlags).Select(propertyInfo => CreateTreeNode(nodeData, propertyInfo)).Where(treeNode => treeNode != null).ToArray(); }
 
-        static TreeNode[] CreateFieldNodes(object nodeData)
-        {
-            return nodeData
-                .GetType()
-                .GetFieldInfos()
-                .Select(fieldInfo => CreateTreeNode(nodeData, fieldInfo))
-                .Where(treeNode => treeNode != null)
-                .ToArray();
-        }
+        static TreeNode[] CreateFieldNodes(object nodeData) { return nodeData.GetType().GetFieldInfos().Select(fieldInfo => CreateTreeNode(nodeData, fieldInfo)).Where(treeNode => treeNode != null).ToArray(); }
 
-        static BindingFlags DefaultBindingFlags
-        {
-            get
-            {
-                return BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                       BindingFlags.FlattenHierarchy;
-            }
-        }
+        static BindingFlags DefaultBindingFlags { get { return BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy; } }
 
         static TreeNode CreateTreeNode(object nodeData, FieldInfo fieldInfo) { return CreateTreeNode(fieldInfo, () => Value(fieldInfo, nodeData)); }
 
@@ -337,6 +306,5 @@ namespace HWClassLibrary.TreeStructure
         internal static void CreateNodeList(this TreeNode node) { CreateNodeList(node.Nodes, node.Tag); }
 
         static void BeforeExpand(object sender, TreeViewCancelEventArgs e) { AddSubNodes(e.Node.Nodes); }
-        
     }
 }

@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2013
 
-//     Project HWClassLibrary
-//     Copyright (C) 2011 - 2013 Harald Hoyer
+//     Project hw.nuget
+//     Copyright (C) 2013 - 2013 Harald Hoyer
 // 
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -25,29 +25,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using HWClassLibrary.Debug;
 using JetBrains.Annotations;
 
-namespace HWClassLibrary.Helper
+namespace hw.Helper
 {
     public static class ReflectionExtender
     {
         [NotNull]
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute
-        {
-            return @this
-                .GetCustomAttributes(typeof(TAttribute), inherit)
-                .Cast<TAttribute>();
-        }
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute { return @this.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
 
         [NotNull]
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo @this, bool inherit)
-            where TAttribute : Attribute
-        {
-            return @this
-                .GetCustomAttributes(typeof(TAttribute), inherit)
-                .Cast<TAttribute>();
-        }
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute { return @this.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
 
         [CanBeNull]
         public static TAttribute GetAttribute<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute
@@ -111,18 +99,12 @@ namespace HWClassLibrary.Helper
         public static IEnumerable<Assembly> GetAssemblies(this Assembly rootAssembly)
         {
             var result = new[] {rootAssembly};
-            for(IEnumerable<Assembly> referencedAssemblies = result;
-                referencedAssemblies.GetEnumerator().MoveNext();
-                result = result.Concat(referencedAssemblies).ToArray())
+            for(IEnumerable<Assembly> referencedAssemblies = result; referencedAssemblies.GetEnumerator().MoveNext(); result = result.Concat(referencedAssemblies).ToArray())
             {
-                var assemblyNames = referencedAssemblies
-                    .SelectMany(assembly => assembly.GetReferencedAssemblies()).ToArray();
-                var assemblies = assemblyNames
-                    .Select(AssemblyLoad).ToArray();
-                var enumerable = assemblies
-                    .Distinct().ToArray();
-                referencedAssemblies = enumerable
-                    .Where(assembly => !result.Contains(assembly)).ToArray();
+                var assemblyNames = referencedAssemblies.SelectMany(assembly => assembly.GetReferencedAssemblies()).ToArray();
+                var assemblies = assemblyNames.Select(AssemblyLoad).ToArray();
+                var enumerable = assemblies.Distinct().ToArray();
+                referencedAssemblies = enumerable.Where(assembly => !result.Contains(assembly)).ToArray();
             }
             return result;
         }
@@ -208,13 +190,7 @@ namespace HWClassLibrary.Helper
 
         public static bool Is<T>(this Type type) { return Is(type, typeof(T)); }
 
-        public static Type[] GetDirectInterfaces(this Type type)
-        {
-            return type
-                .GetInterfaces()
-                .Except((type.BaseType ?? typeof(object)).GetInterfaces())
-                .ToArray();
-        }
+        public static Type[] GetDirectInterfaces(this Type type) { return type.GetInterfaces().Except((type.BaseType ?? typeof(object)).GetInterfaces()).ToArray(); }
 
         public static Type GetGenericType(this Type type) { return type.IsGenericType ? type.GetGenericTypeDefinition() : null; }
 
@@ -228,16 +204,10 @@ namespace HWClassLibrary.Helper
             }
         }
 
-        internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type)
-        {
-            return type
-                .ThisAndBias()
-                .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly));
-        }
+        internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type) { return type.ThisAndBias().SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)); }
 
         public static T Parse<T>(this string title) { return (T) Enum.Parse(typeof(T), title); }
 
         public static void ToStatement<T>(this T any) { }
-
     }
 }
