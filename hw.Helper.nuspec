@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>hw.Helper.Core</id>
+    <version>0.1.0.5</version>
+    <title>hw.Helper.Core</title>
+    <authors>hahoyer</authors>
+    <description>
+      Helper classes - provide some basic extensions for everyday programming.
+    </description>
+    <summary>
+        Helper classes.
+    </summary>
+    <language>en-US</language>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright Harald Hoyer 2013</copyright>
+  </metadata>
+  <files>
+    <file src="hw.Helper\" target="content\hw" />
+  </files>
+</package>

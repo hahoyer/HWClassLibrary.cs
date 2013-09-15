@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>hw.T4Helper</id>
+    <version>0.1.0.2</version>
+    <title>hw.T4Helper</title>
+    <authors>hahoyer</authors>
+    <description>
+      Provides template support for multifile generation.
+    </description>
+    <summary>
+        T4-template support
+    </summary>
+    <language>en-US</language>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <copyright>Copyright Harald Hoyer 2013</copyright>
+      <dependencies>
+          <dependency id="hw.Helper.Core"/>
+      </dependencies>
+      <frameworkAssemblies>
+          <frameworkAssembly assemblyName="EnvDTE.dll" />
+          <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating" />
+      </frameworkAssemblies>  
+  </metadata>
+  <files>
+    <file src="hw.T4Helper\" target="content\hw" />
+  </files>
+</package>

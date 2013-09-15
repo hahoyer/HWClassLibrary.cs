@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>hw.SQLClass</id>
+    <version>0.1.0.0</version>
+    <title>hw.SQLClass</title>
+    <authors>hahoyer</authors>
+    <description>
+      Provide SQL classes (not yet complete).
+    </description>
+    <summary>
+        SQL classes.
+    </summary>
+    <language>en-US</language>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright Harald Hoyer 2013</copyright>
+      <dependencies>
+          <dependency id="hw.Helper.Core"/>
+      </dependencies>
+  </metadata>
+  <files>
+    <file src="hw.SQLClass\" target="content\hw" />
+  </files>
+</package>
