@@ -219,27 +219,13 @@ namespace hw.Debug
         }
 
         /// <summary>
-        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method
-        /// </summary>
-        /// <param name="s"> the text </param>
-        /// <param name="showParam"> controls if parameter list is appended </param>
-        /// <param name="flagText"> </param>
-        public static void FlaggedLine(string s, bool showParam, FilePositionTag flagText = FilePositionTag.Debug) { Line(MethodHeader(1, flagText, showParam) + " " + s); }
-
-        /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="s"> the text </param>
         /// <param name="flagText"> </param>
-        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug) { Line(MethodHeader(1, flagText) + " " + s); }
-
-        /// <summary>
-        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
-        /// </summary>
+        /// <param name="showParam"></param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="s"> the text </param>
-        /// <param name="flagText"> </param>
-        public static void FlaggedLine(int stackFrameDepth, string s, FilePositionTag flagText = FilePositionTag.Debug) { Line(MethodHeader(stackFrameDepth + 1, flagText) + " " + s); }
+        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0) { Line(MethodHeader(stackFrameDepth + 1, flagText, showParam) + " " + s); }
 
         /// <summary>
         ///     generic dump function by use of reflection
@@ -603,7 +589,7 @@ namespace hw.Debug
         public static void ConditionalBreak(int stackFrameDepth, string cond, Func<string> data)
         {
             var result = "Conditional break: " + cond + "\nData: " + (data == null ? "" : data());
-            FlaggedLine(stackFrameDepth + 1, result);
+            FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
             TraceBreak();
         }
 
@@ -663,7 +649,7 @@ namespace hw.Debug
         public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data)
         {
             var result = "Assertion Failed: " + cond + "\nData: " + data();
-            FlaggedLine(stackFrameDepth + 1, result);
+            FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
             AssertionBreak(result);
             return result;
         }
