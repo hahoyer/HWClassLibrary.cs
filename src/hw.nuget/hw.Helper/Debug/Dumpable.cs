@@ -59,7 +59,7 @@ namespace hw.Debug
         [DebuggerHidden]
         public static void NotImplementedFunction(params object[] p)
         {
-            var os = Tracer.DumpMethodWithData("not implemented", 1, null, p);
+            var os = Tracer.DumpMethodWithData("not implemented", null, p, 1);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -76,7 +76,7 @@ namespace hw.Debug
             StartMethodDump(1, trace);
             if(IsMethodDumpTraceActive)
             {
-                var os = Tracer.DumpMethodWithData("", 1, this, p);
+                var os = Tracer.DumpMethodWithData("", this, p, 1);
                 Tracer.Line(os);
                 Tracer.IndentStart();
             }
@@ -93,7 +93,7 @@ namespace hw.Debug
         {
             if(IsMethodDumpTraceActive)
             {
-                var os = Tracer.DumpData("", 1, new[] {name, value});
+                var os = Tracer.DumpData("", new[] {name, value}, 1);
                 Tracer.Line(os);
             }
         }
@@ -169,7 +169,7 @@ namespace hw.Debug
         [DebuggerHidden]
         protected void DumpMethodWithBreak(string text, params object[] p)
         {
-            var os = Tracer.DumpMethodWithData(text, 1, this, p);
+            var os = Tracer.DumpMethodWithData(text, this, p, 1);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -183,7 +183,7 @@ namespace hw.Debug
         [DebuggerHidden]
         protected static void DumpDataWithBreak(string text, params object[] p)
         {
-            var os = Tracer.DumpData(text, 1, p);
+            var os = Tracer.DumpData(text, p, 1);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
@@ -199,7 +199,7 @@ namespace hw.Debug
             if(IsInDump)
                 throw new NotImplementedException();
 
-            var os = Tracer.DumpMethodWithData("not implemented", 1, this, p);
+            var os = Tracer.DumpMethodWithData("not implemented", this, p, 1);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }

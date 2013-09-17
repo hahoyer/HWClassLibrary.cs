@@ -33,9 +33,7 @@ using JetBrains.Annotations;
 
 namespace hw.Debug
 {
-    /// <summary>
-    ///     Summary description for Tracer.
-    /// </summary>
+    /// <summary>     Summary description for Tracer. </summary>
     public static class Tracer
     {
         static int _indentCount;
@@ -117,19 +115,19 @@ namespace hw.Debug
         /// <summary>
         ///     creates a string to inspect the method call contained in current call stack
         /// </summary>
-        /// <param name="depth"> the index of stack frame </param>
+        /// <param name="stackFrameDepth"> the index of stack frame </param>
         /// <param name="tag"> </param>
         /// <param name="showParam"> controls if parameter list is appended </param>
         /// <returns> string to inspect the method call </returns>
-        public static string MethodHeader(int depth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
+        public static string MethodHeader(int stackFrameDepth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
         {
-            var sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
         }
 
-        public static string CallingMethodName(int depth)
+        public static string CallingMethodName(int stackFrameDepth = 0)
         {
-            var sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return DumpMethod(sf.GetMethod(), false);
         }
 
@@ -137,11 +135,11 @@ namespace hw.Debug
         public static string StackTrace(FilePositionTag tag) { return StackTrace(1, tag); }
 
         [UsedImplicitly]
-        public static string StackTrace(int depth, FilePositionTag tag)
+        public static string StackTrace(int stackFrameDepth, FilePositionTag tag)
         {
             var stackTrace = new StackTrace(true);
             var result = "";
-            for(var i = depth + 1; i < stackTrace.FrameCount; i++)
+            for(var i = stackFrameDepth + 1; i < stackTrace.FrameCount; i++)
             {
                 var stackFrame = stackTrace.GetFrame(i);
                 var filePosn = FilePosn(stackFrame, tag) + DumpMethod(stackFrame.GetMethod(), false);
@@ -519,13 +517,13 @@ namespace hw.Debug
         /// <param name="parameter"> parameter objects list for the frame </param>
         public static void DumpStaticMethodWithData(params object[] parameter)
         {
-            var result = DumpMethodWithData("", 1, null, parameter);
+            var result = DumpMethodWithData("", null, parameter, 1);
             Line(result);
         }
 
-        internal static string DumpMethodWithData(string text, int depth, object thisObject, object[] parameter)
+        internal static string DumpMethodWithData(string text, object thisObject, object[] parameter, int stackFrameDepth = 0)
         {
-            var sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return FilePosn(sf, FilePositionTag.Debug) + (DumpMethod(sf.GetMethod(), true)) + text + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter));
         }
 
@@ -533,12 +531,12 @@ namespace hw.Debug
         ///     Dumps the data.
         /// </summary>
         /// <param name="text"> The text. </param>
-        /// <param name="depth"> The stack depth. </param>
         /// <param name="data"> The data, as name/value pair. </param>
+        /// <param name="stackFrameDepth"> The stack stackFrameDepth. </param>
         /// <returns> </returns>
-        public static string DumpData(string text, int depth, object[] data)
+        public static string DumpData(string text, object[] data, int stackFrameDepth = 0)
         {
-            var sf = new StackTrace(true).GetFrame(depth + 1);
+            var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text + Indent(DumpMethodWithData(null, data));
         }
 
@@ -581,14 +579,14 @@ namespace hw.Debug
         /// <summary>
         ///     Function used for condition al break
         /// </summary>
-        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <param name="cond"> The cond. </param>
-        /// <param name="data"> The data. </param>
+        /// <param name="getText"> The data. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <returns> </returns>
         [DebuggerHidden]
-        public static void ConditionalBreak(int stackFrameDepth, string cond, Func<string> data)
+        public static void ConditionalBreak(string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
-            var result = "Conditional break: " + cond + "\nData: " + (data == null ? "" : data());
+            var result = "Conditional break: " + cond + "\nData: " + (getText == null ? "" : getText());
             FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
             TraceBreak();
         }
@@ -596,59 +594,43 @@ namespace hw.Debug
         /// <summary>
         ///     Check boolean expression
         /// </summary>
-        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <param name="b">
         ///     if set to <c>true</c> [b].
         /// </param>
-        /// <param name="text"> The text. </param>
+        /// <param name="getText"> The text. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
-        public static void ConditionalBreak(int stackFrameDepth, bool b, Func<string> text)
+        public static void ConditionalBreak(bool b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b)
-                ConditionalBreak(stackFrameDepth + 1, "", text);
-        }
-
-        [DebuggerHidden]
-        public static void ConditionalBreak(bool cond, Func<string> data = null)
-        {
-            if(cond)
-                ConditionalBreak(1, true, data);
+                ConditionalBreak("", getText, stackFrameDepth + 1);
         }
 
         /// <summary>
         ///     Throws the assertion failed.
         /// </summary>
-        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <param name="cond"> The cond. </param>
-        /// <param name="data"> The data. </param>
+        /// <param name="getText"> The data. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// created 15.10.2006 18:04
         [DebuggerHidden]
-        public static void ThrowAssertionFailed(int stackFrameDepth, string cond, Func<string> data)
+        public static void ThrowAssertionFailed(string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
-            var result = AssertionFailed(stackFrameDepth + 1, cond, data);
+            var result = AssertionFailed(cond, getText, stackFrameDepth + 1);
             throw new AssertionFailedException(result);
         }
 
         /// <summary>
-        ///     Throws the assertion failed.
-        /// </summary>
-        /// <param name="s"> The s. </param>
-        /// <param name="s1"> The s1. </param>
-        /// created 16.12.2006 18:28
-        [DebuggerHidden]
-        public static void ThrowAssertionFailed(string s, Func<string> s1) { ThrowAssertionFailed(1, s, s1); }
-
-        /// <summary>
         ///     Function used in assertions
         /// </summary>
-        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <param name="cond"> The cond. </param>
-        /// <param name="data"> The data. </param>
+        /// <param name="getText"> The data. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <returns> </returns>
         [DebuggerHidden]
-        public static string AssertionFailed(int stackFrameDepth, string cond, Func<string> data)
+        public static string AssertionFailed(string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
-            var result = "Assertion Failed: " + cond + "\nData: " + data();
+            var result = "Assertion Failed: " + cond + "\nData: " + (getText == null ? "" : getText());
             FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
             AssertionBreak(result);
             return result;
@@ -657,71 +639,23 @@ namespace hw.Debug
         /// <summary>
         ///     Check boolean expression
         /// </summary>
-        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <param name="b">
         ///     if set to <c>true</c> [b].
         /// </param>
-        /// <param name="text"> The text. </param>
+        /// <param name="getText"> The text. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
         [ContractAnnotation("b: false => halt")]
-        public static void Assert(int stackFrameDepth, bool b, Func<string> text)
+        public static void Assert(bool b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b)
                 return;
-            AssertionFailed(stackFrameDepth + 1, "", text);
+            AssertionFailed("", getText, stackFrameDepth + 1);
         }
 
-        /// <summary>
-        ///     Check boolean expression
-        /// </summary>
-        /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        /// <param name="b">
-        ///     if set to <c>true</c> [b].
-        /// </param>
         [DebuggerHidden]
         [ContractAnnotation("b: false => halt")]
-        public static void Assert(int stackFrameDepth, bool b)
-        {
-            if(b)
-                return;
-            AssertionFailed(stackFrameDepth + 1, "", () => "");
-        }
-
-        /// <summary>
-        ///     Asserts the specified b.
-        /// </summary>
-        /// <param name="b">
-        ///     if set to <c>true</c> [b].
-        /// </param>
-        /// created 16.12.2006 18:27
-        [DebuggerHidden]
-        [ContractAnnotation("b: false => halt")]
-        public static void Assert(bool b) { Assert(1, b); }
-
-        /// <summary>
-        ///     Asserts the specified b.
-        /// </summary>
-        /// <param name="b">
-        ///     if set to <c>true</c> [b].
-        /// </param>
-        /// <param name="s"> The s. </param>
-        /// created 16.12.2006 18:29
-        [DebuggerHidden]
-        [ContractAnnotation("b: false => halt")]
-        public static void Assert(bool b, Func<string> s) { Assert(1, b, s); }
-
-        [DebuggerHidden]
-        [ContractAnnotation("b: false => halt")]
-        public static void Assert(bool b, string s) { Assert(1, b, () => s); }
-
-        /// <summary>
-        ///     Assertions the failed.
-        /// </summary>
-        /// <param name="s"> The s. </param>
-        /// <param name="s1"> The s1. </param>
-        /// created 16.12.2006 18:30
-        [DebuggerHidden]
-        public static void AssertionFailed(string s, Func<string> s1) { AssertionFailed(1, s, s1); }
+        public static void Assert(bool b, string s) { Assert(b, () => s, 1); }
 
         /// <summary>
         ///     Outputs the specified text.
@@ -762,10 +696,7 @@ namespace hw.Debug
             Debugger.Break();
         }
 
-        [UsedImplicitly]
-        public static string CallingMethodName() { return CallingMethodName(1); }
-
-        public static int CurrentFrameCount(int depth) { return new StackTrace(true).FrameCount - depth; }
+        public static int CurrentFrameCount(int stackFrameDepth) { return new StackTrace(true).FrameCount - stackFrameDepth; }
 
         [DebuggerHidden]
         public static void LaunchDebugger() { Debugger.Launch(); }

@@ -107,7 +107,7 @@ namespace hw.Debug
             IsStopByObjectIdActive = true;
             if(ObjectId == objectId)
                 Tracer.ConditionalBreak
-                    (stackFrameDepth + 1, "", () => @"_objectId==" + objectId + "\n" + Dump());
+                    ("", () => @"_objectId==" + objectId + "\n" + Dump(), stackFrameDepth + 1);
             IsStopByObjectIdActive = isStopByObjectIdActive;
         }
     }

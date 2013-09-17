@@ -93,6 +93,6 @@ namespace hw.Helper
             InternalTest(123456789012345678, "123P");
         }
 
-        static void InternalTest(long x, string y) { Tracer.Assert(1, x.Format3Digits() == y, () => x + " != " + y); }
+        static void InternalTest(long x, string y) { Tracer.Assert(x.Format3Digits() == y, () => x + " != " + y, 1); }
     }
 }
