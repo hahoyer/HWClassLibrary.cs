@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
+using JetBrains.Annotations;
 
 namespace hw.sqlass.MetaData
 {
@@ -34,6 +35,7 @@ namespace hw.sqlass.MetaData
         public string Type;
         public bool IsKey;
         public bool IsNullable;
+        [UsedImplicitly]
         public TableName Reference;
         public override string ToString() { return (IsKey ? "*" : "-") + Table + "." + Name + " Type = " + Type + " " + (IsNullable ? " = 0" : "") + (Reference == null ? "" : " ->" + Reference); }
     }
