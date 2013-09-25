@@ -3,7 +3,8 @@
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
     <AssemblyName>hw.nuget</AssemblyName>
-    <TargetTypeEx>NuGetPackage</TargetTypeEx>
+    <TargetTypeEx>NuGetPackages</TargetTypeEx>
+    <RootNamespace>hw</RootNamespace>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -20,20 +21,10 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-  </PropertyGroup>
-  <PropertyGroup>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>hw</RootNamespace>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
@@ -101,9 +92,6 @@
     <Compile Include="hw.Proof\Proof\TokenFactory.cs" />
     <Compile Include="hw.Proof\Proof\TrueSyntax.cs" />
     <Compile Include="hw.Proof\Proof\VariableSyntax.cs" />
-    <Compile Include="hw.SQLClass\DataBase\SQLGenerator.cs" />
-    <Compile Include="hw.SQLClass\DataBase\DataBase.cs" />
-    <Compile Include="hw.SQLClass\DataBase\TableColumn.cs" />
     <Compile Include="hw.Helper\Debug\DisableDumpAttribute.cs" />
     <Compile Include="hw.Helper\Debug\Dumpable.cs" />
     <Compile Include="hw.Helper\Debug\DumpClassAttribute.cs" />
@@ -116,7 +104,6 @@
     <Compile Include="hw.Helper\Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
     <Compile Include="hw.Helper\Debug\Profiler.cs" />
     <Compile Include="hw.Helper\Debug\Tracer.cs" />
-    <Compile Include="hw.SQLClass\Helper\AdoExtender.cs" />
     <Compile Include="hw.Helper\Helper\Box.cs" />
     <Compile Include="hw.Helper\Helper\DateTimeExtender.cs" />
     <Compile Include="hw.Helper\Helper\FunctionCache.cs" />
@@ -139,36 +126,13 @@
     <Compile Include="hw.CompilerTools\PrioParser\Item.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\IType.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\OpenItem.cs" />
-    <Compile Include="hw.SQLClass\sqlass\CollectionExpressionVisitor.cs" />
-    <Compile Include="hw.SQLClass\sqlass\ExpressionVisitor.cs" />
-    <Compile Include="hw.SQLClass\sqlass\ILogicalStructure.cs" />
-    <Compile Include="hw.SQLClass\sqlass\ISelectStructure.cs" />
-    <Compile Include="hw.SQLClass\sqlass\ISQLKeyProvider.cs" />
-    <Compile Include="hw.SQLClass\sqlass\ISQLSupport.cs" />
-    <Compile Include="hw.SQLClass\sqlass\ISQLSupportProvider.cs" />
-    <Compile Include="hw.SQLClass\sqlass\LambdaExpressionVisitor.cs" />
-    <Compile Include="hw.SQLClass\sqlass\LogicalExpressionVisitor.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\CatalogAttribute.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\MetaDataSupport.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\SchemaAttribute.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\SQLTypeMapper.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\TableColumn.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\TableName.cs" />
-    <Compile Include="hw.SQLClass\sqlass\Handler.cs" />
-    <Compile Include="hw.SQLClass\sqlass\StringVisitor.cs" />
-    <Compile Include="hw.SQLClass\sqlass\StringConditionVisitor.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\KeyAttribute.cs" />
-    <Compile Include="hw.SQLClass\sqlass\MetaData\NullableAttribute.cs" />
     <None Include="hw.CompilerTools.nuspec" />
     <None Include="hw.Helper.nuspec" />
-    <None Include="hw.SQLClass.nuspec" />
     <None Include="hw.T4Helper.nuspec" />
     <None Include="hw.TreeView.nuspec" />
     <None Include="hw.UnitTest.nuspec" />
-    <Compile Include="hw.SQLClass\sqlass\Extender.cs" />
-    <Compile Include="hw.SQLClass\sqlass\WhereContextVisitor.cs" />
-    <Compile Include="hw.T4Helper\Helper\T4Extender.cs" />
-    <Compile Include="hw.T4Helper\Helper\T4Context.cs" />
+    <None Include="hw.T4Helper\Helper\T4Extender.cs" />
+    <None Include="hw.T4Helper\Helper\T4Context.cs" />
     <Compile Include="hw.TreeView\TreeStructure\Extender.cs" />
     <Compile Include="hw.TreeView\TreeStructure\TreeForm.cs">
       <SubType>Form</SubType>
@@ -185,6 +149,7 @@
     <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestRunner.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestType.cs" />
+    <None Include="packages.config" />
     <None Include="sys.targets" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +157,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.DebuggerVisualizers, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.TextTemplating, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextTemplating.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Core">
@@ -200,6 +166,10 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
@@ -243,4 +213,11 @@
   </ItemGroup>
   <Import Project="sys.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

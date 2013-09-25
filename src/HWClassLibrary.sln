@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6CF995B9
 		..\build\CSharp.WinExe.targets = ..\build\CSharp.WinExe.targets
 		..\build\HoyerWare.CSharp.targets = ..\build\HoyerWare.CSharp.targets
 		..\build\NuGetPackage.targets = ..\build\NuGetPackage.targets
+		..\build\NuGetPackages.targets = ..\build\NuGetPackages.targets
 		..\build\sys.targets = ..\build\sys.targets
 	EndProjectSection
 EndProject

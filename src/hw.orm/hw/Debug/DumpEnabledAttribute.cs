@@ -23,20 +23,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Debug;
-using JetBrains.Annotations;
 
-namespace hw.sqlass.MetaData
+namespace hw.Debug
 {
-    sealed class TableColumn : Dumpable
+    public abstract class DumpEnabledAttribute : DumpAttributeBase
     {
-        public TableName Table;
-        public string Name;
-        public string Type;
-        public bool IsKey;
-        public bool IsNullable;
-        [UsedImplicitly]
-        public TableName Reference;
-        public override string ToString() { return (IsKey ? "*" : "-") + Table + "." + Name + " Type = " + Type + " " + (IsNullable ? " = 0" : "") + (Reference == null ? "" : " ->" + Reference); }
+        readonly bool _isEnabled;
+
+        protected DumpEnabledAttribute(bool isEnabled) { _isEnabled = isEnabled; }
+
+        public bool IsEnabled { get { return _isEnabled; } }
     }
 }
