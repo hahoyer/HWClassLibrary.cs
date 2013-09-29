@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>0.2.3-alpha</version>
+        <version>1.0.0.0</version>
         <releaseNotes>
             - namespaces aligned
             - file headers updated

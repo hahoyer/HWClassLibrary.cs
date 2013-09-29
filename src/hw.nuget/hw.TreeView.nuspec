@@ -20,12 +20,12 @@
             <frameworkAssembly assemblyName="System.Drawing" />
         </frameworkAssemblies>
 
-        <version>0.2.2-alpha</version>
+        <version>1.0.0.0</version>
         <releaseNotes>
             - reference to Sysstem.Drawing
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="0.2.1-alpha" />
+            <dependency id="hw.Helper.Core" version="1.0.0.0" />
         </dependencies>
 
     </metadata>

@@ -20,13 +20,13 @@
             <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating" />
         </frameworkAssemblies>
 
-        <version>0.2.1-alpha</version>
+        <version>1.0.0.0</version>
         <releaseNotes>
             - namespaces aligned
             - file headers updated
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="0.2.1-alpha" />
+            <dependency id="hw.Helper.Core" version="1.0.0.0" />
         </dependencies>
 
     </metadata>
