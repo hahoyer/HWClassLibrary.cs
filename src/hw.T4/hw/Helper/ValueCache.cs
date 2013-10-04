@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
-using hw.TreeStructure;
 
 namespace hw.Helper
 {
@@ -34,7 +33,6 @@ namespace hw.Helper
         readonly Func<TValueType> _createValue;
         bool _isValid;
         bool _isBusy;
-        [Node]
         TValueType _value;
 
         public ValueCache(Func<TValueType> createValue) { _createValue = createValue; }
@@ -72,7 +70,6 @@ namespace hw.Helper
             _isBusy = false;
         }
 
-        [Node]
         public bool IsValid
         {
             get { return _isValid; }

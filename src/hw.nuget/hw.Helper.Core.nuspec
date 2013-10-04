@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<package>
+    <metadata>
+        <id>hw.Helper.Core</id>
+        <title>hw.Helper.Core</title>
+        <authors>hahoyer</authors>
+        <description>
+            Helper classes - provide some basic extensions for everyday programming.
+        </description>
+        <summary>
+            Helper classes.
+        </summary>
+        <language>en-US</language>
+        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Copyright Harald Hoyer 2013</copyright>
+
+        <version>1.0.0.2</version>
+        <releaseNotes>
+            - EnumEx: do not return private instances
+        </releaseNotes>
+    </metadata>
+    <files>
+        <file src="hw.Helper.Core\" target="content\hw" />
+    </files>
+</package>

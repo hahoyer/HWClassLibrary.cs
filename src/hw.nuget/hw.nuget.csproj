@@ -25,6 +25,13 @@
     <Prefer32Bit>false</Prefer32Bit>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
@@ -53,7 +60,9 @@
     <Compile Include="hw.CompilerTools\Scanner\MatchExtension.cs" />
     <Compile Include="hw.CompilerTools\Scanner\Source.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePosn.cs" />
-    <Compile Include="hw.Helper\Debug\DumpableObject.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DumpableObject.cs" />
+    <Compile Include="hw.Helper.Data\Helper\AdoExtension.cs" />
+    <Compile Include="hw.Helper.Data\Helper\IReaderInitialize.cs" />
     <Compile Include="hw.Proof\Helper\BigRational.cs" />
     <Compile Include="hw.Proof\Proof\AndSyntax.cs" />
     <Compile Include="hw.Proof\Proof\AssociativeSyntax.cs" />
@@ -92,32 +101,32 @@
     <Compile Include="hw.Proof\Proof\TokenFactory.cs" />
     <Compile Include="hw.Proof\Proof\TrueSyntax.cs" />
     <Compile Include="hw.Proof\Proof\VariableSyntax.cs" />
-    <Compile Include="hw.Helper\Debug\DisableDumpAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\Dumpable.cs" />
-    <Compile Include="hw.Helper\Debug\DumpClassAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\DumpDataClassAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\DumpEnabledAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\EnableDumpExceptAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\DumpAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\DumpToStringAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\EnableDumpAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
-    <Compile Include="hw.Helper\Debug\Profiler.cs" />
-    <Compile Include="hw.Helper\Debug\Tracer.cs" />
-    <Compile Include="hw.Helper\Helper\Box.cs" />
-    <Compile Include="hw.Helper\Helper\DateTimeExtender.cs" />
-    <Compile Include="hw.Helper\Helper\FunctionCache.cs" />
-    <Compile Include="hw.Helper\Helper\EnumEx.cs" />
-    <Compile Include="hw.Helper\Helper\ListExtender.cs" />
-    <Compile Include="hw.Helper\Helper\LongExtender.cs" />
-    <Compile Include="hw.Helper\Helper\ReflectionExtender.cs" />
-    <Compile Include="hw.Helper\Helper\StringExtender.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DisableDumpAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\Dumpable.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DumpClassAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DumpDataClassAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DumpEnabledAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\EnableDumpExceptAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DumpAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DumpToStringAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\EnableDumpAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Debug\Profiler.cs" />
+    <Compile Include="hw.Helper.Core\Debug\Tracer.cs" />
+    <Compile Include="hw.Helper.Core\Helper\Box.cs" />
+    <Compile Include="hw.Helper.Core\Helper\DateTimeExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\FunctionCache.cs" />
+    <Compile Include="hw.Helper.Core\Helper\EnumEx.cs" />
+    <Compile Include="hw.Helper.Core\Helper\ListExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\LongExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\ReflectionExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\StringExtender.cs" />
     <Compile Include="hw.Proof\Proof\Set.cs" />
-    <Compile Include="hw.Helper\Helper\ValueCache.cs" />
-    <Compile Include="hw.Helper\Helper\StringAligner.cs" />
-    <Compile Include="hw.Helper\Helper\TypeNameExtender.cs" />
-    <Compile Include="hw.Helper\Helper\File.cs" />
-    <Compile Include="hw.Helper\JetBrainsAnnotations.cs" />
+    <Compile Include="hw.Helper.Core\Helper\ValueCache.cs" />
+    <Compile Include="hw.Helper.Core\Helper\StringAligner.cs" />
+    <Compile Include="hw.Helper.Core\Helper\TypeNameExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\File.cs" />
+    <Compile Include="hw.Helper.Core\JetBrainsAnnotations.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\PrioTable.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\Extension.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\IOperator.cs" />
@@ -127,9 +136,16 @@
     <Compile Include="hw.CompilerTools\PrioParser\IType.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\OpenItem.cs" />
     <None Include="hw.CompilerTools.nuspec" />
-    <None Include="hw.Helper.nuspec" />
-    <None Include="hw.T4Helper.nuspec" />
-    <None Include="hw.TreeView.nuspec" />
+    <None Include="hw.Helper.Core.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="hw.Helper.Data.nuspec" />
+    <None Include="hw.T4Helper.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="hw.TreeView.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="hw.UnitTest.nuspec" />
     <None Include="hw.T4Helper\Helper\T4Extender.cs" />
     <None Include="hw.T4Helper\Helper\T4Context.cs" />
@@ -142,8 +158,8 @@
     </Compile>
     <Compile Include="hw.TreeView\TreeStructure\Helper.cs">
     </Compile>
-    <Compile Include="hw.Helper\UnitTest\CategoryAttribute.cs" />
-    <Compile Include="hw.Helper\Helper\RelationExtender.cs" />
+    <Compile Include="hw.Helper.Core\UnitTest\CategoryAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Helper\RelationExtender.cs" />
     <Compile Include="hw.UnitTest\UnitTest\DependantAttribute.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestExtender.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />

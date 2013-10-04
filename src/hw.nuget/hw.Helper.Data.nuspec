@@ -2,27 +2,24 @@
 
 <package>
     <metadata>
-        <id>hw.Helper.Core</id>
-        <title>hw.Helper.Core</title>
+        <id>hw.Helper.Data</id>
+        <title>hw.Helper.Data</title>
         <authors>hahoyer</authors>
         <description>
-            Helper classes - provide some basic extensions for everyday programming.
+            Helper classes for ADO-functions.
         </description>
         <summary>
-            Helper classes.
+            Helper classes for ADO-functions.
         </summary>
         <language>en-US</language>
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>1.0.0.0</version>
-        <releaseNotes>
-            - namespaces aligned
-            - file headers updated
-        </releaseNotes>
+        <version>1.0.0.0-alpha</version>
+        <releaseNotes />
     </metadata>
     <files>
-        <file src="hw.Helper\" target="content\hw" />
+        <file src="hw.Helper.Data\" target="content\hw" />
     </files>
 </package>

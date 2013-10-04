@@ -16,17 +16,13 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
         <frameworkAssemblies>
-            <frameworkAssembly assemblyName="EnvDTE.dll" />
-            <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating" />
+            <frameworkAssembly assemblyName="EnvDTE.dll"/>
+            <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating.10.0"/>
         </frameworkAssemblies>
 
         <version>1.0.0.0</version>
-        <releaseNotes>
-            - namespaces aligned
-            - file headers updated
-        </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="1.0.0.0" />
+            <dependency id="hw.Helper.Core" version="1.0.0.1" />
         </dependencies>
 
     </metadata>

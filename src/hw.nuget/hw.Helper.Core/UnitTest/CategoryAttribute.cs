@@ -1,4 +1,4 @@
-#region Copyright (C) 2013
+﻿#region Copyright (C) 2013
 
 //     Project hw.nuget
 //     Copyright (C) 2013 - 2013 Harald Hoyer
@@ -25,13 +25,15 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
-namespace hw.Debug
+namespace hw.UnitTest
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Method)]
     [MeansImplicitUse]
-    public sealed class EnableDumpAttribute : DumpEnabledAttribute
-    {
-        public EnableDumpAttribute()
-            : base(true) { }
-    }
+    public sealed class TestAttribute : Attribute
+    {}
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [MeansImplicitUse]
+    public sealed class TestFixtureAttribute : Attribute
+    {}
 }

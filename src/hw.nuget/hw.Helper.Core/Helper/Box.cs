@@ -24,11 +24,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace hw.Debug
+namespace hw.Helper
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public abstract class DumpDataClassAttribute : Attribute
+    sealed class Box<T>
     {
-        public abstract string Dump(Type t, object x);
+        public T Content;
+        public Box(T content) { Content = content; }
+        public Box() { Content = default(T); }
     }
 }

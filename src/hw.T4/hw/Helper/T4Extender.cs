@@ -23,15 +23,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using JetBrains.Annotations;
+using Microsoft.VisualStudio.TextTemplating;
+using EnvDTE;
 
-namespace hw.Debug
+namespace hw.Helper
 {
-    public abstract class DumpEnabledAttribute : DumpAttributeBase
+    public static class T4Extender
     {
-        readonly bool _isEnabled;
-
-        protected DumpEnabledAttribute(bool isEnabled) { _isEnabled = isEnabled; }
-
-        public bool IsEnabled { get { return _isEnabled; } }
+        [UsedImplicitly]
+        public static T4Context Context(this StringBuilder text, ITextTemplatingEngineHost host) { return new T4Context(text, host); }
     }
 }
