@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using hw.Debug;
 using hw.Helper;
 using JetBrains.Annotations;
 

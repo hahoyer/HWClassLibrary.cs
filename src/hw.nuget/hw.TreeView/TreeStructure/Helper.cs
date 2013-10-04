@@ -51,27 +51,6 @@ namespace hw.TreeStructure
         public NodeAttribute(string iconKey) { IconKey = iconKey; }
     }
 
-    /// <summary>
-    ///     Class attribute to define additional node info property, displayed after node title
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
-    public sealed class AdditionalNodeInfoAttribute : Attribute
-    {
-        readonly string _property;
-
-        /// <summary>
-        ///     Initializes a new instance of the AdditionalNodeInfoAttribute class.
-        /// </summary>
-        /// <param name="property"> The property. </param>
-        /// created 07.02.2007 00:47
-        public AdditionalNodeInfoAttribute(string property) { _property = property; }
-
-        /// <summary>
-        ///     Property to obtain additional node info
-        /// </summary>
-        public string Property { get { return _property; } }
-    }
-
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class SmartNodeAttribute : Attribute
     {
