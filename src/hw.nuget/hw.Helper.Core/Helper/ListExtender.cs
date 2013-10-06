@@ -106,11 +106,7 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Dump<T>(this IEnumerable<T> x)
-        {
-            var xArray = x.ToArray();
-            return xArray.Aggregate(xArray.Length.ToString(), (a, xx) => a + " " + xx.ToString());
-        }
+        public static string Dump<T>(this IEnumerable<T> x) { return Tracer.Dump(x); }
 
         public static string DumpLines<T>(this IEnumerable<T> x) where T : Dumpable
         {

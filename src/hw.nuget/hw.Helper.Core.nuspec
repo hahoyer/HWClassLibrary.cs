@@ -16,9 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>1.0.0.2</version>
+        <version>1.0.0.3</version>
         <releaseNotes>
-            - EnumEx: do not return private instances
+            - list dump uses version of Tracer
         </releaseNotes>
     </metadata>
     <files>
