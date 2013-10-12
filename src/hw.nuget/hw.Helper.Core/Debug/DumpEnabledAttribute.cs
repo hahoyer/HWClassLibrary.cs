@@ -23,19 +23,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Debug;
-using hw.Forms;
 
-namespace hw.Parser
+namespace hw.Debug
 {
-    interface IParsedSyntax : IIconKeyProvider
+    public abstract class DumpEnabledAttribute : DumpAttributeBase
     {
-        [DisableDump]
-        TokenData Token { get; }
+        readonly bool _isEnabled;
 
-        TokenData FirstToken { get; }
-        TokenData LastToken { get; }
-        string Dump();
-        string GetNodeDump();
+        protected DumpEnabledAttribute(bool isEnabled) { _isEnabled = isEnabled; }
+
+        public bool IsEnabled { get { return _isEnabled; } }
     }
 }

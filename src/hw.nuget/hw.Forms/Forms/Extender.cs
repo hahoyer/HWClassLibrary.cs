@@ -31,9 +31,9 @@ using hw.Debug;
 using hw.Helper;
 using JetBrains.Annotations;
 
-namespace hw.TreeStructure
+namespace hw.Forms
 {
-    public static class Extender
+    public static class Extension
     {
         /// <summary>
         ///     Creates a treenode.with a given title from an object

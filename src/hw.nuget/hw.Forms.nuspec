@@ -2,14 +2,15 @@
 
 <package>
     <metadata>
-        <id>hw.TreeView</id>
-        <title>hw.TreeView</title>
+        <id>hw.Forms</id>
+        <title>hw.Forms</title>
         <authors>hahoyer</authors>
         <description>
-            Provides a tree view controlled by attributes.
+            - tree view controlled by attributes.
+            - persistor for windows location
         </description>
         <summary>
-            Tree view
+            Needful things for forms 
         </summary>
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <language>en-US</language>
@@ -20,16 +21,16 @@
             <frameworkAssembly assemblyName="System.Drawing" />
         </frameworkAssemblies>
 
-        <version>1.0.0.1</version>
+        <version>1.0.0.0</version>
         <releaseNotes>
-            - reference to Sysstem.Drawing
+            created from hw.TreeView
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="1.0.0.1" />
+            <dependency id="hw.Helper.Core" version="1.0.0.3" />
         </dependencies>
 
     </metadata>
     <files>
-        <file src="hw.TreeView\" target="content\hw" />
+        <file src="hw.Forms\" target="content\hw" />
     </files>
 </package>

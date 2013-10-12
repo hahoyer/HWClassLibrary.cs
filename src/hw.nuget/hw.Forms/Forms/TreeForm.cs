@@ -23,19 +23,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Debug;
-using hw.Forms;
+using System.Windows.Forms;
 
-namespace hw.Parser
+namespace hw.Forms
 {
-    interface IParsedSyntax : IIconKeyProvider
+    public sealed partial class TreeForm : Form
     {
-        [DisableDump]
-        TokenData Token { get; }
+        readonly PositionConfig _positionConfig;
+        object _target;
+        public TreeForm()
+        {
+            InitializeComponent();
+            _positionConfig = new PositionConfig(this);
+        }
 
-        TokenData FirstToken { get; }
-        TokenData LastToken { get; }
-        string Dump();
-        string GetNodeDump();
+        public object Target
+        {
+            get { return _target; }
+            set
+            {
+                _target = value;
+                treeView1.Connect(_target);
+                Text = _target.GetAdditionalInfo();
+            }
+        }
     }
 }

@@ -143,20 +143,21 @@
     <None Include="hw.T4Helper.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="hw.TreeView.nuspec">
+    <None Include="hw.Forms.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="hw.UnitTest.nuspec" />
     <None Include="hw.T4Helper\Helper\T4Extender.cs" />
     <None Include="hw.T4Helper\Helper\T4Context.cs" />
-    <Compile Include="hw.TreeView\TreeStructure\Extender.cs" />
-    <Compile Include="hw.TreeView\TreeStructure\TreeForm.cs">
+    <Compile Include="hw.Forms\Forms\Extender.cs" />
+    <Compile Include="hw.Forms\Forms\PositionConfig.cs" />
+    <Compile Include="hw.Forms\Forms\TreeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="hw.TreeView\TreeStructure\TreeForm.Designer.cs">
+    <Compile Include="hw.Forms\Forms\TreeForm.Designer.cs">
       <DependentUpon>TreeForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="hw.TreeView\TreeStructure\Helper.cs">
+    <Compile Include="hw.Forms\Forms\Helper.cs">
     </Compile>
     <Compile Include="hw.Helper.Core\UnitTest\CategoryAttribute.cs" />
     <Compile Include="hw.Helper.Core\Helper\RelationExtender.cs" />
@@ -175,7 +176,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="hw.TreeView\TreeStructure\TreeForm.resx">
+    <EmbeddedResource Include="hw.Forms\Forms\TreeForm.resx">
       <DependentUpon>TreeForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -23,19 +23,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Debug;
-using hw.Forms;
+using hw.Helper;
+using JetBrains.Annotations;
 
-namespace hw.Parser
+namespace hw.Debug
 {
-    interface IParsedSyntax : IIconKeyProvider
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [MeansImplicitUse]
+    public sealed class EnableDumpWithExceptionPredicateAttribute : DumpEnabledAttribute, IDumpExceptAttribute
     {
-        [DisableDump]
-        TokenData Token { get; }
-
-        TokenData FirstToken { get; }
-        TokenData LastToken { get; }
-        string Dump();
-        string GetNodeDump();
+        readonly string _predicate;
+        public EnableDumpWithExceptionPredicateAttribute(string predicate = "")
+            : base(true) { _predicate = predicate == "" ? "IsDumpException" : predicate; }
+        bool IDumpExceptAttribute.IsException(object target)
+        {
+            try
+            {
+                return (bool) target.GetType().GetMethod(_predicate).Invoke(target, null);
+            }
+            catch(Exception e)
+            {
+                Tracer.AssertionFailed("Exception when calling " + target.GetType().PrettyName() + _predicate, () => e.Message);
+                return false;
+            }
+        }
     }
 }

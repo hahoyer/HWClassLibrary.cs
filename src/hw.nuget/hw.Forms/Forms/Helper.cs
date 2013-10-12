@@ -26,7 +26,7 @@ using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace hw.TreeStructure
+namespace hw.Forms
 {
     /// <summary>
     ///     Attribute to define a subnode for treeview. Only for public properties. Only the first attribute is considered

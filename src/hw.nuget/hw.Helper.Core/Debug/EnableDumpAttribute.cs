@@ -23,19 +23,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Debug;
-using hw.Forms;
+using JetBrains.Annotations;
 
-namespace hw.Parser
+namespace hw.Debug
 {
-    interface IParsedSyntax : IIconKeyProvider
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [MeansImplicitUse]
+    public sealed class EnableDumpAttribute : DumpEnabledAttribute
     {
-        [DisableDump]
-        TokenData Token { get; }
-
-        TokenData FirstToken { get; }
-        TokenData LastToken { get; }
-        string Dump();
-        string GetNodeDump();
+        public EnableDumpAttribute()
+            : base(true) { }
     }
 }
