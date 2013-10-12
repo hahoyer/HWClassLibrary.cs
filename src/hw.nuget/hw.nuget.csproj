@@ -60,6 +60,10 @@
     <Compile Include="hw.CompilerTools\Scanner\MatchExtension.cs" />
     <Compile Include="hw.CompilerTools\Scanner\Source.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePosn.cs" />
+    <Compile Include="hw.Forms\Forms\IIconKeyProvider.cs" />
+    <Compile Include="hw.Forms\Forms\ITreeNodeSupport.cs" />
+    <Compile Include="hw.Forms\Forms\NodeAttribute.cs" />
+    <Compile Include="hw.Forms\Forms\SmartNodeAttribute.cs" />
     <Compile Include="hw.Helper.Core\Debug\DumpableObject.cs" />
     <Compile Include="hw.Helper.Data\Helper\AdoExtension.cs" />
     <Compile Include="hw.Helper.Data\Helper\IReaderInitialize.cs" />
@@ -157,7 +161,7 @@
     <Compile Include="hw.Forms\Forms\TreeForm.Designer.cs">
       <DependentUpon>TreeForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="hw.Forms\Forms\Helper.cs">
+    <Compile Include="hw.Forms\Forms\IAdditionalNodeInfoProvider.cs">
     </Compile>
     <Compile Include="hw.Helper.Core\UnitTest\CategoryAttribute.cs" />
     <Compile Include="hw.Helper.Core\Helper\RelationExtender.cs" />

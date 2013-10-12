@@ -21,9 +21,9 @@
             <frameworkAssembly assemblyName="System.Drawing" />
         </frameworkAssemblies>
 
-        <version>1.0.0.0</version>
+        <version>1.0.0.1</version>
         <releaseNotes>
-            created from hw.TreeView
+            Formatting, namespace correction
         </releaseNotes>
         <dependencies>
             <dependency id="hw.Helper.Core" version="1.0.0.3" />
