@@ -51,7 +51,7 @@ namespace hw.Debug
         }
 
         [DisableDump]
-        internal string NodeDump
+        public string NodeDump
         {
             get
             {
