@@ -307,5 +307,16 @@ namespace hw.Forms
         internal static void CreateNodeList(this TreeNode node) { CreateNodeList(node.Nodes, node.Tag); }
 
         static void BeforeExpand(object sender, TreeViewCancelEventArgs e) { AddSubNodes(e.Node.Nodes); }
+
+        /// <summary>
+        ///     Installs a <see cref="PositionConfig"/> for target
+        /// </summary>
+        /// <param name="target">the form that will be watched</param>
+        /// <param name="getFileName">
+        ///     function to obtain filename of configuration file.
+        ///     <para>It will be called each time the name is required. </para>
+        ///     <para>Default: Target.Name</para>
+        /// </param>
+        static public PositionConfig InstallPositionConfig(this Form target, Func<string> getFileName = null) { return new PositionConfig(getFileName) { Target = target }; }
     }
 }

@@ -1,65 +1,91 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using hw.Debug;
 using hw.Helper;
 
 namespace hw.Forms
 {
     /// <summary>
-    /// Used to persist location of window of parent
+    ///     Used to persist location of window of parent
     /// </summary>
     public sealed class PositionConfig : IDisposable
     {
-        readonly Form _target;
-        readonly string _name;
-        bool _initialLocationSet;
-    
+        Form _target;
+        bool _loadPositionCalled;
+        readonly Func<string> _getFileName;
+
         /// <summary>
-        /// ctor
+        ///     Ctor
         /// </summary>
-        /// <param name="target"></param>
-        public PositionConfig(Form target)
+        /// <param name="getFileName">
+        ///     function to obtain filename of configuration file.
+        ///     <para>It will be called each time the name is required. </para>
+        ///     <para>Default: Target.Name</para>
+        /// </param>
+        public PositionConfig(Func<string> getFileName = null) { _getFileName = getFileName ?? (() => _target == null ? null : _target.Name); }
+
+        /// <summary>
+        ///     Form that will be controlled by this instance
+        /// </summary>
+        public Form Target
         {
-            _target = target;
-            _name = target.Name;
-            _target.Load += OnLoad;
-            _target.LocationChanged += OnLocationChanged;
-            _target.SizeChanged += OnLocationChanged;
+            get { return _target; }
+            set
+            {
+                Disconnect();
+                _target = value;
+                Connect();
+            }
         }
 
-        void IDisposable.Dispose()
+        /// <summary>
+        ///     Name that will be used as filename
+        /// </summary>
+        public string FileName { get { return _getFileName(); } }
+
+        void IDisposable.Dispose() { Disconnect(); }
+
+        void Disconnect()
         {
+            if(_target == null)
+                return;
+
+            _target.SuspendLayout();
+            _loadPositionCalled = false;
             _target.Load -= OnLoad;
             _target.LocationChanged -= OnLocationChanged;
             _target.SizeChanged -= OnLocationChanged;
+            _target.ResumeLayout();
+            _target = null;
         }
 
-        void OnLocationChanged(object s, EventArgs e) { SavePosition((Form) s); }
-        void OnLoad(object s, EventArgs e) { LoadPosition((Form) s); }
+        void Connect()
+        {
+            if(_target == null)
+                return;
+            _target.SuspendLayout();
+            _loadPositionCalled = false;
+            _target.Load += OnLoad;
+            _target.LocationChanged += OnLocationChanged;
+            _target.SizeChanged += OnLocationChanged;
+            _target.ResumeLayout();
+        }
+
+        void OnLocationChanged(object target, EventArgs e)
+        {
+            if(target != _target)
+                return;
+            SavePosition();
+        }
+        void OnLoad(object target, EventArgs e)
+        {
+            if(target != _target)
+                return;
+            LoadPosition();
+        }
 
         Rectangle? Position { get { return Convert(0, null, s => (Rectangle?) new RectangleConverter().ConvertFromString(s)); } set { Save(value, WindowState); } }
 
@@ -67,14 +93,28 @@ namespace hw.Forms
         {
             get
             {
-                var content = _name.FileHandle().String;
+                if(_target == null)
+                    return null;
+
+                var content = FileHandle.String;
                 return content == null ? null : content.Split('\n');
+            }
+        }
+
+        File FileHandle
+        {
+            get
+            {
+                var fileName = FileName;
+                return fileName == null ? null : fileName.FileHandle();
             }
         }
 
         void Save(Rectangle? position, FormWindowState state)
         {
-            _name.FileHandle().String = "{0}\n{1}"
+            var fileHandle = FileHandle;
+            Tracer.Assert(fileHandle != null);
+            fileHandle.String = "{0}\n{1}"
                 .ReplaceArgs(
                     position == null ? "" : new RectangleConverter().ConvertToString(position.Value),
                     state
@@ -82,35 +122,34 @@ namespace hw.Forms
         }
 
         FormWindowState WindowState { get { return Convert(1, FormWindowState.Normal, s => s.Parse<FormWindowState>()); } set { Save(Position, value); } }
+        T Convert<T>(int position, T defaultValue, Func<string, T> converter) { return ParameterStrings == null ? defaultValue : converter(ParameterStrings[position]); }
 
-        T Convert<T>(int position, T defaultValue, Func<string, T> converter)
+        void LoadPosition()
         {
-            if(ParameterStrings == null)
-                return defaultValue;
-            return converter(ParameterStrings[position]);
-        }
-        void LoadPosition(Form treeForm)
-        {
-            if(Position != null)
+            var fileHandle = FileHandle;
+            Tracer.Assert(fileHandle != null);
+            if(fileHandle.String != null)
             {
-                treeForm.SuspendLayout();
-                treeForm.StartPosition = FormStartPosition.Manual;
-                treeForm.Bounds = EnsureVisible(Position.Value);
-                treeForm.WindowState = WindowState;
-                treeForm.ResumeLayout(true);
+                var position = Position;
+                Tracer.Assert(position != null);
+                _target.SuspendLayout();
+                _target.StartPosition = FormStartPosition.Manual;
+                _target.Bounds = EnsureVisible(position.Value);
+                _target.WindowState = WindowState;
+                _target.ResumeLayout(true);
             }
-            _initialLocationSet = true;
+            _loadPositionCalled = true;
         }
 
-        void SavePosition(Form treeForm)
+        void SavePosition()
         {
-            if(!_initialLocationSet)
+            if(!_loadPositionCalled)
                 return;
 
-            if(treeForm.WindowState == FormWindowState.Normal)
-                Position = treeForm.Bounds;
+            if(_target.WindowState == FormWindowState.Normal)
+                Position = _target.Bounds;
 
-            WindowState = treeForm.WindowState;
+            WindowState = _target.WindowState;
         }
 
         static Rectangle EnsureVisible(Rectangle value)
