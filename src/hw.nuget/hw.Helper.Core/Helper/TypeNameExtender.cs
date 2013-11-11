@@ -91,6 +91,13 @@ namespace hw.Helper
             }
             return result + ">";
         }
+
+        public static string NullableName(this Type type)
+        {
+            if (type.IsClass)
+                return type.PrettyName();
+            return type.PrettyName() + "?";
+        }
     }
 
     sealed class TypeLibrary

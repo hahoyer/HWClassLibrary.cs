@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using JetBrains.Annotations;
 
@@ -209,5 +210,13 @@ namespace hw.Helper
         public static T Parse<T>(this string title) { return (T) Enum.Parse(typeof(T), title); }
 
         public static void ToStatement<T>(this T any) { }
+
+        public static T Eval<T>(this Expression x)
+        {
+            return (T)Expression.Lambda(x)
+                .Compile()
+                .DynamicInvoke();
+        }
+
     }
 }

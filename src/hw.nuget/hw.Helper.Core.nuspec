@@ -16,9 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>1.0.0.3</version>
+        <version>1.0.2.0</version>
         <releaseNotes>
-            - list dump uses version of Tracer
+            - DateTimeExtender.Format3Digits: support for time spans more than a minute
+            - StringExtender.Format(this string x, StringAligner aligner)
         </releaseNotes>
     </metadata>
     <files>

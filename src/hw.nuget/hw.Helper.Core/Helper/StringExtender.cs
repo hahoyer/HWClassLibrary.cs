@@ -153,5 +153,14 @@ namespace hw.Helper
             }
             yield return target.Substring(start);
         }
+    
+        public static string Format(this string x, StringAligner aligner) { return aligner.Format(x); }
+
+        internal static int BeginMatch(string a, string b)
+        {
+            for (var i = 0; ; i++)
+                if (i >= a.Length || i >= b.Length || a[i] != b[i])
+                    return i;
+        }
     }
 }

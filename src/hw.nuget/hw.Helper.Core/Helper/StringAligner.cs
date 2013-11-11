@@ -39,7 +39,7 @@ namespace hw.Helper
                 _floatingColumns[c - 1].FindStartFailed = _floatingColumns[c].FindStart;
         }
 
-        internal string Format(string lines) { return Format(lines.Split('\n')).Aggregate("", (current, temp) => current + temp + "\n"); }
+        public string Format(string lines) { return Format(lines.Split('\n')).Aggregate("", (current, temp) => current + temp + "\n"); }
 
         public string[] Format(string[] lines)
         {

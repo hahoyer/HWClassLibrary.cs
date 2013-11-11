@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using hw.Debug;
 using JetBrains.Annotations;
@@ -280,6 +281,46 @@ namespace hw.Helper
         {
             foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
                 target.Add(item);
+        }
+
+        /// <summary>Finds the index of the first item matching an expression in an enumerable.</summary>
+        /// <param name="items">The enumerable to search.</param>
+        /// <param name="predicate">The expression to test the items against.</param>
+        /// <returns>The index of the first matching item, or null if no items match.</returns>
+        public static int? IndexOf<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            if (items == null)
+                throw new ArgumentNullException("items");
+            if (predicate == null)
+                throw new ArgumentNullException("predicate");
+
+            var result = 0;
+            foreach (var item in items)
+            {
+                if (predicate(item))
+                    return result;
+                result++;
+            }
+            return null;
+        }
+
+        public static IEnumerable<T> Chain<T>(this T current, Func<T, T> getNext)
+            where T : class
+        {
+            while (current != null)
+            {
+                yield return current;
+                current = getNext(current);
+            }
+        }
+
+        internal static bool In(this string a, params string[] b) { return b.Contains(a); }
+
+        internal static IEnumerable<T> SelectHierachical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
+        {
+            yield return root;
+            foreach (var item in getChildren(root).SelectMany(i => i.SelectHierachical(getChildren)))
+                yield return item;
         }
     }
 
