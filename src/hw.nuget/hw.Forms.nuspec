@@ -21,9 +21,11 @@
             <frameworkAssembly assemblyName="System.Drawing" />
         </frameworkAssemblies>
 
-        <version>1.0.0.3-alpha</version>
+        <version>1.0.2.0</version>
         <releaseNotes>
-            PositionConfig: extension method
+            New: Treeview: Name support
+            New: Treeview: lazy node lists
+            Refactor: Treeview: beautification of code
         </releaseNotes>
         <dependencies>
             <dependency id="hw.Helper.Core" version="1.0.0.3" />
