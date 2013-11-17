@@ -16,10 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>1.0.2.0</version>
+        <version>13.0.0.0</version>
         <releaseNotes>
-            - DateTimeExtender.Format3Digits: support for time spans more than a minute
-            - StringExtender.Format(this string x, StringAligner aligner)
+            New: Profiler: Items
+            Change: Profiler: parameters refactored
         </releaseNotes>
     </metadata>
     <files>
