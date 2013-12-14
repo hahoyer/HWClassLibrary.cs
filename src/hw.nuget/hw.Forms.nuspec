@@ -21,14 +21,12 @@
             <frameworkAssembly assemblyName="System.Drawing" />
         </frameworkAssemblies>
 
-        <version>1.0.2.0</version>
+        <version>13.0.0.0</version>
         <releaseNotes>
-            New: Treeview: Name support
-            New: Treeview: lazy node lists
-            Refactor: Treeview: beautification of code
+            New: Some more functions
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="1.0.0.3" />
+            <dependency id="hw.Helper.Core" version="13.1.0.0" />
         </dependencies>
 
     </metadata>

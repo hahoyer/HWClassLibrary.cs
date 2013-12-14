@@ -60,9 +60,11 @@
     <Compile Include="hw.CompilerTools\Scanner\MatchExtension.cs" />
     <Compile Include="hw.CompilerTools\Scanner\Source.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePosn.cs" />
+    <Compile Include="hw.Forms\Forms\CursorUtil.cs" />
     <Compile Include="hw.Forms\Forms\IIconKeyProvider.cs" />
     <Compile Include="hw.Forms\Forms\ITreeNodeSupport.cs" />
     <Compile Include="hw.Forms\Forms\NodeAttribute.cs" />
+    <Compile Include="hw.Forms\Forms\NodeNameAttribute.cs" />
     <Compile Include="hw.Forms\Forms\SmartNodeAttribute.cs" />
     <Compile Include="hw.Helper.Core\Debug\DumpableObject.cs" />
     <Compile Include="hw.Helper.Data\Helper\AdoExtension.cs" />

@@ -16,10 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>13.0.0.0</version>
+        <version>13.1.0.0</version>
         <releaseNotes>
-            New: Profiler: Items
-            Change: Profiler: parameters refactored
+            New: Some more functions
         </releaseNotes>
     </metadata>
     <files>

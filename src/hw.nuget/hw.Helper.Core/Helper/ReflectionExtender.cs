@@ -26,6 +26,9 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using JetBrains.Annotations;
 
 namespace hw.Helper
@@ -218,5 +221,88 @@ namespace hw.Helper
                 .DynamicInvoke();
         }
 
+        /// <summary>
+        /// Invoke a member method
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="method"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static T Invoke<T>(this object target, string method, params object[] args) { return (T)target.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, target, args); }
+        /// <summary>
+        /// Invoke a static method
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <param name="method"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static T Invoke<T>(this Type type, string method, params object[] args) { return ExceptionGuard(() => (T)type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args)); }
+
+        /// <summary>
+        /// Calls a function. In case of exceptions, onError is called, if provided. Otherwise default value is returned
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="onError"></param>
+        /// <returns></returns>
+        public static T ExceptionGuard<T>(this Func<T> function, Func<Exception, T>onError = null)
+        {
+            try
+            {
+                return function();
+            }
+            catch (Exception exception)
+            {
+                return onError == null ? default(T) : onError(exception);
+            }
+        }
+
+        /// <summary>
+        /// Calls an action. In case of exceptions, onError is called, if provided.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="onError"></param>
+        public static void ExceptionGuard(this Action action, Action<Exception> onError = null)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception exception)
+            {
+                if(onError != null)
+                    onError(exception);
+            }
+        }
+
+        public static Task<T> STAStart<T>(Func<T> func)
+        {
+            var tcs = new TaskCompletionSource<T>();
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    tcs.SetResult(func());
+                }
+                catch (Exception e)
+                {
+                    tcs.SetException(e);
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            return tcs.Task;
+        }
+
+        public static Task STAStart(Action func)
+        {
+            var result = new Task(func);
+            var thread = new Thread(result.Start);
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            return result;
+        }
     }
 }

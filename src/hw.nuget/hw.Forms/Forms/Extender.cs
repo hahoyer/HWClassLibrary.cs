@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -380,38 +381,121 @@ namespace hw.Forms
         ///     <para>Default: Target.Name</para>
         /// </param>
         public static PositionConfig InstallPositionConfig(this Form target, Func<string> getFileName = null) { return new PositionConfig(getFileName) {Target = target}; }
-    }
-
-    interface INodeNameProvider
-    {
-        string Value(string name);
-    }
-
-    interface ITreeNodeProbeSupport
-    {
-        bool IsEmpty { get; }
-    }
-
-    sealed class LazyNode
-    {
-        public object Target;
-    }
-
-    [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
-    public class NodeNameAttribute : Attribute
-    {
-        readonly string _property;
 
         /// <summary>
-        ///     Initializes a new instance of the AdditionalNodeInfoAttribute class.
+        /// Turns collection into IEnumerable
         /// </summary>
-        /// <param name="property"> The property. </param>
-        /// created 07.02.2007 00:47
-        public NodeNameAttribute(string property) { _property = property; }
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static IEnumerable<TreeNode> _(this TreeNodeCollection value) { return value.Cast<TreeNode>(); }
 
         /// <summary>
-        ///     Property to obtain additional node info
+        /// Turns collection into IEnumerable
         /// </summary>
-        public string Property { get { return _property; } }
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static IEnumerable<Control> _(this Control.ControlCollection value) { return value.Cast<Control>(); }
+        
+        /// <summary>
+        /// Flatten node hierarchy
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        public static IEnumerable<TreeNode> SelectHierachical(this TreeView tree)
+        {
+            return tree
+                .Nodes
+                ._()
+                .SelectMany(n => n.SelectHierachical(nn => nn.Nodes._()));
+        }
+
+        /// <summary>
+        /// Call a function or invoke it if required
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="control"></param>
+        /// <param name="function"></param>
+        /// <returns></returns>
+        public static T ThreadCallGuard<T>(this Control control, Func<T> function)
+        {
+            if (control.InvokeRequired)
+                return (T)control.Invoke(function);
+            return function();
+        }
+
+        /// <summary>
+        /// Call an action or invoke it if required
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="control"></param>
+        /// <param name="function"></param>
+        /// <returns></returns>
+        public static void ThreadCallGuard(this Control control, Action function)
+        {
+            if (control.InvokeRequired)
+                control.Invoke(function);
+            else
+                function();
+        }
+
+        public const int ShiftKey = 4;
+        public const int AltKey = 32;
+        public const int ControlKey = 8;
+        public const int LeftMouseButton = 1;
+        public const int RightMouseButton = 2;
+        public const int MiddleMouseButton = 16;
+
+        public static bool SetEffect<T>(this DragEventArgs e, Func<T, bool> getIsValid, DragDropEffects defaultEffect)
+        {
+            e.Effect = ObtainEffect(e, getIsValid, defaultEffect);
+            return e.Effect != DragDropEffects.None;
+        }
+
+        public static DragDropEffects ObtainEffect<T>(DragEventArgs e, Func<T, bool> getIsValid, DragDropEffects defaultEffect)
+        {
+            if (e.IsValid(getIsValid))
+            {
+                if (e.KeyState.HasBitSet(AltKey) && e.AllowedEffect.HasFlag(DragDropEffects.Link))
+                    return DragDropEffects.Link;
+                if (e.KeyState.HasBitSet(ShiftKey) && e.AllowedEffect.HasFlag(DragDropEffects.Move))
+                    return DragDropEffects.Move;
+                if (e.KeyState.HasBitSet(ControlKey) && e.AllowedEffect.HasFlag(DragDropEffects.Copy))
+                    return DragDropEffects.Copy;
+                if (e.AllowedEffect.HasFlag(defaultEffect))
+                    return defaultEffect;
+            }
+
+            return DragDropEffects.None;
+        }
+
+        public static bool IsValid<T>(this DragEventArgs e, Func<T, bool> getIsValid)
+        {
+            return e.Data.GetDataPresent(typeof(T))
+                && getIsValid((T)e.Data.GetData(typeof(T)));
+        }
+
+        public static bool SetEffectCopy(this DragEventArgs e, bool isValid)
+        {
+            Tracer.Assert(e.AllowedEffect == DragDropEffects.Copy);
+
+            e.Effect = isValid && e.KeyState.HasBitSet(ControlKey) ? DragDropEffects.Copy : DragDropEffects.None;
+            return e.Effect != DragDropEffects.None;
+        }
+
+        public static Bitmap AsBitmap(this Control c)
+        {
+            var result = new Bitmap(c.Width, c.Height);
+            c.DrawToBitmap(result, new Rectangle(0, 0, c.Width, c.Height));
+            return result;
+        }
+
+        public static Cursor ToCursor(this Control control, Point? hotSpot = null)
+        {
+            var iconInfo = new CursorUtil.IconInfo(control.AsBitmap());
+            if (hotSpot != null)
+                iconInfo.HotSpot = hotSpot.Value;
+            return iconInfo.Cursor;
+        }
     }
+
 }

@@ -65,6 +65,9 @@ namespace hw.Helper
         /// <value>The kilo.</value>
         /// [created 30.08.2006 22:24]
         public static long Kilo { get { return 1000; } }
+
+        public static bool HasBitSet(this long bitArray, long bit) { return (bitArray & bit) == bit; }
+        public static bool HasBitSet(this int bitArray, int bit) { return (bitArray & bit) == bit; }
     }
 
     [TestFixture]
