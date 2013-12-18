@@ -162,5 +162,18 @@ namespace hw.Helper
                 if (i >= a.Length || i >= b.Length || a[i] != b[i])
                     return i;
         }
+
+        /// <summary>
+        /// Provide deafault string aligner with columnCount columns
+        /// </summary>
+        /// <param name="columnCount"></param>
+        /// <returns></returns>
+        public static StringAligner StringAligner(this int columnCount)
+        {
+            var stringAligner = new StringAligner();
+            for (var i = 0; i < columnCount; i++)
+                stringAligner.AddFloatingColumn("  ");
+            return stringAligner;
+        }
     }
 }
