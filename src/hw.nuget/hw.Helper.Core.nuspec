@@ -16,9 +16,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>13.1.0.0</version>
+        <version>13.2.0.0</version>
         <releaseNotes>
-            New: Some more functions
+            Bug: #11: extra reference to System.Windows.Forms in ReflectionExtender
+            New: Function for default string aligner
+            New: Type name printer without shortening
         </releaseNotes>
     </metadata>
     <files>
