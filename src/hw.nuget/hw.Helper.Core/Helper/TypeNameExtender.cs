@@ -35,28 +35,40 @@ namespace hw.Helper
 
         public static string PrettyName(this Type type)
         {
-            if(type == typeof(int))
+            return ObtainName(type, true);
+        }
+        public static string ObtainName(this Type type, bool shortenNamespace)
+        {
+            if (type == typeof(int))
                 return "int";
-            if(type == typeof(string))
+            if (type == typeof(string))
                 return "string";
 
-            var result = PrettyTypeName(type);
-            if(type.IsGenericType)
-                result = result + PrettyNameForGeneric(type.GetGenericArguments());
+            var result = ObtainTypeName(type,shortenNamespace);
+            if (type.IsGenericType)
+                result = result + ObtainNameForGeneric(type.GetGenericArguments(),shortenNamespace);
             return result;
         }
 
-        static string PrettyTypeName(Type type)
+        public static string CompleteName(this Type type)
+        {
+            return ObtainName(type, false);
+        }
+
+        static string ObtainTypeName(Type type, bool shortenNamespace)
         {
             var result = type.Name;
             if(result.Contains("`"))
                 result = result.Remove(result.IndexOf('`'));
 
             if(type.IsNested && !type.IsGenericParameter)
-                return type.DeclaringType.PrettyName() + "." + result;
+                return type.DeclaringType.ObtainName(shortenNamespace) + "." + result;
 
             if(type.Namespace == null)
                 return result;
+
+            if(!shortenNamespace)
+                return type.Namespace + "." + result;
 
             var conflictingTypes = ReferencedTypes.ConflictingTypes(type);
 
@@ -79,7 +91,7 @@ namespace hw.Helper
 
         static TypeLibrary ReferencedTypes { get { return _referencedTypesCache.Value; } }
 
-        static string PrettyNameForGeneric(Type[] types)
+        static string ObtainNameForGeneric(Type[] types, bool shortenNamespace)
         {
             var result = "";
             var delim = "<";
@@ -87,7 +99,7 @@ namespace hw.Helper
             {
                 result += delim;
                 delim = ",";
-                result += t.PrettyName();
+                result += t.ObtainName(shortenNamespace);
             }
             return result + ">";
         }
