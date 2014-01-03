@@ -1,28 +1,4 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
-using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -38,7 +14,9 @@ namespace hw.Debug
     {
         static int _indentCount;
         static bool _isLineStart = true;
-        static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+        static readonly WriteInitiator _writeInitiator = new WriteInitiator();
+        static readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
+        static long _nextObjectId = 0;
 
         [UsedImplicitly]
         public static bool IsBreakDisabled;
@@ -164,8 +142,6 @@ namespace hw.Debug
             }
         }
 
-        static readonly WriteInitiator _writeInitiator = new WriteInitiator();
-
         /// <summary>
         ///     write a line to debug output
         /// </summary>
@@ -234,8 +210,27 @@ namespace hw.Debug
         {
             if(x == null)
                 return "null";
-            return InternalDump(true, x.GetType(), x);
+
+            long key;
+            if(_activeObjects.TryGetValue(x, out key))
+            {
+                if(key == -1)
+                    _activeObjects[x] = _nextObjectId++;
+                return "[==>{" + key + "#}";
+            }
+
+            _activeObjects.Add(x, -1);
+
+            var result = Dumper.Dump(x);
+
+            key = _activeObjects[x];
+            if(key != -1)
+                result += "{" + key + "#}";
+            _activeObjects.Remove(x);
+
+            return result;
         }
+
 
         /// <summary>
         ///     generic dump function by use of reflection
@@ -246,223 +241,7 @@ namespace hw.Debug
         {
             if(x == null)
                 return "";
-            return InternalDumpData(x.GetType(), x);
-        }
-
-        static string InternalDump(bool isTop, Type t, object x)
-        {
-            var xl = x as IList;
-            if(xl != null)
-                return InternalDump(xl);
-
-            var xd = x as IDictionary;
-            if(xd != null)
-                return InternalDump(xd);
-
-            var xc = x as ICollection;
-            if(xc != null)
-                return InternalDump(xc);
-
-            var co = x as CodeObject;
-            if(co != null)
-                return InternalDump(co);
-            var xt = x as Type;
-            if(xt != null)
-                return xt.PrettyName();
-
-            if(t.IsPrimitive || t.ToString().StartsWith("System."))
-                return x.ToString();
-
-            if(t.ToString() == "Outlook.ApplicationClass")
-                return x.ToString();
-            if(t.ToString() == "Outlook.NameSpaceClass")
-                return x.ToString();
-            if(t.ToString() == "Outlook.InspectorClass")
-                return x.ToString();
-
-            var dea = DumpClassAttribute(t);
-            if(dea != null)
-                return dea.Dump(isTop, t, x);
-
-            var result = BaseDump(t, x) + InternalDumpData(t, x);
-            if(result != "")
-                result = Surround("(", result, ")");
-
-            if(isTop || result != "")
-                result = t + result;
-
-            return result;
-        }
-
-        static string InternalDump(ICollection xc) { return "Count=" + xc.Count + xc.Cast<object>().Select(Dump).Stringify("\n", true).Surround("{", "}"); }
-
-        static string InternalDump(this CodeObject co)
-        {
-            var cse = co as CodeSnippetExpression;
-            if(cse != null)
-                return cse.Value;
-
-            throw new NotImplementedException();
-        }
-
-        static string InternalDump(this IList xl) { return "Count=" + xl.Count + xl.Cast<object>().Select(Dump).Stringify("\n", true).Surround("{", "}"); }
-
-        static string InternalDump(this IDictionary xd)
-        {
-            var keys = xd.Keys.Cast<object>();
-            var dictionaryEntries = keys.Select(key => new {Key = key, Value = xd[key]}).ToArray();
-            return dictionaryEntries.Select(entry => "[" + Dump(entry.Key) + "] " + Dump(entry.Value)).Stringify("\n").Surround("{", "}");
-        }
-
-        static DumpClassAttribute DumpClassAttribute(this Type t)
-        {
-            var result = DumpClassAttributeClass(t);
-            if(result != null)
-                return result;
-            var results = DumpClassAttributeInterfaces(t);
-            if(results.Length == 0)
-                return null;
-            if(results.Length == 1)
-                return results[0];
-            throw new NotImplementedException();
-        }
-
-        static DumpClassAttribute[] DumpClassAttributeInterfaces(this Type t)
-        {
-            var al = new ArrayList();
-            foreach(var i in t.GetInterfaces())
-                al.AddRange(DumpClassAttributeInterfaces(i));
-            if(al.Count == 0)
-                return new DumpClassAttribute[0];
-
-            return (DumpClassAttribute[]) al.ToArray();
-        }
-
-        static DumpClassAttribute DumpClassAttributeClass(this Type t)
-        {
-            var result = t.GetRecentAttribute<DumpClassAttribute>();
-            if(result != null)
-                return result;
-            if(t.BaseType != null)
-                return DumpClassAttribute(t.BaseType);
-            return null;
-        }
-
-        static string InternalDumpData(this Type t, object x)
-        {
-            var dumpData = t.GetAttribute<DumpDataClassAttribute>(false);
-            if(dumpData != null)
-                return dumpData.Dump(t, x);
-            var f = t.GetFields(AnyBinding);
-            var fieldDump = "";
-            if(f.Length > 0)
-                fieldDump = DumpMembers(f, x);
-            MemberInfo[] p = t.GetProperties(AnyBinding);
-            var propertyDump = "";
-            if(p.Length > 0)
-                propertyDump = DumpMembers(p, x);
-            if(fieldDump == "")
-                return propertyDump;
-            if(propertyDump == "")
-                return fieldDump;
-            return fieldDump + "\n" + propertyDump;
-        }
-
-        static List<int> CheckMemberAttributes(MemberInfo[] f, object x)
-        {
-            var l = new List<int>();
-            for(var i = 0; i < f.Length; i++)
-            {
-                var pi = f[i] as PropertyInfo;
-                if(pi != null && pi.GetIndexParameters().Length > 0)
-                    continue;
-                if(!CheckDumpDataAttribute(f[i]))
-                    continue;
-                if(!CheckDumpExceptAttribute(f[i], x))
-                    continue;
-                l.Add(i);
-            }
-            return l;
-        }
-
-        static bool CheckDumpDataAttribute(this MemberInfo m)
-        {
-            var dda = m.GetAttribute<DumpEnabledAttribute>(true);
-            if(dda != null)
-                return dda.IsEnabled;
-
-            return !IsPrivateOrDump(m);
-        }
-
-        static bool IsPrivateOrDump(this MemberInfo m)
-        {
-            if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
-                return true;
-
-            var fieldInfo = m as FieldInfo;
-            if(fieldInfo != null)
-                return fieldInfo.IsPrivate;
-
-            if(((PropertyInfo) m).CanRead)
-                return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
-            return true;
-        }
-
-        static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
-
-        static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
-        {
-            var result = "";
-            for(var i = 0; i < l.Count; i++)
-            {
-                if(i > 0)
-                    result += "\n";
-                if(l.Count > 10)
-                    result += i + ":";
-                result += f[l[i]].Name;
-                result += "=";
-                try
-                {
-                    result += Dump(Value(f[l[i]], x));
-                }
-                catch(Exception)
-                {
-                    result += "<not implemented>";
-                }
-            }
-            return result;
-        }
-
-        static bool CheckDumpExceptAttribute(this MemberInfo f, object x)
-        {
-            foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))
-            {
-                var v = Value(f, x);
-                return !dea.IsException(v);
-            }
-            return true;
-        }
-
-        static string BaseDump(this Type t, object x)
-        {
-            var baseDump = "";
-            if(t.BaseType != null && t.BaseType.ToString() != "System.Object" && t.BaseType.ToString() != "System.ValueType")
-                baseDump = InternalDump(false, t.BaseType, x);
-            if(baseDump != "")
-                baseDump = "\nBase:" + baseDump;
-            return baseDump;
-        }
-
-        static object Value(this MemberInfo info, object x)
-        {
-            var fi = info as FieldInfo;
-            if(fi != null)
-                return fi.GetValue(x);
-            var pi = info as PropertyInfo;
-            if(pi != null)
-                return pi.GetValue(x, null);
-
-            throw new NotImplementedException();
+            return x.DumpData();
         }
 
         /// <summary>
