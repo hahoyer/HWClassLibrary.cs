@@ -17,8 +17,6 @@ namespace hw
 
         class Bar : Foo
         {
-            public int Y = 111;
-            public new string S1 = "BarString";
         }
 
         class Bla : Bar
@@ -37,13 +35,11 @@ namespace hw
         Base:hw.TestDump+Foo
         {
             X=20,
-            S1=FooString
+            S1=""FooString""
         }
-        Y=111,
-        S1=BarString
-    }
+    },
     Z=17,
-    S1=BlaString
+    S1=""BlaString""
 }";
 
             var xxx = new Bla();

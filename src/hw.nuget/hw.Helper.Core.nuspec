@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.0.0.19</version>
+        <version>14.0.0.20</version>
         <releaseNotes>
             New: Recursivity check for dump
         </releaseNotes>

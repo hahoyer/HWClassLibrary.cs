@@ -51,7 +51,7 @@ namespace hw.Debug
             if(handler != null)
                 return handler(t, x);
 
-            string result = "\n".SaveConcat(BaseDump(t, x),DumpData(t, x));
+            string result = ",\n".SaveConcat(BaseDump(t, x),DumpData(t, x));
             if(result != "")
                 result = result.Surround("{", "}");
 
@@ -95,7 +95,7 @@ namespace hw.Debug
             if(t.BaseType != null && t.BaseType != typeof(object) && t.BaseType != typeof(ValueType))
                 baseDump = Dump(t.BaseType, x);
             if(baseDump != "")
-                baseDump = "Base:" + baseDump + "\n";
+                baseDump = "Base:" + baseDump;
             return baseDump;
         }
 
