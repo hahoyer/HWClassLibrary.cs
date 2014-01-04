@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using hw.Helper;
 
 namespace hw.Debug
@@ -67,7 +68,7 @@ namespace hw.Debug
             return result == null ? null : result.Dump;
         }
 
-        internal Func<string, object, bool> GetMemberCheck(Type type)
+        internal Func<MemberInfo, object, bool> GetMemberCheck(Type type)
         {
             var result = Handlers[type].FirstOrDefault(handler => handler.MemberCheck != null);
             return result == null ? ((s, o) => true) : result.MemberCheck;
@@ -80,9 +81,9 @@ namespace hw.Debug
 
         public sealed class Handler : AbstractHandler
         {
-            public readonly Func<string, object, bool> MemberCheck;
+            public readonly Func<MemberInfo, object, bool> MemberCheck;
             public readonly Func<Type, object, string> Dump;
-            public Handler(Func<Type, object, string> dump = null, Func<string, object, bool> memberCheck = null)
+            public Handler(Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> memberCheck = null)
             {
                 Dump = dump;
                 MemberCheck = memberCheck;
@@ -129,8 +130,8 @@ namespace hw.Debug
             }
 
             public void Add(AbstractHandler handler) { Handlers.Add(handler); }
-            public void Add(Type type, Func<Type, object, string> dump = null, Func<string, object, bool> methodCheck = null) { Handlers.Add(new TypedHandler(type, new Handler(dump, methodCheck))); }
-            public void Add(Func<Type, bool> typeMatch, Func<Type, object, string> dump = null, Func<string, object, bool> methodCheck = null) { Handlers.Add(new MatchedTypeHandler(typeMatch, new Handler(dump, methodCheck))); }
+            public void Add(Type type, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Add(new TypedHandler(type, new Handler(dump, methodCheck))); }
+            public void Add(Func<Type, bool> typeMatch, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Add(new MatchedTypeHandler(typeMatch, new Handler(dump, methodCheck))); }
         }
     }
 }

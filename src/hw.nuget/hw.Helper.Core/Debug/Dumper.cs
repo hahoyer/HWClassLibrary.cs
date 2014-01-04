@@ -73,7 +73,7 @@ namespace hw.Debug
                 .Cast<MemberInfo>()
                 .Concat(type.GetProperties(AnyBinding))
                 .Where(memberInfo => IsRelevant(memberInfo,data))
-                .Where(memberInfo => memberCheck(memberInfo.Name,data))
+                .Where(memberInfo => memberCheck(memberInfo,data))
                 .Select(memberInfo => Format(memberInfo, data))
                 .ToArray();
             return FormatMemberDump(results);
