@@ -7,12 +7,8 @@ using hw.Helper;
 
 namespace hw.Debug
 {
-    static class TraceWriter
+    sealed class Writer
     {
-        static int _indentCount;
-        static bool _isLineStart = true;
-        static readonly WriteInitiator _writeInitiator = new WriteInitiator();
-
         sealed class WriteInitiator
         {
             string _name = "";
@@ -29,16 +25,14 @@ namespace hw.Debug
             }
         }
 
-        /// <summary>
-        ///     Indent
-        /// </summary>
-        internal static void IndentStart() { _indentCount++; }
-        /// <summary>
-        ///     Unindent
-        /// </summary>
-        internal static void IndentEnd() { _indentCount--; }
+        int _indentCount;
+        bool _isLineStart = true;
+        readonly WriteInitiator _writeInitiator = new WriteInitiator();
 
-        internal static void ThreadSafeWrite(string s, bool isLine)
+        internal void IndentStart() { _indentCount++; }
+        internal void IndentEnd() { _indentCount--; }
+
+        internal void ThreadSafeWrite(string s, bool isLine)
         {
             lock(_writeInitiator)
             {
@@ -62,7 +56,7 @@ namespace hw.Debug
                 _isLineStart = isLine;
             }
         }
-       
+
         static void Write(string s, bool isLine)
         {
             if(Debugger.IsAttached)

@@ -189,7 +189,7 @@ namespace hw.Debug
                 var start = _stopwatch.Elapsed;
                 _current.Suspend(start);
                 _stack.Push(_current);
-                var position = Tracer.MethodHeader(stackFrameDepth + 1) + flag;
+                var position = Tracer.MethodHeader(stackFrameDepth:stackFrameDepth + 1) + flag;
                 if(!_profileItems.TryGetValue(position, out _current))
                 {
                     _current = new ProfileItem(position);

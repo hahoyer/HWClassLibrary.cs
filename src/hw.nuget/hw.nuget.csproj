@@ -69,7 +69,7 @@
     <Compile Include="hw.Helper.Core\Debug\Configuration.cs" />
     <Compile Include="hw.Helper.Core\Debug\DumpableObject.cs" />
     <Compile Include="hw.Helper.Core\Debug\Dumper.cs" />
-    <Compile Include="hw.Helper.Core\Debug\TraceWriter.cs" />
+    <Compile Include="hw.Helper.Core\Debug\Writer.cs" />
     <Compile Include="hw.Helper.Data\Helper\AdoExtension.cs" />
     <Compile Include="hw.Helper.Data\Helper\IReaderInitialize.cs" />
     <Compile Include="hw.Proof\Helper\BigRational.cs" />

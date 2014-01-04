@@ -6,15 +6,15 @@ using hw.Helper;
 
 namespace hw.Debug
 {
-    static class Dumper
+    public sealed class Dumper
     {
         static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
 
-        static readonly Configuration _configuration = new Configuration();
-        static readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
-        static long _nextObjectId = 0;
+        public readonly Configuration Configuration = new Configuration();
+        readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
+        long _nextObjectId = 0;
 
-        internal static string Dump(this object x)
+        internal string Dump(object x)
         {
             if(x == null)
                 return "null";
@@ -39,15 +39,15 @@ namespace hw.Debug
             return result;
         }
 
-        internal static string DumpData(this object x) { return DumpData(x.GetType(), x); }
+        internal static string DumpData(object x) { return DumpData(x.GetType(), x); }
 
-        static string Dump(Type t, object x)
+        string Dump(Type t, object x)
         {
             var dea = DumpClassAttribute(t);
             if(dea != null)
                 return dea.Dump(t, x);
 
-            var handler = _configuration.GetHandler(t);
+            var handler = Configuration.GetHandler(t);
             if(handler != null)
                 return handler.Dump(t, x);
 
@@ -81,7 +81,7 @@ namespace hw.Debug
             return fieldDump + "\n" + propertyDump;
         }
 
-        static string BaseDump(Type t, object x)
+        string BaseDump(Type t, object x)
         {
             var baseDump = "";
             if(t.BaseType != null && t.BaseType != typeof(object) && t.BaseType != typeof(ValueType))

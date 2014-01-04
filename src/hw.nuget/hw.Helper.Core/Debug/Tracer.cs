@@ -11,6 +11,9 @@ namespace hw.Debug
     /// <summary>     Summary description for Tracer. </summary>
     public static class Tracer
     {
+        static readonly Writer _writer = new Writer();
+        public static readonly Dumper Dumper = new Dumper();
+
         [UsedImplicitly]
         public static bool IsBreakDisabled;
 
@@ -83,6 +86,13 @@ namespace hw.Debug
             return result;
         }
 
+        [Obsolete]
+        public static string MethodHeader(int oldStackFrameDepth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
+        {
+            var sf = new StackTrace(true).GetFrame(oldStackFrameDepth + 1);
+            return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
+        }
+
         /// <summary>
         ///     creates a string to inspect the method call contained in current call stack
         /// </summary>
@@ -90,7 +100,7 @@ namespace hw.Debug
         /// <param name="tag"> </param>
         /// <param name="showParam"> controls if parameter list is appended </param>
         /// <returns> string to inspect the method call </returns>
-        public static string MethodHeader(int stackFrameDepth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
+        public static string MethodHeader(FilePositionTag tag = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
@@ -103,10 +113,7 @@ namespace hw.Debug
         }
 
         [UsedImplicitly]
-        public static string StackTrace(FilePositionTag tag) { return StackTrace(1, tag); }
-
-        [UsedImplicitly]
-        public static string StackTrace(int stackFrameDepth, FilePositionTag tag)
+        public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0) 
         {
             var stackTrace = new StackTrace(true);
             var result = "";
@@ -123,13 +130,13 @@ namespace hw.Debug
         ///     write a line to debug output
         /// </summary>
         /// <param name="s"> the text </param>
-        public static void Line(string s) { TraceWriter.ThreadSafeWrite(s, true); }
+        public static void Line(string s) { _writer.ThreadSafeWrite(s, true); }
 
         /// <summary>
         ///     write a line to debug output
         /// </summary>
         /// <param name="s"> the text </param>
-        public static void LinePart(string s) { TraceWriter.ThreadSafeWrite(s, false); }
+        public static void LinePart(string s) { _writer.ThreadSafeWrite(s, false); }
 
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
@@ -138,14 +145,17 @@ namespace hw.Debug
         /// <param name="flagText"> </param>
         /// <param name="showParam"></param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0) { Line(MethodHeader(stackFrameDepth + 1, flagText, showParam) + " " + s); }
+        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0)
+        {
+            Line(MethodHeader(flagText, stackFrameDepth: stackFrameDepth + 1, showParam:showParam) + " " + s);
+        }
 
         /// <summary>
         ///     generic dump function by use of reflection
         /// </summary>
         /// <param name="x"> the object to dump </param>
         /// <returns> </returns>
-        public static string Dump(object x) { return x.Dump(); }
+        public static string Dump(object x) { return Dumper.Dump(x); }
 
 
         /// <summary>
@@ -157,7 +167,7 @@ namespace hw.Debug
         {
             if(x == null)
                 return "";
-            return x.DumpData();
+            return Dumper.DumpData(x);
         }
 
         /// <summary>
@@ -306,17 +316,6 @@ namespace hw.Debug
         [ContractAnnotation("b: false => halt")]
         public static void Assert(bool b, string s) { Assert(b, () => s, 1); }
 
-        /// <summary>
-        ///     Outputs the specified text.
-        /// </summary>
-        /// <param name="text"> The text. </param>
-        /// Created 09.09.07 12:03 by hh on HAHOYER-DELL
-        public static void ConsoleOutput(string text)
-        {
-            FlaggedLine(text, FilePositionTag.Output);
-            Console.WriteLine(text);
-        }
-
         sealed class AssertionFailedException : Exception
         {
             public AssertionFailedException(string result)
@@ -350,8 +349,8 @@ namespace hw.Debug
         [DebuggerHidden]
         public static void LaunchDebugger() { Debugger.Launch(); }
 
-        public static void IndentStart() { TraceWriter.IndentStart(); }
-        public static void IndentEnd() { TraceWriter.IndentEnd(); }
+        public static void IndentStart() { _writer.IndentStart(); }
+        public static void IndentEnd() { _writer.IndentEnd(); }
     }
 
     public enum FilePositionTag

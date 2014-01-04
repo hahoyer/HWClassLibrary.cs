@@ -10,7 +10,7 @@ namespace hw.Debug
     public sealed class Configuration
     {
         readonly HandlerGroup _handlers;
-        public Configuration()
+        internal Configuration()
         {
             _handlers = new HandlerGroup();
             _handlers.Add(typeof(IList), (type, o) => Dump(((IList) o).Cast<object>()));
@@ -70,8 +70,8 @@ namespace hw.Debug
 
         public sealed class Handler : AbstractHandler
         {
-            public readonly Func<Type, object, string> Dump;
-            public Handler(Func<Type, object, string> dump) { Dump = dump; }
+            internal readonly Func<Type, object, string> Dump;
+            internal Handler(Func<Type, object, string> dump) { Dump = dump; }
             public override Handler this[Type type] { get { return this; } }
         }
 
@@ -79,7 +79,7 @@ namespace hw.Debug
         {
             readonly Type _type;
             readonly AbstractHandler _handler;
-            public TypedHandler(Type type, AbstractHandler handler)
+            internal TypedHandler(Type type, AbstractHandler handler)
             {
                 _type = type;
                 _handler = handler;
@@ -91,7 +91,7 @@ namespace hw.Debug
         {
             readonly Func<Type, bool> _typeMatch;
             readonly AbstractHandler _handler;
-            public MatchedTypeHandler(Func<Type, bool> typeMatch, AbstractHandler handler)
+            internal MatchedTypeHandler(Func<Type, bool> typeMatch, AbstractHandler handler)
             {
                 _typeMatch = typeMatch;
                 _handler = handler;
