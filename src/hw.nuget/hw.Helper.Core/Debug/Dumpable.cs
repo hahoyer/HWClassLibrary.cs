@@ -56,7 +56,7 @@ namespace hw.Debug
             {
                 var os = Tracer.DumpMethodWithData("", this, p, 1);
                 Tracer.Line(os);
-                Tracer.IndentStart();
+                TraceWriter.IndentStart();
             }
         }
 
@@ -87,7 +87,7 @@ namespace hw.Debug
         {
             if(IsMethodDumpTraceActive)
             {
-                Tracer.IndentEnd();
+                TraceWriter.IndentEnd();
                 Tracer.Line(Tracer.MethodHeader(1) + "[returns] " + Tracer.Dump(rv));
                 if(breakExecution)
                     Tracer.TraceBreak();
@@ -103,7 +103,7 @@ namespace hw.Debug
         {
             if(IsMethodDumpTraceActive)
             {
-                Tracer.IndentEnd();
+                TraceWriter.IndentEnd();
                 Tracer.Line(Tracer.MethodHeader(1) + "[returns]");
                 if(breakExecution)
                     Tracer.TraceBreak();

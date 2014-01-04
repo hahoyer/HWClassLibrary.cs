@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using hw.Helper;
 using JetBrains.Annotations;
 
@@ -12,10 +11,6 @@ namespace hw.Debug
     /// <summary>     Summary description for Tracer. </summary>
     public static class Tracer
     {
-        static int _indentCount;
-        static bool _isLineStart = true;
-        static readonly WriteInitiator _writeInitiator = new WriteInitiator();
-
         [UsedImplicitly]
         public static bool IsBreakDisabled;
 
@@ -124,71 +119,17 @@ namespace hw.Debug
             return result;
         }
 
-        sealed class WriteInitiator
-        {
-            string _name = "";
-            string _lastName = "";
-
-            public bool ThreadChanged { get { return _name != _lastName; } }
-
-            public string ThreadFlagString { get { return "[" + _lastName + "->" + _name + "]\n"; } }
-
-            public void NewThread()
-            {
-                _lastName = _name;
-                _name = Thread.CurrentThread.ManagedThreadId.ToString();
-            }
-        }
+        /// <summary>
+        ///     write a line to debug output
+        /// </summary>
+        /// <param name="s"> the text </param>
+        public static void Line(string s) { TraceWriter.ThreadSafeWrite(s, true); }
 
         /// <summary>
         ///     write a line to debug output
         /// </summary>
         /// <param name="s"> the text </param>
-        public static void Line(string s) { ThreadSafeWrite(s, true); }
-
-        /// <summary>
-        ///     write a line to debug output
-        /// </summary>
-        /// <param name="s"> the text </param>
-        public static void LinePart(string s) { ThreadSafeWrite(s, false); }
-
-        static void ThreadSafeWrite(string s, bool isLine)
-        {
-            lock(_writeInitiator)
-            {
-                _writeInitiator.NewThread();
-
-                s = IndentLine(_isLineStart, s, _indentCount);
-
-                if(_writeInitiator.ThreadChanged && Debugger.IsAttached)
-                {
-                    var threadFlagString = _writeInitiator.ThreadFlagString;
-                    if(!_isLineStart)
-                        if(s.Length > 0 && s[0] == '\n')
-                            threadFlagString = "\n" + threadFlagString;
-                        else
-                            throw new NotImplementedException();
-                    System.Diagnostics.Debug.Write(threadFlagString);
-                }
-
-                Write(s, isLine);
-
-                _isLineStart = isLine;
-            }
-        }
-
-        static void Write(string s, bool isLine)
-        {
-            if(Debugger.IsAttached)
-                if(isLine)
-                    System.Diagnostics.Debug.WriteLine(s);
-                else
-                    System.Diagnostics.Debug.Write(s);
-            else if(isLine)
-                Console.WriteLine(s);
-            else
-                Console.Write(s);
-        }
+        public static void LinePart(string s) { TraceWriter.ThreadSafeWrite(s, false); }
 
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
@@ -220,52 +161,6 @@ namespace hw.Debug
         }
 
         /// <summary>
-        ///     Indent
-        /// </summary>
-        public static void IndentStart() { _indentCount++; }
-
-        /// <summary>
-        ///     Unindent
-        /// </summary>
-        public static void IndentEnd() { _indentCount--; }
-
-        static string IndentElem(int count)
-        {
-            var result = "";
-            for(var i = 0; i < count; i++)
-                result += "    ";
-            return result;
-        }
-
-        static string IndentLine(bool isLineStart, string s, int count)
-        {
-            var indentElem = IndentElem(count);
-            return (isLineStart ? indentElem : "") + s.Replace("\n", "\n" + indentElem);
-        }
-
-        /// <summary>
-        ///     Indent paramer by 4 * count spaces
-        /// </summary>
-        /// <param name="s"> </param>
-        /// <param name="count"> </param>
-        /// <returns> </returns>
-        public static string Indent(string s, int count = 1) { return s.Replace("\n", "\n" + IndentElem(count)); }
-
-        /// <summary>
-        ///     Surrounds string by left and right parenthesis. If string contains any carriage return, some indenting is done also
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="data"> </param>
-        /// <param name="right"> </param>
-        /// <returns> </returns>
-        public static string Surround(string left, string data, string right)
-        {
-            if(data.IndexOf("\n", StringComparison.Ordinal) < 0)
-                return left + data + right;
-            return "\n" + left + Indent("\n" + data) + "\n" + right;
-        }
-
-        /// <summary>
         ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
         /// </summary>
         /// <param name="parameter"> parameter objects list for the frame </param>
@@ -278,7 +173,7 @@ namespace hw.Debug
         internal static string DumpMethodWithData(string text, object thisObject, object[] parameter, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-            return FilePosn(sf, FilePositionTag.Debug) + (DumpMethod(sf.GetMethod(), true)) + text + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter));
+            return FilePosn(sf, FilePositionTag.Debug) + (DumpMethod(sf.GetMethod(), true)) + text + DumpMethodWithData(sf.GetMethod(), thisObject, parameter).Indent();
         }
 
         /// <summary>
@@ -291,7 +186,7 @@ namespace hw.Debug
         public static string DumpData(string text, object[] data, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-            return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text + Indent(DumpMethodWithData(null, data));
+            return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text + DumpMethodWithData(null, data).Indent();
         }
 
         static string DumpMethodWithData(MethodBase m, object o, object[] p)
@@ -454,6 +349,9 @@ namespace hw.Debug
 
         [DebuggerHidden]
         public static void LaunchDebugger() { Debugger.Launch(); }
+
+        public static void IndentStart() { TraceWriter.IndentStart(); }
+        public static void IndentEnd() { TraceWriter.IndentEnd(); }
     }
 
     public enum FilePositionTag
@@ -472,4 +370,5 @@ namespace hw.Debug
 
     public abstract class DumpAttributeBase : Attribute
     {}
+
 }

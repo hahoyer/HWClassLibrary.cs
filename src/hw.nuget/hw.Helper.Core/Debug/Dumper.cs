@@ -16,13 +16,13 @@ namespace hw.Debug
 
         internal static string Dump(this object x)
         {
-            if (x == null)
+            if(x == null)
                 return "null";
 
             long key;
-            if (_activeObjects.TryGetValue(x, out key))
+            if(_activeObjects.TryGetValue(x, out key))
             {
-                if (key == -1)
+                if(key == -1)
                     _activeObjects[x] = _nextObjectId++;
                 return "[==>{" + key + "#}";
             }
@@ -32,13 +32,13 @@ namespace hw.Debug
             var result = Dump(x.GetType(), x);
 
             key = _activeObjects[x];
-            if (key != -1)
+            if(key != -1)
                 result += "{" + key + "#}";
             _activeObjects.Remove(x);
 
             return result;
         }
-        
+
         internal static string DumpData(this object x) { return DumpData(x.GetType(), x); }
 
         static string Dump(Type t, object x)
@@ -53,7 +53,7 @@ namespace hw.Debug
 
             var result = BaseDump(t, x) + DumpData(t, x);
             if(result != "")
-                result = Tracer.Surround("(", result, ")");
+                result = result.Surround("(", ")");
 
             if(t == x.GetType() || result != "")
                 result = t + result;
@@ -61,22 +61,6 @@ namespace hw.Debug
             return result;
         }
 
-        static DumpClassAttribute DumpClassAttribute(Type t)
-        {
-            var result = t.GetRecentAttribute<DumpClassAttribute>();
-            if(result != null)
-                return result;
-            return DumpClassAttributeInterfaces(t);
-        }
-
-        static DumpClassAttribute DumpClassAttributeInterfaces(Type t)
-        {
-            return t
-                .SelectHierachical(i => i.GetInterfaces())
-                .SelectMany(i => i.GetAttributes<DumpClassAttribute>(false))
-                .SingleOrDefault();
-        }
-        
         static string DumpData(Type t, object x)
         {
             var dumpData = t.GetAttribute<DumpDataClassAttribute>(false);
@@ -97,6 +81,32 @@ namespace hw.Debug
             return fieldDump + "\n" + propertyDump;
         }
 
+        static string BaseDump(Type t, object x)
+        {
+            var baseDump = "";
+            if(t.BaseType != null && t.BaseType != typeof(object) && t.BaseType != typeof(ValueType))
+                baseDump = Dump(t.BaseType, x);
+            if(baseDump != "")
+                baseDump = "\nBase:" + baseDump;
+            return baseDump;
+        }
+
+        static DumpClassAttribute DumpClassAttribute(Type t)
+        {
+            var result = t.GetRecentAttribute<DumpClassAttribute>();
+            if(result != null)
+                return result;
+            return DumpClassAttributeInterfaces(t);
+        }
+
+        static DumpClassAttribute DumpClassAttributeInterfaces(Type t)
+        {
+            return t
+                .SelectHierachical(i => i.GetInterfaces())
+                .SelectMany(i => i.GetAttributes<DumpClassAttribute>(false))
+                .SingleOrDefault();
+        }
+
         static List<int> CheckMemberAttributes(MemberInfo[] f, object x)
         {
             var l = new List<int>();
@@ -113,7 +123,7 @@ namespace hw.Debug
             }
             return l;
         }
-       
+
         static bool CheckDumpDataAttribute(MemberInfo m)
         {
             var dda = m.GetAttribute<DumpEnabledAttribute>(true);
@@ -122,7 +132,7 @@ namespace hw.Debug
 
             return !IsPrivateOrDump(m);
         }
-       
+
         static bool IsPrivateOrDump(MemberInfo m)
         {
             if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
@@ -136,9 +146,9 @@ namespace hw.Debug
                 return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
             return true;
         }
-       
+
         static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
-       
+
         static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
         {
             var result = "";
@@ -170,17 +180,7 @@ namespace hw.Debug
             }
             return true;
         }
-       
-        static string BaseDump(Type t, object x)
-        {
-            var baseDump = "";
-            if(t.BaseType != null && t.BaseType.ToString() != "System.Object" && t.BaseType.ToString() != "System.ValueType")
-                baseDump = Dump(t.BaseType, x);
-            if(baseDump != "")
-                baseDump = "\nBase:" + baseDump;
-            return baseDump;
-        }
-       
+
         static object Value(MemberInfo info, object x)
         {
             var fi = info as FieldInfo;
