@@ -9,17 +9,17 @@ namespace hw.Debug
 {
     public sealed class Configuration
     {
-        readonly HandlerGroup _handlers;
+        public readonly HandlerGroup Handlers;
         internal Configuration()
         {
-            _handlers = new HandlerGroup();
-            _handlers.Add(typeof(IList), (type, o) => Dump(((IList) o).Cast<object>()));
-            _handlers.Add(typeof(IDictionary), (type, o) => DumpIDictionary(o));
-            _handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection) o).Cast<object>()));
-            _handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject) o));
-            _handlers.Add(typeof(Type), (type, o) => ((Type) o).PrettyName());
-            _handlers.Add(t => t.IsPrimitive || t.ToString().StartsWith("System."), (type, o) => o.ToString());
-            _handlers.Add(IsOutlookClass, (type, o) => o.ToString());
+            Handlers = new HandlerGroup();
+            Handlers.Add(typeof(IList), (type, o) => Dump(((IList) o).Cast<object>()));
+            Handlers.Add(typeof(IDictionary), (type, o) => DumpIDictionary(o));
+            Handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection) o).Cast<object>()));
+            Handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject) o));
+            Handlers.Add(typeof(Type), (type, o) => ((Type) o).PrettyName());
+            Handlers.Add(t => t.IsPrimitive || t.ToString().StartsWith("System."), (type, o) => o.ToString());
+            Handlers.Add(IsOutlookClass, (type, o) => o.ToString());
         }
         static bool IsOutlookClass(Type t)
         {
@@ -63,13 +63,13 @@ namespace hw.Debug
 
         internal Func<Type, object, string> GetDump(Type type)
         {
-            var result = _handlers[type].FirstOrDefault(handler => handler.Dump != null);
+            var result = Handlers[type].FirstOrDefault(handler => handler.Dump != null);
             return result == null ? null : result.Dump;
         }
 
         internal Func<string, object, bool> GetMemberCheck(Type type)
         {
-            var result = _handlers[type].FirstOrDefault(handler => handler.MemberCheck != null);
+            var result = Handlers[type].FirstOrDefault(handler => handler.MemberCheck != null);
             return result == null ? ((s, o) => true) : result.MemberCheck;
         }
 
