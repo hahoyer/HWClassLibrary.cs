@@ -132,6 +132,7 @@ namespace hw.Debug
             public void Add(AbstractHandler handler) { Handlers.Add(handler); }
             public void Add(Type type, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Add(new TypedHandler(type, new Handler(dump, methodCheck))); }
             public void Add(Func<Type, bool> typeMatch, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Add(new MatchedTypeHandler(typeMatch, new Handler(dump, methodCheck))); }
+            public void Force(Func<Type, bool> typeMatch, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Insert(0, new MatchedTypeHandler(typeMatch, new Handler(dump, methodCheck))); }
         }
     }
 }
