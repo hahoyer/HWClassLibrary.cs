@@ -37,19 +37,18 @@ namespace hw.Helper
     public static class StringExtender
     {
         /// <summary>
-        ///     Indent paramer by 4 spaces
-        /// </summary>
-        /// <param name="x"> The x. </param>
-        /// <returns> </returns>
-        public static string Indent(this string x) { return x.Replace("\n", "\n    "); }
-
-        /// <summary>
         ///     Indent paramer by 4 times count spaces
         /// </summary>
         /// <param name="x"> The x. </param>
+        /// <param name="tabString"></param>
         /// <param name="count"> The count. </param>
+        /// <param name="isLineStart"></param>
         /// <returns> </returns>
-        public static string Indent(this string x, int count) { return x.Replace("\n", "\n" + Repeat("    ", count)); }
+        public static string Indent(this string x, int count = 1, string tabString = "    ", bool isLineStart = false)
+        {
+            var effectiveTabString = tabString.Repeat(count);
+            return (isLineStart? effectiveTabString:"") + x.Replace("\n", "\n" + effectiveTabString);
+        }
 
         /// <summary>
         ///     Repeats the specified s.
@@ -69,15 +68,15 @@ namespace hw.Helper
         /// <summary>
         ///     Surrounds string by left and right parenthesis. If string contains any carriage return, some indenting is done also
         /// </summary>
-        /// <param name="Left"> </param>
+        /// <param name="left"> </param>
         /// <param name="data"> </param>
-        /// <param name="Right"> </param>
+        /// <param name="right"> </param>
         /// <returns> </returns>
-        public static string Surround(this string data, string Left, string Right)
+        public static string Surround(this string data, string left, string right)
         {
             if(data.IndexOf("\n", StringComparison.Ordinal) < 0)
-                return Left + data + Right;
-            return "\n" + Left + Indent("\n" + data) + "\n" + Right;
+                return left + data + right;
+            return "\n" + left + Indent("\n" + data) + "\n" + right;
         }
 
         /// <summary>
@@ -152,6 +151,28 @@ namespace hw.Helper
                 start += length;
             }
             yield return target.Substring(start);
+        }
+    
+        public static string Format(this string x, StringAligner aligner) { return aligner.Format(x); }
+
+        internal static int BeginMatch(string a, string b)
+        {
+            for (var i = 0; ; i++)
+                if (i >= a.Length || i >= b.Length || a[i] != b[i])
+                    return i;
+        }
+
+        /// <summary>
+        /// Provide deafault string aligner with columnCount columns
+        /// </summary>
+        /// <param name="columnCount"></param>
+        /// <returns></returns>
+        public static StringAligner StringAligner(this int columnCount)
+        {
+            var stringAligner = new StringAligner();
+            for (var i = 0; i < columnCount; i++)
+                stringAligner.AddFloatingColumn("  ");
+            return stringAligner;
         }
     }
 }

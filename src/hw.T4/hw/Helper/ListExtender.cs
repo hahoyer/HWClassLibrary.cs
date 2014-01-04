@@ -1,25 +1,3 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,11 +84,7 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Dump<T>(this IEnumerable<T> x)
-        {
-            var xArray = x.ToArray();
-            return xArray.Aggregate(xArray.Length.ToString(), (a, xx) => a + " " + xx.ToString());
-        }
+        public static string Dump<T>(this IEnumerable<T> x) { return Tracer.Dump(x); }
 
         public static string DumpLines<T>(this IEnumerable<T> x) where T : Dumpable
         {
@@ -284,6 +258,49 @@ namespace hw.Helper
         {
             foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
                 target.Add(item);
+        }
+
+        [Obsolete("Use IndexWhere")]
+        public static int? IndexOf<T>(this IEnumerable<T> items, Func<T, bool> predicate) { return IndexWhere(items, predicate); }
+
+        /// <summary>Finds the index of the first item matching an expression in an enumerable.</summary>
+        /// <param name="items">The enumerable to search.</param>
+        /// <param name="predicate">The expression to test the items against.</param>
+        /// <returns>The index of the first matching item, or null if no items match.</returns>
+        public static int? IndexWhere<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            if(items == null)
+                throw new ArgumentNullException("items");
+            if(predicate == null)
+                throw new ArgumentNullException("predicate");
+
+            var result = 0;
+            foreach(var item in items)
+            {
+                if(predicate(item))
+                    return result;
+                result++;
+            }
+            return null;
+        }
+
+        public static IEnumerable<T> Chain<T>(this T current, Func<T, T> getNext)
+            where T : class
+        {
+            while(current != null)
+            {
+                yield return current;
+                current = getNext(current);
+            }
+        }
+
+        internal static bool In(this string a, params string[] b) { return b.Contains(a); }
+
+        internal static IEnumerable<T> SelectHierachical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
+        {
+            yield return root;
+            foreach(var item in getChildren(root).SelectMany(i => i.SelectHierachical(getChildren)))
+                yield return item;
         }
     }
 

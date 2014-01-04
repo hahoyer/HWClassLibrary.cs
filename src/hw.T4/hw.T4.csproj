@@ -34,6 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="hw\Debug\Configuration.cs" />
     <Compile Include="hw\Debug\DisableDumpAttribute.cs" />
     <Compile Include="hw\Debug\Dumpable.cs" />
     <Compile Include="hw\Debug\DumpableObject.cs" />
@@ -41,12 +42,14 @@
     <Compile Include="hw\Debug\DumpClassAttribute.cs" />
     <Compile Include="hw\Debug\DumpDataClassAttribute.cs" />
     <Compile Include="hw\Debug\DumpEnabledAttribute.cs" />
+    <Compile Include="hw\Debug\Dumper.cs" />
     <Compile Include="hw\Debug\DumpToStringAttribute.cs" />
     <Compile Include="hw\Debug\EnableDumpAttribute.cs" />
     <Compile Include="hw\Debug\EnableDumpExceptAttribute.cs" />
     <Compile Include="hw\Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
     <Compile Include="hw\Debug\Profiler.cs" />
     <Compile Include="hw\Debug\Tracer.cs" />
+    <Compile Include="hw\Debug\Writer.cs" />
     <Compile Include="hw\Helper\Box.cs" />
     <Compile Include="hw\Helper\DateTimeExtender.cs" />
     <Compile Include="hw\Helper\EnumEx.cs" />

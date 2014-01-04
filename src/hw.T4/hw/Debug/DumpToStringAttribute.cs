@@ -35,10 +35,9 @@ namespace hw.Debug
         /// <summary>
         ///     set "ToString" as dump behaviour of class
         /// </summary>
-        /// <param name="top"> true if Dump has been called with that object, false if it is a recursive call within Dump process </param>
         /// <param name="t"> the type to dump. Is the type of any base class of "x" </param>
         /// <param name="x"> the object to dump </param>
         /// <returns> </returns>
-        public override string Dump(bool top, Type t, object x) { return x.ToString(); }
+        public override string Dump(Type t, object x) { return x.ToString(); }
     }
 }

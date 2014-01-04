@@ -1,33 +1,8 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
-using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using hw.Helper;
 using JetBrains.Annotations;
 
@@ -36,9 +11,8 @@ namespace hw.Debug
     /// <summary>     Summary description for Tracer. </summary>
     public static class Tracer
     {
-        static int _indentCount;
-        static bool _isLineStart = true;
-        static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+        static readonly Writer _writer = new Writer();
+        public static readonly Dumper Dumper = new Dumper();
 
         [UsedImplicitly]
         public static bool IsBreakDisabled;
@@ -112,6 +86,13 @@ namespace hw.Debug
             return result;
         }
 
+        [Obsolete]
+        public static string MethodHeader(int oldStackFrameDepth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
+        {
+            var sf = new StackTrace(true).GetFrame(oldStackFrameDepth + 1);
+            return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
+        }
+
         /// <summary>
         ///     creates a string to inspect the method call contained in current call stack
         /// </summary>
@@ -119,7 +100,7 @@ namespace hw.Debug
         /// <param name="tag"> </param>
         /// <param name="showParam"> controls if parameter list is appended </param>
         /// <returns> string to inspect the method call </returns>
-        public static string MethodHeader(int stackFrameDepth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
+        public static string MethodHeader(FilePositionTag tag = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
@@ -132,10 +113,7 @@ namespace hw.Debug
         }
 
         [UsedImplicitly]
-        public static string StackTrace(FilePositionTag tag) { return StackTrace(1, tag); }
-
-        [UsedImplicitly]
-        public static string StackTrace(int stackFrameDepth, FilePositionTag tag)
+        public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0) 
         {
             var stackTrace = new StackTrace(true);
             var result = "";
@@ -148,73 +126,17 @@ namespace hw.Debug
             return result;
         }
 
-        sealed class WriteInitiator
-        {
-            string _name = "";
-            string _lastName = "";
-
-            public bool ThreadChanged { get { return _name != _lastName; } }
-
-            public string ThreadFlagString { get { return "[" + _lastName + "->" + _name + "]\n"; } }
-
-            public void NewThread()
-            {
-                _lastName = _name;
-                _name = Thread.CurrentThread.ManagedThreadId.ToString();
-            }
-        }
-
-        static readonly WriteInitiator _writeInitiator = new WriteInitiator();
+        /// <summary>
+        ///     write a line to debug output
+        /// </summary>
+        /// <param name="s"> the text </param>
+        public static void Line(string s) { _writer.ThreadSafeWrite(s, true); }
 
         /// <summary>
         ///     write a line to debug output
         /// </summary>
         /// <param name="s"> the text </param>
-        public static void Line(string s) { ThreadSafeWrite(s, true); }
-
-        /// <summary>
-        ///     write a line to debug output
-        /// </summary>
-        /// <param name="s"> the text </param>
-        public static void LinePart(string s) { ThreadSafeWrite(s, false); }
-
-        static void ThreadSafeWrite(string s, bool isLine)
-        {
-            lock(_writeInitiator)
-            {
-                _writeInitiator.NewThread();
-
-                s = IndentLine(_isLineStart, s, _indentCount);
-
-                if(_writeInitiator.ThreadChanged && Debugger.IsAttached)
-                {
-                    var threadFlagString = _writeInitiator.ThreadFlagString;
-                    if(!_isLineStart)
-                        if(s.Length > 0 && s[0] == '\n')
-                            threadFlagString = "\n" + threadFlagString;
-                        else
-                            throw new NotImplementedException();
-                    System.Diagnostics.Debug.Write(threadFlagString);
-                }
-
-                Write(s, isLine);
-
-                _isLineStart = isLine;
-            }
-        }
-
-        static void Write(string s, bool isLine)
-        {
-            if(Debugger.IsAttached)
-                if(isLine)
-                    System.Diagnostics.Debug.WriteLine(s);
-                else
-                    System.Diagnostics.Debug.Write(s);
-            else if(isLine)
-                Console.WriteLine(s);
-            else
-                Console.Write(s);
-        }
+        public static void LinePart(string s) { _writer.ThreadSafeWrite(s, false); }
 
         /// <summary>
         ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
@@ -223,19 +145,18 @@ namespace hw.Debug
         /// <param name="flagText"> </param>
         /// <param name="showParam"></param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0) { Line(MethodHeader(stackFrameDepth + 1, flagText, showParam) + " " + s); }
+        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0)
+        {
+            Line(MethodHeader(flagText, stackFrameDepth: stackFrameDepth + 1, showParam:showParam) + " " + s);
+        }
 
         /// <summary>
         ///     generic dump function by use of reflection
         /// </summary>
         /// <param name="x"> the object to dump </param>
         /// <returns> </returns>
-        public static string Dump(object x)
-        {
-            if(x == null)
-                return "null";
-            return InternalDump(true, x.GetType(), x);
-        }
+        public static string Dump(object x) { return Dumper.Dump(x); }
+
 
         /// <summary>
         ///     generic dump function by use of reflection
@@ -246,269 +167,7 @@ namespace hw.Debug
         {
             if(x == null)
                 return "";
-            return InternalDumpData(x.GetType(), x);
-        }
-
-        static string InternalDump(bool isTop, Type t, object x)
-        {
-            var xl = x as IList;
-            if(xl != null)
-                return InternalDump(xl);
-
-            var xd = x as IDictionary;
-            if(xd != null)
-                return InternalDump(xd);
-
-            var xc = x as ICollection;
-            if(xc != null)
-                return InternalDump(xc);
-
-            var co = x as CodeObject;
-            if(co != null)
-                return InternalDump(co);
-            var xt = x as Type;
-            if(xt != null)
-                return xt.PrettyName();
-
-            if(t.IsPrimitive || t.ToString().StartsWith("System."))
-                return x.ToString();
-
-            if(t.ToString() == "Outlook.ApplicationClass")
-                return x.ToString();
-            if(t.ToString() == "Outlook.NameSpaceClass")
-                return x.ToString();
-            if(t.ToString() == "Outlook.InspectorClass")
-                return x.ToString();
-
-            var dea = DumpClassAttribute(t);
-            if(dea != null)
-                return dea.Dump(isTop, t, x);
-
-            var result = BaseDump(t, x) + InternalDumpData(t, x);
-            if(result != "")
-                result = Surround("(", result, ")");
-
-            if(isTop || result != "")
-                result = t + result;
-
-            return result;
-        }
-
-        static string InternalDump(ICollection xc) { return "Count=" + xc.Count + xc.Cast<object>().Select(Dump).Stringify("\n", true).Surround("{", "}"); }
-
-        static string InternalDump(this CodeObject co)
-        {
-            var cse = co as CodeSnippetExpression;
-            if(cse != null)
-                return cse.Value;
-
-            throw new NotImplementedException();
-        }
-
-        static string InternalDump(this IList xl) { return "Count=" + xl.Count + xl.Cast<object>().Select(Dump).Stringify("\n", true).Surround("{", "}"); }
-
-        static string InternalDump(this IDictionary xd)
-        {
-            var keys = xd.Keys.Cast<object>();
-            var dictionaryEntries = keys.Select(key => new {Key = key, Value = xd[key]}).ToArray();
-            return dictionaryEntries.Select(entry => "[" + Dump(entry.Key) + "] " + Dump(entry.Value)).Stringify("\n").Surround("{", "}");
-        }
-
-        static DumpClassAttribute DumpClassAttribute(this Type t)
-        {
-            var result = DumpClassAttributeClass(t);
-            if(result != null)
-                return result;
-            var results = DumpClassAttributeInterfaces(t);
-            if(results.Length == 0)
-                return null;
-            if(results.Length == 1)
-                return results[0];
-            throw new NotImplementedException();
-        }
-
-        static DumpClassAttribute[] DumpClassAttributeInterfaces(this Type t)
-        {
-            var al = new ArrayList();
-            foreach(var i in t.GetInterfaces())
-                al.AddRange(DumpClassAttributeInterfaces(i));
-            if(al.Count == 0)
-                return new DumpClassAttribute[0];
-
-            return (DumpClassAttribute[]) al.ToArray();
-        }
-
-        static DumpClassAttribute DumpClassAttributeClass(this Type t)
-        {
-            var result = t.GetRecentAttribute<DumpClassAttribute>();
-            if(result != null)
-                return result;
-            if(t.BaseType != null)
-                return DumpClassAttribute(t.BaseType);
-            return null;
-        }
-
-        static string InternalDumpData(this Type t, object x)
-        {
-            var dumpData = t.GetAttribute<DumpDataClassAttribute>(false);
-            if(dumpData != null)
-                return dumpData.Dump(t, x);
-            var f = t.GetFields(AnyBinding);
-            var fieldDump = "";
-            if(f.Length > 0)
-                fieldDump = DumpMembers(f, x);
-            MemberInfo[] p = t.GetProperties(AnyBinding);
-            var propertyDump = "";
-            if(p.Length > 0)
-                propertyDump = DumpMembers(p, x);
-            if(fieldDump == "")
-                return propertyDump;
-            if(propertyDump == "")
-                return fieldDump;
-            return fieldDump + "\n" + propertyDump;
-        }
-
-        static List<int> CheckMemberAttributes(MemberInfo[] f, object x)
-        {
-            var l = new List<int>();
-            for(var i = 0; i < f.Length; i++)
-            {
-                var pi = f[i] as PropertyInfo;
-                if(pi != null && pi.GetIndexParameters().Length > 0)
-                    continue;
-                if(!CheckDumpDataAttribute(f[i]))
-                    continue;
-                if(!CheckDumpExceptAttribute(f[i], x))
-                    continue;
-                l.Add(i);
-            }
-            return l;
-        }
-
-        static bool CheckDumpDataAttribute(this MemberInfo m)
-        {
-            var dda = m.GetAttribute<DumpEnabledAttribute>(true);
-            if(dda != null)
-                return dda.IsEnabled;
-
-            return !IsPrivateOrDump(m);
-        }
-
-        static bool IsPrivateOrDump(this MemberInfo m)
-        {
-            if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
-                return true;
-
-            var fieldInfo = m as FieldInfo;
-            if(fieldInfo != null)
-                return fieldInfo.IsPrivate;
-
-            if(((PropertyInfo) m).CanRead)
-                return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
-            return true;
-        }
-
-        static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
-
-        static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
-        {
-            var result = "";
-            for(var i = 0; i < l.Count; i++)
-            {
-                if(i > 0)
-                    result += "\n";
-                if(l.Count > 10)
-                    result += i + ":";
-                result += f[l[i]].Name;
-                result += "=";
-                try
-                {
-                    result += Dump(Value(f[l[i]], x));
-                }
-                catch(Exception)
-                {
-                    result += "<not implemented>";
-                }
-            }
-            return result;
-        }
-
-        static bool CheckDumpExceptAttribute(this MemberInfo f, object x)
-        {
-            foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))
-            {
-                var v = Value(f, x);
-                return !dea.IsException(v);
-            }
-            return true;
-        }
-
-        static string BaseDump(this Type t, object x)
-        {
-            var baseDump = "";
-            if(t.BaseType != null && t.BaseType.ToString() != "System.Object" && t.BaseType.ToString() != "System.ValueType")
-                baseDump = InternalDump(false, t.BaseType, x);
-            if(baseDump != "")
-                baseDump = "\nBase:" + baseDump;
-            return baseDump;
-        }
-
-        static object Value(this MemberInfo info, object x)
-        {
-            var fi = info as FieldInfo;
-            if(fi != null)
-                return fi.GetValue(x);
-            var pi = info as PropertyInfo;
-            if(pi != null)
-                return pi.GetValue(x, null);
-
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Indent
-        /// </summary>
-        public static void IndentStart() { _indentCount++; }
-
-        /// <summary>
-        ///     Unindent
-        /// </summary>
-        public static void IndentEnd() { _indentCount--; }
-
-        static string IndentElem(int count)
-        {
-            var result = "";
-            for(var i = 0; i < count; i++)
-                result += "    ";
-            return result;
-        }
-
-        static string IndentLine(bool isLineStart, string s, int count)
-        {
-            var indentElem = IndentElem(count);
-            return (isLineStart ? indentElem : "") + s.Replace("\n", "\n" + indentElem);
-        }
-
-        /// <summary>
-        ///     Indent paramer by 4 * count spaces
-        /// </summary>
-        /// <param name="s"> </param>
-        /// <param name="count"> </param>
-        /// <returns> </returns>
-        public static string Indent(string s, int count = 1) { return s.Replace("\n", "\n" + IndentElem(count)); }
-
-        /// <summary>
-        ///     Surrounds string by left and right parenthesis. If string contains any carriage return, some indenting is done also
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="data"> </param>
-        /// <param name="right"> </param>
-        /// <returns> </returns>
-        public static string Surround(string left, string data, string right)
-        {
-            if(data.IndexOf("\n", StringComparison.Ordinal) < 0)
-                return left + data + right;
-            return "\n" + left + Indent("\n" + data) + "\n" + right;
+            return Dumper.DumpData(x);
         }
 
         /// <summary>
@@ -524,7 +183,7 @@ namespace hw.Debug
         internal static string DumpMethodWithData(string text, object thisObject, object[] parameter, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-            return FilePosn(sf, FilePositionTag.Debug) + (DumpMethod(sf.GetMethod(), true)) + text + Indent(DumpMethodWithData(sf.GetMethod(), thisObject, parameter));
+            return FilePosn(sf, FilePositionTag.Debug) + (DumpMethod(sf.GetMethod(), true)) + text + DumpMethodWithData(sf.GetMethod(), thisObject, parameter).Indent();
         }
 
         /// <summary>
@@ -537,7 +196,7 @@ namespace hw.Debug
         public static string DumpData(string text, object[] data, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-            return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text + Indent(DumpMethodWithData(null, data));
+            return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text + DumpMethodWithData(null, data).Indent();
         }
 
         static string DumpMethodWithData(MethodBase m, object o, object[] p)
@@ -657,17 +316,6 @@ namespace hw.Debug
         [ContractAnnotation("b: false => halt")]
         public static void Assert(bool b, string s) { Assert(b, () => s, 1); }
 
-        /// <summary>
-        ///     Outputs the specified text.
-        /// </summary>
-        /// <param name="text"> The text. </param>
-        /// Created 09.09.07 12:03 by hh on HAHOYER-DELL
-        public static void ConsoleOutput(string text)
-        {
-            FlaggedLine(text, FilePositionTag.Output);
-            Console.WriteLine(text);
-        }
-
         sealed class AssertionFailedException : Exception
         {
             public AssertionFailedException(string result)
@@ -700,6 +348,9 @@ namespace hw.Debug
 
         [DebuggerHidden]
         public static void LaunchDebugger() { Debugger.Launch(); }
+
+        public static void IndentStart() { _writer.IndentStart(); }
+        public static void IndentEnd() { _writer.IndentEnd(); }
     }
 
     public enum FilePositionTag
@@ -718,4 +369,5 @@ namespace hw.Debug
 
     public abstract class DumpAttributeBase : Attribute
     {}
+
 }

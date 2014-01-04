@@ -33,7 +33,7 @@ namespace hw.Helper
     {
         static IEnumerable<MemberInfo> AllMemberInfos(Type type)
         {
-            var memberInfos = type.GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            var memberInfos = type.GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
             return memberInfos.Where(memberInfo => IsValue(memberInfo, type));
         }
         static IEnumerable<EnumEx> AllInstances(Type type) { return AllMemberInfos(type).Select(Instance); }

@@ -89,8 +89,7 @@ namespace hw.Helper
 
         public void AssumeDirectoryOfFileExists()
         {
-            var fi = new FileInfo(_name);
-            var dn = fi.DirectoryName;
+            var dn = DirectoryName;
             if(dn == null || dn.FileHandle().Exists)
                 return;
             Directory.CreateDirectory(dn);
@@ -119,7 +118,7 @@ namespace hw.Helper
         {
             get
             {
-                var f = System.IO.File.OpenRead(_name);
+                var f = Reader;
                 var result = new byte[Size];
                 f.Read(result, 0, (int) Size);
                 f.Close();
@@ -133,6 +132,8 @@ namespace hw.Helper
             }
         }
 
+        public FileStream Reader { get { return System.IO.File.OpenRead(_name); } }
+
         /// <summary>
         ///     Size of file in bytes
         /// </summary>
@@ -142,6 +143,8 @@ namespace hw.Helper
         ///     Gets the full path of the directory or file.
         /// </summary>
         public string FullName { get { return FileSystemInfo.FullName; } }
+        public string DirectoryName { get { return Path.GetDirectoryName(FullName); } }
+        public string Extension { get { return Path.GetExtension(FullName); } }
 
         /// <summary>
         ///     Gets the name of the directory or file without path.
@@ -179,7 +182,23 @@ namespace hw.Helper
         /// <summary>
         ///     Delete the file
         /// </summary>
-        public void Delete() { System.IO.File.Delete(_name); }
+        public void Delete(bool recursive = false)
+        {
+            if(IsDirectory)
+                Directory.Delete(_name, recursive);
+            else
+                System.IO.File.Delete(_name);
+        }
+        /// <summary>
+        ///     Move the file
+        /// </summary>
+        public void Move(string newName)
+        {
+            if(IsDirectory)
+                Directory.Move(_name, newName);
+            else
+                System.IO.File.Move(_name, newName);
+        }
 
         /// <summary>
         ///     returns true if it is a directory
@@ -237,5 +256,34 @@ namespace hw.Helper
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return sf.GetFileName();
         }
+        /// <summary>
+        ///     Gets list of files that match given path and pattern
+        /// </summary>
+        /// <param name="filePattern"></param>
+        /// <returns></returns>
+        public static string[] Select(string filePattern)
+        {
+            var namePattern = filePattern.Split('\\').Last();
+            return Directory
+                .GetFiles(filePattern.Substring(0, filePattern.Length - namePattern.Length - 1), namePattern);
+        }
+
+        public bool IsLocked
+        {
+            get
+            {
+                try
+                {
+                    System.IO.File.OpenRead(_name).Close();
+                    return false;
+                }
+                catch(IOException)
+                {
+                    return true;
+                }
+
+                //file is not locked
+            }
+        }
     }
-}
+}                                   

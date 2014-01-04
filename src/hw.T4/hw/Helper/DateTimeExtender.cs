@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 
 namespace hw.Helper
@@ -84,9 +85,14 @@ namespace hw.Helper
 
         public static string Format3Digits(this TimeSpan timeSpan)
         {
-            if(timeSpan.TotalMinutes >= 1)
-                return timeSpan.ToString();
-            var nanoSeconds = ((long) (timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits() + "ns";
+            if (timeSpan.TotalDays >= 1)
+                return timeSpan.TotalDays.ToString("0.00") + "d";
+            if (timeSpan.Hours > 0)
+                return timeSpan.Hours + ":" + timeSpan.Minutes.ToString("00") + "h";
+            if (timeSpan.Minutes > 0)
+                return timeSpan.Minutes + ":" + timeSpan.Seconds.ToString("00") + "m";
+
+            var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits() + "ns";
             return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", "s");
         }
     }
