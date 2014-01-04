@@ -53,7 +53,7 @@ namespace hw.Debug
 
             var result = BaseDump(t, x) + DumpData(t, x);
             if(result != "")
-                result = result.Surround("(", ")");
+                result = result.Surround("{", "}");
 
             if(t == x.GetType() || result != "")
                 result = t + result;
@@ -72,8 +72,8 @@ namespace hw.Debug
                 .GetFields(AnyBinding)
                 .Cast<MemberInfo>()
                 .Concat(type.GetProperties(AnyBinding))
-                .Where(memberInfo => IsRelevant(memberInfo,data))
-                .Where(memberInfo => memberCheck(memberInfo,data))
+                .Where(memberInfo => IsRelevant(memberInfo, type, data))
+                .Where(memberInfo => memberCheck(memberInfo, data))
                 .Select(memberInfo => Format(memberInfo, data))
                 .ToArray();
             return FormatMemberDump(results);
@@ -82,11 +82,11 @@ namespace hw.Debug
         static string FormatMemberDump(string[] results)
         {
             var result = results;
-            if (result.Length > 10)
+            if(result.Length > 10)
                 result = result
                     .Select((s, i) => i + ":" + s)
                     .ToArray();
-            return result.Stringify("\n");
+            return result.Stringify(",\n");
         }
 
         string BaseDump(Type t, object x)
@@ -95,7 +95,7 @@ namespace hw.Debug
             if(t.BaseType != null && t.BaseType != typeof(object) && t.BaseType != typeof(ValueType))
                 baseDump = Dump(t.BaseType, x);
             if(baseDump != "")
-                baseDump = "\nBase:" + baseDump;
+                baseDump = "Base:" + baseDump + "\n";
             return baseDump;
         }
 
@@ -115,8 +115,10 @@ namespace hw.Debug
                 .SingleOrDefault();
         }
 
-        static bool IsRelevant(MemberInfo memberInfo, object x)
+        static bool IsRelevant(MemberInfo memberInfo, Type type, object x)
         {
+            if(memberInfo.DeclaringType != type)
+                return false;
             var propertyInfo = memberInfo as PropertyInfo;
             if(propertyInfo != null && propertyInfo.GetIndexParameters().Length > 0)
                 return false;
