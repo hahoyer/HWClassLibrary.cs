@@ -150,7 +150,7 @@ namespace hw.Debug
         {
             try
             {
-                return memberInfo.Name + "=" + Tracer.Dump(Value(memberInfo, x));
+                return memberInfo.Name + "=" + Tracer.Dump(x.InvokeValue(memberInfo));
             }
             catch(Exception)
             {
@@ -162,22 +162,10 @@ namespace hw.Debug
         {
             foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))
             {
-                var v = Value(f, x);
+                var v = x.InvokeValue(f);
                 return !dea.IsException(v);
             }
             return true;
-        }
-
-        static object Value(MemberInfo info, object x)
-        {
-            var fi = info as FieldInfo;
-            if(fi != null)
-                return fi.GetValue(x);
-            var pi = info as PropertyInfo;
-            if(pi != null)
-                return pi.GetValue(x, null);
-
-            throw new NotImplementedException();
         }
     }
 }
