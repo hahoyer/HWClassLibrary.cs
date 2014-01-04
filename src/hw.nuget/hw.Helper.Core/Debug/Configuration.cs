@@ -19,7 +19,8 @@ namespace hw.Debug
             Handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection) o).Cast<object>()));
             Handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject) o));
             Handlers.Add(typeof(Type), (type, o) => ((Type) o).PrettyName());
-            Handlers.Add(t => t.IsPrimitive || t.ToString().StartsWith("System."), (type, o) => o.ToString());
+            Handlers.Add(typeof(string), (type, o) => ((string)o).Quote());
+            Handlers.Add(t => t.IsPrimitive, (type, o) => o.ToString());
             Handlers.Add(IsOutlookClass, (type, o) => o.ToString());
         }
         static bool IsOutlookClass(Type t)
