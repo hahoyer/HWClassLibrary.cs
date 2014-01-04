@@ -39,7 +39,7 @@ namespace hw.Debug
             return result;
         }
 
-        internal static string DumpData(object x) { return DumpData(x.GetType(), x); }
+        internal string DumpData(object x) { return DumpData(x.GetType(), x); }
 
         string Dump(Type t, object x)
         {
@@ -47,9 +47,9 @@ namespace hw.Debug
             if(dea != null)
                 return dea.Dump(t, x);
 
-            var handler = Configuration.GetHandler(t);
+            var handler = Configuration.GetDump(t);
             if(handler != null)
-                return handler.Dump(t, x);
+                return handler(t, x);
 
             var result = BaseDump(t, x) + DumpData(t, x);
             if(result != "")
@@ -61,24 +61,32 @@ namespace hw.Debug
             return result;
         }
 
-        static string DumpData(Type t, object x)
+        string DumpData(Type type, object data)
         {
-            var dumpData = t.GetAttribute<DumpDataClassAttribute>(false);
+            var dumpData = type.GetAttribute<DumpDataClassAttribute>(false);
             if(dumpData != null)
-                return dumpData.Dump(t, x);
-            var f = t.GetFields(AnyBinding);
-            var fieldDump = "";
-            if(f.Length > 0)
-                fieldDump = DumpMembers(f, x);
-            MemberInfo[] p = t.GetProperties(AnyBinding);
-            var propertyDump = "";
-            if(p.Length > 0)
-                propertyDump = DumpMembers(p, x);
-            if(fieldDump == "")
-                return propertyDump;
-            if(propertyDump == "")
-                return fieldDump;
-            return fieldDump + "\n" + propertyDump;
+                return dumpData.Dump(type, data);
+
+            var memberCheck = Configuration.GetMemberCheck(type);
+            var results = type
+                .GetFields(AnyBinding)
+                .Cast<MemberInfo>()
+                .Concat(type.GetProperties(AnyBinding))
+                .Where(memberInfo => IsRelevant(memberInfo,data))
+                .Where(memberInfo => memberCheck(memberInfo.Name,data))
+                .Select(memberInfo => Format(memberInfo, data))
+                .ToArray();
+            return FormatMemberDump(results);
+        }
+
+        static string FormatMemberDump(string[] results)
+        {
+            var result = results;
+            if (result.Length > 10)
+                result = result
+                    .Select((s, i) => i + ":" + s)
+                    .ToArray();
+            return result.Stringify("\n");
         }
 
         string BaseDump(Type t, object x)
@@ -107,21 +115,12 @@ namespace hw.Debug
                 .SingleOrDefault();
         }
 
-        static List<int> CheckMemberAttributes(MemberInfo[] f, object x)
+        static bool IsRelevant(MemberInfo memberInfo, object x)
         {
-            var l = new List<int>();
-            for(var i = 0; i < f.Length; i++)
-            {
-                var pi = f[i] as PropertyInfo;
-                if(pi != null && pi.GetIndexParameters().Length > 0)
-                    continue;
-                if(!CheckDumpDataAttribute(f[i]))
-                    continue;
-                if(!CheckDumpExceptAttribute(f[i], x))
-                    continue;
-                l.Add(i);
-            }
-            return l;
+            var propertyInfo = memberInfo as PropertyInfo;
+            if(propertyInfo != null && propertyInfo.GetIndexParameters().Length > 0)
+                return false;
+            return CheckDumpDataAttribute(memberInfo) && CheckDumpExceptAttribute(memberInfo, x);
         }
 
         static bool CheckDumpDataAttribute(MemberInfo m)
@@ -147,30 +146,18 @@ namespace hw.Debug
             return true;
         }
 
-        static string DumpMembers(MemberInfo[] f, object x) { return DumpSomeMembers(CheckMemberAttributes(f, x), f, x); }
-
-        static string DumpSomeMembers(IList<int> l, MemberInfo[] f, object x)
+        static string Format(MemberInfo memberInfo, object x)
         {
-            var result = "";
-            for(var i = 0; i < l.Count; i++)
+            try
             {
-                if(i > 0)
-                    result += "\n";
-                if(l.Count > 10)
-                    result += i + ":";
-                result += f[l[i]].Name;
-                result += "=";
-                try
-                {
-                    result += Tracer.Dump(Value(f[l[i]], x));
-                }
-                catch(Exception)
-                {
-                    result += "<not implemented>";
-                }
+                return memberInfo.Name + "=" + Tracer.Dump(Value(memberInfo, x));
             }
-            return result;
+            catch(Exception)
+            {
+                return "<not implemented>";
+            }
         }
+
         static bool CheckDumpExceptAttribute(MemberInfo f, object x)
         {
             foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))

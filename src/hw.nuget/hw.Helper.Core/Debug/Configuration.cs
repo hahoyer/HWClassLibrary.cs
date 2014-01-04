@@ -61,18 +61,33 @@ namespace hw.Debug
                 .Surround("{", "}");
         }
 
-        internal Handler GetHandler(Type type) { return _handlers[type]; }
+        internal Func<Type, object, string> GetDump(Type type)
+        {
+            var result = _handlers[type].FirstOrDefault(handler => handler.Dump != null);
+            return result == null ? null : result.Dump;
+        }
+
+        internal Func<string, object, bool> GetMemberCheck(Type type)
+        {
+            var result = _handlers[type].FirstOrDefault(handler => handler.MemberCheck != null);
+            return result == null ? ((s, o) => true) : result.MemberCheck;
+        }
 
         public abstract class AbstractHandler
         {
-            public abstract Handler this[Type type] { get; }
+            public abstract IEnumerable<Handler> this[Type type] { get; }
         }
 
         public sealed class Handler : AbstractHandler
         {
+            internal readonly Func<string, object, bool> MemberCheck;
             internal readonly Func<Type, object, string> Dump;
-            internal Handler(Func<Type, object, string> dump) { Dump = dump; }
-            public override Handler this[Type type] { get { return this; } }
+            internal Handler(Func<Type, object, string> dump = null, Func<string, object, bool> memberCheck = null)
+            {
+                Dump = dump;
+                MemberCheck = memberCheck;
+            }
+            public override IEnumerable<Handler> this[Type type] { get { yield return this; } }
         }
 
         public sealed class TypedHandler : AbstractHandler
@@ -84,7 +99,7 @@ namespace hw.Debug
                 _type = type;
                 _handler = handler;
             }
-            public override Handler this[Type type] { get { return type.Is(_type) ? _handler[type] : null; } }
+            public override IEnumerable<Handler> this[Type type] { get { return type.Is(_type) ? _handler[type] : new Handler[0]; } }
         }
 
         public sealed class MatchedTypeHandler : AbstractHandler
@@ -96,20 +111,20 @@ namespace hw.Debug
                 _typeMatch = typeMatch;
                 _handler = handler;
             }
-            public override Handler this[Type type] { get { return _typeMatch(type) ? _handler[type] : null; } }
+            public override IEnumerable<Handler> this[Type type] { get { return _typeMatch(type) ? _handler[type] : new Handler[0]; } }
         }
 
         public sealed class HandlerGroup : AbstractHandler
         {
             readonly List<AbstractHandler> _handlers = new List<AbstractHandler>();
 
-            public override Handler this[Type type]
+            public override IEnumerable<Handler> this[Type type]
             {
                 get
                 {
                     return _handlers
-                        .Select(handler => handler[type])
-                        .FirstOrDefault(result => result != null);
+                        .SelectMany(handler => handler[type])
+                        .Where(result => result != null);
                 }
             }
             public void Add(AbstractHandler handler) { _handlers.Add(handler); }
