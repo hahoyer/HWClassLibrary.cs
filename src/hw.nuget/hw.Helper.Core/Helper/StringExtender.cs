@@ -79,6 +79,8 @@ namespace hw.Helper
             return "\n" + left + Indent("\n" + data) + "\n" + right;
         }
 
+        public static string SaveConcat(this string delim, params string[] data) { return data.Stringify(delim); }
+
         /// <summary>
         ///     Converts string to a string literal.
         /// </summary>

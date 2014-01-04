@@ -51,7 +51,7 @@ namespace hw.Debug
             if(handler != null)
                 return handler(t, x);
 
-            var result = BaseDump(t, x) + DumpData(t, x);
+            string result = "\n".SaveConcat(BaseDump(t, x),DumpData(t, x));
             if(result != "")
                 result = result.Surround("{", "}");
 
