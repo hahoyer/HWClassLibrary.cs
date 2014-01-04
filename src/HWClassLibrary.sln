@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{74DE59EF-1FD7-49C7-AA7D-072C03150508}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -35,6 +37,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "this", "this", "{E931DD26-B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.T4", "hw.T4\hw.T4.csproj", "{82BE46EE-086C-468D-8D01-B8955A5FE533}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2} = {0402FAE1-D5D6-490F-BC68-C26C8873C0B2}
+		{82BE46EE-086C-468D-8D01-B8955A5FE533} = {82BE46EE-086C-468D-8D01-B8955A5FE533}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +57,10 @@ Global
 		{82BE46EE-086C-468D-8D01-B8955A5FE533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82BE46EE-086C-468D-8D01-B8955A5FE533}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82BE46EE-086C-468D-8D01-B8955A5FE533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
