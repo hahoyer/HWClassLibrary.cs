@@ -80,9 +80,9 @@ namespace hw.Debug
 
         public sealed class Handler : AbstractHandler
         {
-            internal readonly Func<string, object, bool> MemberCheck;
-            internal readonly Func<Type, object, string> Dump;
-            internal Handler(Func<Type, object, string> dump = null, Func<string, object, bool> memberCheck = null)
+            public readonly Func<string, object, bool> MemberCheck;
+            public readonly Func<Type, object, string> Dump;
+            public Handler(Func<Type, object, string> dump = null, Func<string, object, bool> memberCheck = null)
             {
                 Dump = dump;
                 MemberCheck = memberCheck;
@@ -92,44 +92,45 @@ namespace hw.Debug
 
         public sealed class TypedHandler : AbstractHandler
         {
-            readonly Type _type;
-            readonly AbstractHandler _handler;
-            internal TypedHandler(Type type, AbstractHandler handler)
+            public readonly Type Type;
+            public readonly AbstractHandler Handler;
+            public TypedHandler(Type type, AbstractHandler handler)
             {
-                _type = type;
-                _handler = handler;
+                Type = type;
+                Handler = handler;
             }
-            public override IEnumerable<Handler> this[Type type] { get { return type.Is(_type) ? _handler[type] : new Handler[0]; } }
+            public override IEnumerable<Handler> this[Type type] { get { return type.Is(Type) ? Handler[type] : new Handler[0]; } }
         }
 
         public sealed class MatchedTypeHandler : AbstractHandler
         {
-            readonly Func<Type, bool> _typeMatch;
-            readonly AbstractHandler _handler;
-            internal MatchedTypeHandler(Func<Type, bool> typeMatch, AbstractHandler handler)
+            public readonly Func<Type, bool> TypeMatch;
+            public readonly AbstractHandler Handler;
+            public MatchedTypeHandler(Func<Type, bool> typeMatch, AbstractHandler handler)
             {
-                _typeMatch = typeMatch;
-                _handler = handler;
+                TypeMatch = typeMatch;
+                Handler = handler;
             }
-            public override IEnumerable<Handler> this[Type type] { get { return _typeMatch(type) ? _handler[type] : new Handler[0]; } }
+            public override IEnumerable<Handler> this[Type type] { get { return TypeMatch(type) ? Handler[type] : new Handler[0]; } }
         }
 
         public sealed class HandlerGroup : AbstractHandler
         {
-            readonly List<AbstractHandler> _handlers = new List<AbstractHandler>();
+            public readonly List<AbstractHandler> Handlers = new List<AbstractHandler>();
 
             public override IEnumerable<Handler> this[Type type]
             {
                 get
                 {
-                    return _handlers
+                    return Handlers
                         .SelectMany(handler => handler[type])
                         .Where(result => result != null);
                 }
             }
-            public void Add(AbstractHandler handler) { _handlers.Add(handler); }
-            public void Add(Type type, Func<Type, object, string> dump) { _handlers.Add(new TypedHandler(type, new Handler(dump))); }
-            public void Add(Func<Type, bool> typeMatch, Func<Type, object, string> dump) { _handlers.Add(new MatchedTypeHandler(typeMatch, new Handler(dump))); }
+
+            public void Add(AbstractHandler handler) { Handlers.Add(handler); }
+            public void Add(Type type, Func<Type, object, string> dump = null, Func<string, object, bool> methodCheck = null) { Handlers.Add(new TypedHandler(type, new Handler(dump, methodCheck))); }
+            public void Add(Func<Type, bool> typeMatch, Func<Type, object, string> dump = null, Func<string, object, bool> methodCheck = null) { Handlers.Add(new MatchedTypeHandler(typeMatch, new Handler(dump, methodCheck))); }
         }
     }
 }
