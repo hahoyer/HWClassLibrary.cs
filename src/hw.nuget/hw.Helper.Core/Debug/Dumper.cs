@@ -11,8 +11,34 @@ namespace hw.Debug
         static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
 
         static readonly Configuration _configuration = new Configuration();
+        static readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
+        static long _nextObjectId = 0;
 
-        internal static string Dump(this object x) { return Dump(x.GetType(), x); }
+        internal static string Dump(this object x)
+        {
+            if (x == null)
+                return "null";
+
+            long key;
+            if (_activeObjects.TryGetValue(x, out key))
+            {
+                if (key == -1)
+                    _activeObjects[x] = _nextObjectId++;
+                return "[==>{" + key + "#}";
+            }
+
+            _activeObjects.Add(x, -1);
+
+            var result = Dump(x.GetType(), x);
+
+            key = _activeObjects[x];
+            if (key != -1)
+                result += "{" + key + "#}";
+            _activeObjects.Remove(x);
+
+            return result;
+        }
+        
         internal static string DumpData(this object x) { return DumpData(x.GetType(), x); }
 
         static string Dump(Type t, object x)

@@ -15,8 +15,6 @@ namespace hw.Debug
         static int _indentCount;
         static bool _isLineStart = true;
         static readonly WriteInitiator _writeInitiator = new WriteInitiator();
-        static readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
-        static long _nextObjectId = 0;
 
         [UsedImplicitly]
         public static bool IsBreakDisabled;
@@ -206,30 +204,7 @@ namespace hw.Debug
         /// </summary>
         /// <param name="x"> the object to dump </param>
         /// <returns> </returns>
-        public static string Dump(object x)
-        {
-            if(x == null)
-                return "null";
-
-            long key;
-            if(_activeObjects.TryGetValue(x, out key))
-            {
-                if(key == -1)
-                    _activeObjects[x] = _nextObjectId++;
-                return "[==>{" + key + "#}";
-            }
-
-            _activeObjects.Add(x, -1);
-
-            var result = Dumper.Dump(x);
-
-            key = _activeObjects[x];
-            if(key != -1)
-                result += "{" + key + "#}";
-            _activeObjects.Remove(x);
-
-            return result;
-        }
+        public static string Dump(object x) { return x.Dump(); }
 
 
         /// <summary>
