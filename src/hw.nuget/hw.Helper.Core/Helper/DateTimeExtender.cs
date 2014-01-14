@@ -60,17 +60,17 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = false)
+        public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = false, bool useSymbols = false)
         {
             if(timeSpan.TotalDays >= 1)
                 return timeSpan.TotalDays.ToString("0.00") + "d";
             if(timeSpan.Hours > 0)
                 return timeSpan.Hours + OmitCheck(":", timeSpan.Minutes, omitZeros) + "h";
             if(timeSpan.Minutes > 0)
-                return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + "m";
+                return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols?"'":"m");
 
             var nanoSeconds = ((long) (timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits() + "ns";
-            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", "s");
+            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", (useSymbols?"\"":"s"));
         }
 
         static string OmitCheck(string delimiter, int value, bool omitZeros)
