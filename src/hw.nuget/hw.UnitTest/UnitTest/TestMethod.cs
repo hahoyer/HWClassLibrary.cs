@@ -35,7 +35,7 @@ namespace hw.UnitTest
             {
                 if(!IsSuspended)
                 {
-                    var test = Activator.CreateInstance(_methodInfo.ReflectedType);
+                    var test = _methodInfo.IsStatic ? null : Activator.CreateInstance(_methodInfo.ReflectedType);
                     var isBreakDisabled = Tracer.IsBreakDisabled;
                     Tracer.IsBreakDisabled = !TestRunner.IsModeErrorFocus;
                     try
