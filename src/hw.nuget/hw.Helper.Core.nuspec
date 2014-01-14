@@ -16,9 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.2.0.0</version>
+        <version>14.3.0.0</version>
         <releaseNotes>
-            New: TypeNameExtender functions
+            New: parameter "omitZeros" for "DateTimeExtender.Format3Digits"
         </releaseNotes>
     </metadata>
     <files>

@@ -146,6 +146,7 @@
     <Compile Include="hw.CompilerTools\PrioParser\Item.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\IType.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\OpenItem.cs" />
+    <Compile Include="Tests\Helper\Core\HelperCore.cs" />
     <None Include="hw.CompilerTools.nuspec" />
     <None Include="hw.Helper.Core.nuspec">
       <SubType>Designer</SubType>
