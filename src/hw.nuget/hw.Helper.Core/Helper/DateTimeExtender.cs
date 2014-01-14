@@ -60,7 +60,7 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = false, bool useSymbols = false)
+        public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = true, bool useSymbols = true)
         {
             if(timeSpan.TotalDays >= 1)
                 return timeSpan.TotalDays.ToString("0.00") + "d";
@@ -69,7 +69,7 @@ namespace hw.Helper
             if(timeSpan.Minutes > 0)
                 return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols?"'":"m");
 
-            var nanoSeconds = ((long) (timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits() + "ns";
+            var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
             return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", (useSymbols?"\"":"s"));
         }
 

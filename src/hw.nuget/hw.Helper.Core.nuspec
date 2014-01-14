@@ -16,12 +16,15 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.3.0.0</version>
+        <version>14.4.0.0</version>
         <releaseNotes>
-            New: parameter "omitZeros" for "DateTimeExtender.Format3Digits"
+            New: parameter "omitZeros" for "LongExtender.Format3Digits"
+            New: parameter "useSymbols" for "DateTimeExtender.Format3Digits"
+            Change: Default for "omitZeros" and "useSymbols" is true
+            Refactor: Test moved to correct place
         </releaseNotes>
     </metadata>
     <files>
         <file src="hw.Helper.Core\" target="content\hw" />
     </files>
-</package>
+</package>                                                          
