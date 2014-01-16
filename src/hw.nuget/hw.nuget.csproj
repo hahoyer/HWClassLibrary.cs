@@ -69,6 +69,7 @@
     <Compile Include="hw.Helper.Core\Debug\Configuration.cs" />
     <Compile Include="hw.Helper.Core\Debug\DumpableObject.cs" />
     <Compile Include="hw.Helper.Core\Debug\Dumper.cs" />
+    <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="TestDump.cs" />
     <Compile Include="hw.Helper.Core\Debug\Writer.cs" />

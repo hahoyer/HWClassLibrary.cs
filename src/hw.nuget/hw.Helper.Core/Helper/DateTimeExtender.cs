@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace hw.Helper
@@ -67,10 +68,10 @@ namespace hw.Helper
             if(timeSpan.Hours > 0)
                 return timeSpan.Hours + OmitCheck(":", timeSpan.Minutes, omitZeros) + "h";
             if(timeSpan.Minutes > 0)
-                return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols?"'":"m");
+                return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols ? "'" : "m");
 
-            var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
-            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", (useSymbols?"\"":"s"));
+            var nanoSeconds = ((long) (timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
+            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", (useSymbols ? "\"" : "s"));
         }
 
         static string OmitCheck(string delimiter, int value, bool omitZeros)
@@ -78,6 +79,16 @@ namespace hw.Helper
             if(omitZeros && value == 0)
                 return "";
             return delimiter + value.ToString("00");
+        }
+
+        public static int WeekNumber(this DateTime dateTime, CultureInfo culture)
+        {
+            if(culture == null)
+                culture = CultureInfo.CurrentCulture;
+            var dateTimeFormatInfo = culture.DateTimeFormat;
+            return dateTimeFormatInfo
+                .Calendar
+                .GetWeekOfYear(dateTime, dateTimeFormatInfo.CalendarWeekRule, dateTimeFormatInfo.FirstDayOfWeek);
         }
     }
 }
