@@ -16,12 +16,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.4.0.0</version>
+        <version>14.5.0.0</version>
         <releaseNotes>
-            New: parameter "omitZeros" for "LongExtender.Format3Digits"
-            New: parameter "useSymbols" for "DateTimeExtender.Format3Digits"
-            Change: Default for "omitZeros" and "useSymbols" is true
-            Refactor: Test moved to correct place
+            Bug: function LongExtender.Format3Digits cutted characters at the beginning
+            New: class DateRange
+            New: function DateTimeExtender.WeekNumber
         </releaseNotes>
     </metadata>
     <files>
