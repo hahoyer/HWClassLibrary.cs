@@ -3,23 +3,25 @@ using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using hw.Helper;
 
 namespace hw.Debug
 {
     public sealed class Configuration
     {
-        readonly HandlerGroup _handlers;
+        public readonly HandlerGroup Handlers;
         internal Configuration()
         {
-            _handlers = new HandlerGroup();
-            _handlers.Add(typeof(IList), (type, o) => Dump(((IList) o).Cast<object>()));
-            _handlers.Add(typeof(IDictionary), (type, o) => DumpIDictionary(o));
-            _handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection) o).Cast<object>()));
-            _handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject) o));
-            _handlers.Add(typeof(Type), (type, o) => ((Type) o).PrettyName());
-            _handlers.Add(t => t.IsPrimitive || t.ToString().StartsWith("System."), (type, o) => o.ToString());
-            _handlers.Add(IsOutlookClass, (type, o) => o.ToString());
+            Handlers = new HandlerGroup();
+            Handlers.Add(typeof(IList), (type, o) => Dump(((IList) o).Cast<object>()));
+            Handlers.Add(typeof(IDictionary), (type, o) => DumpIDictionary(o));
+            Handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection) o).Cast<object>()));
+            Handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject) o));
+            Handlers.Add(typeof(Type), (type, o) => ((Type) o).PrettyName());
+            Handlers.Add(typeof(string), (type, o) => ((string)o).Quote());
+            Handlers.Add(t => t.IsPrimitive, (type, o) => o.ToString());
+            Handlers.Add(IsOutlookClass, (type, o) => o.ToString());
         }
         static bool IsOutlookClass(Type t)
         {
@@ -63,13 +65,13 @@ namespace hw.Debug
 
         internal Func<Type, object, string> GetDump(Type type)
         {
-            var result = _handlers[type].FirstOrDefault(handler => handler.Dump != null);
+            var result = Handlers[type].FirstOrDefault(handler => handler.Dump != null);
             return result == null ? null : result.Dump;
         }
 
-        internal Func<string, object, bool> GetMemberCheck(Type type)
+        internal Func<MemberInfo, object, bool> GetMemberCheck(Type type)
         {
-            var result = _handlers[type].FirstOrDefault(handler => handler.MemberCheck != null);
+            var result = Handlers[type].FirstOrDefault(handler => handler.MemberCheck != null);
             return result == null ? ((s, o) => true) : result.MemberCheck;
         }
 
@@ -80,9 +82,9 @@ namespace hw.Debug
 
         public sealed class Handler : AbstractHandler
         {
-            internal readonly Func<string, object, bool> MemberCheck;
-            internal readonly Func<Type, object, string> Dump;
-            internal Handler(Func<Type, object, string> dump = null, Func<string, object, bool> memberCheck = null)
+            public readonly Func<MemberInfo, object, bool> MemberCheck;
+            public readonly Func<Type, object, string> Dump;
+            public Handler(Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> memberCheck = null)
             {
                 Dump = dump;
                 MemberCheck = memberCheck;
@@ -92,44 +94,47 @@ namespace hw.Debug
 
         public sealed class TypedHandler : AbstractHandler
         {
-            readonly Type _type;
-            readonly AbstractHandler _handler;
-            internal TypedHandler(Type type, AbstractHandler handler)
+            public readonly Type Type;
+            public readonly AbstractHandler Handler;
+            public TypedHandler(Type type, AbstractHandler handler)
             {
-                _type = type;
-                _handler = handler;
+                Type = type;
+                Handler = handler;
             }
-            public override IEnumerable<Handler> this[Type type] { get { return type.Is(_type) ? _handler[type] : new Handler[0]; } }
+            public override IEnumerable<Handler> this[Type type] { get { return type.Is(Type) ? Handler[type] : new Handler[0]; } }
         }
 
         public sealed class MatchedTypeHandler : AbstractHandler
         {
-            readonly Func<Type, bool> _typeMatch;
-            readonly AbstractHandler _handler;
-            internal MatchedTypeHandler(Func<Type, bool> typeMatch, AbstractHandler handler)
+            public readonly Func<Type, bool> TypeMatch;
+            public readonly AbstractHandler Handler;
+            public MatchedTypeHandler(Func<Type, bool> typeMatch, AbstractHandler handler)
             {
-                _typeMatch = typeMatch;
-                _handler = handler;
+                TypeMatch = typeMatch;
+                Handler = handler;
             }
-            public override IEnumerable<Handler> this[Type type] { get { return _typeMatch(type) ? _handler[type] : new Handler[0]; } }
+            public override IEnumerable<Handler> this[Type type] { get { return TypeMatch(type) ? Handler[type] : new Handler[0]; } }
         }
 
         public sealed class HandlerGroup : AbstractHandler
         {
-            readonly List<AbstractHandler> _handlers = new List<AbstractHandler>();
+            public readonly List<AbstractHandler> Handlers = new List<AbstractHandler>();
 
             public override IEnumerable<Handler> this[Type type]
             {
                 get
                 {
-                    return _handlers
+                    return Handlers
                         .SelectMany(handler => handler[type])
                         .Where(result => result != null);
                 }
             }
-            public void Add(AbstractHandler handler) { _handlers.Add(handler); }
-            public void Add(Type type, Func<Type, object, string> dump) { _handlers.Add(new TypedHandler(type, new Handler(dump))); }
-            public void Add(Func<Type, bool> typeMatch, Func<Type, object, string> dump) { _handlers.Add(new MatchedTypeHandler(typeMatch, new Handler(dump))); }
+
+            public void Add(AbstractHandler handler) { Handlers.Add(handler); }
+            public void Add(Type type, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Add(new TypedHandler(type, new Handler(dump, methodCheck))); }
+            public void Add(Func<Type, bool> typeMatch, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Add(new MatchedTypeHandler(typeMatch, new Handler(dump, methodCheck))); }
+            public void Force(Type type, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Insert(0, new TypedHandler(type, new Handler(dump, methodCheck))); }
+            public void Force(Func<Type, bool> typeMatch, Func<Type, object, string> dump = null, Func<MemberInfo, object, bool> methodCheck = null) { Handlers.Insert(0, new MatchedTypeHandler(typeMatch, new Handler(dump, methodCheck))); }
         }
     }
 }

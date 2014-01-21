@@ -1,28 +1,6 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
+using System.Globalization;
 using System.Linq;
 
 namespace hw.Helper
@@ -83,17 +61,34 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Format3Digits(this TimeSpan timeSpan)
+        public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = true, bool useSymbols = true)
         {
-            if (timeSpan.TotalDays >= 1)
+            if(timeSpan.TotalDays >= 1)
                 return timeSpan.TotalDays.ToString("0.00") + "d";
-            if (timeSpan.Hours > 0)
-                return timeSpan.Hours + ":" + timeSpan.Minutes.ToString("00") + "h";
-            if (timeSpan.Minutes > 0)
-                return timeSpan.Minutes + ":" + timeSpan.Seconds.ToString("00") + "m";
+            if(timeSpan.Hours > 0)
+                return timeSpan.Hours + OmitCheck(":", timeSpan.Minutes, omitZeros) + "h";
+            if(timeSpan.Minutes > 0)
+                return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols ? "'" : "m");
 
-            var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits() + "ns";
-            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", "s");
+            var nanoSeconds = ((long) (timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
+            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", (useSymbols ? "\"" : "s"));
+        }
+
+        static string OmitCheck(string delimiter, int value, bool omitZeros)
+        {
+            if(omitZeros && value == 0)
+                return "";
+            return delimiter + value.ToString("00");
+        }
+
+        public static int WeekNumber(this DateTime dateTime, CultureInfo culture)
+        {
+            if(culture == null)
+                culture = CultureInfo.CurrentCulture;
+            var dateTimeFormatInfo = culture.DateTimeFormat;
+            return dateTimeFormatInfo
+                .Calendar
+                .GetWeekOfYear(dateTime, dateTimeFormatInfo.CalendarWeekRule, dateTimeFormatInfo.FirstDayOfWeek);
         }
     }
 }

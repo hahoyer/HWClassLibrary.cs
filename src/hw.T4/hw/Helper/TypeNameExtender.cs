@@ -1,25 +1,3 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,55 +11,10 @@ namespace hw.Helper
 
         public static void OnModuleLoaded() { _referencedTypesCache.IsValid = false; }
 
-        public static string PrettyName(this Type type)
-        {
-            return ObtainName(type, true);
-        }
-        public static string ObtainName(this Type type, bool shortenNamespace)
-        {
-            if (type == typeof(int))
-                return "int";
-            if (type == typeof(string))
-                return "string";
-
-            var result = ObtainTypeName(type,shortenNamespace);
-            if (type.IsGenericType)
-                result = result + ObtainNameForGeneric(type.GetGenericArguments(),shortenNamespace);
-            return result;
-        }
-
-        public static string CompleteName(this Type type)
-        {
-            return ObtainName(type, false);
-        }
-
-        static string ObtainTypeName(Type type, bool shortenNamespace)
-        {
-            var result = type.Name;
-            if(result.Contains("`"))
-                result = result.Remove(result.IndexOf('`'));
-
-            if(type.IsNested && !type.IsGenericParameter)
-                return type.DeclaringType.ObtainName(shortenNamespace) + "." + result;
-
-            if(type.Namespace == null)
-                return result;
-
-            if(!shortenNamespace)
-                return type.Namespace + "." + result;
-
-            var conflictingTypes = ReferencedTypes.ConflictingTypes(type);
-
-            var namespaceParts = type.Namespace.Split('.').Reverse().ToArray();
-            var namespacePart = "";
-            for(var i = 0; i < namespaceParts.Length && conflictingTypes.Length > 0; i++)
-            {
-                namespacePart = namespaceParts[i] + "." + namespacePart;
-                conflictingTypes = conflictingTypes.Where(conflictingType => ("." + conflictingType.Namespace + ".").EndsWith("." + namespacePart)).ToArray();
-            }
-
-            return namespacePart + result;
-        }
+        public static Type[] ResolveType(this string typeName) { return ReferencedTypes.ByNamePartMulti[typeName]; }
+        public static Type ResolveUniqueType(this string typeName) { return ReferencedTypes.ByNamePart[typeName]; }
+        public static string PrettyName(this Type type) { return ReferencedTypes.PrettyName[type]; }
+        public static string CompleteName(this Type type) { return ReferencedTypes.CompleteName[type]; }
 
         static TypeLibrary ObtainReferencedTypes()
         {
@@ -91,39 +24,11 @@ namespace hw.Helper
 
         static TypeLibrary ReferencedTypes { get { return _referencedTypesCache.Value; } }
 
-        static string ObtainNameForGeneric(Type[] types, bool shortenNamespace)
-        {
-            var result = "";
-            var delim = "<";
-            foreach(var t in types)
-            {
-                result += delim;
-                delim = ",";
-                result += t.ObtainName(shortenNamespace);
-            }
-            return result + ">";
-        }
-
         public static string NullableName(this Type type)
         {
-            if (type.IsClass)
+            if(type.IsClass)
                 return type.PrettyName();
             return type.PrettyName() + "?";
-        }
-    }
-
-    sealed class TypeLibrary
-    {
-        readonly Dictionary<string, IGrouping<string, Type>> _data;
-
-        public TypeLibrary(IEnumerable<Type> types) { _data = types.GroupBy(t => t.Name, t => t).ToDictionary(t => t.Key, t => t); }
-
-        internal Type[] ConflictingTypes(Type type)
-        {
-            IGrouping<string, Type> result;
-            if(!_data.TryGetValue(type.Name, out result))
-                return new Type[0];
-            return result.Where(definedType => definedType.Namespace != type.Namespace).ToArray();
         }
     }
 }
