@@ -11,7 +11,7 @@ namespace hw.Helper
         public DateTime End;
         public TimeSpan Length { get { return End - Start; } set { End = Start + value; } }
 
-        internal IEnumerable<DateRange> SelectContainingWeeks
+        public IEnumerable<DateRange> SelectContainingWeeks
         {
             get
             {
