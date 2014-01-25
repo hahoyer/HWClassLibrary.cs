@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace hw.Helper
 {
-    public static class ListExtender
+    static class LinqExtension
     {
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual) { return InternalAddDistinct(a, b, isEqual); }
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class { return InternalAddDistinct(a, b, combine); }
@@ -302,6 +302,31 @@ namespace hw.Helper
             foreach(var item in getChildren(root).SelectMany(i => i.SelectHierachical(getChildren)))
                 yield return item;
         }
+
+        public static IEnumerable<TType> Sort<TType>(this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+        {
+            var xx = x.ToArray();
+            Tracer.Assert(xx.IsCircuidFree(immediateParents));
+            return null;
+        }
+
+        public static IEnumerable<TType> Closure<TType>(this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+        {
+            var types = x.ToArray();
+            var targets = types;
+            while(true)
+            {
+                targets = targets.SelectMany(immediateParents).Except(types).ToArray();
+                if(!targets.Any())
+                    return types;
+                types = types.Union(targets).ToArray();
+            }
+        }
+
+        public static bool IsCircuidFree<TType>(this TType x, Func<TType, IEnumerable<TType>> immediateParents) { return immediateParents(x).Closure(immediateParents).All(xx => !xx.Equals(x)); }
+        public static bool IsCircuidFree<TType>(this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents) { return x.All(xx => xx.IsCircuidFree(immediateParents)); }
+
+        public static IEnumerable<TType> Circuids<TType>(this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents) { return x.Where(xx => !xx.IsCircuidFree<TType>(immediateParents)); }
     }
 
     public interface IAggregateable<T>

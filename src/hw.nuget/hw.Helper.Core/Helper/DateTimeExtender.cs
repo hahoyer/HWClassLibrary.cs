@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace hw.Helper
 {
-    public static class DateTimeExtender
+    static class DateTimeExtender
     {
         public static string Format(this DateTime dateTime)
         {

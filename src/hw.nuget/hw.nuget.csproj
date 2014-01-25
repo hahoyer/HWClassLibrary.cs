@@ -129,7 +129,7 @@
     <Compile Include="hw.Helper.Core\Helper\DateTimeExtender.cs" />
     <Compile Include="hw.Helper.Core\Helper\FunctionCache.cs" />
     <Compile Include="hw.Helper.Core\Helper\EnumEx.cs" />
-    <Compile Include="hw.Helper.Core\Helper\ListExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\LinqExtension.cs" />
     <Compile Include="hw.Helper.Core\Helper\LongExtender.cs" />
     <Compile Include="hw.Helper.Core\Helper\ReflectionExtender.cs" />
     <Compile Include="hw.Helper.Core\Helper\StringExtender.cs" />
@@ -148,7 +148,7 @@
     <Compile Include="hw.CompilerTools\PrioParser\IType.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\OpenItem.cs" />
     <Compile Include="Tests\Helper\Core\HelperCore.cs" />
-    <Compile Include="Tests\Helper\Core\TestLongExtender.cs" />
+    <Compile Include="Tests\Helper\Core\LongExtender.cs" />
     <None Include="hw.CompilerTools.nuspec" />
     <None Include="hw.Helper.Core.nuspec">
       <SubType>Designer</SubType>
@@ -174,7 +174,6 @@
     <Compile Include="hw.Forms\Forms\IAdditionalNodeInfoProvider.cs">
     </Compile>
     <Compile Include="hw.Helper.Core\UnitTest\CategoryAttribute.cs" />
-    <Compile Include="hw.Helper.Core\Helper\RelationExtender.cs" />
     <Compile Include="hw.UnitTest\UnitTest\DependantAttribute.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestExtender.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />

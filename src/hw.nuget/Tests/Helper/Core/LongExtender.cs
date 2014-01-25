@@ -8,7 +8,7 @@ using hw.UnitTest;
 namespace hw.Tests.Helper.Core
 {
     [TestFixture]
-    public static class TestLongExtender
+    public static class LongExtender
     {
         [Test]
         public static void TestMethod()
@@ -46,6 +46,12 @@ namespace hw.Tests.Helper.Core
             InternalTest(120000, "120k");
             InternalTest(123000, "123k");
             InternalTest(123400, "123k");
+
+            InternalTest(0, "0");
+            InternalTest(-123, "-123");
+            InternalTest(-1234, "-1.23k");
+
+
         }
 
         static void InternalTest(long x, string y) { Tracer.Assert(x.Format3Digits() == y, () => x + " != " + y, stackFrameDepth: 1); }

@@ -11,7 +11,7 @@ namespace hw.Helper
         public readonly FunctionCache<string, Type> ByNamePart;
         public readonly FunctionCache<string, Type[]> ByNamePartMulti;
         public readonly FunctionCache<Type, string> CompleteName;
-        public readonly FunctionCache<Type, string> PrettyName; 
+        public readonly FunctionCache<Type, string> PrettyName;
 
         public TypeLibrary(IEnumerable<Type> types)
         {
@@ -74,7 +74,7 @@ namespace hw.Helper
                 result = result + ObtainNameForGeneric(type.GetGenericArguments(), shortenNamespace);
             return result;
         }
-       
+
         string ObtainNameForGeneric(Type[] types, bool shortenNamespace)
         {
             var result = "";

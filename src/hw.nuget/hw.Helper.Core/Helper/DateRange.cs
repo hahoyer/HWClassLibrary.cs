@@ -14,17 +14,17 @@ namespace hw.Helper
         {
             get
             {
-                return ((int)(End - Start).TotalDays)
+                return ((int) (End - Start).TotalDays)
                     .Select(i => Start + TimeSpan.FromDays(i))
                     .GroupBy(d => d.Year * 52 + d.WeekNumber(CultureInfo.CurrentCulture))
-                    .Select(g => new DateRange { Start = g.Min(), End = (g.Max() + TimeSpan.FromDays(1)).Date })
+                    .Select(g => new DateRange {Start = g.Min(), End = (g.Max() + TimeSpan.FromDays(1)).Date})
                     .Where(w => (w.End - w.Start).TotalDays >= 7);
             }
         }
 
         internal IEnumerable<DateTime> Split(TimeSpan interval)
         {
-            for (var result = Start; result < End; result += interval)
+            for(var result = Start; result < End; result += interval)
                 yield return result;
         }
 
@@ -32,11 +32,11 @@ namespace hw.Helper
         {
             get
             {
-                if (Start.TimeOfDay != TimeSpan.FromHours(0) || End.TimeOfDay != TimeSpan.FromHours(0))
+                if(Start.TimeOfDay != TimeSpan.FromHours(0) || End.TimeOfDay != TimeSpan.FromHours(0))
                     return null;
-                if (Start.Year != End.Year)
+                if(Start.Year != End.Year)
                     return Start.ToString("yyyy.MM.dd") + "..." + End.ToString("yyyy.MM.dd");
-                if (Start.Month != End.Month)
+                if(Start.Month != End.Month)
                     return Start.Year + " " + Start.ToString("MM.dd") + "..." + End.ToString("MM.dd");
                 return Start.ToString("yyyy.MM") + " " + Start.Day + "..." + End.Day;
             }

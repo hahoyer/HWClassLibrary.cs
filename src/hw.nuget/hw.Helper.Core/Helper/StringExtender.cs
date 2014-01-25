@@ -1,25 +1,3 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,7 +12,7 @@ namespace hw.Helper
     /// <summary>
     ///     String helper functions.
     /// </summary>
-    public static class StringExtender
+    static class StringExtender
     {
         /// <summary>
         ///     Indent paramer by 4 times count spaces
@@ -47,7 +25,7 @@ namespace hw.Helper
         public static string Indent(this string x, int count = 1, string tabString = "    ", bool isLineStart = false)
         {
             var effectiveTabString = tabString.Repeat(count);
-            return (isLineStart? effectiveTabString:"") + x.Replace("\n", "\n" + effectiveTabString);
+            return (isLineStart ? effectiveTabString : "") + x.Replace("\n", "\n" + effectiveTabString);
         }
 
         /// <summary>
@@ -79,7 +57,7 @@ namespace hw.Helper
             return "\n" + left + Indent("\n" + data) + "\n" + right;
         }
 
-        public static string SaveConcat(this string delim, params string[] data) { return data.Where(d=>!string.IsNullOrEmpty(d)).Stringify(delim); }
+        public static string SaveConcat(this string delim, params string[] data) { return data.Where(d => !string.IsNullOrEmpty(d)).Stringify(delim); }
 
         /// <summary>
         ///     Converts string to a string literal.
@@ -133,7 +111,7 @@ namespace hw.Helper
             return proc.StandardOutput.ReadToEnd();
         }
 
-        public static File FileHandle(this string name) { return File.Create(name); }
+        internal static File FileHandle(this string name) { return File.Create(name); }
         public static string PathCombine(this string head, params string[] tail) { return Path.Combine(head, Path.Combine(tail)); }
 
         public static string UnderScoreToCamelCase(this string name) { return name.Split('_').Select(ToLowerFirstUpper).Stringify(""); }
@@ -154,25 +132,25 @@ namespace hw.Helper
             }
             yield return target.Substring(start);
         }
-    
+
         public static string Format(this string x, StringAligner aligner) { return aligner.Format(x); }
 
         internal static int BeginMatch(string a, string b)
         {
-            for (var i = 0; ; i++)
-                if (i >= a.Length || i >= b.Length || a[i] != b[i])
+            for(var i = 0;; i++)
+                if(i >= a.Length || i >= b.Length || a[i] != b[i])
                     return i;
         }
 
         /// <summary>
-        /// Provide deafault string aligner with columnCount columns
+        ///     Provide deafault string aligner with columnCount columns
         /// </summary>
         /// <param name="columnCount"></param>
         /// <returns></returns>
         public static StringAligner StringAligner(this int columnCount)
         {
             var stringAligner = new StringAligner();
-            for (var i = 0; i < columnCount; i++)
+            for(var i = 0; i < columnCount; i++)
                 stringAligner.AddFloatingColumn("  ");
             return stringAligner;
         }
