@@ -51,9 +51,9 @@ namespace hw.Debug
             if(handler != null)
                 return handler(t, x);
 
-            var result = BaseDump(t, x) + DumpData(t, x);
+            string result = ",\n".SaveConcat(BaseDump(t, x),DumpData(t, x));
             if(result != "")
-                result = result.Surround("(", ")");
+                result = result.Surround("{", "}");
 
             if(t == x.GetType() || result != "")
                 result = t + result;
@@ -72,8 +72,8 @@ namespace hw.Debug
                 .GetFields(AnyBinding)
                 .Cast<MemberInfo>()
                 .Concat(type.GetProperties(AnyBinding))
-                .Where(memberInfo => IsRelevant(memberInfo,data))
-                .Where(memberInfo => memberCheck(memberInfo.Name,data))
+                .Where(memberInfo => IsRelevant(memberInfo, type, data))
+                .Where(memberInfo => memberCheck(memberInfo, data))
                 .Select(memberInfo => Format(memberInfo, data))
                 .ToArray();
             return FormatMemberDump(results);
@@ -82,11 +82,11 @@ namespace hw.Debug
         static string FormatMemberDump(string[] results)
         {
             var result = results;
-            if (result.Length > 10)
+            if(result.Length > 10)
                 result = result
                     .Select((s, i) => i + ":" + s)
                     .ToArray();
-            return result.Stringify("\n");
+            return result.Stringify(",\n");
         }
 
         string BaseDump(Type t, object x)
@@ -95,7 +95,7 @@ namespace hw.Debug
             if(t.BaseType != null && t.BaseType != typeof(object) && t.BaseType != typeof(ValueType))
                 baseDump = Dump(t.BaseType, x);
             if(baseDump != "")
-                baseDump = "\nBase:" + baseDump;
+                baseDump = "Base:" + baseDump;
             return baseDump;
         }
 
@@ -115,8 +115,10 @@ namespace hw.Debug
                 .SingleOrDefault();
         }
 
-        static bool IsRelevant(MemberInfo memberInfo, object x)
+        static bool IsRelevant(MemberInfo memberInfo, Type type, object x)
         {
+            if(memberInfo.DeclaringType != type)
+                return false;
             var propertyInfo = memberInfo as PropertyInfo;
             if(propertyInfo != null && propertyInfo.GetIndexParameters().Length > 0)
                 return false;
@@ -150,7 +152,7 @@ namespace hw.Debug
         {
             try
             {
-                return memberInfo.Name + "=" + Tracer.Dump(Value(memberInfo, x));
+                return memberInfo.Name + "=" + Tracer.Dump(x.InvokeValue(memberInfo));
             }
             catch(Exception)
             {
@@ -162,22 +164,10 @@ namespace hw.Debug
         {
             foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))
             {
-                var v = Value(f, x);
+                var v = x.InvokeValue(f);
                 return !dea.IsException(v);
             }
             return true;
-        }
-
-        static object Value(MemberInfo info, object x)
-        {
-            var fi = info as FieldInfo;
-            if(fi != null)
-                return fi.GetValue(x);
-            var pi = info as PropertyInfo;
-            if(pi != null)
-                return pi.GetValue(x, null);
-
-            throw new NotImplementedException();
         }
     }
 }

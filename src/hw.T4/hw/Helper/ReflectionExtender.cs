@@ -246,7 +246,7 @@ namespace hw.Helper
         /// <param name="function"></param>
         /// <param name="onError"></param>
         /// <returns></returns>
-        public static T ExceptionGuard<T>(this Func<T> function, Func<Exception, T>onError = null)
+        public static T ExceptionGuard<T>(this Func<T> function, Func<Exception, T> onError = null)
         {
             try
             {
@@ -302,6 +302,32 @@ namespace hw.Helper
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             return result;
+        }
+        
+        public static object InvokeValue(this object x, MemberInfo info)
+        {
+            var fi = info as FieldInfo;
+            if(fi != null)
+                return fi.GetValue(x);
+            var pi = info as PropertyInfo;
+            if(pi != null)
+                return pi.GetValue(x, null);
+
+            throw new FieldOrPropertyExpected(x,info);
+        }
+    }
+
+    public sealed class FieldOrPropertyExpected : Exception
+    {
+        [UsedImplicitly]
+        public new readonly object Data;
+        [UsedImplicitly]
+        public readonly MemberInfo MemberInfo;
+
+        internal FieldOrPropertyExpected(object data, MemberInfo memberInfo)
+        {
+            Data = data;
+            MemberInfo = memberInfo;
         }
     }
 }

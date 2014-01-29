@@ -51,6 +51,7 @@
     <Compile Include="hw\Debug\Tracer.cs" />
     <Compile Include="hw\Debug\Writer.cs" />
     <Compile Include="hw\Helper\Box.cs" />
+    <Compile Include="hw\Helper\DateRange.cs" />
     <Compile Include="hw\Helper\DateTimeExtender.cs" />
     <Compile Include="hw\Helper\EnumEx.cs" />
     <Compile Include="hw\Helper\File.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="hw\Helper\StringExtender.cs" />
     <Compile Include="hw\Helper\T4Context.cs" />
     <Compile Include="hw\Helper\T4Extender.cs" />
+    <Compile Include="hw\Helper\TypeLibrary.cs" />
     <Compile Include="hw\Helper\TypeNameExtender.cs" />
     <Compile Include="hw\Helper\ValueCache.cs" />
     <Compile Include="hw\JetBrainsAnnotations.cs" />
@@ -70,7 +72,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="sys.targets" />
   </ItemGroup>
   <Import Project="sys.targets" />
