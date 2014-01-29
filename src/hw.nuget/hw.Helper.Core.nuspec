@@ -16,11 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.5.0.0</version>
+        <version>14.6.0.0</version>
         <releaseNotes>
-            Bug: function LongExtender.Format3Digits cutted characters at the beginning
-            New: class DateRange
-            New: function DateTimeExtender.WeekNumber
+            New: more DateRange functions
         </releaseNotes>
     </metadata>
     <files>

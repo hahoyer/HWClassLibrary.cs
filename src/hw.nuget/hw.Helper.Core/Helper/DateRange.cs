@@ -5,12 +5,13 @@ using System.Linq;
 
 namespace hw.Helper
 {
-    sealed class DateRange
+    public sealed class DateRange
     {
         public DateTime Start;
         public DateTime End;
+        public TimeSpan Length { get { return End - Start; } set { End = Start + value; } }
 
-        internal IEnumerable<DateRange> SelectContainingWeeks
+        public IEnumerable<DateRange> SelectContainingWeeks
         {
             get
             {
@@ -22,13 +23,70 @@ namespace hw.Helper
             }
         }
 
-        internal IEnumerable<DateTime> Split(TimeSpan interval)
+        public IEnumerable<DateRange> SelectContainedWeeks
+        {
+            get
+            {
+                return new DateRange()
+                {
+                    Start = Start - TimeSpan.FromDays(6),
+                    End = End + TimeSpan.FromDays(6)
+                }
+                    .SelectContainingWeeks;
+            }
+        }
+
+        public static DateRange LastWeek
+        {
+            get
+            {
+                return new DateRange()
+                {
+                    Start = DateTime.Today - TimeSpan.FromDays(7),
+                    Length = TimeSpan.FromDays(1)
+                }
+                    .SelectContainedWeeks
+                    .Single();
+            }
+        }
+
+        public static DateRange LastMonth
+        {
+            get
+            {
+                var today = DateTime.Today;
+                var result = new DateRange();
+                result.End = new DateTime(today.Year, today.Month, 1);
+                var endOfLastMonth = result.End - TimeSpan.FromDays(1);
+                result.Start = new DateTime(endOfLastMonth.Year, endOfLastMonth.Month, 1);
+                return result;
+            }
+        }
+
+        public IEnumerable<DateRange> SelectContainingMonths
+        {
+            get
+            {
+                var m = SplitByMonth.ToArray();
+                for(var i = 0; i <= m.Length; i++)
+                {
+                    var start = (i == 0) ? Start : m[i - 1];
+                    var end = i == m.Length ? End : m[i];
+                    if(start < end)
+                        yield return new DateRange {Start = start, End = end};
+                }
+            }
+        }
+
+        public IEnumerable<DateTime> SplitByMonth { get { return Split(TimeSpan.FromDays(1)).Where(d => d.Day == 1); } }
+
+        public IEnumerable<DateTime> Split(TimeSpan interval)
         {
             for(var result = Start; result < End; result += interval)
                 yield return result;
         }
 
-        internal String Format
+        public String Format
         {
             get
             {
@@ -41,5 +99,7 @@ namespace hw.Helper
                 return Start.ToString("yyyy.MM") + " " + Start.Day + "..." + End.Day;
             }
         }
+
+        public bool Contains(DateTime target) { return Start <= target && target < End; }
     }
 }
