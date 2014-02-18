@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace hw.Helper
 {
-    static class TypeNameExtender
+    public static class TypeNameExtender
     {
         static readonly ValueCache<TypeLibrary> _referencedTypesCache = new ValueCache<TypeLibrary>(ObtainReferencedTypes);
 
