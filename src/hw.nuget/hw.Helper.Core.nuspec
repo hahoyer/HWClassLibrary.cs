@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.9.0.0</version>
+        <version>14.10.0.0</version>
         <releaseNotes>
             Change: more publics
         </releaseNotes>
