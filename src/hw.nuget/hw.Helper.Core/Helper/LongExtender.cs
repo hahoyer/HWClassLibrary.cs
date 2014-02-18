@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace hw.Helper
 {
-    static class LongExtender
+    public static class LongExtender
     {
         public static string Format3Digits(this long value, bool omitZeros = true)
         {

@@ -5,7 +5,7 @@ using hw.Debug;
 
 namespace hw.Helper
 {
-    sealed class StringAligner
+    public sealed class StringAligner
     {
         readonly List<FloatingColumn> _floatingColumns = new List<FloatingColumn>();
 

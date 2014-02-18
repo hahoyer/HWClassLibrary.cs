@@ -16,9 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.7.0.0</version>
+        <version>14.8.0.0</version>
         <releaseNotes>
-            New: more DateRange functions
+            Change: more publics
         </releaseNotes>
     </metadata>
     <files>

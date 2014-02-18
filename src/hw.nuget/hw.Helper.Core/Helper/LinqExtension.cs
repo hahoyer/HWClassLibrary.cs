@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace hw.Helper
 {
-    static class LinqExtension
+    public static class LinqExtension
     {
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual) { return InternalAddDistinct(a, b, isEqual); }
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class { return InternalAddDistinct(a, b, combine); }

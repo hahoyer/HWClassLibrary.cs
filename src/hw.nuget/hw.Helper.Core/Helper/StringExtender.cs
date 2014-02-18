@@ -12,7 +12,7 @@ namespace hw.Helper
     /// <summary>
     ///     String helper functions.
     /// </summary>
-    static class StringExtender
+    public static class StringExtender
     {
         /// <summary>
         ///     Indent paramer by 4 times count spaces
