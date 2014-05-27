@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<package>
+    <metadata>
+        <id>hw.ReplaceVariables</id>
+        <title>hw.ReplaceVariables</title>
+        <authors>hahoyer</authors>
+        <description>
+            Example:
+
+            using hw.ReplaceVariables;
+
+            static public class Example
+            {
+            public static void TestMethod()
+            {
+            var myData = new MyData();
+            var format = "i: $(InvoiceDate) - n: $(Now) - id: $(InvoiceDate.Date) - in: $(ImportantNumber) - asis: $(=ImportantNumber) ";
+            var expectedResult = "i: 22.04.2014 22:57:34 - n: 27.05.2014 22:57:34 - id: 22.04.2014 - in: 42 - asis: $(ImportantNumber) ";
+            var result = format.ReplaceVariables(myData);
+            Tracer.Assert(result == expectedResult);
+            }
+
+            sealed class MyData
+            {
+            [Visible]
+            DateTimeSpecial InvoiceDate { get { return new DateTimeSpecial(new DateTime(2014,5,27,22,57,34).AddDays(-35)); } }
+            [Visible]
+            DateTimeSpecial Now = new DateTimeSpecial(new DateTime(2014, 5, 27, 22, 57, 34));
+            [Visible]
+            int ImportantNumber = 42;
+            }
+
+            sealed class DateTimeSpecial
+            {
+            DateTime _value;
+            public DateTimeSpecial(DateTime value) { _value = value; }
+            [Visible]
+            int Day { get { return _value.Day; } }
+            [Visible]
+            int Month { get { return _value.Month; } }
+            [Visible]
+            int Year { get { return _value.Year; } }
+            [Visible]
+            string Date { get { return _value.Date.ToShortDateString(); } }
+            public override string ToString() { return _value.ToString(); }
+            }
+            }
+
+        </description>
+        <summary>
+            Formatting a string by replacing variables of the form $(name) by values of members of an object.
+        </summary>
+        <language>en-US</language>
+        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Copyright Harald Hoyer 2014</copyright>
+
+        <version>14.0.0.0</version>
+        <releaseNotes>
+            New: more DateRange functions
+        </releaseNotes>
+        <dependencies>
+            <dependency id="hw.Helper.Core" version="14.0.0.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="hw.ReplaceVariables\" target="content\hw" />
+    </files>
+</package>

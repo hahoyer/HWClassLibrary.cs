@@ -71,6 +71,7 @@
     <Compile Include="hw.Helper.Core\Debug\Dumper.cs" />
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
+    <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
     <Compile Include="TestDump.cs" />
     <Compile Include="hw.Helper.Core\Debug\Writer.cs" />
     <Compile Include="hw.Helper.Data\Helper\AdoExtension.cs" />
@@ -149,11 +150,17 @@
     <Compile Include="hw.CompilerTools\PrioParser\OpenItem.cs" />
     <Compile Include="Tests\Helper\Core\HelperCore.cs" />
     <Compile Include="Tests\Helper\Core\LongExtender.cs" />
+    <Compile Include="Tests\ReplaceVariables\Example.cs" />
+    <None Include="hw.ReplaceVariables.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="hw.CompilerTools.nuspec" />
     <None Include="hw.Helper.Core.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="hw.Helper.Data.nuspec" />
+    <None Include="hw.Helper.Data.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="hw.T4Helper.nuspec">
       <SubType>Designer</SubType>
     </None>

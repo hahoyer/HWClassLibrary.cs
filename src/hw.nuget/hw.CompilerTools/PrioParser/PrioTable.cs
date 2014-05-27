@@ -1,27 +1,6 @@
-﻿#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using hw.Debug;
 using hw.Forms;
@@ -144,12 +123,9 @@ namespace hw.PrioParser
         }
         static string[] AllocTokens(params string[][] tokenArrayList)
         {
-            var l = tokenArrayList.Sum(t => t.Length);
-            var tokens = new string[l];
-            var k = 0;
-            foreach(var token in tokenArrayList.SelectMany(tokenArray => tokenArray))
-                tokens[k++] = token;
-            return tokens;
+            return tokenArrayList
+                .SelectMany(tokenArray => tokenArray)
+                .ToArray();
         }
 
         /// <summary>
@@ -157,7 +133,7 @@ namespace hw.PrioParser
         /// </summary>
         int Length { get { return _token.Length; } }
 
-        static int Find(int i, params string[][] x)
+        static int FindGroup(int i, params string[][] x)
         {
             for(var j = 0; j < x.Length; j++)
             {
@@ -204,58 +180,34 @@ namespace hw.PrioParser
             : this()
         {
             _token = AllocTokens(left, x._token, right);
-            for(var i = 0; i < left.Length; i++)
-                for(var j = 0; j < left.Length; j++)
-                    _dataCache.Value[i, j] = data[0][0];
-
-            for(var i = 0; i < x._token.Length; i++)
-                for(var j = 0; j < left.Length; j++)
-                {
-                    _dataCache.Value[i + left.Length, j] = data[1][0];
-                    _dataCache.Value[j, i + left.Length] = data[0][1];
-                }
-
-            for(var i = 0; i < x._token.Length; i++)
-                for(var j = 0; j < x._token.Length; j++)
-                    _dataCache.Value[i + left.Length, j + left.Length] = x._dataCache.Value[i, j];
-
-            for(var i = 0; i < right.Length; i++)
-                for(var j = 0; j < left.Length; j++)
-                {
-                    _dataCache.Value[i + left.Length + x._token.Length, j] = i < j ? '+' : i > j ? '-' : '=';
-                    _dataCache.Value[j, i + left.Length + x._token.Length] = data[0][2];
-                }
-
-            for(var i = 0; i < right.Length; i++)
-                for(var j = 0; j < x._token.Length; j++)
-                {
-                    _dataCache.Value[i + left.Length + x._token.Length, j + left.Length] = data[2][1];
-                    _dataCache.Value[j + left.Length, i + left.Length + x._token.Length] = data[1][2];
-                }
-
-            for(var i = 0; i < right.Length; i++)
-                for(var j = 0; j < right.Length; j++)
-                    _dataCache.Value[i + left.Length + x._token.Length, j + left.Length + x._token.Length] = data[2][2];
-
-
             for(var i = 0; i < Length; i++)
                 for(var j = 0; j < Length; j++)
-                {
-                    var iData = Find(i, left, x._token);
-                    var jData = Find(j, left, x._token);
-                    var prioChar = data[iData][jData];
+                    _dataCache.Value[i, j] = PrioChar(x, data, left, i, j);
+        }
 
-                    if(iData == 1 && jData == 1)
-                        prioChar = x._dataCache.Value[i - left.Length, j - left.Length];
-                    else if(iData == 2 && jData == 0)
-                        if(j < i - left.Length - x.Length)
-                            prioChar = '-';
-                        else if(j == i - left.Length - x.Length)
-                            prioChar = '=';
-                        else
-                            prioChar = '+';
-                    Tracer.Assert(prioChar == _dataCache.Value[i, j]);
+        static char PrioChar(PrioTable x, string[] data, string[] left, int i, int j)
+        {
+            var iGroup = FindGroup(i, left, x._token);
+            var jGroup = FindGroup(j, left, x._token);
+
+            if(iGroup == 1 && jGroup == 1)
+                return x._dataCache.Value[i - left.Length, j - left.Length];
+
+            if(iGroup == 2 && jGroup == 0)
+            {
+                switch(Math.Sign(left.Length + x.Length - i + j))
+                {
+                    case -1:
+                        return '-';
+                    case 0:
+                        return '=';
+                    case 1:
+                        return '+';
+                    default:
+                        throw new InvalidExpressionException();
                 }
+            }
+            return data[iGroup][jGroup];
         }
         /// <summary>
         /// </summary>
