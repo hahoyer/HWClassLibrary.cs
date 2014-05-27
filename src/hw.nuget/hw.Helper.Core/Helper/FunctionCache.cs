@@ -11,7 +11,7 @@ namespace hw.Helper
     /// <typeparam name="TKey"> </typeparam>
     /// <typeparam name="TValue"> </typeparam>
     [AdditionalNodeInfo("NodeDump")]
-    sealed class FunctionCache<TKey, TValue> : Dictionary<TKey, TValue>
+    public sealed class FunctionCache<TKey, TValue> : Dictionary<TKey, TValue>
     {
         readonly Func<TKey, TValue> _createValue;
 

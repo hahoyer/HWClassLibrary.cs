@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 
 namespace hw.Helper
 {
-    static class ReflectionExtender
+    public static class ReflectionExtender
     {
         [NotNull]
         public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute { return @this.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }

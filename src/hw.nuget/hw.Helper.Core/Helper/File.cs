@@ -12,7 +12,7 @@ namespace hw.Helper
     ///     Summary description for File.
     /// </summary>
     [Serializable]
-    sealed class File
+    public sealed class File
     {
         readonly string _name;
 
