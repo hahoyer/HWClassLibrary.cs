@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using hw.Debug;
-using hw.Helper;
 using JetBrains.Annotations;
 
 namespace hw.ReplaceVariables
@@ -25,7 +23,7 @@ namespace hw.ReplaceVariables
                 .GetFields(AnyBinding)
                 .Cast<MemberInfo>()
                 .Concat(type.GetProperties(AnyBinding))
-                .Where(m => m.GetAttribute<VisibleAttribute>(true) != null)
+                .Where(m => m.GetCustomAttribute<VisibleAttribute>(true) != null)
                 .Aggregate(target, (s, info) => Replace(s, info, replaceProvider, prefix));
         }
 
