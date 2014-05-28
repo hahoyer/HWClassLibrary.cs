@@ -56,7 +56,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.1.0.0</version>
+        <version>14.2.0.0</version>
         <releaseNotes>
             - dependency to core removed
             - file name corrected

@@ -10,11 +10,8 @@ namespace hw.ReplaceVariables
     {
         static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
 
-        public static string ReplaceVariables(this string target, object replaceProvider)
-        {
-            var result = target.ReplaceVariables(replaceProvider, "");
-            return result.Replace("$(=", "$(");
-        }
+        public static string ReplaceVariables(this string target, object replaceProvider) { return target.ReplaceVariables(replaceProvider, ""); }
+        public static string ReplaceProtected(this string target) { return target.Replace("$(=", "$("); }
 
         static string ReplaceVariables(this string target, object replaceProvider, string prefix)
         {

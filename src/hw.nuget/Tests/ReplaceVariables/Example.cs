@@ -14,7 +14,7 @@ namespace hw.Tests.ReplaceVariables
             var myData = new MyData();
             var format = "i: $(InvoiceDate) - n: $(Now) - id: $(InvoiceDate.Date) - in: $(ImportantNumber) - asis: $(=ImportantNumber) ";
             var expectedResult = "i: 22.04.2014 22:57:34 - n: 27.05.2014 22:57:34 - id: 22.04.2014 - in: 42 - asis: $(ImportantNumber) ";
-            var result = format.ReplaceVariables(myData);
+            var result = format.ReplaceVariables(myData).ReplaceProtected();
             Tracer.Assert(result == expectedResult);
         }
 
