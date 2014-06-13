@@ -11,10 +11,12 @@ namespace hw.ReplaceVariables
         static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
 
         public static string ReplaceVariables(this string target, object replaceProvider) { return target.ReplaceVariables(replaceProvider, ""); }
-        public static string ReplaceProtected(this string target) { return target.Replace("$(=", "$("); }
+        public static string ReplaceProtected(this string target) { return target == null ? null : target.Replace("$(=", "$("); }
 
         static string ReplaceVariables(this string target, object replaceProvider, string prefix)
         {
+            if(target == null)
+                return null;
             var type = replaceProvider.GetType();
             return type
                 .GetFields(AnyBinding)
@@ -27,10 +29,19 @@ namespace hw.ReplaceVariables
         static string Replace(string target, MemberInfo definition, object replaceProvider, string prefix)
         {
             var name = prefix + definition.Name;
+            var hasDirectReference = target.Contains("$(" + name + ")");
+            var mayHaveIndirectReference = target.Contains("$(" + name + ".");
+
+            if(!hasDirectReference && !mayHaveIndirectReference)
+                return target;
+
             var value = GetValue(definition, replaceProvider);
-            return target
-                .Replace("$(" + name + ")", value.ToString())
-                .ReplaceVariables(value, name + ".");
+
+            if(hasDirectReference)
+                target = target.Replace("$(" + name + ")", value.ToString());
+            if(mayHaveIndirectReference)
+                target = target.ReplaceVariables(value, name + ".");
+            return target;
         }
 
         static object GetValue(MemberInfo definition, object replaceProvider)
