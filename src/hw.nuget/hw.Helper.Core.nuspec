@@ -16,9 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.10.0.0</version>
+        <version>14.11.0.0</version>
         <releaseNotes>
-            Change: more publics
+            Change: extension function "In" becomes public
+            New: extension function "Merge" when both list are of the same type
         </releaseNotes>
     </metadata>
     <files>

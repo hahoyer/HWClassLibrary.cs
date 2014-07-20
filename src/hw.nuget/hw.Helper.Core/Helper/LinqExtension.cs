@@ -235,6 +235,9 @@ namespace hw.Helper
             return leftCommon.Union(rightCommon).GroupBy(t => t.Item1).Select(Merge);
         }
 
+        public static IEnumerable<Tuple<TKey, T, T>> Merge<TKey, T>(this IEnumerable<T> left, IEnumerable<T> right, Func<T, TKey> getKey)
+            where T : class { return Merge(left, right, getKey, getKey); }
+
         public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>(IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping) where TLeft : class where TRight : class
         {
             var list = grouping.ToArray();
@@ -294,7 +297,7 @@ namespace hw.Helper
             }
         }
 
-        internal static bool In(this string a, params string[] b) { return b.Contains(a); }
+        public static bool In(this string a, params string[] b) { return b.Contains(a); }
 
         internal static IEnumerable<T> SelectHierachical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
         {
