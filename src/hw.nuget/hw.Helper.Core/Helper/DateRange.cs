@@ -68,16 +68,16 @@ namespace hw.Helper
             get
             {
                 var m = SplitByMonth.ToArray();
-                for(var i = 0; i <= m.Length; i++)
+                for (var i = 0; i < m.Length; i++)
                 {
-                    var start = (i == 0) ? Start : m[i - 1];
-                    var end = i == m.Length ? End : m[i];
-                    if(start < end)
-                        yield return new DateRange {Start = start, End = end};
+                    var start = m[i];
+                    var end = start.AddMonths(1);
+                    if (end <= End)
+                        yield return new DateRange { Start = start, End = end };
                 }
             }
         }
-
+        
         public IEnumerable<DateTime> SplitByMonth { get { return Split(TimeSpan.FromDays(1)).Where(d => d.Day == 1); } }
 
         public IEnumerable<DateTime> Split(TimeSpan interval)

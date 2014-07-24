@@ -16,10 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.11.0.0</version>
+        <version>14.12.0.0</version>
         <releaseNotes>
-            Change: extension function "In" becomes public
-            New: extension function "Merge" when both list are of the same type
+            Bug: Containing Weeks was incorrect (#19)
         </releaseNotes>
     </metadata>
     <files>
