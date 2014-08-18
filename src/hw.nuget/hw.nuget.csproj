@@ -150,6 +150,7 @@
     <Compile Include="hw.CompilerTools\PrioParser\OpenItem.cs" />
     <Compile Include="Tests\Helper\Core\HelperCore.cs" />
     <Compile Include="Tests\Helper\Core\LongExtender.cs" />
+    <Compile Include="Tests\Helper\Core\TypeNameExtender.cs" />
     <Compile Include="Tests\ReplaceVariables\Example.cs" />
     <None Include="hw.ReplaceVariables.nuspec">
       <SubType>Designer</SubType>

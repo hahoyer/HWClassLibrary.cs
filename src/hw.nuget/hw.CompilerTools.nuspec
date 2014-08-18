@@ -18,6 +18,7 @@
 
         <version>14.1.0.0</version>
         <releaseNotes>
+            Change: Parser match check
         </releaseNotes>
         <dependencies>
             <dependency id="hw.Helper.Core" version="14.0.0.0" />
