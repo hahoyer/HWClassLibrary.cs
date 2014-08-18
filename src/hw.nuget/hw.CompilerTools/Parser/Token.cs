@@ -31,7 +31,7 @@ using JetBrains.Annotations;
 
 namespace hw.Parser
 {
-    [DebuggerDisplay("{NodeDump} {DumpBeforeCurrent}[{DumpCurrent}]{DumpAfterCurrent}")]
+    [DebuggerDisplay("{NodeDump}")]
     sealed class TokenData : Dumpable, IPart<IParsedSyntax>, IOperatorPart
     {
         readonly int _length;
@@ -91,6 +91,19 @@ namespace hw.Parser
                 if(Position >= DumpWidth)
                     result = "..." + result;
                 return result;
+            }
+        }
+
+        [UsedImplicitly]
+        string NodeDump
+        {
+            get
+            {
+                return DumpBeforeCurrent
+                    + "["
+                    + DumpCurrent
+                    + "]"
+                    + DumpAfterCurrent;
             }
         }
 
