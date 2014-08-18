@@ -1,25 +1,3 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,10 +23,23 @@ namespace hw.Parser
 
         string INameProvider.Name { set { Name = value; } }
 
-        IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right) { return Create(left, part, right); }
+        IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right, bool isMatch)
+        {
+            if(AcceptsMatch == isMatch)
+                return Create(left, part, right);
+            return Mismatch(left, part, right);
+        }
+
         string IType<IParsedSyntax>.PrioTableName { get { return Name; } }
         bool IType<IParsedSyntax>.IsEnd { get { return IsEnd; } }
 
+        protected virtual IParsedSyntax Mismatch(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right)
+        {
+            NotImplementedMethod(left, part, right);
+            return null;
+        }
+
+        protected virtual bool AcceptsMatch { get { return false; } }
         protected abstract IParsedSyntax Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right);
 
         protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }

@@ -14,9 +14,9 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <language>en-US</language>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2013</copyright>
+        <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.0.0.0</version>
+        <version>14.1.0.0</version>
         <releaseNotes>
         </releaseNotes>
         <dependencies>
