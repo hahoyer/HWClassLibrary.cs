@@ -16,9 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>14.13.0.0</version>
+        <version>14.14.0.0</version>
         <releaseNotes>
-            Bug: TypeNameExtender returned "Int32" instead of "int"
+            New: Option to provide alternative line format
         </releaseNotes>
     </metadata>
     <files>
