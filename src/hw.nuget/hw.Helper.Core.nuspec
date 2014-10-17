@@ -14,9 +14,8 @@
         <language>en-US</language>
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2013</copyright>
-
-        <version>14.14.0.0</version>
+        <copyright>Copyright Harald Hoyer 2014</copyright>
+        <version>14.14.4.0</version>
         <releaseNotes>
             New: Option to provide alternative line format
         </releaseNotes>

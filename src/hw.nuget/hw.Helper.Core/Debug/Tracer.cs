@@ -16,7 +16,8 @@ namespace hw.Debug
 
         [UsedImplicitly]
         public static bool IsBreakDisabled;
-        const string VisualStudioLineFormat = "{0}({1},{2}): {3}: ";
+        [UsedImplicitly]
+        public const string VisualStudioLineFormat = "{fileName}({lineNr},{colNr}): {tagText}: ";
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
@@ -25,7 +26,7 @@ namespace hw.Debug
         /// <param name="tag"> </param>
         /// <param name="lineFormat"></param>
         /// <returns> the "FileName(LineNr,ColNr): tag: " string </returns>
-        public static string FilePosn(this StackFrame sf, FilePositionTag tag, string lineFormat = null)
+        public static string FilePosn(this StackFrame sf, FilePositionTag tag, Func<string, int, int, string, string> lineFormat = null)
         {
             if(sf.GetFileLineNumber() == 0)
                 return "<nofile> " + tag;
@@ -41,7 +42,7 @@ namespace hw.Debug
         /// <param name="tag"> asis </param>
         /// <param name="lineFormat"></param>
         /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
-        public static string FilePosn(string fileName, int lineNr, int colNr, FilePositionTag tag, string lineFormat = null)
+        public static string FilePosn(string fileName, int lineNr, int colNr, FilePositionTag tag, Func<string, int, int, string, string> lineFormat = null)
         {
             var tagText = tag.ToString();
             return FilePosn(fileName, lineNr, colNr, tagText, lineFormat);
@@ -56,10 +57,17 @@ namespace hw.Debug
         /// <param name="tagText"> asis </param>
         /// <param name="lineFormat"></param>
         /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
-        public static string FilePosn(string fileName, int lineNr, int colNr, string tagText, string lineFormat = null)
+        public static string FilePosn(string fileName, int lineNr, int colNr, string tagText, Func<string, int, int, string, string> lineFormat = null)
         {
-            return (lineFormat ?? VisualStudioLineFormat)
-                .ReplaceArgs(fileName, (lineNr + 1), colNr, tagText);
+            if(lineFormat != null)
+                return lineFormat(fileName, lineNr, colNr, tagText);
+            return
+                VisualStudioLineFormat
+                    .Replace("{fileName}", fileName)
+                    .Replace("{lineNr}", (lineNr + 1).ToString())
+                    .Replace("{colNr}", colNr.ToString())
+                    .Replace("{tagText}", tagText)
+                ;
         }
 
         /// <summary>
@@ -100,11 +108,12 @@ namespace hw.Debug
         /// <param name="stackFrameDepth"> the index of stack frame </param>
         /// <param name="tag"> </param>
         /// <param name="showParam"> controls if parameter list is appended </param>
+        /// <param name="lineFormat"></param>
         /// <returns> string to inspect the method call </returns>
-        public static string MethodHeader(FilePositionTag tag = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0)
+        public static string MethodHeader(FilePositionTag tag = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0, Func<string, int, int, string, string> lineFormat = null)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-            return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
+            return FilePosn(sf, tag, lineFormat) + DumpMethod(sf.GetMethod(), showParam);
         }
 
         public static string CallingMethodName(int stackFrameDepth = 0)
@@ -114,7 +123,7 @@ namespace hw.Debug
         }
 
         [UsedImplicitly]
-        public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0, string lineFormat= null)
+        public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0, Func<string, int, int, string, string> lineFormat = null)
         {
             var stackTrace = new StackTrace(true);
             var result = "";
@@ -146,7 +155,12 @@ namespace hw.Debug
         /// <param name="flagText"> </param>
         /// <param name="showParam"></param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0) { Line(MethodHeader(flagText, stackFrameDepth: stackFrameDepth + 1, showParam: showParam) + " " + s); }
+        /// <param name="lineFormat"></param>
+        public static void FlaggedLine(string s, FilePositionTag flagText = FilePositionTag.Debug, bool showParam = false, int stackFrameDepth = 0, Func<string, int, int, string, string> lineFormat = null)
+        {
+            var methodHeader = MethodHeader(flagText, stackFrameDepth: stackFrameDepth + 1, showParam: showParam,lineFormat:lineFormat);
+            Line(methodHeader + " " + s);
+        }
 
         /// <summary>
         ///     generic dump function by use of reflection
