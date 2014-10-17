@@ -14,6 +14,6 @@ namespace hw.UnitTest
     [MeansImplicitUse]
     public sealed class TestFixtureAttribute : Attribute
     {
-        public readonly string DefaultMethod;
+        public string DefaultMethod;
     }
 }

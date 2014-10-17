@@ -16,12 +16,13 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.1-alpha</version>
+        <version>14.1.1-alpha</version>
         <releaseNotes>
             New: Ability to provide default method at textfixture
+            New: Ability to define textfixture by use of an interface
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="14.15" />
+            <dependency id="hw.Helper.Core" version="14.16" />
         </dependencies>
 
     </metadata>

@@ -23,20 +23,27 @@ namespace hw.UnitTest
                     .GetMethods()
                     .Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null)
                     .Select(methodInfo => new TestMethod(methodInfo))
-                    .Concat(DefaultTestMethod);
+                    .Concat(DefaultTestMethods)
+                    .Concat(InterfaceMethods);
+            }
+        }
+       
+        IEnumerable<TestMethod> InterfaceMethods
+        {
+            get
+            {
+                if(Type.Is<ITestFixture>())
+                    yield return new TestMethod(Type);
             }
         }
 
-        IEnumerable<TestMethod> DefaultTestMethod
+        IEnumerable<TestMethod> DefaultTestMethods
         {
             get
             {
                 var testAttribute = Type.GetAttribute<TestFixtureAttribute>(true);
-                if(testAttribute == null)
-                    yield break;
-                if(testAttribute.DefaultMethod == null)
-                    yield break;
-                yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod));
+                if(testAttribute != null && testAttribute.DefaultMethod != null)
+                    yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod));
             }
         }
 

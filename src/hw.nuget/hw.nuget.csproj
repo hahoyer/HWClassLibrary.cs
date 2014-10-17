@@ -72,6 +72,7 @@
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\ITestFixture.cs" />
     <Compile Include="TestDump.cs" />
     <Compile Include="hw.Helper.Core\Debug\Writer.cs" />
     <Compile Include="hw.Helper.Data\Helper\AdoExtension.cs" />
@@ -181,7 +182,7 @@
     </Compile>
     <Compile Include="hw.Forms\Forms\IAdditionalNodeInfoProvider.cs">
     </Compile>
-    <Compile Include="hw.Helper.Core\UnitTest\CategoryAttribute.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\CategoryAttribute.cs" />
     <Compile Include="hw.UnitTest\UnitTest\DependantAttribute.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestExtender.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />
