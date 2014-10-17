@@ -15,9 +15,9 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
-        <version>14.14.4.0</version>
+        <version>14.15.0.0</version>
         <releaseNotes>
-            New: Option to provide alternative line format
+            New: Ability to provide default method at textfixture
         </releaseNotes>
     </metadata>
     <files>
