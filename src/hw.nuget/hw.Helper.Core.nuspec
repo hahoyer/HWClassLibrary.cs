@@ -15,7 +15,7 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
-        <version>14.16.0-alpha</version>
+        <version>14.16.0</version>
         <releaseNotes>
             Refactor: CategoryAttribute.cs moved to package UnitTest
         </releaseNotes>
