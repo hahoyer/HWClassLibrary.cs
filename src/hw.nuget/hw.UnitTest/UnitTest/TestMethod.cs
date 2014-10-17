@@ -7,7 +7,7 @@ using hw.Helper;
 
 namespace hw.UnitTest
 {
-    public class SourceFilePosition
+    public sealed class SourceFilePosition
     {
         public string FileName;
         public int LineNumber;
@@ -21,14 +21,19 @@ namespace hw.UnitTest
             string Name { get; }
             string LongName { get; }
             object Instance { get; }
-            SourceFilePosition FilePosition { get; }
+            IEnumerable<SourceFilePosition> FilePositions { get; }
             void Run(object test);
         }
 
         sealed class MethodActor : IActor
         {
+            readonly Type _type;
             readonly MethodInfo _target;
-            public MethodActor(MethodInfo target) { _target = target; }
+            public MethodActor(MethodInfo target, Type type)
+            {
+                _target = target;
+                _type = type;
+            }
             string IActor.Name { get { return _target.Name; } }
             string IActor.LongName
             {
@@ -47,16 +52,16 @@ namespace hw.UnitTest
                     return Activator.CreateInstance(_target.ReflectedType);
                 }
             }
-            SourceFilePosition IActor.FilePosition
+            IEnumerable<SourceFilePosition> IActor.FilePositions
             {
                 get
                 {
                     var a = _target.GetAttribute<TestAttribute>(true);
                     if(a != null)
-                        return a.Where;
-                    return _target.DeclaringType.GetAttribute<TestFixtureAttribute>(true)
-                        .AssertNotNull()
-                        .Where;
+                        yield return a.Where;
+                    var b = _type.GetAttribute<TestFixtureAttribute>(true);
+                    if (b != null)
+                        yield return b.Where;
                 }
             }
             void IActor.Run(object test) { _target.Invoke(test, new object[0]); }
@@ -69,13 +74,13 @@ namespace hw.UnitTest
             string IActor.Name { get { return _target.Name; } }
             string IActor.LongName { get { return _target.PrettyName(); } }
             object IActor.Instance { get { return Activator.CreateInstance(_target); } }
-            SourceFilePosition IActor.FilePosition
+            IEnumerable<SourceFilePosition> IActor.FilePositions
             {
                 get
                 {
-                    return _target.GetAttribute<TestFixtureAttribute>(true)
-                        .AssertNotNull()
-                        .Where;
+                    var b = _target.GetAttribute<TestFixtureAttribute>(true);
+                    if (b != null)
+                        yield return b.Where;
                 }
             }
             void IActor.Run(object test) { ((ITestFixture) test).Run(); }
@@ -83,7 +88,7 @@ namespace hw.UnitTest
 
         readonly IActor _actor;
         public bool IsSuspended;
-        public TestMethod(MethodInfo methodInfo) { _actor = new MethodActor(methodInfo); }
+        public TestMethod(MethodInfo methodInfo, Type type) { _actor = new MethodActor(methodInfo, type); }
 
         public TestMethod(Type type) { _actor = new InterfaceActor(type); }
 
@@ -104,7 +109,7 @@ namespace hw.UnitTest
         {
             Tracer.Line("Start " + _actor.LongName);
             Tracer.IndentStart();
-            Tracer.Line(_actor.FilePosition.ToString(FilePositionTag.Test)+ " position of test");
+            Tracer.Line(_actor.FilePositions.Select(p=> p.ToString(FilePositionTag.Test)+ " position of test").Stringify("\n"));
             try
             {
                 if(!IsSuspended)
