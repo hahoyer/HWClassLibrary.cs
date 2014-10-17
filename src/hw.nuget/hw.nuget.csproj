@@ -67,8 +67,10 @@
     <Compile Include="hw.Forms\Forms\NodeNameAttribute.cs" />
     <Compile Include="hw.Forms\Forms\SmartNodeAttribute.cs" />
     <Compile Include="hw.Helper.Core\Debug\Configuration.cs" />
+    <Compile Include="hw.Helper.Core\Debug\DebugTextWriter.cs" />
     <Compile Include="hw.Helper.Core\Debug\DumpableObject.cs" />
     <Compile Include="hw.Helper.Core\Debug\Dumper.cs" />
+    <Compile Include="hw.Helper.Core\Debug\TextWriters.cs" />
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
