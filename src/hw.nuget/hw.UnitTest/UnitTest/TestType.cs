@@ -10,19 +10,41 @@ namespace hw.UnitTest
     {
         internal readonly Type Type;
         internal TestType(Type type) { Type = type; }
-        bool _isComplete;
         readonly List<TestMethod> _failedMethods = new List<TestMethod>();
         bool _isSuspended;
 
         public IEnumerable<DependantAttribute> Dependants { get { return Type.GetAttributes<DependantAttribute>(true); } }
 
-        IEnumerable<TestMethod> UnitTestMethods { get { return Type.GetMethods().Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null).Select(methodInfo => new TestMethod(methodInfo)); } }
+        IEnumerable<TestMethod> UnitTestMethods
+        {
+            get
+            {
+                return Type
+                    .GetMethods()
+                    .Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null)
+                    .Select(methodInfo => new TestMethod(methodInfo))
+                    .Concat(DefaultTestMethod);
+            }
+        }
+
+        IEnumerable<TestMethod> DefaultTestMethod
+        {
+            get
+            {
+                var testAttribute = Type.GetAttribute<TestFixtureAttribute>(true);
+                if(testAttribute == null)
+                    yield break;
+                if(testAttribute.DefaultMethod == null)
+                    yield break;
+                yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod));
+            }
+        }
 
         public bool IsStarted { get; set; }
 
         public bool IsStartable(Func<Type, bool> isLevel) { return !IsStarted && !_isSuspended && isLevel(Type); }
 
-        public bool IsComplete { get { return _isComplete; } }
+        public bool IsComplete { get; set; }
 
         public bool IsSuccessfull { get { return IsComplete && _failedMethods.Count == 0; } }
 
@@ -43,7 +65,10 @@ namespace hw.UnitTest
             get { return _failedMethods.Aggregate("", (current, testMethod) => current + testMethod.ConfigurationString); }
             set
             {
-                var forcedMethods = value.Split(',').Join(UnitTestMethods, name => name, method => method.Name, (name, method) => method).ToArray();
+                var forcedMethods =
+                    value.Split(',')
+                        .Join(UnitTestMethods, name => name, method => method.Name, (name, method) => method)
+                        .ToArray();
                 foreach(var notForcedMethod in UnitTestMethods.Except(forcedMethods))
                     notForcedMethod.IsSuspended = true;
             }
@@ -97,7 +122,7 @@ namespace hw.UnitTest
                 {
                     _failedMethods.Add(unitTestMethod);
                 }
-            _isComplete = true;
+            IsComplete = true;
         }
     }
 }

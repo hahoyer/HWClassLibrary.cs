@@ -14,15 +14,14 @@
         <language>en-US</language>
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2013</copyright>
+        <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.0.0.0</version>
+        <version>14.1-alpha</version>
         <releaseNotes>
-            Admin: file headers removed
-            Change: Support static and sealed test classes only
+            New: Ability to provide default method at textfixture
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="14.0" />
+            <dependency id="hw.Helper.Core" version="14.14" />
         </dependencies>
 
     </metadata>
