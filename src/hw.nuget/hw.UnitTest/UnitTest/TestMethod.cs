@@ -7,6 +7,13 @@ using hw.Helper;
 
 namespace hw.UnitTest
 {
+    public class SourceFilePosition
+    {
+        public string FileName;
+        public int LineNumber;
+        public string ToString(FilePositionTag tag) { return Tracer.FilePosn(FileName, LineNumber, 0, tag); }
+    }
+
     sealed class TestMethod : Dumpable
     {
         interface IActor
@@ -14,6 +21,7 @@ namespace hw.UnitTest
             string Name { get; }
             string LongName { get; }
             object Instance { get; }
+            SourceFilePosition FilePosition { get; }
             void Run(object test);
         }
 
@@ -39,6 +47,18 @@ namespace hw.UnitTest
                     return Activator.CreateInstance(_target.ReflectedType);
                 }
             }
+            SourceFilePosition IActor.FilePosition
+            {
+                get
+                {
+                    var a = _target.GetAttribute<TestAttribute>(true);
+                    if(a != null)
+                        return a.Where;
+                    return _target.DeclaringType.GetAttribute<TestFixtureAttribute>(true)
+                        .AssertNotNull()
+                        .Where;
+                }
+            }
             void IActor.Run(object test) { _target.Invoke(test, new object[0]); }
         }
 
@@ -49,6 +69,15 @@ namespace hw.UnitTest
             string IActor.Name { get { return _target.Name; } }
             string IActor.LongName { get { return _target.PrettyName(); } }
             object IActor.Instance { get { return Activator.CreateInstance(_target); } }
+            SourceFilePosition IActor.FilePosition
+            {
+                get
+                {
+                    return _target.GetAttribute<TestFixtureAttribute>(true)
+                        .AssertNotNull()
+                        .Where;
+                }
+            }
             void IActor.Run(object test) { ((ITestFixture) test).Run(); }
         }
 
@@ -75,6 +104,7 @@ namespace hw.UnitTest
         {
             Tracer.Line("Start " + _actor.LongName);
             Tracer.IndentStart();
+            Tracer.Line(_actor.FilePosition.ToString(FilePositionTag.Test)+ " position of test");
             try
             {
                 if(!IsSuspended)

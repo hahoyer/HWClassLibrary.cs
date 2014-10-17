@@ -124,7 +124,7 @@ namespace hw.UnitTest
             return rootAssembly
                 .GetReferencedTypes()
                 .Where(type => type.IsSealed && type.GetAttribute<TestFixtureAttribute>(true) != null)
-                .Select(methodInfo => new TestType(methodInfo));
+                .Select(type => new TestType(type));
         }
     }
 
