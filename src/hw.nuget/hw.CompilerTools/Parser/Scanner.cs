@@ -1,25 +1,3 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,19 +14,37 @@ namespace hw.Parser
         protected abstract int? Text(SourcePosn sourcePosn);
         protected abstract int? Any(SourcePosn sourcePosn);
 
-        internal Item<IParsedSyntax> CreateToken(SourcePosn sourcePosn, ITokenFactory tokenFactory)
+        internal Item<IParsedSyntax> CreateToken
+            (SourcePosn sourcePosn, ITokenFactory tokenFactory, Stack<OpenItem<IParsedSyntax>> stack)
+        {
+            var item = InternalCreateToken(sourcePosn, tokenFactory);
+            var type = item.Type;
+            var rescannable = type as IRescannable<IParsedSyntax>;
+            if(rescannable != null)
+                return rescannable.Execute(item.Part, sourcePosn, stack);
+
+            return new Item<IParsedSyntax>((IType<IParsedSyntax>) type, item.Part);
+        }
+
+        RawItem InternalCreateToken
+            (SourcePosn sourcePosn, ITokenFactory tokenFactory)
         {
             try
             {
                 sourcePosn.Position += WhiteSpace(sourcePosn);
-                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?) 0 : null, tokenFactory.EndOfText) ?? CreateAndAdvance(sourcePosn, Number, tokenFactory.Number) ?? CreateAndAdvance(sourcePosn, Text, tokenFactory.Text) ?? CreateAndAdvance(sourcePosn, Any, tokenFactory.TokenClass) ?? WillReturnNull(sourcePosn);
+                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?)0 : null, tokenFactory.EndOfText)
+                    ?? CreateAndAdvance(sourcePosn, Number, tokenFactory.Number)
+                        ?? CreateAndAdvance(sourcePosn, Text, tokenFactory.Text)
+                            ?? CreateAndAdvance(sourcePosn, Any, tokenFactory.TokenClass)
+                                ?? WillReturnNull(sourcePosn);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 return CreateAndAdvance(exception.SourcePosn, sp => exception.Length, exception.TokenClass);
             }
         }
-        Item<IParsedSyntax> WillReturnNull(SourcePosn sourcePosn)
+
+        RawItem WillReturnNull(SourcePosn sourcePosn)
         {
             NotImplementedMethod(sourcePosn);
             return null;
@@ -57,10 +53,10 @@ namespace hw.Parser
         internal sealed class Exception : System.Exception
         {
             public readonly SourcePosn SourcePosn;
-            public readonly IType<IParsedSyntax> TokenClass;
+            public readonly IType TokenClass;
             public readonly int Length;
 
-            public Exception(SourcePosn sourcePosn, IType<IParsedSyntax> tokenClass, int length)
+            public Exception(SourcePosn sourcePosn, IType tokenClass, int length)
             {
                 SourcePosn = sourcePosn;
                 TokenClass = tokenClass;
@@ -68,18 +64,29 @@ namespace hw.Parser
             }
         }
 
-        static Item<IParsedSyntax> CreateAndAdvance(SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType<IParsedSyntax> tokenClass) { return CreateAndAdvance(sourcePosn, getLength, (sp, l) => tokenClass); }
-        static Item<IParsedSyntax> CreateAndAdvance(SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType<IParsedSyntax>> getTokenClass) { return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass(sp.SubString(0, l))); }
+        static RawItem CreateAndAdvance
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType tokenClass)
+        {
+            return CreateAndAdvance(sourcePosn, getLength, (sp, l) => tokenClass);
+        }
+        static RawItem CreateAndAdvance
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType> getTokenClass)
+        {
+            return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass(sp.SubString(0, l)));
+        }
 
-        static Item<IParsedSyntax> CreateAndAdvance(SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<SourcePosn, int, IType<IParsedSyntax>> getTokenClass)
+        static RawItem CreateAndAdvance
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<SourcePosn, int, IType> getTokenClass)
         {
             var length = getLength(sourcePosn);
             if(length == null)
                 return null;
 
-            var result = new Item<IParsedSyntax>(getTokenClass(sourcePosn, length.Value), TokenData.Span(sourcePosn, length.Value));
+            var result = new RawItem
+                (getTokenClass(sourcePosn, length.Value), TokenData.Span(sourcePosn, length.Value));
             sourcePosn.Position += length.Value;
             return result;
         }
     }
+
 }

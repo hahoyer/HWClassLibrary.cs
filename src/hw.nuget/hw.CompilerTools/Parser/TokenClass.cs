@@ -18,12 +18,9 @@ namespace hw.Parser
 
         string IIconKeyProvider.IconKey { get { return "Symbol"; } }
 
-        [EnableDumpExcept(null)]
-        protected virtual ITokenFactory NewTokenFactory { get { return null; } }
-
         string INameProvider.Name { set { Name = value; } }
 
-        IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right, bool isMatch)
+        IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart part, IParsedSyntax right, bool isMatch)
         {
             if(AcceptsMatch == isMatch)
                 return Create(left, part, right);
@@ -33,14 +30,14 @@ namespace hw.Parser
         string IType<IParsedSyntax>.PrioTableName { get { return Name; } }
         bool IType<IParsedSyntax>.IsEnd { get { return IsEnd; } }
 
-        protected virtual IParsedSyntax Mismatch(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right)
+        protected virtual IParsedSyntax Mismatch(IParsedSyntax left, IPart part, IParsedSyntax right)
         {
             NotImplementedMethod(left, part, right);
             return null;
         }
 
         protected virtual bool AcceptsMatch { get { return false; } }
-        protected abstract IParsedSyntax Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right);
+        protected abstract IParsedSyntax Create(IParsedSyntax left, IPart part, IParsedSyntax right);
 
         protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }
 

@@ -32,7 +32,10 @@ namespace hw.Parser
             return sourcePosn.Parse(_tokenFactory.PrioTable);
         }
 
-        internal Item<IParsedSyntax> GetItemAndAdvance(SourcePosn sourcePosn) { return _scanner.CreateToken(sourcePosn, _tokenFactory); }
+        internal Item<IParsedSyntax> GetItemAndAdvance(SourcePosn sourcePosn, Stack<OpenItem<IParsedSyntax>> stack)
+        {
+            return _scanner.CreateToken(sourcePosn, _tokenFactory, stack);
+        }
     }
 
     sealed class Position : Dumpable, IPosition<IParsedSyntax>
@@ -46,7 +49,13 @@ namespace hw.Parser
             _parserInst = parserInst;
         }
 
-        Item<IParsedSyntax> IPosition<IParsedSyntax>.GetItemAndAdvance(Stack<OpenItem<IParsedSyntax>> stack) { return _parserInst.GetItemAndAdvance(SourcePosn); }
-        IPart<IParsedSyntax> IPosition<IParsedSyntax>.Span(IPosition<IParsedSyntax> end) { return TokenData.Span(SourcePosn, end); }
+        Item<IParsedSyntax> IPosition<IParsedSyntax>.GetItemAndAdvance(Stack<OpenItem<IParsedSyntax>> stack)
+        {
+            return _parserInst.GetItemAndAdvance(SourcePosn,stack);
+        }
+        IPart IPosition<IParsedSyntax>.Span(IPosition<IParsedSyntax> end)
+        {
+            return TokenData.Span(SourcePosn, end);
+        }
     }
 }

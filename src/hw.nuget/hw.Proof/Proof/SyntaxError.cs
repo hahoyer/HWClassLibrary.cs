@@ -15,7 +15,7 @@ namespace hw.Proof
 
         public SyntaxError(IssueId issueId) { _issueId = issueId; }
 
-        IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart<IParsedSyntax> part, IParsedSyntax right, bool isMatch)
+        IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart part, IParsedSyntax right, bool isMatch)
         {
             NotImplementedMethod(left, part, right);
             return null;

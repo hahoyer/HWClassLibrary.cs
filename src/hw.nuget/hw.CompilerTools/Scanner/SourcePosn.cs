@@ -11,7 +11,7 @@ namespace hw.Scanner
     ///     Source and position for compilation process
     /// </summary>
     [DebuggerDisplay("{NodeDump}")]
-    sealed class SourcePosn : Dumpable
+    public sealed class SourcePosn : Dumpable
     {
         public readonly Source Source;
         public int Position;

@@ -5,13 +5,25 @@ using hw.Debug;
 
 namespace hw.PrioParser
 {
+    public sealed class RawItem
+    {
+        public readonly IType Type;
+        public readonly IPart Part;
+
+        public RawItem(IType type, IPart part)
+        {
+            Type = type;
+            Part = part;
+        }
+    }
+
     public sealed class Item<T>
         where T : class
     {
         public readonly IType<T> Type;
-        public readonly IPart<T> Part;
+        public readonly IPart Part;
 
-        public Item(IType<T> type, IPart<T> part)
+        public Item(IType<T> type, IPart part)
         {
             Type = type;
             Part = part;

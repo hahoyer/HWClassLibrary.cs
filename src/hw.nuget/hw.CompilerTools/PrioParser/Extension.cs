@@ -38,6 +38,12 @@ namespace hw.PrioParser
             } while(true);
         }
 
-        public static T Operation<T>(this IOperator<T> @operator, T left, IOperatorPart token, T right) where T : class { return left == null ? (right == null ? @operator.Terminal(token) : @operator.Prefix(token, right)) : (right == null ? @operator.Suffix(left, token) : @operator.Infix(left, token, right)); }
+        public static T Operation<T>(this IOperator<T> @operator, T left, IOperatorPart token, T right)
+            where T : class
+        {
+            return left == null
+                ? (right == null ? @operator.Terminal(token) : @operator.Prefix(token, right))
+                : (right == null ? @operator.Suffix(left, token) : @operator.Infix(left, token, right));
+        }
     }
 }

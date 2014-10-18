@@ -1,26 +1,4 @@
-﻿#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
@@ -30,7 +8,7 @@ using hw.PrioParser;
 namespace hw.Parser
 {
     abstract class TokenFactory<TTokenClass> : Dumpable, ITokenFactory
-        where TTokenClass : class, IType<IParsedSyntax>, INameProvider
+        where TTokenClass : class, IType, INameProvider
     {
         readonly PrioTable _prioTable;
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
@@ -92,11 +70,11 @@ namespace hw.Parser
 
         PrioTable ITokenFactory.PrioTable { get { return _prioTable; } }
 
-        IType<IParsedSyntax> ITokenFactory.TokenClass(string name) { return TokenClasses[name]; }
+        IType ITokenFactory.TokenClass(string name) { return TokenClasses[name]; }
 
-        IType<IParsedSyntax> ITokenFactory.Number { get { return _number.Value; } }
-        IType<IParsedSyntax> ITokenFactory.Text { get { return _text.Value; } }
-        IType<IParsedSyntax> ITokenFactory.EndOfText { get { return _endOfText.Value; } }
+        IType ITokenFactory.Number { get { return _number.Value; } }
+        IType ITokenFactory.Text { get { return _text.Value; } }
+        IType ITokenFactory.EndOfText { get { return _endOfText.Value; } }
 
         protected abstract TTokenClass GetSyntaxError(string message);
         protected abstract FunctionCache<string, TTokenClass> GetPredefinedTokenClasses();
@@ -108,6 +86,6 @@ namespace hw.Parser
         protected virtual TTokenClass GetText() { return GetSyntaxError("unexpected string"); }
 
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
-        protected IType<IParsedSyntax> TokenClass(string name) { return ((ITokenFactory) this).TokenClass(name); }
+        protected IType TokenClass(string name) { return ((ITokenFactory)this).TokenClass(name); }
     }
 }
