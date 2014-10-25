@@ -10,7 +10,7 @@ namespace hw.Scanner
         int? Match(SourcePosn sourcePosn);
     }
 
-    sealed class Match : Dumpable, IMatch
+    public sealed class Match : Dumpable, IMatch
     {
         [EnableDump]
         readonly IMatch _data;
@@ -158,7 +158,7 @@ namespace hw.Scanner
             }
         }
 
-        internal interface IError
+        public interface IError
         {}
 
         internal sealed class Exception : System.Exception

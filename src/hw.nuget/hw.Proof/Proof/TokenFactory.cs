@@ -2,18 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Helper;
-using hw.PrioParser;
+using hw.Parser;
 using hw.Proof.TokenClasses;
 
 namespace hw.Proof
 {
-    sealed class TokenFactory : Parser.TokenFactory<TokenClass>
+    sealed class TokenFactory : TokenFactory<TokenClasses.TokenClass , ParsedSyntax>
     {
         TokenFactory() { }
 
         internal static TokenFactory Instance { get { return new TokenFactory(); } }
 
-        protected override TokenClass GetTokenClass(string name) { return new UserSymbol(); }
+        protected override TokenClasses.TokenClass GetTokenClass(string name) { return new UserSymbol(); }
 
         internal static PrioTable PrioTable
         {
@@ -41,9 +41,9 @@ namespace hw.Proof
             }
         }
 
-        protected override FunctionCache<string, TokenClass> GetPredefinedTokenClasses()
+        protected override FunctionCache<string, TokenClasses.TokenClass> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass>
+            var result = new FunctionCache<string, TokenClasses.TokenClass>
             {
                 {"{", new LeftParenthesis(1)},
                 {"[", new LeftParenthesis(2)},
@@ -64,16 +64,16 @@ namespace hw.Proof
             };
             return result;
         }
-        protected override TokenClass GetEndOfText() { return new RightParenthesis(0); }
-        protected override TokenClass GetNumber() { return new Number(); }
+        protected override TokenClasses.TokenClass GetEndOfText() { return new RightParenthesis(0); }
+        protected override TokenClasses.TokenClass GetNumber() { return new Number(); }
 
         internal Minus Minus { get { return (Minus) TokenClass("-"); } }
         internal Equal Equal { get { return (Equal) TokenClass("="); } }
         internal Plus Plus { get { return (Plus) TokenClass("+"); } }
 
-        protected override TokenClass GetSyntaxError(string message) { return new SyntaxError(message); }
+        protected override TokenClasses.TokenClass GetSyntaxError(string message) { return new SyntaxError(message); }
 
-        sealed class SyntaxError : TokenClass
+        sealed class SyntaxError : TokenClasses.TokenClass
         {
             readonly string _message;
             public SyntaxError(string message) { _message = message; }

@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using hw.Debug;
 using hw.Parser;
+using hw.Scanner;
 
 namespace hw.Proof.TokenClasses
 {
-    abstract class TokenClass : Parser.TokenClass
+    abstract class TokenClass : DumpableObject, IType<ParsedSyntax>, INameProvider
     {
-        protected override Parser.ParsedSyntax Create(Parser.ParsedSyntax left, SourcePart part, Parser.ParsedSyntax right)  
-        {
-            throw new NotImplementedException();
-        }
+        string _name;
 
         protected virtual ParsedSyntax Syntax(ParsedSyntax left, SourcePart token, ParsedSyntax right)
         {
@@ -30,5 +29,16 @@ namespace hw.Proof.TokenClasses
             }
             return "(" + result + ")";
         }
+        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, SourcePart part, ParsedSyntax right, bool isMatch)
+        {
+            return Syntax(left, part, right);
+        }
+
+        string IType<ParsedSyntax>.PrioTableName { get { return _name; } }
+        ISubParser<ParsedSyntax> IType<ParsedSyntax>.Next { get { return Next; } }
+        string INameProvider.Name { set { _name = value; } }
+
+        protected virtual ISubParser<ParsedSyntax> Next { get { return null; } }
+        public string Name { get { return _name ; } }
     }
 }

@@ -27,6 +27,7 @@ using hw.Debug;
 using hw.Helper;
 using hw.Parser;
 using hw.Proof.TokenClasses;
+using hw.Scanner;
 using JetBrains.Annotations;
 
 namespace hw.Proof

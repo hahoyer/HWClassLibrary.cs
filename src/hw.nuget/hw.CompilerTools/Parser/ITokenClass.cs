@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.PrioParser;
 
 namespace hw.Parser
 {
@@ -10,6 +9,4 @@ namespace hw.Parser
         string Name { set; }
     }
 
-    interface ITokenClass : IType<ParsedSyntax>, INameProvider
-    {}
 }

@@ -4,23 +4,23 @@ using System.Linq;
 using hw.Debug;
 using hw.Helper;
 using hw.Parser;
-using hw.PrioParser;
+using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    abstract class TokenFactory : TokenFactory<TokenClass>
+    abstract class TokenFactory : TokenFactory<TokenClass<Syntax>, Syntax>
     {
-        protected static readonly hw.Parser.Scanner Scanner = new Scanner();
+        protected static readonly IScanner<Syntax> Scanner = new Scanner<Syntax>(new Proof.ReniLexer());
 
-        protected override TokenClass GetSyntaxError(string message) { return new SyntaxError(message); }
-        protected override TokenClass GetEndOfText() { return new EndOfTextToken(); }
+        protected override TokenClass<Syntax> GetSyntaxError(string message) { return new SyntaxError(message); }
+        protected override TokenClass<Syntax> GetEndOfText() { return new EndOfTextToken(); }
 
-        sealed class SyntaxError : TokenClass
+        sealed class SyntaxError : TokenClass<Syntax>
         {
             [EnableDump]
             readonly string _message;
             public SyntaxError(string message) { _message = message; }
-            protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
+            protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
             {
                 NotImplementedMethod(left, part, right);
                 return null;
@@ -30,14 +30,9 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class MainTokenFactory : TokenFactory
     {
-        public static readonly Control Instance = new Control
-        {
-            TokenFactory = new MainTokenFactory(),
-            PrioTable = PrioTable,
-            Scanner = Scanner
-        };
+        public static readonly IParser<Syntax> Parser = new PrioParser<Syntax>(PrioTable,Scanner,new MainTokenFactory());
 
-        MainTokenFactory() {}
+        MainTokenFactory() { }
 
         static PrioTable PrioTable
         {
@@ -51,25 +46,29 @@ namespace hw.Tests.CompilerTool.Util
             }
         }
 
-        protected override FunctionCache<string, TokenClass> GetPredefinedTokenClasses()
+        protected override FunctionCache<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass> {{"-->", new SwitchToken()}};
+            var result = new FunctionCache<string, TokenClass<Syntax>> {{"-->", new SwitchToken()}};
             return result;
         }
 
-        protected override TokenClass GetTokenClass(string name) { return new MainToken(name); }
+        protected override TokenClass<Syntax> GetTokenClass(string name) { return new MainToken(name); }
     }
 
     sealed class NestedTokenFactory : TokenFactory
     {
-        public static readonly Control Instance = new Control
-        {
-            TokenFactory = new NestedTokenFactory(),
-            PrioTable = PrioTable,
-            Scanner = Scanner
-        };
+        public static readonly ISubParser<Syntax> ParserInstance = new Parser();
 
-        NestedTokenFactory() {}
+        sealed class Parser : DumpableObject, ISubParser<Syntax>
+        {
+            IType<Syntax> ISubParser<Syntax>.Execute(SourcePosn sourcePosn, Stack<OpenItem<Syntax>> stack)
+            {
+                NotImplementedMethod(sourcePosn, stack);
+                return null;
+            }
+        }
+
+        NestedTokenFactory() { }
 
         static PrioTable PrioTable
         {
@@ -84,40 +83,41 @@ namespace hw.Tests.CompilerTool.Util
             }
         }
 
-        protected override FunctionCache<string, TokenClass> GetPredefinedTokenClasses()
+        protected override FunctionCache<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass>();
+            var result = new FunctionCache<string, TokenClass<Syntax>>();
             return result;
         }
 
-        protected override TokenClass GetTokenClass(string name) { return new NestedToken(name); }
+        protected override TokenClass<Syntax> GetTokenClass(string name) { return new NestedToken(name); }
     }
 
     sealed class SwitchToken : NamedToken
     {
         public SwitchToken()
-            : base("-->") {}
+            : base("-->")
+        {}
         public override bool IsMain { get { return true; } }
-        protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
+        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
         {
             if(right == null && left == null)
                 return new Syntax(null, this, part, null);
 
-            Tracer.Assert(left == null, ()=>left.Dump());
+            Tracer.Assert(left == null, () => left.Dump());
             return right;
         }
-        protected override Control Next { get { return NestedTokenFactory.Instance; } }
+        protected override ISubParser<Syntax> Next { get { return NestedTokenFactory.ParserInstance; } }
     }
 
-    abstract class NamedToken : TokenClass
+    abstract class NamedToken : TokenClass<Syntax>
     {
         [EnableDump]
         readonly string _name;
         protected NamedToken(string name) { _name = name; }
         public abstract bool IsMain { get; }
-        protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
+        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
         {
-            return new Syntax((Syntax) left, this, part, (Syntax) right);
+            return new Syntax(left, this, part, right);
         }
     }
 
@@ -152,9 +152,9 @@ namespace hw.Tests.CompilerTool.Util
         }
     }
 
-    sealed class EndOfTextToken : TokenClass
+    sealed class EndOfTextToken : TokenClass<Syntax>
     {
-        protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
+        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
         {
             Tracer.Assert(right == null);
             return left;

@@ -4,11 +4,12 @@ using System.Linq;
 using hw.Debug;
 using hw.Forms;
 using hw.Helper;
-using hw.PrioParser;
+using hw.Scanner;
 
 namespace hw.Parser
 {
-    abstract class TokenClass : DumpableObject, IIconKeyProvider, ITokenClass
+    public abstract class TokenClass<TTreeItem> : DumpableObject, IIconKeyProvider, IType<TTreeItem>, INameProvider
+        where TTreeItem : class
     {
         static int _nextObjectId;
         string _name;
@@ -20,26 +21,26 @@ namespace hw.Parser
 
         string INameProvider.Name { set { Name = value; } }
 
-        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, SourcePart part, ParsedSyntax right, bool isMatch)
+        TTreeItem IType<TTreeItem>.Create(TTreeItem left, SourcePart part, TTreeItem right, bool isMatch)
         {
             if(AcceptsMatch == isMatch)
                 return Create(left, part, right);
             return Mismatch(left, part, right);
         }
 
-        string IType<ParsedSyntax>.PrioTableName { get { return Name; } }
-        Control IType<ParsedSyntax>.Next { get { return Next; } }
+        string IType<TTreeItem>.PrioTableName { get { return Name; } }
+        ISubParser<TTreeItem> IType<TTreeItem>.Next { get { return Next; } }
 
-        protected virtual Control Next { get { return null; } }
+        protected virtual ISubParser<TTreeItem> Next { get { return null; } }
 
-        protected virtual ParsedSyntax Mismatch(ParsedSyntax left, SourcePart part, ParsedSyntax right)
+        protected virtual TTreeItem Mismatch(TTreeItem left, SourcePart part, TTreeItem right)
         {
             NotImplementedMethod(left, part, right);
             return null;
         }
 
         protected virtual bool AcceptsMatch { get { return false; } }
-        protected abstract ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right);
+        protected abstract TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
 
         protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }
 

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
 using hw.Helper;
-using hw.PrioParser;
+using hw.Scanner;
 
 namespace hw.Parser
 {
-    abstract class TokenFactory<TTokenClass> : Dumpable, ITokenFactory<ParsedSyntax>
-        where TTokenClass : class, IType<ParsedSyntax>, INameProvider
+    abstract class TokenFactory<TTokenClass, TTreeItem> : Dumpable, ITokenFactory<TTreeItem>
+        where TTokenClass : class, IType<TTreeItem>, INameProvider
+        where TTreeItem : class
     {
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
         readonly ValueCache<TTokenClass> _number;
@@ -58,11 +59,12 @@ namespace hw.Parser
             return result;
         }
 
-        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.TokenClass(string name) { return TokenClasses[name]; }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.TokenClass(string name) { return TokenClass(name); }
 
-        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.Number { get { return _number.Value; } }
-        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.Text { get { return _text.Value; } }
-        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.EndOfText { get { return _endOfText.Value; } }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.Number { get { return _number.Value; } }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.Text { get { return _text.Value; } }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.EndOfText { get { return _endOfText.Value; } }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error) { return GetSyntaxError(error.ToString()); }
 
         protected abstract TTokenClass GetSyntaxError(string message);
         protected abstract FunctionCache<string, TTokenClass> GetPredefinedTokenClasses();
@@ -73,6 +75,6 @@ namespace hw.Parser
         protected virtual TTokenClass GetText() { return GetSyntaxError("unexpected string"); }
 
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
-        protected IType<ParsedSyntax> TokenClass(string name) { return ((ITokenFactory<ParsedSyntax>)this).TokenClass(name); }
+        protected IType<TTreeItem> TokenClass(string name) { return TokenClasses[name]; }
     }
 }

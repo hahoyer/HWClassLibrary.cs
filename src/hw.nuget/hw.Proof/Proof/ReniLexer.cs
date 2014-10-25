@@ -2,22 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
+using hw.Parser;
 using hw.Scanner;
 
 namespace hw.Proof
 {
-    sealed class Scanner : Parser.Scanner
+    sealed class ReniLexer : ILexer
     {
+        internal sealed class Error : Match.IError
+        {
+            public readonly IssueId IssueId;
+            public Error(IssueId issueId) { IssueId = issueId; }
+        }
+
         readonly Match _whiteSpaces;
         readonly Match _any;
         readonly Match _text;
-        readonly SyntaxError _invalidTextEnd = new SyntaxError(IssueId.EOLInString);
-        readonly SyntaxError _invalidLineComment = new SyntaxError(IssueId.EOFInLineComment);
-        readonly SyntaxError _invalidComment = new SyntaxError(IssueId.EOFInComment);
-        readonly SyntaxError _unexpectedSyntaxError = new SyntaxError(IssueId.UnexpectedSyntaxError);
+        readonly Error _invalidTextEnd = new Error(IssueId.EOLInString);
+        readonly Error _invalidLineComment = new Error(IssueId.EOFInLineComment);
+        readonly Error _invalidComment = new Error(IssueId.EOFInComment);
         readonly IMatch _number;
 
-        public Scanner()
+        public ReniLexer()
         {
             var alpha = Match.Letter.Else("_");
             var symbol1 = "({[)}];,".AnyChar();
@@ -48,28 +54,15 @@ namespace hw.Proof
                     });
         }
 
-        protected override int WhiteSpace(SourcePosn sourcePosn)
+        int ILexer.WhiteSpace(SourcePosn sourcePosn)
         {
-            var result = ExceptionGuard(sourcePosn, _whiteSpaces);
+            var result = sourcePosn.Match(_whiteSpaces);
             Tracer.Assert(result != null);
             return result.Value;
         }
 
-        protected override int? Number(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _number); }
-        protected override int? Any(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _any); }
-        protected override int? Text(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _text); }
-
-        int? ExceptionGuard(SourcePosn sourcePosn, IMatch match)
-        {
-            try
-            {
-                return sourcePosn.Match(match);
-            }
-            catch(Match.Exception exception)
-            {
-                throw new Exception
-                    (sourcePosn, exception.Error as SyntaxError ?? _unexpectedSyntaxError, exception.SourcePosn - sourcePosn);
-            }
-        }
+        int? ILexer.Number(SourcePosn sourcePosn) { return sourcePosn.Match(_number); }
+        int? ILexer.Any(SourcePosn sourcePosn) { return sourcePosn.Match(_any); }
+        int? ILexer.Text(SourcePosn sourcePosn) { return sourcePosn.Match(_text); }
     }
 }

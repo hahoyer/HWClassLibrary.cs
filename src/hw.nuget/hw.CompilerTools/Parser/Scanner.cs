@@ -2,37 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
-using hw.PrioParser;
 using hw.Scanner;
 
 namespace hw.Parser
 {
-    public sealed class Token
+    public class Scanner<TTreeItem> : Dumpable, IScanner<TTreeItem>
+        where TTreeItem : class
     {
-        public readonly IType<ParsedSyntax> Type;
-        public readonly SourcePart Part;
+        readonly ILexer _lexer;
 
-        public Token(IType<ParsedSyntax> type, SourcePart part)
-        {
-            Type = type;
-            Part = part;
-        }
-    }
+        public Scanner(ILexer lexer) { _lexer = lexer; }
 
+        int WhiteSpace(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.WhiteSpace); }
+        int? Number(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Number); }
+        int? Text(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Text); }
+        int? Any(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Any); }
 
-    public abstract class Scanner : Dumpable, IScanner<ParsedSyntax>
-    {
-        protected abstract int WhiteSpace(SourcePosn sourcePosn);
-        protected abstract int? Number(SourcePosn sourcePosn);
-        protected abstract int? Text(SourcePosn sourcePosn);
-        protected abstract int? Any(SourcePosn sourcePosn);
-
-        Token IScanner<ParsedSyntax>.NextToken(SourcePosn sourcePosn, ITokenFactory<ParsedSyntax> tokenFactory, Stack<OpenItem<ParsedSyntax>> stack)
+        ScannerItem<TTreeItem> IScanner<TTreeItem>.NextToken
+            (SourcePosn sourcePosn, ITokenFactory<TTreeItem> tokenFactory, Stack<OpenItem<TTreeItem>> stack)
         {
             return NextToken(sourcePosn, tokenFactory);
         }
 
-        Token NextToken(SourcePosn sourcePosn, ITokenFactory<ParsedSyntax> tokenFactory)
+        ScannerItem<TTreeItem> NextToken(SourcePosn sourcePosn, ITokenFactory<TTreeItem> tokenFactory)
         {
             try
             {
@@ -45,11 +37,11 @@ namespace hw.Parser
             }
             catch(Exception exception)
             {
-                return CreateAndAdvance(exception.SourcePosn, sp => exception.Length, exception.TokenClass);
+                return CreateAndAdvance(exception.SourcePosn, sp => exception.Length, tokenFactory.Error(exception.Error));
             }
         }
 
-        Token WillReturnNull(SourcePosn sourcePosn)
+        ScannerItem<TTreeItem> WillReturnNull(SourcePosn sourcePosn)
         {
             NotImplementedMethod(sourcePosn);
             return null;
@@ -58,42 +50,54 @@ namespace hw.Parser
         internal sealed class Exception : System.Exception
         {
             public readonly SourcePosn SourcePosn;
-            public readonly IType<ParsedSyntax> TokenClass;
-            public readonly int Length;
+            internal readonly int Length;
+            public readonly Match.IError Error;
 
-            public Exception(SourcePosn sourcePosn, IType<ParsedSyntax> tokenClass, int length)
+            public Exception(SourcePosn sourcePosn, int length, Match.IError error)
             {
                 SourcePosn = sourcePosn;
-                TokenClass = tokenClass;
                 Length = length;
+                Error = error;
             }
         }
 
-        static Token CreateAndAdvance
-            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType<ParsedSyntax> tokenClass)
+        static ScannerItem<TTreeItem> CreateAndAdvance
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType<TTreeItem> tokenClass)
         {
             return CreateAndAdvance(sourcePosn, getLength, (sp, l) => tokenClass);
         }
-        static Token CreateAndAdvance
-            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType<ParsedSyntax>> getTokenClass)
+        static ScannerItem<TTreeItem> CreateAndAdvance
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType<TTreeItem>> getTokenClass)
         {
             return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass(sp.SubString(0, l)));
         }
 
-        static Token CreateAndAdvance
+        static ScannerItem<TTreeItem> CreateAndAdvance
             (
             SourcePosn sourcePosn,
             Func<SourcePosn, int?> getLength,
-            Func<SourcePosn, int, IType<ParsedSyntax>> getTokenClass)
+            Func<SourcePosn, int, IType<TTreeItem>> getTokenClass)
         {
             var length = getLength(sourcePosn);
             if(length == null)
                 return null;
 
-            var result = new Token
+            var result = new ScannerItem<TTreeItem>
                 (getTokenClass(sourcePosn, length.Value), SourcePart.Span(sourcePosn, length.Value));
             sourcePosn.Position += length.Value;
             return result;
+        }
+
+        TResult ExceptionGuard<TResult>(SourcePosn sourcePosn, Func<SourcePosn, TResult> match)
+        {
+            try
+            {
+                return match(sourcePosn);
+            }
+            catch(Match.Exception exception)
+            {
+                throw new Exception(sourcePosn, sourcePosn - exception.SourcePosn, exception.Error);
+            }
         }
     }
 }
