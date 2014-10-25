@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
@@ -11,21 +10,24 @@ namespace hw.Scanner
     {
         readonly string _data;
         readonly File _file;
+        public const int NodeDumpWidth = 10;
+        public const int DumpWidth = 20;
 
-        internal Source(File file)
+        public Source(File file)
         {
             _file = file;
             _data = _file.String;
         }
 
         public string Data { get { return _data; } }
-        internal Source(string data) { _data = data; }
-        internal char this[int index] { get { return IsEnd(index) ? '\0' : _data[index]; } }
-        internal bool IsEnd(int posn) { return Length <= posn; }
-        internal int Length { get { return _data.Length; } }
-        internal string SubString(int start, int length) { return _data.Substring(start, length); }
+        public Source(string data) { _data = data; }
+        public char this[int index] { get { return IsEnd(index) ? '\0' : _data[index]; } }
+        public bool IsEnd(int posn) { return Length <= posn; }
+        public int Length { get { return _data.Length; } }
+        public bool IsPersistent { get { return _file != null; } }
+        public string SubString(int start, int length) { return _data.Substring(start, length); }
 
-        internal string FilePosn(int i, string flagText, string tag = null)
+        public string FilePosn(int i, string flagText, string tag = null)
         {
             if(_file == null)
                 return "????";
