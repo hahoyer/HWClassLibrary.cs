@@ -16,11 +16,12 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.4-alpha</version>
+        <version>14.4.0.1-alpha</version>
         <releaseNotes>
             New: Subparsing support
             Change: Ability to use templates improved
             Change: Better decomposition of objects involved in compiling process
+            ApiBug: Extension.Operation is not an extension method
         </releaseNotes>
         <dependencies>
             <dependency id="hw.Helper.Core" version="14.16.2.0" />
