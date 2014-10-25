@@ -4,6 +4,7 @@ using System.Linq;
 using hw.Debug;
 using hw.Helper;
 using hw.Parser;
+using hw.Proof.TokenClasses;
 using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
@@ -39,7 +40,7 @@ namespace hw.Tests.CompilerTool.Util
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel(new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
+                x = x.ParenthesisLevel(new[] {"(", PrioTable.BeginOfText}, new[] {")", PrioTable.EndOfText});
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
                 return x;
@@ -48,7 +49,13 @@ namespace hw.Tests.CompilerTool.Util
 
         protected override FunctionCache<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass<Syntax>> {{"-->", new SwitchToken()}};
+            var result = new FunctionCache<string, TokenClass<Syntax>>
+            {
+                {"-->", new SwitchToken()},
+                {"(", new LeftParenthesis()},
+                {")", new RightParenthesis()}
+            
+            };
             return result;
         }
 
@@ -66,8 +73,9 @@ namespace hw.Tests.CompilerTool.Util
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel(new[] {"(", "[", "{"}, new[] {")", "]", "}"});
+                x = x.ParenthesisLevel(new[] { "(", PrioTable.BeginOfText }, new[] { ")", PrioTable.EndOfText });
                 x.Correct(PrioTable.Any, PrioTable.BeginOfText, '=');
+                x.Correct(")", PrioTable.BeginOfText, '=');
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
                 return x;
@@ -76,7 +84,12 @@ namespace hw.Tests.CompilerTool.Util
 
         protected override FunctionCache<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass<Syntax>>();
+            var result = new FunctionCache<string, TokenClass<Syntax>>
+            {
+                {"(", new LeftParenthesis()},
+                {")", new RightParenthesis()}
+            
+            };
             return result;
         }
 
@@ -145,6 +158,8 @@ namespace hw.Tests.CompilerTool.Util
 
         [DisableDump]
         protected override bool AcceptsMatch { get { return true; } }
+        [DisableDump]
+        protected override bool AcceptsMismatch { get { return true; } }
     }
 
     sealed class Syntax : ParsedSyntax
@@ -168,6 +183,28 @@ namespace hw.Tests.CompilerTool.Util
         protected override bool AcceptsMatch { get { return true; } }
 
         protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+        {
+            Tracer.Assert(right == null);
+            return left;
+        }
+    }
+    sealed class LeftParenthesis : TokenClass<Syntax>
+    {
+        [DisableDump]
+        protected override bool AcceptsMatch { get { return true; } }
+
+        protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
+        {
+            Tracer.Assert(left== null);
+            return right;
+        }
+    }
+    sealed class RightParenthesis : TokenClass<Syntax>
+    {
+        [DisableDump]
+        protected override bool AcceptsMatch { get { return true; } }
+
+        protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
         {
             Tracer.Assert(right == null);
             return left;

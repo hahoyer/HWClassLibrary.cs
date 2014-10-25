@@ -59,13 +59,17 @@ namespace hw.Tests.CompilerTool
 
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
             Tracer.Assert(result.TokenClass.Name == "c");
-            Tracer.Assert(result.TokenClass.IsMain);
+            Tracer.Assert(result.TokenClass.IsMain, result.Dump);
             Tracer.Assert(result.Left != null);
             Tracer.Assert(result.Right == null);
-            Tracer.Assert(result.Left.TokenClass.Name == "b");
+            Tracer.Assert(result.Left.TokenClass.Name == "c", result.Dump);
             Tracer.Assert(!result.Left.TokenClass.IsMain);
-            Tracer.Assert(result.Left.Left == null);
+            Tracer.Assert(result.Left.Left != null, result.Dump);
             Tracer.Assert(result.Left.Right == null);
+            Tracer.Assert(result.Left.Left.TokenClass.Name == "b");
+            Tracer.Assert(!result.Left.Left.TokenClass.IsMain);
+            Tracer.Assert(result.Left.Left.Left == null);
+            Tracer.Assert(result.Left.Left.Right == null);
         }
     }
 }
