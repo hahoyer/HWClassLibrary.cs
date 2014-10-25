@@ -23,7 +23,7 @@ namespace hw.Parser
 
         TTreeItem IType<TTreeItem>.Create(TTreeItem left, SourcePart part, TTreeItem right, bool isMatch)
         {
-            if(AcceptsMatch == isMatch)
+            if(isMatch && AcceptsMatch || !isMatch && AcceptsMismatch)
                 return Create(left, part, right);
             return Mismatch(left, part, right);
         }
@@ -39,6 +39,7 @@ namespace hw.Parser
             return null;
         }
 
+        protected virtual bool AcceptsMismatch { get { return !AcceptsMatch; } }
         protected virtual bool AcceptsMatch { get { return false; } }
         protected abstract TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
 
