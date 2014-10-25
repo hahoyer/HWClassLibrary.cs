@@ -5,7 +5,7 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    class PrioParser<TTreeItem> : IParser<TTreeItem>
+    public sealed class PrioParser<TTreeItem> : IParser<TTreeItem>
         where TTreeItem : class
     {
         readonly PrioTable _prioTable;
@@ -45,7 +45,7 @@ namespace hw.Parser
                         continue;
 
                     if(startLevel > stack.Count)
-                        return result;
+                        return item.Create(result, null, relation == '=');
 
                     stack.Push(new OpenItem<TTreeItem>(result, item, relation == '='));
                     result = null;
@@ -53,24 +53,15 @@ namespace hw.Parser
             } while(true);
         }
 
-        ParserItem<TTreeItem> NextToken
-            (SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack)
+        ParserItem<TTreeItem> NextToken(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack)
         {
             var result = _scanner.NextToken(sourcePosn, _tokenFactory, stack);
             if(result.Type == null || result.Type.Next == null)
                 return result.ToParserItem;
 
             var subType = result.Type.Next.Execute(sourcePosn, stack);
-            var sourcePart = SourcePart.Span(result.Part.Start,sourcePosn);
-            return new ParserItem<TTreeItem>(subType,sourcePart);
-        }
-
-
-        public static TTreeItem Operation(IOperator<TTreeItem> @operator, TTreeItem left, SourcePart token, TTreeItem right)
-        {
-            return left == null
-                ? (right == null ? @operator.Terminal(token) : @operator.Prefix(token, right))
-                : (right == null ? @operator.Suffix(left, token) : @operator.Infix(left, token, right));
+            var sourcePart = SourcePart.Span(result.Part.Start, sourcePosn);
+            return new ParserItem<TTreeItem>(subType, sourcePart);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace hw.Tests.CompilerTool
             var source = new Source(text);
 
 
-            var result = MainTokenFactory.Parser.Execute(source + 0, null);
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
             Tracer.Assert(result.TokenClass.Name == "c");
             Tracer.Assert(result.TokenClass.IsMain);
@@ -41,7 +41,7 @@ namespace hw.Tests.CompilerTool
             var text = "--> b c";
             var source = new Source(text);
 
-            var result = MainTokenFactory.Parser.Execute(source + 0, null);
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
             Tracer.Assert(result.TokenClass.Name == "c", result.Dump);
             Tracer.Assert(result.TokenClass.IsMain, result.Dump);
             Tracer.Assert(result.Left != null);
@@ -57,7 +57,7 @@ namespace hw.Tests.CompilerTool
             var text = "--> (b c) c";
             var source = new Source(text);
 
-            var result = MainTokenFactory.Parser.Execute(source + 0, null);
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
             Tracer.Assert(result.TokenClass.Name == "c");
             Tracer.Assert(result.TokenClass.IsMain);
             Tracer.Assert(result.Left != null);

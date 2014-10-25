@@ -30,7 +30,7 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class MainTokenFactory : TokenFactory
     {
-        public static readonly IParser<Syntax> Parser = new PrioParser<Syntax>(PrioTable,Scanner,new MainTokenFactory());
+        public static readonly IParser<Syntax> Instance = new PrioParser<Syntax>(PrioTable, Scanner, new MainTokenFactory());
 
         MainTokenFactory() { }
 
@@ -57,16 +57,7 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class NestedTokenFactory : TokenFactory
     {
-        public static readonly ISubParser<Syntax> ParserInstance = new Parser();
-
-        sealed class Parser : DumpableObject, ISubParser<Syntax>
-        {
-            IType<Syntax> ISubParser<Syntax>.Execute(SourcePosn sourcePosn, Stack<OpenItem<Syntax>> stack)
-            {
-                NotImplementedMethod(sourcePosn, stack);
-                return null;
-            }
-        }
+        public static readonly IParser<Syntax> Instance = new PrioParser<Syntax>(PrioTable, Scanner, new NestedTokenFactory());
 
         NestedTokenFactory() { }
 
@@ -74,9 +65,9 @@ namespace hw.Tests.CompilerTool.Util
         {
             get
             {
-                var x = PrioTable.Left("-->");
-                x += PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel(new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
+                var x = PrioTable.Left(PrioTable.Any);
+                x = x.ParenthesisLevel(new[] {"(", "[", "{"}, new[] {")", "]", "}"});
+                x.Correct(PrioTable.Any, PrioTable.BeginOfText, '=');
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
                 return x;
@@ -106,7 +97,22 @@ namespace hw.Tests.CompilerTool.Util
             Tracer.Assert(left == null, () => left.Dump());
             return right;
         }
-        protected override ISubParser<Syntax> Next { get { return NestedTokenFactory.ParserInstance; } }
+        protected override ISubParser<Syntax> Next { get { return NestedTokenFactory.Instance.Convert(Converter); } }
+
+        IType<Syntax> Converter(Syntax arg) { return new SyntaxBoxToken(arg); }
+
+        sealed class SyntaxBoxToken : TokenClass<Syntax>
+        {
+            [EnableDump]
+            readonly Syntax _content;
+            public SyntaxBoxToken(Syntax content) { _content = content; }
+            protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+            {
+                Tracer.Assert(left == null);
+                Tracer.Assert(right == null);
+                return _content;
+            }
+        }
     }
 
     abstract class NamedToken : TokenClass<Syntax>
@@ -134,7 +140,11 @@ namespace hw.Tests.CompilerTool.Util
         public NestedToken(string name)
             : base(name)
         {}
+
         public override bool IsMain { get { return false; } }
+
+        [DisableDump]
+        protected override bool AcceptsMatch { get { return true; } }
     }
 
     sealed class Syntax : ParsedSyntax
@@ -154,6 +164,9 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class EndOfTextToken : TokenClass<Syntax>
     {
+        [DisableDump]
+        protected override bool AcceptsMatch { get { return true; } }
+
         protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
         {
             Tracer.Assert(right == null);

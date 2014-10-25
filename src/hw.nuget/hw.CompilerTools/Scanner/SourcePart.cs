@@ -74,6 +74,7 @@ namespace hw.Scanner
                 + GetDumpAfterCurrent(dumpWidth);
         }
         
+        [DisableDump]
         public SourcePosn Start { get { return Source + Position; } }
 
         public SourcePart Combine(SourcePart other)

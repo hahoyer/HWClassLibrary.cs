@@ -20,7 +20,7 @@ namespace hw.Parser
         }
 
         internal char Relation(string newTokenName, PrioTable prioTable) { return prioTable.Relation(newTokenName, Item.Name); }
-        internal TTreeItem Create(TTreeItem args) { return Item.Create(Left, args, _isMatch); }
+        internal TTreeItem Create(TTreeItem right) { return Item.Create(Left, right, _isMatch); }
 
         internal static OpenItem<TTreeItem> StartItem(SourcePosn sourcePosn) { return StartItem(null, SourcePart.Span(sourcePosn, sourcePosn)); }
         internal static OpenItem<TTreeItem> StartItem(IType<TTreeItem> type, SourcePart part)
