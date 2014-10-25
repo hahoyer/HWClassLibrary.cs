@@ -62,52 +62,45 @@ namespace hw.Scanner
         ///     Default dump behaviour
         /// </summary>
         /// <returns>The file position of sourec file</returns>
-        protected override string Dump(bool isRecursion) { return "\n" + FilePosn("see there"); }
+        protected override string Dump(bool isRecursion)
+        {
+            if(Source.IsPersistent)
+                return "\n" + FilePosn("see there");
+            return GetDumpAroundCurrent(Source.DumpWidth);
+        }
 
-        [UsedImplicitly]
         string DumpCurrent { get { return IsEnd ? "" : ("" + Current); } }
 
-        const int DumpWidth = 10;
-
-        [UsedImplicitly]
-        string DumpAfterCurrent
+        string GetDumpAfterCurrent(int dumpWidth)
         {
-            get
-            {
-                if(IsEnd)
-                    return "";
-                var length = Math.Min(DumpWidth, Source.Length - Position - 1);
-                var result = Source.SubString(Position + 1, length);
-                if(length == DumpWidth)
-                    result += "...";
-                return result;
-            }
+            if(IsEnd)
+                return "";
+            var length = Math.Min(dumpWidth, Source.Length - Position - 1);
+            var result = Source.SubString(Position + 1, length);
+            if(length == dumpWidth)
+                result += "...";
+            return result;
+        }
+
+        string GetDumpBeforeCurrent(int dumpWidth)
+        {
+            var start = Math.Max(0, Position - dumpWidth);
+            var result = Source.SubString(start, Position - start);
+            if(Position >= dumpWidth)
+                result = "..." + result;
+            return result;
         }
 
         [UsedImplicitly]
-        string DumpBeforeCurrent
-        {
-            get
-            {
-                var start = Math.Max(0, Position - DumpWidth);
-                var result = Source.SubString(start, Position - start);
-                if(Position >= DumpWidth)
-                    result = "..." + result;
-                return result;
-            }
-        }
+        string NodeDump { get { return GetDumpAroundCurrent(Source.NodeDumpWidth); } }
 
-        [UsedImplicitly]
-        string NodeDump
+        string GetDumpAroundCurrent(int dumpWidth)
         {
-            get
-            {
-                return DumpBeforeCurrent
-                    + "["
-                    + DumpCurrent
-                    + "]"
-                    + DumpAfterCurrent;
-            }
+            return GetDumpBeforeCurrent(dumpWidth)
+                + "["
+                + DumpCurrent
+                + "]"
+                + GetDumpAfterCurrent(dumpWidth);
         }
 
         public SourcePosn Clone { get { return new SourcePosn(Source, Position); } }

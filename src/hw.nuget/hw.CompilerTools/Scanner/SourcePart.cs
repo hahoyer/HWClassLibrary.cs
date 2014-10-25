@@ -30,59 +30,51 @@ namespace hw.Scanner
         [DisableDump]
         int Length { get { return _length; } }
 
-        internal string Name { get { return Source.SubString(Position, Length); } }
+        public string Name { get { return Source.SubString(Position, Length); } }
 
         [DisableDump]
-        internal string FilePosition { get { return "\n" + Source.FilePosn(Position, Name); } }
+        public string FilePosition { get { return "\n" + Source.FilePosn(Position, Name); } }
 
-        internal string FileErrorPosition(string errorTag) { return "\n" + Source.FilePosn(Position, Name, "error " + errorTag); }
+        public string FileErrorPosition(string errorTag) { return "\n" + Source.FilePosn(Position, Name, "error " + errorTag); }
 
         [UsedImplicitly]
         string DumpCurrent { get { return Name; } }
 
         const int DumpWidth = 10;
 
-        [UsedImplicitly]
-        string DumpAfterCurrent
+        string GetDumpAfterCurrent(int dumpWidth)
         {
-            get
-            {
-                if(Source.IsEnd(Position + Length))
-                    return "";
-                var length = Math.Min(DumpWidth, Source.Length - Position - Length);
-                var result = Source.SubString(Position + Length, length);
-                if(length == DumpWidth)
-                    result += "...";
-                return result;
-            }
+            if(Source.IsEnd(Position + Length))
+                return "";
+            var length = Math.Min(dumpWidth, Source.Length - Position - Length);
+            var result = Source.SubString(Position + Length, length);
+            if(length == dumpWidth)
+                result += "...";
+            return result;
+        }
+
+        string GetDumpBeforeCurrent(int dumpWidth)
+        {
+            var start = Math.Max(0, Position - dumpWidth);
+            var result = Source.SubString(start, Position - start);
+            if(Position >= dumpWidth)
+                result = "..." + result;
+            return result;
         }
 
         [UsedImplicitly]
-        string DumpBeforeCurrent
-        {
-            get
-            {
-                var start = Math.Max(0, Position - DumpWidth);
-                var result = Source.SubString(start, Position - start);
-                if(Position >= DumpWidth)
-                    result = "..." + result;
-                return result;
-            }
-        }
+        string NodeDump { get { return GetDumpAroundCurrent(Source.NodeDumpWidth); } }
 
-        [UsedImplicitly]
-        string NodeDump
+        string GetDumpAroundCurrent(int dumpWidth)
         {
-            get
-            {
-                return DumpBeforeCurrent
-                    + "["
-                    + DumpCurrent
-                    + "]"
-                    + DumpAfterCurrent;
-            }
+            return GetDumpBeforeCurrent(dumpWidth)
+                + "["
+                + DumpCurrent
+                + "]"
+                + GetDumpAfterCurrent(dumpWidth);
         }
-        public SourcePosn Start { get { return Source+Position; } }
+        
+        public SourcePosn Start { get { return Source + Position; } }
 
         public SourcePart Combine(SourcePart other)
         {
@@ -91,12 +83,13 @@ namespace hw.Scanner
             return new SourcePart(Source, Position, other.Position + other.Length - Position);
         }
 
-        internal static SourcePart Span(SourcePosn first, SourcePosn other)
+        public static SourcePart Span(SourcePosn first, SourcePosn other)
         {
             var length = other - first;
             return new SourcePart(first.Source, first.Position, length);
         }
-        internal static SourcePart Span(SourcePosn first, int length)
+
+        public static SourcePart Span(SourcePosn first, int length)
         {
             return new SourcePart(first.Source, first.Position, length);
         }
