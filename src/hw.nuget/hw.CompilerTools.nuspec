@@ -16,12 +16,14 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.3.1.0</version>
+        <version>14.4-alpha</version>
         <releaseNotes>
             New: Subparsing support
+            Change: Ability to use templates improved
+            Change: Better decomposition of objects involved in compiling process
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="14.16.1.0" />
+            <dependency id="hw.Helper.Core" version="14.16.2.0" />
         </dependencies>
 
     </metadata>
