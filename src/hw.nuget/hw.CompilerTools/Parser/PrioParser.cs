@@ -39,7 +39,7 @@ namespace hw.Parser
                     var relation = topItem.Relation(item.Name, _prioTable);
 
                     if(relation != '+')
-                        result = stack.Pop().Create(result);
+                        result = stack.Pop().Create(result, relation == '=');
 
                     if(relation == '-')
                         continue;
@@ -47,7 +47,10 @@ namespace hw.Parser
                     if(startLevel > stack.Count)
                         return item.Create(result, null, relation == '=');
 
-                    stack.Push(new OpenItem<TTreeItem>(result, item, relation == '='));
+                    if(relation == '=')
+                        continue;
+                    
+                    stack.Push(new OpenItem<TTreeItem>(result, item));
                     result = null;
                 } while(result != null);
             } while(true);

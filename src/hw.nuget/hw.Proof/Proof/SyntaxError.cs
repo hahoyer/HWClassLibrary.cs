@@ -16,7 +16,7 @@ namespace hw.Proof
 
         ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, SourcePart part, ParsedSyntax right, bool isMatch)
         {
-            NotImplementedMethod(left, part, right);
+            NotImplementedMethod(left, part, right, isMatch);
             return null;
         }
         string IType<ParsedSyntax>.PrioTableName { get { return PrioTable.Error; } }

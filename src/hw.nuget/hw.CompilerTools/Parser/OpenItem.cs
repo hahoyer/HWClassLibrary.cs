@@ -10,22 +10,20 @@ namespace hw.Parser
     {
         internal readonly TTreeItem Left;
         internal readonly ParserItem<TTreeItem> Item;
-        readonly bool _isMatch;
 
-        internal OpenItem(TTreeItem left, ParserItem<TTreeItem> item, bool isMatch)
+        internal OpenItem(TTreeItem left, ParserItem<TTreeItem> item)
         {
             Left = left;
             Item = item;
-            _isMatch = isMatch;
         }
 
         internal char Relation(string newTokenName, PrioTable prioTable) { return prioTable.Relation(newTokenName, Item.Name); }
-        internal TTreeItem Create(TTreeItem right) { return Item.Create(Left, right, _isMatch); }
+        internal TTreeItem Create(TTreeItem right, bool isMatch) { return Item.Create(Left, right, isMatch); }
 
         internal static OpenItem<TTreeItem> StartItem(SourcePosn sourcePosn) { return StartItem(null, SourcePart.Span(sourcePosn, sourcePosn)); }
         internal static OpenItem<TTreeItem> StartItem(IType<TTreeItem> type, SourcePart part)
         {
-            return new OpenItem<TTreeItem>(default(TTreeItem), new ParserItem<TTreeItem>(type, part), false);
+            return new OpenItem<TTreeItem>(default(TTreeItem), new ParserItem<TTreeItem>(type, part));
         }
     }
 }
