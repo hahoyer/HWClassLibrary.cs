@@ -51,7 +51,6 @@
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParsedSyntaxBase.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParserInst.cs" />
-    <Compile Include="hw.CompilerTools\Parser\PushedSyntax.cs" />
     <Compile Include="hw.CompilerTools\Parser\Scanner.cs" />
     <Compile Include="hw.CompilerTools\Parser\Token.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
@@ -74,6 +73,7 @@
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
+    <Compile Include="hw.UnitTest\Tests\CompilerTool\Util\MainTokenFactory.cs" />
     <Compile Include="hw.UnitTest\UnitTest\ITestFixture.cs" />
     <Compile Include="TestDump.cs" />
     <Compile Include="hw.Helper.Core\Debug\Writer.cs" />
@@ -146,13 +146,15 @@
     <Compile Include="hw.CompilerTools\PrioParser\PrioTable.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\Extension.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\IOperator.cs" />
-    <Compile Include="hw.CompilerTools\PrioParser\IPart.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\IPosition.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\Item.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\IType.cs" />
     <Compile Include="hw.CompilerTools\PrioParser\OpenItem.cs" />
+    <Compile Include="Tests\CompilerTool\Parser.cs" />
+    <Compile Include="Tests\CompilerTool\Util\Scanner.cs" />
     <Compile Include="Tests\Helper\Core\HelperCore.cs" />
     <Compile Include="Tests\Helper\Core\LongExtender.cs" />
+    <Compile Include="Tests\Helper\Core\TestEnumEx.cs" />
     <Compile Include="Tests\Helper\Core\TypeNameExtender.cs" />
     <Compile Include="Tests\ReplaceVariables\Example.cs" />
     <None Include="hw.ReplaceVariables.nuspec">

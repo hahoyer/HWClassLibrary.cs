@@ -7,6 +7,27 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
+    public interface ISubParser
+    {
+        Item<IParsedSyntax, TokenData> Execute
+            (TokenData part, SourcePosn sourcePosn, Stack<OpenItem<IParsedSyntax, TokenData>> stack);
+    }
+
+    public sealed class RawItem
+    {
+        public readonly IType<IParsedSyntax, TokenData> Type;
+        public readonly TokenData Part;
+
+        public RawItem(IType<IParsedSyntax, TokenData> type, TokenData part)
+        {
+            Type = type;
+            Part = part;
+        }
+
+        public Item<IParsedSyntax, TokenData> Finalize() { return new Item<IParsedSyntax, TokenData>(Type, Part); }
+    }
+
+
     abstract class Scanner : Dumpable
     {
         protected abstract int WhiteSpace(SourcePosn sourcePosn);
@@ -14,31 +35,30 @@ namespace hw.Parser
         protected abstract int? Text(SourcePosn sourcePosn);
         protected abstract int? Any(SourcePosn sourcePosn);
 
-        internal Item<IParsedSyntax> CreateToken
-            (SourcePosn sourcePosn, ITokenFactory tokenFactory, Stack<OpenItem<IParsedSyntax>> stack)
+        internal Item<IParsedSyntax, TokenData> CreateToken
+            (
+            SourcePosn sourcePosn,
+            ITokenFactory<IParsedSyntax, TokenData> tokenFactory,
+            Stack<OpenItem<IParsedSyntax, TokenData>> stack)
         {
             var item = InternalCreateToken(sourcePosn, tokenFactory);
-            var type = item.Type;
-            var rescannable = type as IRescannable<IParsedSyntax>;
-            if(rescannable != null)
-                return rescannable.Execute(item.Part, sourcePosn, stack);
-
-            return new Item<IParsedSyntax>((IType<IParsedSyntax>) type, item.Part);
+            var rescannable = item.Type as ISubParser;
+            return rescannable == null ? item.Finalize() : rescannable.Execute(item.Part, sourcePosn, stack);
         }
 
         RawItem InternalCreateToken
-            (SourcePosn sourcePosn, ITokenFactory tokenFactory)
+            (SourcePosn sourcePosn, ITokenFactory<IParsedSyntax, TokenData> tokenFactory)
         {
             try
             {
                 sourcePosn.Position += WhiteSpace(sourcePosn);
-                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?)0 : null, tokenFactory.EndOfText)
+                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?) 0 : null, tokenFactory.EndOfText)
                     ?? CreateAndAdvance(sourcePosn, Number, tokenFactory.Number)
                         ?? CreateAndAdvance(sourcePosn, Text, tokenFactory.Text)
                             ?? CreateAndAdvance(sourcePosn, Any, tokenFactory.TokenClass)
                                 ?? WillReturnNull(sourcePosn);
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 return CreateAndAdvance(exception.SourcePosn, sp => exception.Length, exception.TokenClass);
             }
@@ -53,10 +73,10 @@ namespace hw.Parser
         internal sealed class Exception : System.Exception
         {
             public readonly SourcePosn SourcePosn;
-            public readonly IType TokenClass;
+            public readonly IType<IParsedSyntax, TokenData> TokenClass;
             public readonly int Length;
 
-            public Exception(SourcePosn sourcePosn, IType tokenClass, int length)
+            public Exception(SourcePosn sourcePosn, IType<IParsedSyntax, TokenData> tokenClass, int length)
             {
                 SourcePosn = sourcePosn;
                 TokenClass = tokenClass;
@@ -65,18 +85,21 @@ namespace hw.Parser
         }
 
         static RawItem CreateAndAdvance
-            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType tokenClass)
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType<IParsedSyntax, TokenData> tokenClass)
         {
             return CreateAndAdvance(sourcePosn, getLength, (sp, l) => tokenClass);
         }
         static RawItem CreateAndAdvance
-            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType> getTokenClass)
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType<IParsedSyntax, TokenData>> getTokenClass)
         {
             return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass(sp.SubString(0, l)));
         }
 
         static RawItem CreateAndAdvance
-            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<SourcePosn, int, IType> getTokenClass)
+            (
+            SourcePosn sourcePosn,
+            Func<SourcePosn, int?> getLength,
+            Func<SourcePosn, int, IType<IParsedSyntax, TokenData>> getTokenClass)
         {
             var length = getLength(sourcePosn);
             if(length == null)
@@ -88,5 +111,4 @@ namespace hw.Parser
             return result;
         }
     }
-
 }

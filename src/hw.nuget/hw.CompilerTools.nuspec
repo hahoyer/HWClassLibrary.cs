@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.2.1.0</version>
+        <version>14.3.1.0</version>
         <releaseNotes>
             New: Subparsing support
         </releaseNotes>

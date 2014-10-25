@@ -7,8 +7,8 @@ using hw.PrioParser;
 
 namespace hw.Parser
 {
-    abstract class TokenFactory<TTokenClass> : Dumpable, ITokenFactory
-        where TTokenClass : class, IType, INameProvider
+    abstract class TokenFactory<TTokenClass> : Dumpable, ITokenFactory<IParsedSyntax, TokenData>
+        where TTokenClass : class, IType<IParsedSyntax, TokenData>, INameProvider
     {
         readonly PrioTable _prioTable;
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
@@ -68,13 +68,13 @@ namespace hw.Parser
             return result;
         }
 
-        PrioTable ITokenFactory.PrioTable { get { return _prioTable; } }
+        PrioTable ITokenFactory<IParsedSyntax, TokenData>.PrioTable { get { return _prioTable; } }
 
-        IType ITokenFactory.TokenClass(string name) { return TokenClasses[name]; }
+        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.TokenClass(string name) { return TokenClasses[name]; }
 
-        IType ITokenFactory.Number { get { return _number.Value; } }
-        IType ITokenFactory.Text { get { return _text.Value; } }
-        IType ITokenFactory.EndOfText { get { return _endOfText.Value; } }
+        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.Number { get { return _number.Value; } }
+        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.Text { get { return _text.Value; } }
+        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.EndOfText { get { return _endOfText.Value; } }
 
         protected abstract TTokenClass GetSyntaxError(string message);
         protected abstract FunctionCache<string, TTokenClass> GetPredefinedTokenClasses();
@@ -86,6 +86,6 @@ namespace hw.Parser
         protected virtual TTokenClass GetText() { return GetSyntaxError("unexpected string"); }
 
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
-        protected IType TokenClass(string name) { return ((ITokenFactory)this).TokenClass(name); }
+        protected IType<IParsedSyntax, TokenData> TokenClass(string name) { return ((ITokenFactory<IParsedSyntax, TokenData>)this).TokenClass(name); }
     }
 }

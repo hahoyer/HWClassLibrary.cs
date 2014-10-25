@@ -6,13 +6,22 @@ namespace hw.PrioParser
 {
     public static class Extension
     {
-        public static T Parse<T>(this IPosition<T> current, PrioTable prioTable, Stack<OpenItem<T>> stack = null) where T : class
+        public static T Parse<T, TPart>
+            (this IPosition<T, TPart> current, PrioTable prioTable, Stack<OpenItem<T, TPart>> stack = null)
+            where T : class
         {
             if(stack == null)
             {
-                stack = new Stack<OpenItem<T>>();
-                stack.Push(OpenItem<T>.StartItem(current));
+                stack = new Stack<OpenItem<T, TPart>>();
+                stack.Push(OpenItem<T, TPart>.StartItem(current));
             }
+
+            else
+            {
+                
+            }
+
+            var startLevel = stack.Count;
 
             do
             {
@@ -29,10 +38,10 @@ namespace hw.PrioParser
                     if(relation == '-')
                         continue;
 
-                    if(item.IsEnd)
+                    if(startLevel > stack.Count)
                         return result;
 
-                    stack.Push(new OpenItem<T>(result, item, relation == '='));
+                    stack.Push(new OpenItem<T, TPart>(result, item, relation == '='));
                     result = null;
                 } while(result != null);
             } while(true);

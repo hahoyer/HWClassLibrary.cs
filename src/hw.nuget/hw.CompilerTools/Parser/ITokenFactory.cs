@@ -5,12 +5,12 @@ using hw.PrioParser;
 
 namespace hw.Parser
 {
-    interface ITokenFactory
+    interface ITokenFactory<TTreeItem, in TPart>
     {
-        IType TokenClass(string name);
+        IType<TTreeItem, TPart> TokenClass(string name);
         PrioTable PrioTable { get; }
-        IType Number { get; }
-        IType Text { get; }
-        IType EndOfText { get; }
+        IType<TTreeItem, TPart> Number { get; }
+        IType<TTreeItem, TPart> Text { get; }
+        IType<TTreeItem, TPart> EndOfText { get; }
     }
 }

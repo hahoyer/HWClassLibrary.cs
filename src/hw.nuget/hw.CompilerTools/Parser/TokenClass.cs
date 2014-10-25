@@ -8,7 +8,7 @@ using hw.PrioParser;
 
 namespace hw.Parser
 {
-    abstract class TokenClass : DumpableObject, IIconKeyProvider, ITokenClass
+    abstract class TokenClass<TPart> : DumpableObject, IIconKeyProvider, ITokenClass<TPart>
     {
         static int _nextObjectId;
         string _name;
@@ -20,24 +20,24 @@ namespace hw.Parser
 
         string INameProvider.Name { set { Name = value; } }
 
-        IParsedSyntax IType<IParsedSyntax>.Create(IParsedSyntax left, IPart part, IParsedSyntax right, bool isMatch)
+        IParsedSyntax IType<IParsedSyntax, TPart>.Create(IParsedSyntax left, TPart part, IParsedSyntax right, bool isMatch)
         {
             if(AcceptsMatch == isMatch)
                 return Create(left, part, right);
             return Mismatch(left, part, right);
         }
 
-        string IType<IParsedSyntax>.PrioTableName { get { return Name; } }
-        bool IType<IParsedSyntax>.IsEnd { get { return IsEnd; } }
+        string IType<IParsedSyntax, TPart>.PrioTableName { get { return Name; } }
+        bool IType<IParsedSyntax, TPart>.IsEnd { get { return IsEnd; } }
 
-        protected virtual IParsedSyntax Mismatch(IParsedSyntax left, IPart part, IParsedSyntax right)
+        protected virtual IParsedSyntax Mismatch(IParsedSyntax left, TPart part, IParsedSyntax right)
         {
             NotImplementedMethod(left, part, right);
             return null;
         }
 
         protected virtual bool AcceptsMatch { get { return false; } }
-        protected abstract IParsedSyntax Create(IParsedSyntax left, IPart part, IParsedSyntax right);
+        protected abstract IParsedSyntax Create(IParsedSyntax left, TPart part, IParsedSyntax right);
 
         protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }
 

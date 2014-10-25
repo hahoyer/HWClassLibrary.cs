@@ -6,9 +6,12 @@ using hw.PrioParser;
 
 namespace hw.Proof.TokenClasses
 {
-    abstract class TokenClass : Parser.TokenClass
+    abstract class TokenClass : TokenClass<TokenData>
     {
-        protected override IParsedSyntax Create(IParsedSyntax left, IPart part, IParsedSyntax right) { throw new NotImplementedException(); }
+        protected override IParsedSyntax Create(IParsedSyntax left, TokenData part, IParsedSyntax right)
+        {
+            throw new NotImplementedException();
+        }
 
         protected virtual ParsedSyntax Syntax(ParsedSyntax left, TokenData token, ParsedSyntax right)
         {

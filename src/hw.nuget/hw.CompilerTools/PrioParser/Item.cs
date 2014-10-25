@@ -5,25 +5,13 @@ using hw.Debug;
 
 namespace hw.PrioParser
 {
-    public sealed class RawItem
+    public sealed class Item<TTreeItem, TPart>
+        where TTreeItem : class
     {
-        public readonly IType Type;
-        public readonly IPart Part;
+        public readonly IType<TTreeItem, TPart> Type;
+        public readonly TPart Part;
 
-        public RawItem(IType type, IPart part)
-        {
-            Type = type;
-            Part = part;
-        }
-    }
-
-    public sealed class Item<T>
-        where T : class
-    {
-        public readonly IType<T> Type;
-        public readonly IPart Part;
-
-        public Item(IType<T> type, IPart part)
+        public Item(IType<TTreeItem, TPart> type, TPart part)
         {
             Type = type;
             Part = part;
@@ -31,7 +19,7 @@ namespace hw.PrioParser
 
         public string Name { get { return Type == null ? PrioTable.BeginOfText : Type.PrioTableName; } }
         public bool IsEnd { get { return Type != null && Type.IsEnd; } }
-        public T Create(T left, T right, bool isMatch)
+        public TTreeItem Create(TTreeItem left, TTreeItem right, bool isMatch)
         {
             if(Type != null)
                 return Type.Create(left, Part, right, isMatch);

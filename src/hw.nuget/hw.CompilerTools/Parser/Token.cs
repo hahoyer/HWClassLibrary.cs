@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +10,7 @@ using JetBrains.Annotations;
 namespace hw.Parser
 {
     [DebuggerDisplay("{NodeDump}")]
-    sealed class TokenData : Dumpable, IPart, IOperatorPart
+    public sealed class TokenData : Dumpable, IOperatorPart
     {
         readonly int _length;
         readonly Source _source;
@@ -93,7 +92,7 @@ namespace hw.Parser
             return new TokenData(Source, Position, other.Position + other.Length - Position);
         }
 
-        internal static TokenData Span(SourcePosn first, IPosition<IParsedSyntax> other)
+        internal static TokenData Span(SourcePosn first, IPosition<IParsedSyntax, TokenData> other)
         {
             var length = ((Position) other).SourcePosn - first;
             return new TokenData(first.Source, first.Position, length);

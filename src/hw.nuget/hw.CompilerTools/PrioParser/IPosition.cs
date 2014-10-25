@@ -1,14 +1,13 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace hw.PrioParser
 {
-    public interface IPosition<T>
+    public interface IPosition<T, TPart>
         where T : class
     {
-        Item<T> GetItemAndAdvance(Stack<OpenItem<T>> stack);
-        IPart Span(IPosition<T> end);
+        Item<T, TPart> GetItemAndAdvance(Stack<OpenItem<T, TPart>> stack);
+        TPart Span(IPosition<T, TPart> end);
     }
 }
