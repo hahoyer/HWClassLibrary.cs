@@ -8,19 +8,19 @@ using hw.Scanner;
 
 namespace hw.Proof
 {
-    sealed class SyntaxError : Dumpable, IType<IParsedSyntax,TokenData>, Match.IError
+    sealed class SyntaxError : Dumpable, IType<Parser.ParsedSyntax>, Match.IError
     {
         [EnableDump]
         readonly IssueId _issueId;
 
         public SyntaxError(IssueId issueId) { _issueId = issueId; }
 
-        IParsedSyntax IType<IParsedSyntax, TokenData>.Create(IParsedSyntax left, TokenData part, IParsedSyntax right, bool isMatch)
+        Parser.ParsedSyntax IType<Parser.ParsedSyntax>.Create(Parser.ParsedSyntax left, SourcePart part, Parser.ParsedSyntax right, bool isMatch)
         {
             NotImplementedMethod(left, part, right);
             return null;
         }
-        string IType<IParsedSyntax, TokenData>.PrioTableName { get { return PrioTable.Error; } }
-        bool IType<IParsedSyntax, TokenData>.IsEnd { get { return false; } }
+        string IType<Parser.ParsedSyntax>.PrioTableName { get { return PrioTable.Error; } }
+        Control IType<Parser.ParsedSyntax>.Next { get { return null; } }
     }
 }

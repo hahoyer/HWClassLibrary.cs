@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
-using hw.Parser;
 using hw.Scanner;
 using hw.Tests.CompilerTool.Util;
 using hw.UnitTest;
@@ -18,7 +17,7 @@ namespace hw.Tests.CompilerTool
             var text = "a b c";
             var source = new Source(text);
 
-            var result = (Syntax)Position.Parse(source, MainTokenFactory.Instance, TokenFactory.Scanner);
+            var result = (Syntax) MainTokenFactory.Instance.Parse(source);
 
             Tracer.Assert(result.TokenClass.Name == "c");
             Tracer.Assert(result.TokenClass.IsMain);
@@ -40,16 +39,15 @@ namespace hw.Tests.CompilerTool
             var text = "--> b c";
             var source = new Source(text);
 
-            var result = (Syntax)Position.Parse(source, MainTokenFactory.Instance, TokenFactory.Scanner);
-            Tracer.Assert(result.TokenClass.Name == "c");
-            Tracer.Assert(result.TokenClass.IsMain);
+            var result = (Syntax) MainTokenFactory.Instance.Parse(source);
+            Tracer.Assert(result.TokenClass.Name == "c", result.Dump);
+            Tracer.Assert(result.TokenClass.IsMain, result.Dump);
             Tracer.Assert(result.Left != null);
             Tracer.Assert(result.Right == null);
             Tracer.Assert(result.Left.TokenClass.Name == "b");
             Tracer.Assert(!result.Left.TokenClass.IsMain);
             Tracer.Assert(result.Left.Left == null);
             Tracer.Assert(result.Left.Right == null);
-
         }
         [Test]
         public static void NestedParserMultipleEntries()
@@ -57,7 +55,7 @@ namespace hw.Tests.CompilerTool
             var text = "--> (b c) c";
             var source = new Source(text);
 
-            var result = (Syntax)Position.Parse(source, MainTokenFactory.Instance, TokenFactory.Scanner);
+            var result = (Syntax) MainTokenFactory.Instance.Parse(source);
             Tracer.Assert(result.TokenClass.Name == "c");
             Tracer.Assert(result.TokenClass.IsMain);
             Tracer.Assert(result.Left != null);
@@ -66,7 +64,6 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(!result.Left.TokenClass.IsMain);
             Tracer.Assert(result.Left.Left == null);
             Tracer.Assert(result.Left.Right == null);
-
         }
     }
 }

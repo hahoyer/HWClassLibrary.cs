@@ -30,7 +30,7 @@ namespace hw.Proof
 {
     sealed class IntegerSyntax : ParsedSyntax, IComparableEx<IntegerSyntax>
     {
-        public IntegerSyntax(TokenData token)
+        public IntegerSyntax(SourcePart token)
             : base(token) { }
 
         [DisableDump]

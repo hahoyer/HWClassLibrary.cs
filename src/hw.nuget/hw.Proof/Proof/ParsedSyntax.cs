@@ -31,9 +31,9 @@ using JetBrains.Annotations;
 
 namespace hw.Proof
 {
-    abstract class ParsedSyntax : ParsedSyntaxBase, IComparable<ParsedSyntax>
+    abstract class ParsedSyntax : Parser.ParsedSyntax, IComparable<ParsedSyntax>
     {
-        protected ParsedSyntax(TokenData token)
+        protected ParsedSyntax(SourcePart token)
             : base(token) { }
 
         [DisableDump]
@@ -52,7 +52,7 @@ namespace hw.Proof
         [DisableDump]
         internal virtual bool IsNegative { get { return false; } }
 
-        internal ParsedSyntax Associative<TOperation>(TOperation operation, TokenData token, ParsedSyntax other) where TOperation : IAssociative { return operation.CombineAssosiative(token, new[] {this, other}); }
+        internal ParsedSyntax Associative<TOperation>(TOperation operation, SourcePart token, ParsedSyntax other) where TOperation : IAssociative { return operation.CombineAssosiative(token, new[] {this, other}); }
 
         internal virtual bool IsDistinct(ParsedSyntax other)
         {
@@ -85,7 +85,7 @@ namespace hw.Proof
         internal ParsedSyntax Minus(IEnumerable<ParsedSyntax> others) { return others.Aggregate(this, (x, y) => x.Minus(y)); }
 
         internal ParsedSyntax Minus(ParsedSyntax other) { return Minus(null, other); }
-        internal ParsedSyntax Minus(TokenData token, ParsedSyntax other) { return Plus(token, other.Negative()); }
+        internal ParsedSyntax Minus(SourcePart token, ParsedSyntax other) { return Plus(token, other.Negative()); }
         internal ParsedSyntax Negative() { return Times(-1); }
         internal virtual ParsedSyntax Times(BigRational value)
         {
@@ -98,7 +98,7 @@ namespace hw.Proof
 
         internal virtual ParsedSyntax IsolateFromSum(string variable, ParsedSyntax other) { return null; }
 
-        internal ParsedSyntax Equal(TokenData token, ParsedSyntax other)
+        internal ParsedSyntax Equal(SourcePart token, ParsedSyntax other)
         {
             var difference = CompareTo(other);
             if(difference == 0)
@@ -114,9 +114,9 @@ namespace hw.Proof
             return null;
         }
 
-        EqualSyntax DefaultEqual(TokenData token, ParsedSyntax other) { return new EqualSyntax(this, token, other); }
+        EqualSyntax DefaultEqual(SourcePart token, ParsedSyntax other) { return new EqualSyntax(this, token, other); }
 
-        internal ParsedSyntax Plus(TokenData token, ParsedSyntax otherSite) { return Associative(Main.TokenFactory.Plus, token, otherSite); }
+        internal ParsedSyntax Plus(SourcePart token, ParsedSyntax otherSite) { return Associative(Main.TokenFactory.Plus, token, otherSite); }
 
         int? GenericCompareTo<T>(ParsedSyntax other) where T : ParsedSyntax, IComparableEx<T>
         {

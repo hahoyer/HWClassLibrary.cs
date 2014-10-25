@@ -2,32 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
-using hw.Forms;
 using hw.Helper;
 using hw.Parser;
 using hw.PrioParser;
-using hw.Proof.TokenClasses;
-using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    abstract class TokenFactory : TokenFactory<TokenClass<TokenData>>
+    abstract class TokenFactory : TokenFactory<TokenClass>
     {
-        public static readonly hw.Parser.Scanner Scanner = new Scanner();
+        protected static readonly hw.Parser.Scanner Scanner = new Scanner();
 
-        internal TokenFactory(PrioTable prioTable)
-            : base(prioTable)
-        {}
-        protected override TokenClass<TokenData> GetSyntaxError(string message) { return new SyntaxError(message); }
-        protected override TokenClass<TokenData> GetEndOfText() { return new EndOfTextToken(); }
-        protected override TokenClass<TokenData> GetBeginOfText() { return new BeginOfTextToken(); }
+        protected override TokenClass GetSyntaxError(string message) { return new SyntaxError(message); }
+        protected override TokenClass GetEndOfText() { return new EndOfTextToken(); }
 
-        sealed class SyntaxError : TokenClass<TokenData>
+        sealed class SyntaxError : TokenClass
         {
             [EnableDump]
             readonly string _message;
             public SyntaxError(string message) { _message = message; }
-            protected override IParsedSyntax Create(IParsedSyntax left, TokenData part, IParsedSyntax right)
+            protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
             {
                 NotImplementedMethod(left, part, right);
                 return null;
@@ -37,95 +30,92 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class MainTokenFactory : TokenFactory
     {
-        public static readonly MainTokenFactory Instance = new MainTokenFactory();
+        public static readonly Control Instance = new Control
+        {
+            TokenFactory = new MainTokenFactory(),
+            PrioTable = PrioTable,
+            Scanner = Scanner
+        };
 
-        MainTokenFactory()
-            : base(PrioTable) { }
-       
+        MainTokenFactory() {}
+
         static PrioTable PrioTable
         {
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel(new[] { "(", "[", "{", PrioTable.BeginOfText }, new[] { ")", "]", "}", PrioTable.EndOfText });
-                Tracer.FlaggedLine("\n" + x + "\n");
+                x = x.ParenthesisLevel(new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
+                Tracer.FlaggedLine("\n" + x.Dump() + "\n");
+                x.Title = Tracer.MethodHeader();
                 return x;
             }
         }
 
-        protected override FunctionCache<string, TokenClass<TokenData>> GetPredefinedTokenClasses()
+        protected override FunctionCache<string, TokenClass> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass<TokenData>> {{"-->", new SwitchToken()}};
+            var result = new FunctionCache<string, TokenClass> {{"-->", new SwitchToken()}};
             return result;
         }
 
-        protected override TokenClass<TokenData> GetTokenClass(string name) { return new MainToken(name); }
+        protected override TokenClass GetTokenClass(string name) { return new MainToken(name); }
     }
 
     sealed class NestedTokenFactory : TokenFactory
     {
-        public static readonly NestedTokenFactory Instance = new NestedTokenFactory();
+        public static readonly Control Instance = new Control
+        {
+            TokenFactory = new NestedTokenFactory(),
+            PrioTable = PrioTable,
+            Scanner = Scanner
+        };
 
-        NestedTokenFactory()
-            : base(PrioTable) { }
-       
+        NestedTokenFactory() {}
+
         static PrioTable PrioTable
         {
             get
             {
-                var x = PrioTable.Left("-->", PrioTable.Any);
-                x = x.ParenthesisLevel(new[] { "(", "[", "{", PrioTable.BeginOfText }, new[] { ")", "]", "}", PrioTable.EndOfText });
-                x.Correct("-->", "-->", '=');
-                Tracer.FlaggedLine("\n" + x + "\n");
+                var x = PrioTable.Left("-->");
+                x += PrioTable.Left(PrioTable.Any);
+                x = x.ParenthesisLevel(new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
+                Tracer.FlaggedLine("\n" + x.Dump() + "\n");
+                x.Title = Tracer.MethodHeader();
                 return x;
             }
         }
 
-        protected override FunctionCache<string, TokenClass<TokenData>> GetPredefinedTokenClasses()
+        protected override FunctionCache<string, TokenClass> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass<TokenData>>();
+            var result = new FunctionCache<string, TokenClass>();
             return result;
         }
 
-        protected override TokenClass<TokenData> GetTokenClass(string name) { return new NestedToken(name); }
+        protected override TokenClass GetTokenClass(string name) { return new NestedToken(name); }
     }
 
-    sealed class SwitchToken : TokenClass<TokenData>, ISubParser
+    sealed class SwitchToken : NamedToken
     {
-        protected override IParsedSyntax Create(IParsedSyntax left, TokenData part, IParsedSyntax right)
+        public SwitchToken()
+            : base("-->") {}
+        public override bool IsMain { get { return true; } }
+        protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
         {
-            Tracer.Assert(right == null);
-            return left;
-        }
-        Item<IParsedSyntax, TokenData> ISubParser.Execute
-            (TokenData part, SourcePosn sourcePosn, Stack<OpenItem<IParsedSyntax, TokenData>> stack)
-        {
-            stack.Push(OpenItem<IParsedSyntax, TokenData>.StartItem(this, part));
-            var result = (Syntax)Position.Parse(sourcePosn, NestedTokenFactory.Instance, TokenFactory.Scanner, stack);
+            if(right == null && left == null)
+                return new Syntax(null, this, part, null);
 
-            Tracer.Assert(result.Left == null);
-            Tracer.Assert(result.Right == null);
-            return new Item<IParsedSyntax, TokenData>(result.TokenClass,result.Part);
+            Tracer.Assert(left == null, ()=>left.Dump());
+            return right;
         }
+        protected override Control Next { get { return NestedTokenFactory.Instance; } }
     }
 
-    sealed class BeginOfTextToken : TokenClass<TokenData>
-    {
-        protected override bool AcceptsMatch { get { return true; } }
-        protected override IParsedSyntax Create(IParsedSyntax left, TokenData part, IParsedSyntax right)
-        {
-            NotImplementedMethod(left, part, right);
-            return null;
-        }
-    }
-
-    abstract class NamedToken : TokenClass<TokenData>
+    abstract class NamedToken : TokenClass
     {
         [EnableDump]
         readonly string _name;
         protected NamedToken(string name) { _name = name; }
         public abstract bool IsMain { get; }
-        protected override IParsedSyntax Create(IParsedSyntax left, TokenData part, IParsedSyntax right)
+        protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
         {
             return new Syntax((Syntax) left, this, part, (Syntax) right);
         }
@@ -139,49 +129,35 @@ namespace hw.Tests.CompilerTool.Util
         public override bool IsMain { get { return true; } }
     }
 
-    sealed class NestedToken : NamedToken, ISubParser
+    sealed class NestedToken : NamedToken
     {
         public NestedToken(string name)
             : base(name)
-        { }
+        {}
         public override bool IsMain { get { return false; } }
-        Item<IParsedSyntax, TokenData> ISubParser.Execute
-            (TokenData part, SourcePosn sourcePosn, Stack<OpenItem<IParsedSyntax, TokenData>> stack)
-        {
-            var t = stack.Pop();
-            stack.Push(new OpenItem<IParsedSyntax, TokenData>(new Syntax((Syntax) t.Left, this, part, null), t.Item, false));
-            return t.Item;
-        }
     }
 
-    sealed class Syntax : DumpableObject, IParsedSyntax
+    sealed class Syntax : ParsedSyntax
     {
         public readonly Syntax Left;
         public readonly NamedToken TokenClass;
-        internal readonly TokenData Part;
         public readonly Syntax Right;
 
-        public Syntax(Syntax left, NamedToken tokenClass, TokenData part, Syntax right)
+        public Syntax(Syntax left, NamedToken tokenClass, SourcePart part, Syntax right)
+            : base(part)
         {
             Left = left;
             TokenClass = tokenClass;
-            Part = part;
             Right = right;
         }
-        string IIconKeyProvider.IconKey { get { return "Symbol"; } }
-        TokenData IParsedSyntax.Token { get { return Part; } }
-        TokenData IParsedSyntax.FirstToken { get { return Left == null ? Part : ((IParsedSyntax) Left).FirstToken; } }
-        TokenData IParsedSyntax.LastToken { get { return Right == null ? Part : ((IParsedSyntax) Right).LastToken; } }
-        string IParsedSyntax.GetNodeDump() { return GetNodeDump(); }
     }
 
-    sealed class EndOfTextToken : TokenClass<TokenData>
+    sealed class EndOfTextToken : TokenClass
     {
-        protected override IParsedSyntax Create(IParsedSyntax left, TokenData part, IParsedSyntax right)
+        protected override ParsedSyntax Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
         {
             Tracer.Assert(right == null);
             return left;
         }
-        protected override bool IsEnd { get { return true; } }
     }
 }

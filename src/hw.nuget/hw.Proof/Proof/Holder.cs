@@ -19,7 +19,9 @@ namespace hw.Proof
             var file = "main.proof".FileHandle();
             file.String = text;
             _text = text;
-            var parsedSyntax = Position.Parse(new Source(file), Main.TokenFactory, _scanner);
+            var parsedSyntax =
+                new Control {TokenFactory = Main.TokenFactory, Scanner = _scanner, PrioTable = TokenFactory.PrioTable}.Parse
+                    (new Source(file));
             _statement = (ClauseSyntax) parsedSyntax;
         }
 

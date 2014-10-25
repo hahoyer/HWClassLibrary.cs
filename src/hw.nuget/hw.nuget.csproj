@@ -46,11 +46,11 @@
     <Compile Include="hw.CompilerTools\Graphics\SVG\Text.cs" />
     <Compile Include="hw.CompilerTools\Graphics\Syntax.cs" />
     <Compile Include="hw.CompilerTools\Graphics\SyntaxDrawer.cs" />
-    <Compile Include="hw.CompilerTools\Parser\IParsedSyntax.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Control.cs" />
     <Compile Include="hw.CompilerTools\Parser\ITokenClass.cs" />
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
-    <Compile Include="hw.CompilerTools\Parser\ParsedSyntaxBase.cs" />
-    <Compile Include="hw.CompilerTools\Parser\ParserInst.cs" />
+    <Compile Include="hw.CompilerTools\Parser\ParsedSyntax.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Position.cs" />
     <Compile Include="hw.CompilerTools\Parser\Scanner.cs" />
     <Compile Include="hw.CompilerTools\Parser\Token.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />

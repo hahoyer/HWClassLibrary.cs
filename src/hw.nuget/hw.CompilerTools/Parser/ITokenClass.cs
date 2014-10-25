@@ -10,6 +10,6 @@ namespace hw.Parser
         string Name { set; }
     }
 
-    interface ITokenClass<TPart> : IType<IParsedSyntax, TPart>, INameProvider
+    interface ITokenClass : IType<ParsedSyntax>, INameProvider
     {}
 }

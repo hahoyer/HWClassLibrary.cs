@@ -2,18 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Parser;
-using hw.PrioParser;
 
 namespace hw.Proof.TokenClasses
 {
-    abstract class TokenClass : TokenClass<TokenData>
+    abstract class TokenClass : Parser.TokenClass
     {
-        protected override IParsedSyntax Create(IParsedSyntax left, TokenData part, IParsedSyntax right)
+        protected override Parser.ParsedSyntax Create(Parser.ParsedSyntax left, SourcePart part, Parser.ParsedSyntax right)  
         {
             throw new NotImplementedException();
         }
 
-        protected virtual ParsedSyntax Syntax(ParsedSyntax left, TokenData token, ParsedSyntax right)
+        protected virtual ParsedSyntax Syntax(ParsedSyntax left, SourcePart token, ParsedSyntax right)
         {
             NotImplementedMethod(left, token, right);
             return null;

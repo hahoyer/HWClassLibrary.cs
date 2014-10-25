@@ -34,7 +34,7 @@ namespace hw.Proof
     {
         internal readonly BigRational Value;
 
-        internal NumberSyntax(TokenData token)
+        internal NumberSyntax(SourcePart token)
             : base(token) { Value = BigInteger.Parse(token.Name); }
 
         internal NumberSyntax(BigRational value)

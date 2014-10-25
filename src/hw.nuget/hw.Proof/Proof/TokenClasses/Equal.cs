@@ -29,7 +29,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Equal : PairToken
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, TokenData token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, SourcePart token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);

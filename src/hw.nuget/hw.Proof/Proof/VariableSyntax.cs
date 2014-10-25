@@ -33,7 +33,7 @@ namespace hw.Proof
     {
         internal readonly string Name;
 
-        public VariableSyntax(TokenData token, string name)
+        public VariableSyntax(SourcePart token, string name)
             : base(token) { Name = name; }
 
         int IComparableEx<VariableSyntax>.CompareToEx(VariableSyntax other) { return String.CompareOrdinal(Name, other.Name); }

@@ -1,25 +1,3 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,15 +28,24 @@ namespace hw.Proof
 
             _any = symbol1.Else(identifier);
 
-            _whiteSpaces = Match.WhiteSpace.Else("#" + " \t".AnyChar() + Match.LineEnd.Find).Else("#(" + Match.WhiteSpace + (Match.WhiteSpace + ")#").Find).Else("#(" + _any.Value(id => (Match.WhiteSpace + id + ")#").Box().Find)).Else("#(" + Match.End.Find + _invalidComment).Else("#" + Match.End.Find + _invalidLineComment).Repeat();
+            _whiteSpaces =
+                Match.WhiteSpace
+                    .Else("#" + " \t".AnyChar() + Match.LineEnd.Find)
+                    .Else("#(" + Match.WhiteSpace + (Match.WhiteSpace + ")#").Find)
+                    .Else("#(" + _any.Value(id => (Match.WhiteSpace + id + ")#").Box().Find))
+                    .Else("#(" + Match.End.Find + _invalidComment)
+                    .Else("#" + Match.End.Find + _invalidLineComment)
+                    .Repeat();
 
             _number = Match.Digit.Repeat(1);
 
-            _text = textFrame.Value(head =>
-            {
-                var textEnd = head.Else(Match.LineEnd + _invalidTextEnd);
-                return textEnd.Find + (head + textEnd.Find).Repeat();
-            });
+            _text = textFrame.Value
+                (
+                    head =>
+                    {
+                        var textEnd = head.Else(Match.LineEnd + _invalidTextEnd);
+                        return textEnd.Find + (head + textEnd.Find).Repeat();
+                    });
         }
 
         protected override int WhiteSpace(SourcePosn sourcePosn)
@@ -80,7 +67,8 @@ namespace hw.Proof
             }
             catch(Match.Exception exception)
             {
-                throw new Exception(sourcePosn, exception.Error as SyntaxError ?? _unexpectedSyntaxError, exception.SourcePosn - sourcePosn);
+                throw new Exception
+                    (sourcePosn, exception.Error as SyntaxError ?? _unexpectedSyntaxError, exception.SourcePosn - sourcePosn);
             }
         }
     }

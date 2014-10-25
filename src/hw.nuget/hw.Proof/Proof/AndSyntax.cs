@@ -29,7 +29,7 @@ namespace hw.Proof
 {
     sealed class AndSyntax : AssociativeSyntax
     {
-        public AndSyntax(IAssociative @operator, TokenData token, Set<ParsedSyntax> set)
+        public AndSyntax(IAssociative @operator, SourcePart token, Set<ParsedSyntax> set)
             : base(@operator, token, set) { }
     }
 }

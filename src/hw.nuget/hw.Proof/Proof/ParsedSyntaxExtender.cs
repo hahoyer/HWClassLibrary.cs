@@ -56,7 +56,7 @@ namespace hw.Proof
             return x.IsDistinct(y);
         }
 
-        internal static ParsedSyntax CombineAssosiative<TOperation>(this TOperation operation, TokenData token, IEnumerable<ParsedSyntax> x) where TOperation : IAssociative
+        internal static ParsedSyntax CombineAssosiative<TOperation>(this TOperation operation, SourcePart token, IEnumerable<ParsedSyntax> x) where TOperation : IAssociative
         {
             var xx = operation.ToList(x);
             switch(xx.Count())

@@ -7,30 +7,20 @@ using hw.PrioParser;
 
 namespace hw.Parser
 {
-    abstract class TokenFactory<TTokenClass> : Dumpable, ITokenFactory<IParsedSyntax, TokenData>
-        where TTokenClass : class, IType<IParsedSyntax, TokenData>, INameProvider
+    abstract class TokenFactory<TTokenClass> : Dumpable, ITokenFactory<ParsedSyntax>
+        where TTokenClass : class, IType<ParsedSyntax>, INameProvider
     {
-        readonly PrioTable _prioTable;
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
         readonly ValueCache<TTokenClass> _number;
         readonly ValueCache<TTokenClass> _text;
-        readonly ValueCache<TTokenClass> _beginOfText;
         readonly ValueCache<TTokenClass> _endOfText;
 
-        internal TokenFactory(PrioTable prioTable)
+        internal TokenFactory()
         {
-            _prioTable = prioTable;
             _endOfText = new ValueCache<TTokenClass>(InternalGetEndOfText);
-            _beginOfText = new ValueCache<TTokenClass>(InternalGetBeginOfText);
             _number = new ValueCache<TTokenClass>(InternalGetNumber);
             _tokenClasses = new ValueCache<FunctionCache<string, TTokenClass>>(GetTokenClasses);
             _text = new ValueCache<TTokenClass>(InternalGetText);
-        }
-        TTokenClass InternalGetBeginOfText()
-        {
-            var result = GetBeginOfText();
-            result.Name = PrioTable.BeginOfText;
-            return result;
         }
         TTokenClass InternalGetEndOfText()
         {
@@ -68,24 +58,21 @@ namespace hw.Parser
             return result;
         }
 
-        PrioTable ITokenFactory<IParsedSyntax, TokenData>.PrioTable { get { return _prioTable; } }
+        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.TokenClass(string name) { return TokenClasses[name]; }
 
-        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.TokenClass(string name) { return TokenClasses[name]; }
-
-        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.Number { get { return _number.Value; } }
-        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.Text { get { return _text.Value; } }
-        IType<IParsedSyntax, TokenData> ITokenFactory<IParsedSyntax, TokenData>.EndOfText { get { return _endOfText.Value; } }
+        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.Number { get { return _number.Value; } }
+        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.Text { get { return _text.Value; } }
+        IType<ParsedSyntax> ITokenFactory<ParsedSyntax>.EndOfText { get { return _endOfText.Value; } }
 
         protected abstract TTokenClass GetSyntaxError(string message);
         protected abstract FunctionCache<string, TTokenClass> GetPredefinedTokenClasses();
 
         protected virtual TTokenClass GetEndOfText() { return GetSyntaxError("unexpected end of text".Quote()); }
-        protected virtual TTokenClass GetBeginOfText() { return GetSyntaxError("unexpected begin of text".Quote()); }
         protected virtual TTokenClass GetTokenClass(string name) { return GetSyntaxError("invalid symbol: " + name.Quote()); }
         protected virtual TTokenClass GetNumber() { return GetSyntaxError("unexpected number"); }
         protected virtual TTokenClass GetText() { return GetSyntaxError("unexpected string"); }
 
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
-        protected IType<IParsedSyntax, TokenData> TokenClass(string name) { return ((ITokenFactory<IParsedSyntax, TokenData>)this).TokenClass(name); }
+        protected IType<ParsedSyntax> TokenClass(string name) { return ((ITokenFactory<ParsedSyntax>)this).TokenClass(name); }
     }
 }

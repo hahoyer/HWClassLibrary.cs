@@ -30,7 +30,7 @@ namespace hw.Proof
 {
     sealed class EqualSyntax : PairSyntax, IComparableEx<EqualSyntax>
     {
-        public EqualSyntax(ParsedSyntax left, TokenData token, ParsedSyntax right)
+        public EqualSyntax(ParsedSyntax left, SourcePart token, ParsedSyntax right)
             : base(Main.TokenFactory.Equal, left, token, right) { }
 
         int IComparableEx<EqualSyntax>.CompareToEx(EqualSyntax other)

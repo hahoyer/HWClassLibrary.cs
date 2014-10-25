@@ -32,7 +32,7 @@ namespace hw.Proof
 {
     sealed class PlusSyntax : AssociativeSyntax, IComparableEx<PlusSyntax>
     {
-        public PlusSyntax(Plus @operator, TokenData token, Set<ParsedSyntax> set)
+        public PlusSyntax(Plus @operator, SourcePart token, Set<ParsedSyntax> set)
             : base(@operator, token, set) { Tracer.Assert(set.All(x => !(x is PlusSyntax))); }
 
         internal override ParsedSyntax IsolateFromEquation(string variable, ParsedSyntax otherSite)

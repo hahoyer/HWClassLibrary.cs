@@ -29,7 +29,7 @@ namespace hw.Proof
 {
     sealed class ClauseSyntax : AssociativeSyntax
     {
-        public ClauseSyntax(IAssociative @operator, TokenData token, Set<ParsedSyntax> set)
+        public ClauseSyntax(IAssociative @operator, SourcePart token, Set<ParsedSyntax> set)
             : base(@operator, token, set) { }
 
         public IEnumerable<KeyValuePair<string, ParsedSyntax>> GetDefinitions(int variableCount) { return Set.Where(parsedSyntax => parsedSyntax.Variables.Count() <= variableCount).SelectMany(GetDefinitions).Where(pair => pair.Value != null); }

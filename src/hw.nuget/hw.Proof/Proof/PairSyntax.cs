@@ -34,7 +34,7 @@ namespace hw.Proof
         internal readonly ParsedSyntax Left;
         internal readonly ParsedSyntax Right;
 
-        internal PairSyntax(IPair @operator, ParsedSyntax left, TokenData token, ParsedSyntax right)
+        internal PairSyntax(IPair @operator, ParsedSyntax left, SourcePart token, ParsedSyntax right)
             : base(token)
         {
             Operator = @operator;

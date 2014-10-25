@@ -9,15 +9,13 @@ namespace hw.Proof
 {
     sealed class TokenFactory : Parser.TokenFactory<TokenClass>
     {
-        TokenFactory()
-            : base(PrioTable)
-        {}
+        TokenFactory() { }
 
         internal static TokenFactory Instance { get { return new TokenFactory(); } }
 
         protected override TokenClass GetTokenClass(string name) { return new UserSymbol(); }
 
-        static PrioTable PrioTable
+        internal static PrioTable PrioTable
         {
             get
             {
@@ -67,7 +65,6 @@ namespace hw.Proof
             return result;
         }
         protected override TokenClass GetEndOfText() { return new RightParenthesis(0); }
-        protected override TokenClass GetBeginOfText() { return new LeftParenthesis(0); }
         protected override TokenClass GetNumber() { return new Number(); }
 
         internal Minus Minus { get { return (Minus) TokenClass("-"); } }
