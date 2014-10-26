@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
-using hw.Parser;
 using hw.Scanner;
 using hw.Tests.CompilerTool.Util;
 using hw.UnitTest;
@@ -70,6 +69,143 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(!result.Left.Left.TokenClass.IsMain);
             Tracer.Assert(result.Left.Left.Left == null);
             Tracer.Assert(result.Left.Left.Right == null);
+        }
+
+        [Test]
+        public static void Parenthesis()
+        {
+            var text = "(anton)";
+            var source = new Source(text);
+
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            Tracer.Assert(result.TokenClass.Name == "anton");
+            Tracer.Assert(result.Left == null);
+            Tracer.Assert(result.Right == null);
+        }
+        [Test]
+        public static void ParenthesisAndSuffix()
+        {
+            var text = "(anton)berta";
+            var source = new Source(text);
+
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
+            Tracer.Assert(result.Left != null, result.Dump);
+            Tracer.Assert(result.Right == null, result.Dump);
+
+            Tracer.Assert(result.Left.TokenClass.Name == "anton", result.Dump);
+            Tracer.Assert(result.Left.Left == null, result.Dump);
+            Tracer.Assert(result.Left.Right == null, result.Dump);
+        }
+
+        [Test]
+        public static void ParenthesisAndPrefix()
+        {
+            var text = "zulu(anton)";
+            var source = new Source(text);
+
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            Tracer.Assert(result.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.Left == null, result.Dump);
+            Tracer.Assert(result.Right != null, result.Dump);
+
+            Tracer.Assert(result.Right.TokenClass.Name == "anton", result.Dump);
+            Tracer.Assert(result.Right.Left == null, result.Dump);
+            Tracer.Assert(result.Right.Right == null, result.Dump);
+        }
+
+        [Test]
+        public static void ParenthesisSuffixAndPrefix()
+        {
+            var text = "zulu(anton)berta";
+            var source = new Source(text);
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+
+            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
+            Tracer.Assert(result.Left != null, result.Dump);
+            Tracer.Assert(result.Right == null, result.Dump);
+
+            Tracer.Assert(result.Left.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.Left.Left == null, result.Dump);
+            Tracer.Assert(result.Left.Right != null, result.Dump);
+
+            Tracer.Assert(result.Left.Right.TokenClass.Name == "anton", result.Dump);
+            Tracer.Assert(result.Left.Right.Left == null, result.Dump);
+            Tracer.Assert(result.Left.Right.Right == null, result.Dump);
+        }
+        [Test]
+        public static void EmptyParenthesis()
+        {
+            var text = "()";
+            var source = new Source(text);
+
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            Tracer.Assert(result.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.Left == null, result.Dump);
+            Tracer.Assert(result.Right == null, result.Dump);
+        }
+
+        [Test]
+        public static void EmptyParenthesisAndSuffix()
+        {
+            var text = "()berta";
+            var source = new Source(text);
+
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
+            Tracer.Assert(result.Left != null, result.Dump);
+            Tracer.Assert(result.Right == null, result.Dump);
+
+            Tracer.Assert(result.Left.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.Left.Left == null, result.Dump);
+            Tracer.Assert(result.Left.Right == null, result.Dump);
+        }
+
+        [Test]
+        public static void EmptyParenthesisAndPrefix()
+        {
+            var text = "zulu()";
+            var source = new Source(text);
+
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            Tracer.Assert(result.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.Left == null, result.Dump);
+            Tracer.Assert(result.Right != null, result.Dump);
+
+            Tracer.Assert(result.Right.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.Right.Left == null, result.Dump);
+            Tracer.Assert(result.Right.Right == null, result.Dump);
+        }
+
+        [Test]
+        public static void EmptyParenthesisSuffixAndPrefix()
+        {
+            var text = "zulu()berta";
+            var source = new Source(text);
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+
+            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
+            Tracer.Assert(result.Left != null, result.Dump);
+            Tracer.Assert(result.Right == null, result.Dump);
+
+            Tracer.Assert(result.Left.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.Left.Left == null, result.Dump);
+            Tracer.Assert(result.Left.Right != null, result.Dump);
+
+            Tracer.Assert(result.Left.Right.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.Left.Right.Left == null, result.Dump);
+            Tracer.Assert(result.Left.Right.Right == null, result.Dump);
+        }
+        [Test]
+
+        public static void ParenthesisSuffixAndPrefixAndSequence()
+        {
+            var text = "zulu()(anton)berta";
+            var source = new Source(text);
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+
+            Tracer.Assert(result.TraceDump == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.TraceDump);
+            
         }
     }
 }

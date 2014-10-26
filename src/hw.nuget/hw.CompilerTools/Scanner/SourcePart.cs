@@ -63,9 +63,9 @@ namespace hw.Scanner
         }
 
         [UsedImplicitly]
-        string NodeDump { get { return GetDumpAroundCurrent(Source.NodeDumpWidth); } }
+        public string NodeDump { get { return GetDumpAroundCurrent(Source.NodeDumpWidth); } }
 
-        string GetDumpAroundCurrent(int dumpWidth)
+        public string GetDumpAroundCurrent(int dumpWidth)
         {
             return GetDumpBeforeCurrent(dumpWidth)
                 + "["

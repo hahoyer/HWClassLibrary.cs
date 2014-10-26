@@ -53,7 +53,6 @@ namespace hw.Tests.CompilerTool.Util
                 {"-->", new SwitchToken()},
                 {"(", new LeftParenthesis()},
                 {")", new RightParenthesis()}
-            
             };
             return result;
         }
@@ -72,7 +71,7 @@ namespace hw.Tests.CompilerTool.Util
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel(new[] { "(", PrioTable.BeginOfText }, new[] { ")", PrioTable.EndOfText });
+                x = x.ParenthesisLevel(new[] {"(", PrioTable.BeginOfText}, new[] {")", PrioTable.EndOfText});
                 x.Correct(PrioTable.Any, PrioTable.BeginOfText, '=');
                 x.Correct(")", PrioTable.BeginOfText, '=');
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
@@ -87,7 +86,6 @@ namespace hw.Tests.CompilerTool.Util
             {
                 {"(", new LeftParenthesis()},
                 {")", new RightParenthesis()}
-            
             };
             return result;
         }
@@ -129,9 +127,7 @@ namespace hw.Tests.CompilerTool.Util
 
     abstract class NamedToken : TokenClass<Syntax>
     {
-        [EnableDump]
-        readonly string _name;
-        protected NamedToken(string name) { _name = name; }
+        protected NamedToken(string name) { Name = name; }
         public abstract bool IsMain { get; }
         protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
         {
@@ -144,6 +140,7 @@ namespace hw.Tests.CompilerTool.Util
         public MainToken(string name)
             : base(name)
         {}
+        [DisableDump]
         public override bool IsMain { get { return true; } }
     }
 
@@ -163,6 +160,8 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class Syntax : ParsedSyntax
     {
+        static readonly NamedToken _emptyTokenClass = new MainToken("");
+
         public readonly Syntax Left;
         public readonly NamedToken TokenClass;
         public readonly Syntax Right;
@@ -171,8 +170,21 @@ namespace hw.Tests.CompilerTool.Util
             : base(part)
         {
             Left = left;
-            TokenClass = tokenClass;
+            TokenClass = tokenClass ?? _emptyTokenClass;
             Right = right;
+        }
+        public string TraceDump
+        {
+            get
+            {
+                var result = "";
+                result += "(";
+                result += Left == null ? "<null>" : Left.TraceDump;
+                result += " " + TokenClass.Name + " ";
+                result += Right == null ? "<null>" : Right.TraceDump;
+                result += ")";
+                return result;
+            }
         }
     }
 
@@ -187,6 +199,7 @@ namespace hw.Tests.CompilerTool.Util
             return left;
         }
     }
+
     sealed class LeftParenthesis : TokenClass<Syntax>
     {
         [DisableDump]
@@ -194,14 +207,18 @@ namespace hw.Tests.CompilerTool.Util
 
         protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
         {
-            Tracer.Assert(left== null);
-            return right;
+            if(left == null && right != null)
+                return right;
+            return new Syntax(left, null, token, right);
         }
     }
+
     sealed class RightParenthesis : TokenClass<Syntax>
     {
         [DisableDump]
         protected override bool AcceptsMatch { get { return true; } }
+        [DisableDump]
+        protected override bool AcceptsMismatch { get { return true; } }
 
         protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
         {

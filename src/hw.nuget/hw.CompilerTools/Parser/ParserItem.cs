@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
 {
-    public sealed class ParserItem<TTreeItem>
+    public sealed class ParserItem<TTreeItem>: DumpableObject
         where TTreeItem : class
     {
         public readonly IType<TTreeItem> Type;
@@ -25,6 +26,16 @@ namespace hw.Parser
                 return Type.Create(left, Part, right, isMatch);
             Tracer.Assert(left == null);
             return right;
+        }
+
+        protected override string GetNodeDump()
+        {
+            var result = "";
+            if(Type == null)
+                result += "null";
+            else
+                result += Type.GetType().PrettyName();
+            return result + " " + Part.GetDumpAroundCurrent(20);
         }
     }
 }
