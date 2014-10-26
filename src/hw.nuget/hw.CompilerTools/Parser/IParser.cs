@@ -8,15 +8,12 @@ namespace hw.Parser
     public interface IParser<TTreeItem>
         where TTreeItem : class
     {
-        TTreeItem Execute
-            (SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack);
+        TTreeItem Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack = null);
     }
 
     public interface ISubParser<TTreeItem>
         where TTreeItem : class
     {
-        IType<TTreeItem> Execute
-            (SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack);
+        IType<TTreeItem> Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack = null);
     }
-
 }

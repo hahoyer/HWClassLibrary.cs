@@ -4,14 +4,13 @@ using System.Linq;
 using hw.Debug;
 using hw.Helper;
 using hw.Parser;
-using hw.Proof.TokenClasses;
 using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
     abstract class TokenFactory : TokenFactory<TokenClass<Syntax>, Syntax>
     {
-        protected static readonly IScanner<Syntax> Scanner = new Scanner<Syntax>(new Proof.ReniLexer());
+        protected static readonly IScanner<Syntax> Scanner = new Scanner<Syntax>(new ReniLexer());
 
         protected override TokenClass<Syntax> GetSyntaxError(string message) { return new SyntaxError(message); }
         protected override TokenClass<Syntax> GetEndOfText() { return new EndOfTextToken(); }
