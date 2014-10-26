@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using hw.Debug;
 using hw.Scanner;
 
 namespace hw.Parser
 {
-    public sealed class PrioParser<TTreeItem> : IParser<TTreeItem>
+    public sealed class PrioParser<TTreeItem> : DumpableObject, IParser<TTreeItem>
         where TTreeItem : class
     {
         readonly PrioTable _prioTable;
@@ -51,8 +52,8 @@ namespace hw.Parser
                         continue;
                     
                     stack.Push(new OpenItem<TTreeItem>(result, item));
-                    result = null;
-                } while(result != null);
+                    item = null;
+                } while(item != null);
             } while(true);
         }
 
