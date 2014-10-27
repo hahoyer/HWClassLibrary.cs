@@ -196,16 +196,27 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left.Right.Left == null, result.Dump);
             Tracer.Assert(result.Left.Right.Right == null, result.Dump);
         }
-        [Test]
 
+        [Test]
         public static void ParenthesisSuffixAndPrefixAndSequence()
         {
             var text = "zulu()(anton)berta";
             var source = new Source(text);
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
-            Tracer.Assert(result.TraceDump == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.TraceDump);
-            
+            Tracer.Assert
+                (result.TraceDump == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.TraceDump);
+        }
+
+        [Test]
+        public static void RealParenthesisTest()
+        {
+            var text = " (x5 type x5) instance () dump_print           ";
+            var source = new Source(text);
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+
+            Tracer.Assert
+                (result.TraceDump == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.TraceDump);
         }
     }
 }
