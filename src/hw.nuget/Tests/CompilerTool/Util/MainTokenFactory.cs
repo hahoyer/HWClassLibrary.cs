@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using hw.Debug;
 using hw.Helper;
@@ -39,7 +40,11 @@ namespace hw.Tests.CompilerTool.Util
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel(new[] {"(", PrioTable.BeginOfText}, new[] {")", PrioTable.EndOfText});
+                x = x.ParenthesisLevel
+                    (
+                        new[] {"(", PrioTable.BeginOfText},
+                        new[] {")", PrioTable.EndOfText}
+                    );
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
                 return x;
@@ -71,7 +76,11 @@ namespace hw.Tests.CompilerTool.Util
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel(new[] {"(", PrioTable.BeginOfText}, new[] {")", PrioTable.EndOfText});
+                x = x.ParenthesisLevel
+                    (
+                        new[] {"(", PrioTable.BeginOfText},
+                        new[] {")", PrioTable.EndOfText}
+                    );
                 x.Correct(PrioTable.Any, PrioTable.BeginOfText, '=');
                 x.Correct(")", PrioTable.BeginOfText, '=');
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
@@ -158,6 +167,7 @@ namespace hw.Tests.CompilerTool.Util
         protected override bool AcceptsMismatch { get { return true; } }
     }
 
+    [DebuggerDisplay("{NodeDump}")]
     sealed class Syntax : ParsedSyntax
     {
         static readonly NamedToken _emptyTokenClass = new MainToken("");
@@ -173,15 +183,15 @@ namespace hw.Tests.CompilerTool.Util
             TokenClass = tokenClass ?? _emptyTokenClass;
             Right = right;
         }
-        public string TraceDump
+        protected override string Dump(bool isRecursive)
         {
-            get
+            
             {
                 var result = "";
                 result += "(";
-                result += Left == null ? "<null>" : Left.TraceDump;
+                result += Left == null ? "<null>" : Left.Dump();
                 result += " " + TokenClass.Name + " ";
-                result += Right == null ? "<null>" : Right.TraceDump;
+                result += Right == null ? "<null>" : Right.Dump();
                 result += ")";
                 return result;
             }

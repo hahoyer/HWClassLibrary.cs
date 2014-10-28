@@ -205,7 +205,7 @@ namespace hw.Tests.CompilerTool
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
             Tracer.Assert
-                (result.TraceDump == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.TraceDump);
+                (result.Dump() == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.Dump());
         }
 
         [Test]
@@ -216,7 +216,7 @@ namespace hw.Tests.CompilerTool
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
             Tracer.Assert
-                (result.TraceDump == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.TraceDump);
+                (result.Dump() == "(((((<null> x5 <null>) type <null>) x5 <null>) instance (<null>  <null>)) dump_print <null>)", result.Dump());
         }
     }
 }
