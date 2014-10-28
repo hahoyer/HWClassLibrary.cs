@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using hw.Debug;
 using hw.Scanner;
@@ -12,6 +13,7 @@ namespace hw.Parser
         readonly PrioTable _prioTable;
         readonly IScanner<TTreeItem> _scanner;
         readonly ITokenFactory<TTreeItem> _tokenFactory;
+        public bool Trace { get; set; }
 
         public PrioParser(PrioTable prioTable, IScanner<TTreeItem> scanner, ITokenFactory<TTreeItem> tokenFactory)
         {
@@ -21,85 +23,82 @@ namespace hw.Parser
         }
         TTreeItem IParser<TTreeItem>.Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> initialStack)
         {
-
-
-            var trace = true;
-            StartMethodDump(trace, sourcePosn, initialStack);
+            StartMethodDump(Trace, sourcePosn.GetDumpAroundCurrent(50), initialStack);
             try
             {
-                int indent = initialStack == null ? 1 : 0;
                 var stack = InitializeStack(sourcePosn, initialStack);
                 var startLevel = stack.Count;
 
                 do
                 {
-                    if (trace)
+                    if(Trace)
                     {
-                        Tracer.FlaggedLine("begin of outer poop");
-                        Tracer.Line("=====================================================");
-                        Tracer.IndentStart();
+                        Tracer.Line("\n== NextToken ====>");
                         Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
-                        Tracer.IndentEnd();
                     }
 
                     var item = NextToken(sourcePosn, stack);
-                    Dump("item", item); 
+                    if(Trace)
+                    {
+                        Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
+                        Tracer.Line("=================>\n");
+                        Tracer.IndentStart();
+                        Tracer.Line("item=" + item.Name + " ObjectÍd= " + item.ObjectId + " TokenClass= " + item.Type.GetType().PrettyName());
+                        Tracer.IndentEnd();
+                    }
 
                     TTreeItem result = null;
                     do
                     {
-                        if(trace)
+                        if(Trace)
                         {
-                            Tracer.FlaggedLine("begin of inner poop");
-                            Tracer.Line("--------------------------------------------------");
+                            Tracer.Line("begin of inner loop ==>");
                             Tracer.IndentStart();
-                            Tracer.Line("Level = " + stack.Count );
-                            Tracer.Line("item = " + item.DebuggerDumpString);
-                            Tracer.Line("result = " + Tracer.Dump(result));
+                            Tracer.Line("Level = " + stack.Count);
+                            Tracer.Line("result = " + Extension.TreeDump(result));
+                            Tracer.Line("top = " + TreeDump(stack.Peek()));
                             Tracer.IndentEnd();
                         }
 
                         var relation = Relation(stack, item);
-                        Dump("relation", relation);
+                        if(Trace)
+                            Tracer.Line
+                                ("" + relation + relation + relation + relation + relation + relation + relation + relation + relation + relation);
 
                         if(relation != '+')
                         {
                             result = stack.Pop().Create(result, relation == '=');
-                            indent--;
-                            Tracer.IndentEnd();
-                            Dump("Pop result", result); 
+                            if(Trace)
+                            {
+                                Tracer.Line("<<<<<<");
+                                Tracer.IndentStart();
+                                Tracer.Line("Level = " + stack.Count);
+                                Tracer.Line("result = " + Extension.TreeDump(result));
+                                Tracer.Line("top = " + TreeDump(stack.Peek()));
+                                Tracer.IndentEnd();
+                            }
                         }
 
                         if(relation == '-')
-                        {
-                            Dump("Continue inner loop, because of relation", relation);
                             continue;
-                        }
 
                         if(startLevel > stack.Count)
-                        {
-                            while(indent > 0)
-                            {
-                                Tracer.IndentEnd();
-                                --indent;
-                            }
-                            return ReturnMethodDump(item.Create(result, null, relation == '='), false);
-                        }
+                            return ReturnMethodDump(item.Create(result, null, relation == '='));
 
                         if(relation == '=')
-                        {
-                            Dump("Continue inner loop, because of relation", relation);
                             continue;
-                        }
 
-                        Tracer.IndentStart();
-                        indent++;
-                        var openItem = new OpenItem<TTreeItem>(result, item);
-                        Dump("Push openItem", openItem);
-                        stack.Push(openItem);
+                        stack.Push(new OpenItem<TTreeItem>(result, item));
                         item = null;
-                        Dump("leave inner loop since item", item);
-                    } while (item != null);
+                        if(Trace)
+                        {
+                            Tracer.Line(">>>>>>");
+                            Tracer.IndentStart();
+                            Tracer.Line("Level = " + stack.Count);
+                            Tracer.Line("top = " + TreeDump(stack.Peek()));
+                            Tracer.IndentEnd();
+                        }
+                    } while(item != null);
                 } while(true);
             }
             finally
@@ -107,6 +106,8 @@ namespace hw.Parser
                 EndMethodDump();
             }
         }
+
+        static string TreeDump(OpenItem<TTreeItem> value) { return Extension.TreeDump(value.Left) + " " + value.Item.Name; }
 
         static Stack<OpenItem<TTreeItem>> InitializeStack(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> initialStack)
         {
@@ -116,17 +117,13 @@ namespace hw.Parser
                 stack = new Stack<OpenItem<TTreeItem>>();
                 var openItem = OpenItem<TTreeItem>.StartItem(sourcePosn);
                 stack.Push(openItem);
-                Tracer.IndentStart();
             }
             else
                 stack = initialStack;
             return stack;
         }
 
-        char Relation(Stack<OpenItem<TTreeItem>> stack, ParserItem<TTreeItem> item)
-        {
-            return stack.Peek().Relation(item.Name, _prioTable);
-        }
+        char Relation(Stack<OpenItem<TTreeItem>> stack, ParserItem<TTreeItem> item) { return stack.Peek().Relation(item.Name, _prioTable); }
 
         ParserItem<TTreeItem> NextToken(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack)
         {

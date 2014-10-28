@@ -168,7 +168,7 @@ namespace hw.Tests.CompilerTool.Util
     }
 
     [DebuggerDisplay("{NodeDump}")]
-    sealed class Syntax : ParsedSyntax
+    sealed class Syntax : ParsedSyntax, ITreeItem
     {
         static readonly NamedToken _emptyTokenClass = new MainToken("");
 
@@ -183,19 +183,11 @@ namespace hw.Tests.CompilerTool.Util
             TokenClass = tokenClass ?? _emptyTokenClass;
             Right = right;
         }
-        protected override string Dump(bool isRecursive)
-        {
-            
-            {
-                var result = "";
-                result += "(";
-                result += Left == null ? "<null>" : Left.Dump();
-                result += " " + TokenClass.Name + " ";
-                result += Right == null ? "<null>" : Right.Dump();
-                result += ")";
-                return result;
-            }
-        }
+
+        protected override string Dump(bool isRecursion) { return this.TreeDump(); }
+        ITreeItem ITreeItem.Left { get { return Left; } }
+        string ITreeItem.TokenId{ get { return TokenClass.Name; } }
+        ITreeItem ITreeItem.Right{ get { return Right; } }
     }
 
     sealed class EndOfTextToken : TokenClass<Syntax>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using hw.Debug;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -19,6 +20,30 @@ namespace hw.Parser
             (this IParser<TTreeItem> parser, Func<TTreeItem, IType<TTreeItem>> converter) where TTreeItem : class
         {
             return new SubParser<TTreeItem>(parser, converter);
+        }
+        
+        internal static string TreeDump<TTreeItem>(TTreeItem value) where TTreeItem : class
+        {
+            var t = value as ITreeItem;
+            if(t == null)
+                return Tracer.Dump(value);
+
+            return TreeDump(t);
+        }
+        
+        public static string TreeDump(this ITreeItem value)
+        {
+            if(value == null)
+                return "<null>";
+
+            var result = "(";
+            result += TreeDump(value.Left);
+            result += " ";
+            result += value.TokenId;
+            result += " ";
+            result += TreeDump(value.Right);
+            result += ")";
+            return result;
         }
     }
 }

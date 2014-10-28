@@ -213,6 +213,7 @@ namespace hw.Tests.CompilerTool
         {
             var text = " (x5 type x5) instance () dump_print           ";
             var source = new Source(text);
+            MainTokenFactory.Instance.Trace = true;
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
             Tracer.Assert
