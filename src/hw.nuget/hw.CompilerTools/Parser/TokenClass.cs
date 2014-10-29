@@ -21,26 +21,19 @@ namespace hw.Parser
 
         string INameProvider.Name { set { Name = value; } }
 
-        TTreeItem IType<TTreeItem>.Create(TTreeItem left, SourcePart part, TTreeItem right, bool isMatch)
-        {
-            if(isMatch && AcceptsMatch || !isMatch && AcceptsMismatch)
-                return Create(left, part, right);
-            return Mismatch(left, part, right);
-        }
+        TTreeItem IType<TTreeItem>.Create(TTreeItem left, SourcePart part, TTreeItem right) { return Create(left, part, right); }
 
         string IType<TTreeItem>.PrioTableName { get { return Name; } }
         ISubParser<TTreeItem> IType<TTreeItem>.Next { get { return Next; } }
-
-        protected virtual ISubParser<TTreeItem> Next { get { return null; } }
-
-        protected virtual TTreeItem Mismatch(TTreeItem left, SourcePart part, TTreeItem right)
+        IType<TTreeItem> IType<TTreeItem>.Match(TTreeItem other) { return Match(other); }
+        protected virtual IType<TTreeItem> Match(TTreeItem other)
         {
-            NotImplementedMethod(left, part, right);
+            NotImplementedMethod(other);
             return null;
         }
 
-        protected virtual bool AcceptsMismatch { get { return !AcceptsMatch; } }
-        protected virtual bool AcceptsMatch { get { return false; } }
+        protected virtual ISubParser<TTreeItem> Next { get { return null; } }
+
         protected abstract TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
 
         protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }

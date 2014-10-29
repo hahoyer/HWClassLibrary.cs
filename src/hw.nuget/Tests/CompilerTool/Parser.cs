@@ -57,6 +57,7 @@ namespace hw.Tests.CompilerTool
             var source = new Source(text);
 
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
+
             Tracer.Assert(result.TokenClass.Name == "c");
             Tracer.Assert(result.TokenClass.IsMain, result.Dump);
             Tracer.Assert(result.Left != null);
@@ -65,7 +66,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(!result.Left.TokenClass.IsMain);
             Tracer.Assert(result.Left.Left != null, result.Dump);
             Tracer.Assert(result.Left.Right == null);
-            Tracer.Assert(result.Left.Left.TokenClass.Name == "b");
+            Tracer.Assert(result.Left.Left.TokenClass.Name == "b", result.Dump);
             Tracer.Assert(!result.Left.Left.TokenClass.IsMain);
             Tracer.Assert(result.Left.Left.Left == null);
             Tracer.Assert(result.Left.Left.Right == null);
@@ -213,11 +214,22 @@ namespace hw.Tests.CompilerTool
         {
             var text = " (x5 type x5) instance () dump_print           ";
             var source = new Source(text);
-            MainTokenFactory.Instance.Trace = true;
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
             Tracer.Assert
                 (result.Dump() == "(((((<null> x5 <null>) type <null>) x5 <null>) instance (<null>  <null>)) dump_print <null>)", result.Dump());
+        }
+        [Test]
+        public static void LotOfParenthesisTest()
+        {
+            var text = " x()()";
+            var source = new Source(text);
+            MainTokenFactory.Instance.Trace = TestRunner.IsModeErrorFocus;
+            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            MainTokenFactory.Instance.Trace = false;
+
+            Tracer.Assert
+                (result.Dump() == "((<null> x (<null>  <null>))  (<null>  <null>))", result.Dump());
         }
     }
 }

@@ -14,9 +14,14 @@ namespace hw.Proof
 
         public SyntaxError(IssueId issueId) { _issueId = issueId; }
 
-        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, SourcePart part, ParsedSyntax right, bool isMatch)
+        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
         {
-            NotImplementedMethod(left, part, right, isMatch);
+            NotImplementedMethod(left, part, right);
+            return null;
+        }
+        IType<ParsedSyntax> IType<ParsedSyntax>.Match(ParsedSyntax other)
+        {
+            NotImplementedMethod(other);
             return null;
         }
         string IType<ParsedSyntax>.PrioTableName { get { return PrioTable.Error; } }

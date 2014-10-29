@@ -11,7 +11,9 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            Parser.EmptyParenthesis();
+            TestRunner.IsModeErrorFocus = true;
+            Parser.LotOfParenthesisTest();
+            TestRunner.IsModeErrorFocus = false;
             TestRunner.RunTests(Assembly.GetExecutingAssembly());
         }
     }

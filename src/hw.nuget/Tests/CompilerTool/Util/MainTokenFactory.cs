@@ -40,11 +40,16 @@ namespace hw.Tests.CompilerTool.Util
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel
+                x = x.ParenthesisLevelRight
                     (
-                        new[] {"(", PrioTable.BeginOfText},
-                        new[] {")", PrioTable.EndOfText}
+                        new[] {"("},
+                        new[] {")"}
                     );
+                x = x.ParenthesisLevelLeft
+                            (
+                                new[] { PrioTable.BeginOfText },
+                                new[] { PrioTable.EndOfText }
+                            );
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
                 return x;
@@ -76,7 +81,7 @@ namespace hw.Tests.CompilerTool.Util
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
-                x = x.ParenthesisLevel
+                x = x.ParenthesisLevelLeft
                     (
                         new[] {"(", PrioTable.BeginOfText},
                         new[] {")", PrioTable.EndOfText}
@@ -160,11 +165,6 @@ namespace hw.Tests.CompilerTool.Util
         {}
 
         public override bool IsMain { get { return false; } }
-
-        [DisableDump]
-        protected override bool AcceptsMatch { get { return true; } }
-        [DisableDump]
-        protected override bool AcceptsMismatch { get { return true; } }
     }
 
     [DebuggerDisplay("{NodeDump}")]
@@ -186,15 +186,21 @@ namespace hw.Tests.CompilerTool.Util
 
         protected override string Dump(bool isRecursion) { return this.TreeDump(); }
         ITreeItem ITreeItem.Left { get { return Left; } }
-        string ITreeItem.TokenId{ get { return TokenClass.Name; } }
-        ITreeItem ITreeItem.Right{ get { return Right; } }
+        string ITreeItem.TokenId
+        {
+            get
+            {
+                var result = TokenClass.Name;
+                if(result.In("(", ")"))
+                    return result.Quote();
+                return result;
+            }
+        }
+        ITreeItem ITreeItem.Right { get { return Right; } }
     }
 
     sealed class EndOfTextToken : TokenClass<Syntax>
     {
-        [DisableDump]
-        protected override bool AcceptsMatch { get { return true; } }
-
         protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
         {
             Tracer.Assert(right == null);
@@ -204,9 +210,6 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class LeftParenthesis : TokenClass<Syntax>
     {
-        [DisableDump]
-        protected override bool AcceptsMatch { get { return true; } }
-
         protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
         {
             if(left == null && right != null)
@@ -217,15 +220,12 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class RightParenthesis : TokenClass<Syntax>
     {
-        [DisableDump]
-        protected override bool AcceptsMatch { get { return true; } }
-        [DisableDump]
-        protected override bool AcceptsMismatch { get { return true; } }
-
+        protected override IType<Syntax> Match(Syntax other) { return other.TokenClass; }
         protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
         {
-            Tracer.Assert(right == null);
-            return left;
+            if (left != null && right == null)
+                return left;
+            return new Syntax(left, null, token, right);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace hw.Proof
                 x += PrioTable.Right(",");
                 x += PrioTable.Right(";");
 
-                x = x.ParenthesisLevel(new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
+                x = x.ParenthesisLevelLeft(new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
                 //Tracer.FlaggedLine("\n"+x+"\n");
                 return x;
             }

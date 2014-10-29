@@ -20,10 +20,10 @@ namespace hw.Parser
         }
 
         public string Name { get { return Type == null ? PrioTable.BeginOfText : Type.PrioTableName; } }
-        public TTreeItem Create(TTreeItem left, TTreeItem right, bool isMatch)
+        public TTreeItem Create(TTreeItem left, TTreeItem right)
         {
             if(Type != null)
-                return Type.Create(left, Part, right, isMatch);
+                return Type.Create(left, Part, right);
             Tracer.Assert(left == null);
             return right;
         }
@@ -37,5 +37,6 @@ namespace hw.Parser
                 result += Type.GetType().PrettyName();
             return result + " " + Part.GetDumpAroundCurrent(20);
         }
+        internal IType<TTreeItem> Match(TTreeItem other) { return Type.Match(other); }
     }
 }

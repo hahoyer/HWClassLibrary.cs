@@ -102,7 +102,7 @@ namespace hw.Parser
                         result += Right(data);
                         break;
                     case "parlevel":
-                        result = result.ParenthesisLevel
+                        result = result.ParenthesisLevelLeft
                             (data.Take(tokenCount).ToArray(), data.Skip(tokenCount).Take(tokenCount).ToArray());
                         break;
                     case "televel":
@@ -289,12 +289,17 @@ namespace hw.Parser
         {
             return new PrioTable(this, data, lToken, rToken);
         }
+        static readonly string[] _parenthesisTableLeft = {"++-", "+?-", "?--"};
+        static readonly string[] _parenthesisTableRight = { "+++", "+?+", "?-+" };
+        static readonly string[] _thenElseTable = { "+--", "+?+", "?-+" };
 
-        public PrioTable ParenthesisLevel(string[] lToken, string[] rToken) { return Level(_parenthesisTable, lToken, rToken); }
+
+        public PrioTable ParenthesisLevelLeft(string[] lToken, string[] rToken) { return Level(_parenthesisTableLeft, lToken, rToken); }
+        public PrioTable ParenthesisLevelRight(string[] lToken, string[] rToken) { return Level(_parenthesisTableRight, lToken, rToken); }
         public PrioTable ThenElseLevel(string[] lToken, string[] rToken) { return Level(_thenElseTable, lToken, rToken); }
         public PrioTable ParenthesisLevel(string lToken, string rToken)
         {
-            return Level(_parenthesisTable, new[] {lToken}, new[] {rToken});
+            return Level(_parenthesisTableLeft, new[] {lToken}, new[] {rToken});
         }
         public PrioTable ThenElseLevel(string lToken, string rToken)
         {
@@ -394,10 +399,6 @@ namespace hw.Parser
                 return result;
             }
         }
-
-        static readonly string[] _parenthesisTable = {"++-", "+?-", "?--"};
-
-        static readonly string[] _thenElseTable = {"+--", "+?+", "?-+"};
 
         void Sort()
         {

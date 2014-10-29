@@ -19,7 +19,7 @@ namespace hw.Parser
         }
 
         internal char Relation(string newTokenName, PrioTable prioTable) { return prioTable.Relation(newTokenName, Item.Name); }
-        internal TTreeItem Create(TTreeItem right, bool isMatch) { return Item.Create(Left, right, isMatch); }
+        internal TTreeItem Create(TTreeItem right) { return Item.Create(Left, right); }
 
         internal static OpenItem<TTreeItem> StartItem(SourcePosn sourcePosn)
         {

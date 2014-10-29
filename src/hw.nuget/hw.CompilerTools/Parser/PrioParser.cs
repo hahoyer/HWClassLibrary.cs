@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.Debug;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -40,10 +40,20 @@ namespace hw.Parser
                     var item = NextToken(sourcePosn, stack);
                     if(Trace)
                     {
+                        Tracer.Line(item.Part.GetDumpAroundCurrent(50));
                         Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
-                        Tracer.Line("=================>\n");
+                        Tracer.Line("=================>");
                         Tracer.IndentStart();
-                        Tracer.Line("item=" + item.Name + " ObjectÍd= " + item.ObjectId + " TokenClass= " + item.Type.GetType().PrettyName());
+                        Tracer.Line
+                            (
+                                "item="
+                                    + item.Name
+                                    + " ObjectÍd= "
+                                    + item.ObjectId
+                                    + " TokenClass= "
+                                    + item.Type.GetType().PrettyName()
+                                    + "\n"
+                            );
                         Tracer.IndentEnd();
                     }
 
@@ -63,40 +73,55 @@ namespace hw.Parser
                         var relation = Relation(stack, item);
                         if(Trace)
                             Tracer.Line
-                                ("" + relation + relation + relation + relation + relation + relation + relation + relation + relation + relation);
+                                ((("" + relation).Repeat(4) + " ").Repeat(stack.Count));
 
-                        if(relation != '+')
+                        if (relation == '-' || relation == '=')
                         {
-                            result = stack.Pop().Create(result, relation == '=');
+                            result = stack.Pop().Create(result);
+                            
                             if(Trace)
                             {
                                 Tracer.Line("<<<<<<");
                                 Tracer.IndentStart();
                                 Tracer.Line("Level = " + stack.Count);
                                 Tracer.Line("result = " + Extension.TreeDump(result));
-                                Tracer.Line("top = " + TreeDump(stack.Peek()));
+                                if(stack.Count > 0)
+                                    Tracer.Line("top = " + TreeDump(stack.Peek()));
+                                Tracer.IndentEnd();
+                            }
+
+                        }
+
+                        if (startLevel > stack.Count)
+                            return ReturnMethodDump(item.Create(result, null));
+
+                        if (relation == '=')
+                        {
+                            result = item.Create(result, null);
+                            if (Trace)
+                            {
+                                Tracer.Line("======");
+                                Tracer.IndentStart();
+                                Tracer.Line("Level = " + stack.Count);
+                                Tracer.Line("result = " + Extension.TreeDump(result));
+                                if (stack.Count > 0)
+                                    Tracer.Line("top = " + TreeDump(stack.Peek()));
                                 Tracer.IndentEnd();
                             }
                         }
 
-                        if(relation == '-')
-                            continue;
-
-                        if(startLevel > stack.Count)
-                            return ReturnMethodDump(item.Create(result, null, relation == '='));
-
-                        if(relation == '=')
-                            continue;
-
-                        stack.Push(new OpenItem<TTreeItem>(result, item));
-                        item = null;
-                        if(Trace)
+                        if (relation == '+')
                         {
-                            Tracer.Line(">>>>>>");
-                            Tracer.IndentStart();
-                            Tracer.Line("Level = " + stack.Count);
-                            Tracer.Line("top = " + TreeDump(stack.Peek()));
-                            Tracer.IndentEnd();
+                            stack.Push(new OpenItem<TTreeItem>(result, item));
+                            item = null;
+                            if(Trace)
+                            {
+                                Tracer.Line(">>>>>>");
+                                Tracer.IndentStart();
+                                Tracer.Line("Level = " + stack.Count);
+                                Tracer.Line("top = " + TreeDump(stack.Peek()));
+                                Tracer.IndentEnd();
+                            }
                         }
                     } while(item != null);
                 } while(true);
@@ -123,7 +148,10 @@ namespace hw.Parser
             return stack;
         }
 
-        char Relation(Stack<OpenItem<TTreeItem>> stack, ParserItem<TTreeItem> item) { return stack.Peek().Relation(item.Name, _prioTable); }
+        char Relation(Stack<OpenItem<TTreeItem>> stack, ParserItem<TTreeItem> item)
+        {
+            return stack.Peek().Relation(item.Name, _prioTable);
+        }
 
         ParserItem<TTreeItem> NextToken(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack)
         {
