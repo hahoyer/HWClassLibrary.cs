@@ -56,12 +56,12 @@ namespace hw.UnitTest
             {
                 get
                 {
-                    var a = _target.GetAttribute<TestAttribute>(true);
-                    if(a != null)
-                        yield return a.Where;
                     var b = _type.GetAttribute<TestFixtureAttribute>(true);
                     if (b != null)
                         yield return b.Where;
+                    var a = _target.GetAttribute<TestAttribute>(true);
+                    if (a != null)
+                        yield return a.Where;
                 }
             }
             void IActor.Run(object test) { _target.Invoke(test, new object[0]); }
