@@ -86,8 +86,8 @@ namespace hw.Tests.CompilerTool.Util
                         new[] {"(", PrioTable.BeginOfText},
                         new[] {")", PrioTable.EndOfText}
                     );
-                x.Correct(PrioTable.Any, PrioTable.BeginOfText, '=');
-                x.Correct(")", PrioTable.BeginOfText, '=');
+                x.Correct(PrioTable.Any, PrioTable.BeginOfText, '-');
+                x.Correct(")", PrioTable.BeginOfText, '-');
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
                 return x;

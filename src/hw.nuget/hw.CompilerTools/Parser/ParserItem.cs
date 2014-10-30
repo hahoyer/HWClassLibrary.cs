@@ -37,6 +37,6 @@ namespace hw.Parser
                 result += Type.GetType().PrettyName();
             return result + " " + Part.GetDumpAroundCurrent(20);
         }
-        internal IType<TTreeItem> Match(TTreeItem other) { return Type.Match(other); }
+        internal IType<TTreeItem> MatchType(TTreeItem other) { return Type.Match(other); }
     }
 }

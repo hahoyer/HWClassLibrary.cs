@@ -84,19 +84,21 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Right == null);
         }
         [Test]
-        public static void ParenthesisAndSuffix()
+        public static void ParenthesisAndSuffix() { ParseAndCheck("(anton)berta", "((<null> anton <null>) berta <null>)"); }
+
+        static void ParseAndCheck(string text, string expectedResultDump, int stackFrameDepth = 0)
         {
-            var text = "(anton)berta";
+            var result = Parse(text);
+            Tracer.Assert(result.Dump() == expectedResultDump, result.Dump, stackFrameDepth + 1);
+        }
+
+        static Syntax Parse(string text)
+        {
             var source = new Source(text);
-
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
-            Tracer.Assert(result.Left != null, result.Dump);
-            Tracer.Assert(result.Right == null, result.Dump);
-
-            Tracer.Assert(result.Left.TokenClass.Name == "anton", result.Dump);
-            Tracer.Assert(result.Left.Left == null, result.Dump);
-            Tracer.Assert(result.Left.Right == null, result.Dump);
+            MainTokenFactory.Instance.Trace = TestRunner.IsModeErrorFocus;
+            var result = MainTokenFactory.Instance.Execute(source + 0);
+            MainTokenFactory.Instance.Trace = false;
+            return result;
         }
 
         [Test]
@@ -217,7 +219,10 @@ namespace hw.Tests.CompilerTool
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
             Tracer.Assert
-                (result.Dump() == "(((((<null> x5 <null>) type <null>) x5 <null>) instance (<null>  <null>)) dump_print <null>)", result.Dump());
+                (
+                    result.Dump()
+                        == "(((((<null> x5 <null>) type <null>) x5 <null>) instance (<null>  <null>)) dump_print <null>)",
+                    result.Dump());
         }
         [Test]
         public static void LotOfParenthesisTest()

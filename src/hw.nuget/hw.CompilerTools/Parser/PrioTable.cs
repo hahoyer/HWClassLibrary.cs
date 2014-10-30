@@ -206,9 +206,8 @@ namespace hw.Parser
                 switch(Math.Sign(left.Length + x.Length - i + j))
                 {
                     case -1:
-                        return '-';
                     case 0:
-                        return '=';
+                        return '-';
                     case 1:
                         return '+';
                     default:
@@ -255,16 +254,6 @@ namespace hw.Parser
         }
 
         /// <summary>
-        ///     Define a prio table with tokens that have the same priority and are like a list
-        /// </summary>
-        /// <param name="x"> </param>
-        /// <returns> </returns>
-        public static PrioTable List(params string[] x)
-        {
-            return new PrioTable('=', x);
-        }
-
-        /// <summary>
         ///     Define a prio table that adds a parenthesis level.
         ///     LToken and RToken should have the same number of elements.
         ///     Elements of these lists that have the same index are considered as matching
@@ -278,7 +267,7 @@ namespace hw.Parser
         ///     1,0: TokenClass defined so far finds left TokenClass;
         ///     1,1: ignored, Table for already defined Tokens used (use '?');
         ///     1,2: TokenClass defined so far finds right TokenClass;
-        ///     2,0: ignored, "-=+"-Table generated (use '?');
+        ///     2,0: ignored, "-+"-Table generated (use '?');
         ///     2,1: right TokenClass finds TokenClass defined so far;
         ///     2,2: right TokenClass finds right TokenClass
         /// </param>
@@ -290,7 +279,7 @@ namespace hw.Parser
             return new PrioTable(this, data, lToken, rToken);
         }
         static readonly string[] _parenthesisTableLeft = {"++-", "+?-", "?--"};
-        static readonly string[] _parenthesisTableRight = { "+++", "+?+", "?-+" };
+        static readonly string[] _parenthesisTableRight = { "+++", "+?-", "?--" };
         static readonly string[] _thenElseTable = { "+--", "+?+", "?-+" };
 
 

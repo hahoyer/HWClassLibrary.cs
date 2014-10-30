@@ -18,6 +18,9 @@
 
         <version>14.4.0.3-alpha</version>
         <releaseNotes>
+            Change: Priotable: Parenthesis levels can be right or left associative
+            Change: Priotable: Matchtag (=) removed and completely replaced by lowertag (-)
+            14.4.0.3-alpha
             New: Subparsing support
             Change: Ability to use templates improved
             Change: Better decomposition of objects involved in compiling process
