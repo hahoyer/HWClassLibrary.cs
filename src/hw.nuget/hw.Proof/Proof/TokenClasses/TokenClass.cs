@@ -36,7 +36,6 @@ namespace hw.Proof.TokenClasses
 
         string IType<ParsedSyntax>.PrioTableName { get { return _name; } }
         ISubParser<ParsedSyntax> IType<ParsedSyntax>.Next { get { return Next; } }
-        IType<ParsedSyntax> IType<ParsedSyntax>.Match(ParsedSyntax other) { throw new NotImplementedException(); }
         string INameProvider.Name { set { _name = value; } }
 
         protected virtual ISubParser<ParsedSyntax> Next { get { return null; } }

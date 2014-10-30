@@ -19,11 +19,6 @@ namespace hw.Proof
             NotImplementedMethod(left, part, right);
             return null;
         }
-        IType<ParsedSyntax> IType<ParsedSyntax>.Match(ParsedSyntax other)
-        {
-            NotImplementedMethod(other);
-            return null;
-        }
         string IType<ParsedSyntax>.PrioTableName { get { return PrioTable.Error; } }
         ISubParser<ParsedSyntax> IType<ParsedSyntax>.Next { get { return null; } }
     }

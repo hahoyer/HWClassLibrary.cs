@@ -220,7 +220,6 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class RightParenthesis : TokenClass<Syntax>
     {
-        protected override IType<Syntax> Match(Syntax other) { return other.TokenClass; }
         protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
         {
             if (left != null && right == null)

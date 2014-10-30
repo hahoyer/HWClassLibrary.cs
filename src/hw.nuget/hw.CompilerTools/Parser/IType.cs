@@ -11,6 +11,5 @@ namespace hw.Parser
         TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
         string PrioTableName { get; }
         ISubParser<TTreeItem> Next { get; }
-        IType<TTreeItem> Match(TTreeItem other);
     }
 }

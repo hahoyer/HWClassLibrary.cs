@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.4.0.4-alpha</version>
+        <version>14.4.0.5-alpha</version>
         <releaseNotes>
+            ApiBug: Extra function Match
+            14.4.0.4-alpha
             Change: Priotable: Parenthesis levels can be right or left associative
             Change: Priotable: Matchtag (=) removed and completely replaced by lowertag (-)
             14.4.0.3-alpha

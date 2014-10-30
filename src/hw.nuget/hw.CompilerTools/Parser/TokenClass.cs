@@ -25,13 +25,6 @@ namespace hw.Parser
 
         string IType<TTreeItem>.PrioTableName { get { return Name; } }
         ISubParser<TTreeItem> IType<TTreeItem>.Next { get { return Next; } }
-        IType<TTreeItem> IType<TTreeItem>.Match(TTreeItem other) { return Match(other); }
-        protected virtual IType<TTreeItem> Match(TTreeItem other)
-        {
-            NotImplementedMethod(other);
-            return null;
-        }
-
         protected virtual ISubParser<TTreeItem> Next { get { return null; } }
 
         protected abstract TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
