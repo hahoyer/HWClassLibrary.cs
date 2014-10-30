@@ -53,10 +53,7 @@ namespace hw.Tests.CompilerTool
         [Test]
         public static void NestedParserMultipleEntries()
         {
-            var text = "--> (b c) c";
-            var source = new Source(text);
-
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            var result = Parse("--> (b c) c");
 
             Tracer.Assert(result.TokenClass.Name == "c");
             Tracer.Assert(result.TokenClass.IsMain, result.Dump);
@@ -96,8 +93,10 @@ namespace hw.Tests.CompilerTool
         {
             var source = new Source(text);
             MainTokenFactory.Instance.Trace = TestRunner.IsModeErrorFocus;
+            NestedTokenFactory.Instance.Trace = TestRunner.IsModeErrorFocus;
             var result = MainTokenFactory.Instance.Execute(source + 0);
             MainTokenFactory.Instance.Trace = false;
+            NestedTokenFactory.Instance.Trace = false;
             return result;
         }
 

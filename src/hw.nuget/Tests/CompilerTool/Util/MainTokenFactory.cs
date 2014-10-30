@@ -203,8 +203,8 @@ namespace hw.Tests.CompilerTool.Util
     {
         protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
         {
-            Tracer.Assert(right == null);
-            return left;
+            Tracer.Assert(left == null);
+            return right;
         }
     }
 
@@ -214,6 +214,8 @@ namespace hw.Tests.CompilerTool.Util
         {
             if(left == null && right != null)
                 return right;
+            if (left != null && right == null)
+                return left;
             return new Syntax(left, null, token, right);
         }
     }
@@ -222,6 +224,8 @@ namespace hw.Tests.CompilerTool.Util
     {
         protected override Syntax Create(Syntax left, SourcePart token, Syntax right)
         {
+            if (left == null && right != null)
+                return right;
             if (left != null && right == null)
                 return left;
             return new Syntax(left, null, token, right);

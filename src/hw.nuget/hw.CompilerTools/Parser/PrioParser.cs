@@ -49,7 +49,7 @@ namespace hw.Parser
                         }
 
                         if(startLevel > stack.Count)
-                            return ReturnMethodDump(item.Create(result, null));
+                            return ReturnMethodDump(item.Create(null, result));
 
                         if(relation == '+')
                         {

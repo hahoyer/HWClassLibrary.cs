@@ -12,7 +12,7 @@ namespace Tester
         static void Main(string[] args)
         {
             TestRunner.IsModeErrorFocus = true;
-            Parser.ParenthesisAndSuffix();
+            //Parser.NestedParserMultipleEntries();
             TestRunner.IsModeErrorFocus = false;
             TestRunner.RunTests(Assembly.GetExecutingAssembly());
         }
