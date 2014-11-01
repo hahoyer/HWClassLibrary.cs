@@ -12,6 +12,29 @@ namespace hw.Tests.CompilerTool
     public static class Parser
     {
         [Test]
+        public static void WrongExpression()
+        {
+            ParseAndCheck
+                (
+                    "(a;b);c",
+                    "(((<null> ?(? (<null> a <null>)) ; ((<null> b <null>) ?)? <null>)) ; (<null> c <null>))"
+                );
+        }
+
+        [Test]
+        public static void Expression()
+        {
+            ParseAndCheck
+                (
+                    "(a*b+c*d)*(e*f+g*h) +(a*b+c*d)*(e*f+g*h)",
+                    "("
+                        + "((((<null> a <null>) * (<null> b <null>)) + ((<null> c <null>) * (<null> d <null>))) * (((<null> e <null>) * (<null> f <null>)) + ((<null> g <null>) * (<null> h <null>))))"
+                        + " + "
+                        + "((((<null> a <null>) * (<null> b <null>)) + ((<null> c <null>) * (<null> d <null>))) * (((<null> e <null>) * (<null> f <null>)) + ((<null> g <null>) * (<null> h <null>))))"
+                        + ")"
+                );
+        }
+        [Test]
         public static void NormalParser()
         {
             var text = "a b c";
@@ -20,16 +43,16 @@ namespace hw.Tests.CompilerTool
 
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
-            Tracer.Assert(result.TokenClass.Name == "c");
-            Tracer.Assert(result.TokenClass.IsMain);
+            Tracer.Assert(result.TokenClassName == "c");
+            Tracer.Assert(result.TokenClassIsMain);
             Tracer.Assert(result.Left != null);
             Tracer.Assert(result.Right == null);
-            Tracer.Assert(result.Left.TokenClass.Name == "b");
-            Tracer.Assert(result.Left.TokenClass.IsMain);
+            Tracer.Assert(result.Left.TokenClassName == "b");
+            Tracer.Assert(result.Left.TokenClassIsMain);
             Tracer.Assert(result.Left.Left != null);
             Tracer.Assert(result.Left.Right == null);
-            Tracer.Assert(result.Left.Left.TokenClass.Name == "a");
-            Tracer.Assert(result.Left.Left.TokenClass.IsMain);
+            Tracer.Assert(result.Left.Left.TokenClassName == "a");
+            Tracer.Assert(result.Left.Left.TokenClassIsMain);
             Tracer.Assert(result.Left.Left.Left == null);
             Tracer.Assert(result.Left.Left.Right == null);
         }
@@ -37,16 +60,14 @@ namespace hw.Tests.CompilerTool
         [Test]
         public static void NestedParser()
         {
-            var text = "--> b c";
-            var source = new Source(text);
+            var result = Parse("--> b c");
 
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            Tracer.Assert(result.TokenClass.Name == "c", result.Dump);
-            Tracer.Assert(result.TokenClass.IsMain, result.Dump);
+            Tracer.Assert(result.TokenClassName == "c", result.Dump);
+            Tracer.Assert(result.TokenClassIsMain, result.Dump);
             Tracer.Assert(result.Left != null);
             Tracer.Assert(result.Right == null);
-            Tracer.Assert(result.Left.TokenClass.Name == "b");
-            Tracer.Assert(!result.Left.TokenClass.IsMain);
+            Tracer.Assert(result.Left.TokenClassName == "b");
+            Tracer.Assert(!result.Left.TokenClassIsMain);
             Tracer.Assert(result.Left.Left == null);
             Tracer.Assert(result.Left.Right == null);
         }
@@ -55,16 +76,16 @@ namespace hw.Tests.CompilerTool
         {
             var result = Parse("--> (b c) c");
 
-            Tracer.Assert(result.TokenClass.Name == "c");
-            Tracer.Assert(result.TokenClass.IsMain, result.Dump);
+            Tracer.Assert(result.TokenClassName == "c");
+            Tracer.Assert(result.TokenClassIsMain, result.Dump);
             Tracer.Assert(result.Left != null);
             Tracer.Assert(result.Right == null);
-            Tracer.Assert(result.Left.TokenClass.Name == "c", result.Dump);
-            Tracer.Assert(!result.Left.TokenClass.IsMain);
+            Tracer.Assert(result.Left.TokenClassName == "c", result.Dump);
+            Tracer.Assert(!result.Left.TokenClassIsMain);
             Tracer.Assert(result.Left.Left != null, result.Dump);
             Tracer.Assert(result.Left.Right == null);
-            Tracer.Assert(result.Left.Left.TokenClass.Name == "b", result.Dump);
-            Tracer.Assert(!result.Left.Left.TokenClass.IsMain);
+            Tracer.Assert(result.Left.Left.TokenClassName == "b", result.Dump);
+            Tracer.Assert(!result.Left.Left.TokenClassIsMain);
             Tracer.Assert(result.Left.Left.Left == null);
             Tracer.Assert(result.Left.Left.Right == null);
         }
@@ -76,7 +97,7 @@ namespace hw.Tests.CompilerTool
             var source = new Source(text);
 
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            Tracer.Assert(result.TokenClass.Name == "anton");
+            Tracer.Assert(result.TokenClassName == "anton");
             Tracer.Assert(result.Left == null);
             Tracer.Assert(result.Right == null);
         }
@@ -107,11 +128,11 @@ namespace hw.Tests.CompilerTool
             var source = new Source(text);
 
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            Tracer.Assert(result.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.TokenClassName == "zulu", result.Dump);
             Tracer.Assert(result.Left == null, result.Dump);
             Tracer.Assert(result.Right != null, result.Dump);
 
-            Tracer.Assert(result.Right.TokenClass.Name == "anton", result.Dump);
+            Tracer.Assert(result.Right.TokenClassName == "anton", result.Dump);
             Tracer.Assert(result.Right.Left == null, result.Dump);
             Tracer.Assert(result.Right.Right == null, result.Dump);
         }
@@ -123,26 +144,24 @@ namespace hw.Tests.CompilerTool
             var source = new Source(text);
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
 
-            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
+            Tracer.Assert(result.TokenClassName == "berta", result.Dump);
             Tracer.Assert(result.Left != null, result.Dump);
             Tracer.Assert(result.Right == null, result.Dump);
 
-            Tracer.Assert(result.Left.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.Left.TokenClassName == "zulu", result.Dump);
             Tracer.Assert(result.Left.Left == null, result.Dump);
             Tracer.Assert(result.Left.Right != null, result.Dump);
 
-            Tracer.Assert(result.Left.Right.TokenClass.Name == "anton", result.Dump);
+            Tracer.Assert(result.Left.Right.TokenClassName == "anton", result.Dump);
             Tracer.Assert(result.Left.Right.Left == null, result.Dump);
             Tracer.Assert(result.Left.Right.Right == null, result.Dump);
         }
         [Test]
         public static void EmptyParenthesis()
         {
-            var text = "()";
-            var source = new Source(text);
+            var result = Parse("()");
 
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            Tracer.Assert(result.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.TokenClassName == "", result.Dump);
             Tracer.Assert(result.Left == null, result.Dump);
             Tracer.Assert(result.Right == null, result.Dump);
         }
@@ -150,15 +169,13 @@ namespace hw.Tests.CompilerTool
         [Test]
         public static void EmptyParenthesisAndSuffix()
         {
-            var text = "()berta";
-            var source = new Source(text);
+            var result = Parse("()berta");
 
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
+            Tracer.Assert(result.TokenClassName == "berta", result.Dump);
             Tracer.Assert(result.Left != null, result.Dump);
             Tracer.Assert(result.Right == null, result.Dump);
 
-            Tracer.Assert(result.Left.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.Left.TokenClassName == "", result.Dump);
             Tracer.Assert(result.Left.Left == null, result.Dump);
             Tracer.Assert(result.Left.Right == null, result.Dump);
         }
@@ -170,11 +187,11 @@ namespace hw.Tests.CompilerTool
             var source = new Source(text);
 
             var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            Tracer.Assert(result.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.TokenClassName == "zulu", result.Dump);
             Tracer.Assert(result.Left == null, result.Dump);
             Tracer.Assert(result.Right != null, result.Dump);
 
-            Tracer.Assert(result.Right.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.Right.TokenClassName == "", result.Dump);
             Tracer.Assert(result.Right.Left == null, result.Dump);
             Tracer.Assert(result.Right.Right == null, result.Dump);
         }
@@ -182,19 +199,17 @@ namespace hw.Tests.CompilerTool
         [Test]
         public static void EmptyParenthesisSuffixAndPrefix()
         {
-            var text = "zulu()berta";
-            var source = new Source(text);
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
+            var result = Parse("zulu()berta");
 
-            Tracer.Assert(result.TokenClass.Name == "berta", result.Dump);
+            Tracer.Assert(result.TokenClassName == "berta", result.Dump);
             Tracer.Assert(result.Left != null, result.Dump);
             Tracer.Assert(result.Right == null, result.Dump);
 
-            Tracer.Assert(result.Left.TokenClass.Name == "zulu", result.Dump);
+            Tracer.Assert(result.Left.TokenClassName == "zulu", result.Dump);
             Tracer.Assert(result.Left.Left == null, result.Dump);
             Tracer.Assert(result.Left.Right != null, result.Dump);
 
-            Tracer.Assert(result.Left.Right.TokenClass.Name == "", result.Dump);
+            Tracer.Assert(result.Left.Right.TokenClassName == "", result.Dump);
             Tracer.Assert(result.Left.Right.Left == null, result.Dump);
             Tracer.Assert(result.Left.Right.Right == null, result.Dump);
         }
@@ -202,12 +217,16 @@ namespace hw.Tests.CompilerTool
         [Test]
         public static void ParenthesisSuffixAndPrefixAndSequence()
         {
-            var text = "zulu()(anton)berta";
-            var source = new Source(text);
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
-
-            Tracer.Assert
-                (result.Dump() == "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)", result.Dump());
+            ParseAndCheck
+                (
+                    "zulu aaa()(anton)berta",
+                    "((((<null> zulu <null>) aaa (<null>  <null>))  (<null> anton <null>)) berta <null>)"
+                );
+            ParseAndCheck
+                (
+                    "zulu()(anton)berta",
+                    "(((<null> zulu (<null>  <null>))  (<null> anton <null>)) berta <null>)"
+                );
         }
 
         [Test]
@@ -224,16 +243,6 @@ namespace hw.Tests.CompilerTool
                     result.Dump());
         }
         [Test]
-        public static void LotOfParenthesisTest()
-        {
-            var text = " x()()";
-            var source = new Source(text);
-            MainTokenFactory.Instance.Trace = TestRunner.IsModeErrorFocus;
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
-            MainTokenFactory.Instance.Trace = false;
-
-            Tracer.Assert
-                (result.Dump() == "((<null> x (<null>  <null>))  (<null>  <null>))", result.Dump());
-        }
+        public static void LotOfParenthesisTest() { ParseAndCheck(" x()()", "((<null> x (<null>  <null>))  (<null>  <null>))"); }
     }
 }

@@ -16,6 +16,5 @@ namespace hw.Parser
             Type = type;
             Part = part;
         }
-        public ParserItem<TTreeItem> ToParserItem { get { return new ParserItem<TTreeItem>(Type, Part); } }
     }
 }

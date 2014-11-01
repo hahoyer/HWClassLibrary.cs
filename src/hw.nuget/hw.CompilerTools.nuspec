@@ -16,8 +16,13 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.4.0.6-alpha</version>
+        <version>14.4.0.7-alpha</version>
         <releaseNotes>
+            Bug: Priotable: Matchtag (=) reintroduced. It is required - really
+            Refactor: PrioParser: Function size, long parameter lists
+            Test: PrioParser: more test
+            Test: Much more and better trace dump
+            14.4.0.6-alpha
             Bug: PrioParser: result should be right operand at last create
             14.4.0.5-alpha
             ApiBug: Extra function Match

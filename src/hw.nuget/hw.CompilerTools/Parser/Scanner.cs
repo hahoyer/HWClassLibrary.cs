@@ -28,6 +28,7 @@ namespace hw.Parser
         {
             try
             {
+                Tracer.Assert(sourcePosn.IsValid);
                 sourcePosn.Position += WhiteSpace(sourcePosn);
                 return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?) 0 : null, tokenFactory.EndOfText)
                     ?? CreateAndAdvance(sourcePosn, Number, tokenFactory.Number)
@@ -84,7 +85,10 @@ namespace hw.Parser
 
             var result = new ScannerItem<TTreeItem>
                 (getTokenClass(sourcePosn, length.Value), SourcePart.Span(sourcePosn, length.Value));
+            var wasEnd = sourcePosn.IsEnd;
             sourcePosn.Position += length.Value;
+            if(wasEnd)
+                sourcePosn.IsValid = false;
             return result;
         }
 

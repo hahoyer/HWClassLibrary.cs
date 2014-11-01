@@ -18,22 +18,20 @@ namespace hw.Parser
             : base(_nextObjectId++) { StopByObjectId(-31); }
 
         string IIconKeyProvider.IconKey { get { return "Symbol"; } }
-
         string INameProvider.Name { set { Name = value; } }
-
         TTreeItem IType<TTreeItem>.Create(TTreeItem left, SourcePart part, TTreeItem right) { return Create(left, part, right); }
-
         string IType<TTreeItem>.PrioTableName { get { return Name; } }
-        ISubParser<TTreeItem> IType<TTreeItem>.Next { get { return Next; } }
-        protected virtual ISubParser<TTreeItem> Next { get { return null; } }
-
-        protected abstract TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
-
-        protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }
+        ISubParser<TTreeItem> IType<TTreeItem>.NextParser { get { return Next; } }
+        IType<TTreeItem> IType<TTreeItem>.NextTypeIfMatched { get { return NextTypeIfMatched; } }
 
         [Node]
         [DisableDump]
         internal string Name { get { return _name; } set { _name = value; } }
+
+        protected virtual ISubParser<TTreeItem> Next { get { return null; } }
+        protected virtual IType<TTreeItem> NextTypeIfMatched { get { return null; } }
+        protected abstract TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
+        protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }
 
         public override string ToString() { return base.ToString() + " Name=" + _name.Quote(); }
     }

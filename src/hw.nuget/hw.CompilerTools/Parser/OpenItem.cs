@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -10,26 +11,34 @@ namespace hw.Parser
         where TTreeItem : class
     {
         internal readonly TTreeItem Left;
-        internal readonly ParserItem<TTreeItem> Item;
+        internal readonly IType<TTreeItem> Type;
+        readonly SourcePart _part;
 
-        internal OpenItem(TTreeItem left, ParserItem<TTreeItem> item)
+        internal OpenItem(TTreeItem left, IType<TTreeItem> type, SourcePart part)
         {
             Left = left;
-            Item = item;
+            Type = type;
+            _part = part;
         }
 
-        internal char Relation(string newTokenName, PrioTable prioTable) { return prioTable.Relation(newTokenName, Item.Name); }
-        internal TTreeItem Create(TTreeItem right) { return Item.Create(Left, right); }
+        internal TTreeItem Create(TTreeItem right)
+        {
+            if(Type != null)
+                return Type.Create(Left, _part, right);
+            Tracer.Assert(Left == null);
+            return right;
+        }
 
-        internal static OpenItem<TTreeItem> StartItem(SourcePosn sourcePosn)
+        internal static OpenItem<TTreeItem> StartItem(SourcePart sourcePart)
         {
-            return StartItem(null, SourcePart.Span(sourcePosn, sourcePosn));
+            return StartItem(null, sourcePart);
         }
-        internal static OpenItem<TTreeItem> StartItem(IType<TTreeItem> type, SourcePart part)
+
+        static OpenItem<TTreeItem> StartItem(IType<TTreeItem> type, SourcePart partOfStartItem)
         {
-            return new OpenItem<TTreeItem>(default(TTreeItem), new ParserItem<TTreeItem>(type, part));
+            return new OpenItem<TTreeItem>(default(TTreeItem), type, partOfStartItem);
         }
-        
-        protected override string GetNodeDump() { return Tracer.Dump(Left) + " " + Item.NodeDump; }
+
+        protected override string GetNodeDump() { return Tracer.Dump(Left) + " " + Type.GetType().PrettyName(); }
     }
 }

@@ -27,6 +27,8 @@ namespace hw.Scanner
             Source = source;
         }
 
+        public bool IsValid { get { return 0 <= Position && Position <= Source.Length; } set { Position = (value ? 0 : -1); } }
+
         /// <summary>
         ///     The current character
         /// </summary>
@@ -96,11 +98,13 @@ namespace hw.Scanner
 
         public string GetDumpAroundCurrent(int dumpWidth)
         {
-            return GetDumpBeforeCurrent(dumpWidth)
-                + "["
-                + DumpCurrent
-                + "]"
-                + GetDumpAfterCurrent(dumpWidth);
+            if(IsValid)
+                return GetDumpBeforeCurrent(dumpWidth)
+                    + "["
+                    + DumpCurrent
+                    + "]"
+                    + GetDumpAfterCurrent(dumpWidth);
+            return "<invalid>";
         }
 
         public SourcePosn Clone { get { return new SourcePosn(Source, Position); } }

@@ -152,7 +152,6 @@
     <Compile Include="hw.CompilerTools\Parser\PrioParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\IOperator.cs" />
     <Compile Include="hw.CompilerTools\Parser\IParser.cs" />
-    <Compile Include="hw.CompilerTools\Parser\ParserItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\IType.cs" />
     <Compile Include="hw.CompilerTools\Parser\OpenItem.cs" />
     <Compile Include="Tests\CompilerTool\Parser.cs" />
