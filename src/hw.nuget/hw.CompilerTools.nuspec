@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.4.0.7-alpha</version>
+        <version>14.4.0.8-alpha</version>
         <releaseNotes>
+            Bug: PrioParser: Steck-empty-test has to be earlier
+            14.4.0.7-alpha
             Bug: Priotable: Matchtag (=) reintroduced. It is required - really
             Refactor: PrioParser: Function size, long parameter lists
             Test: PrioParser: more test
