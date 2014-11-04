@@ -15,8 +15,10 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
-        <version>14.16.2</version>
+        <version>14.16.3</version>
         <releaseNotes>
+            Bug: extra using statement
+            14.16.2
             Change: Test moved to outer namespace
         </releaseNotes>
     </metadata>
