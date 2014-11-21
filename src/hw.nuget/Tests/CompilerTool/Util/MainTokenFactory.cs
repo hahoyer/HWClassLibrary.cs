@@ -13,14 +13,14 @@ namespace hw.Tests.CompilerTool.Util
     {
         protected static readonly IScanner<Syntax> Scanner = new Scanner<Syntax>(new ReniLexer());
 
-        protected override TokenClass<Syntax> GetSyntaxError(string message) { return new SyntaxError(message); }
+        protected override TokenClass<Syntax> GetSyntaxError(Match.IError message) { return new SyntaxError(message); }
         protected override TokenClass<Syntax> GetEndOfText() { return new EndOfText(); }
 
         sealed class SyntaxError : TokenClass<Syntax>
         {
             [EnableDump]
-            readonly string _message;
-            public SyntaxError(string message) { _message = message; }
+            readonly Match.IError _message;
+            public SyntaxError(Match.IError message) { _message = message; }
             protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
             {
                 NotImplementedMethod(left, part, right);

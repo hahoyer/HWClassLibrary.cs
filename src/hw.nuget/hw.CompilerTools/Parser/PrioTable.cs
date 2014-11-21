@@ -289,13 +289,37 @@ namespace hw.Parser
         {
             return new PrioTable(this, data, lToken, rToken);
         }
-        static readonly string[] _parenthesisTableLeft = {"++-", "+?-", "?--"};
-        static readonly string[] _parenthesisTableRight = { "+++", "+?+", "?--" };
-        static readonly string[] _thenElseTable = { "+--", "+?+", "?-+" };
+
+        static readonly string[] _parenthesisTableLeft =
+        {
+            "++-",
+            "+?-",
+            "?--"
+        };
+
+        static readonly string[] _parenthesisTableRight =
+        {
+            "+++",
+            "+?+",
+            "?--"
+        };
+
+        static readonly string[] _thenElseTable =
+        {
+            "+--",
+            "+?+",
+            "?-+"
+        };
 
 
-        public PrioTable ParenthesisLevelLeft(string[] lToken, string[] rToken) { return Level(_parenthesisTableLeft, lToken, rToken); }
-        public PrioTable ParenthesisLevelRight(string[] lToken, string[] rToken) { return Level(_parenthesisTableRight, lToken, rToken); }
+        public PrioTable ParenthesisLevelLeft(string[] lToken, string[] rToken)
+        {
+            return Level(_parenthesisTableLeft, lToken, rToken);
+        }
+        public PrioTable ParenthesisLevelRight(string[] lToken, string[] rToken)
+        {
+            return Level(_parenthesisTableRight, lToken, rToken);
+        }
         public PrioTable ThenElseLevel(string[] lToken, string[] rToken) { return Level(_thenElseTable, lToken, rToken); }
         public PrioTable ParenthesisLevel(string lToken, string rToken)
         {

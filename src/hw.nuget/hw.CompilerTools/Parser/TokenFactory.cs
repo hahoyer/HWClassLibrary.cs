@@ -64,17 +64,28 @@ namespace hw.Parser
         IType<TTreeItem> ITokenFactory<TTreeItem>.Number { get { return _number.Value; } }
         IType<TTreeItem> ITokenFactory<TTreeItem>.Text { get { return _text.Value; } }
         IType<TTreeItem> ITokenFactory<TTreeItem>.EndOfText { get { return _endOfText.Value; } }
-        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error) { return GetSyntaxError(error.ToString()); }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error) { return GetSyntaxError(error); }
 
-        protected abstract TTokenClass GetSyntaxError(string message);
+        protected abstract TTokenClass GetSyntaxError(Match.IError message);
         protected abstract FunctionCache<string, TTokenClass> GetPredefinedTokenClasses();
 
-        protected virtual TTokenClass GetEndOfText() { return GetSyntaxError("unexpected end of text".Quote()); }
-        protected virtual TTokenClass GetTokenClass(string name) { return GetSyntaxError("invalid symbol: " + name.Quote()); }
-        protected virtual TTokenClass GetNumber() { return GetSyntaxError("unexpected number"); }
-        protected virtual TTokenClass GetText() { return GetSyntaxError("unexpected string"); }
+        protected virtual TTokenClass GetEndOfText() { return GetSyntaxError(Error.UnexpectedEndOfText); }
+        protected virtual TTokenClass GetTokenClass(string name) { return GetSyntaxError(Error.InvalidSymbol(name)); }
+        protected virtual TTokenClass GetNumber() { return GetSyntaxError(Error.UnexpectedNumber); }
+        protected virtual TTokenClass GetText() { return GetSyntaxError(Error.UnexpectedString); }
 
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
         protected IType<TTreeItem> TokenClass(string name) { return TokenClasses[name]; }
+    }
+
+    public sealed class Error : DumpableObject, Match.IError
+    {
+        public static readonly Error UnexpectedEndOfText = new Error("unexpected end of text");
+        public static readonly Error UnexpectedNumber = new Error("unexpected number");
+        public static readonly Error UnexpectedString = new Error("unexpected string");
+        public static Error InvalidSymbol(string name) { return new Error("invalid symbol: " + name); }
+
+        public readonly string Message;
+        Error(string message) { Message = message; }
     }
 }

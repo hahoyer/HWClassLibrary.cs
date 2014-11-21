@@ -4,6 +4,7 @@ using System.Linq;
 using hw.Helper;
 using hw.Parser;
 using hw.Proof.TokenClasses;
+using hw.Scanner;
 
 namespace hw.Proof
 {
@@ -71,12 +72,12 @@ namespace hw.Proof
         internal Equal Equal { get { return (Equal) TokenClass("="); } }
         internal Plus Plus { get { return (Plus) TokenClass("+"); } }
 
-        protected override TokenClasses.TokenClass GetSyntaxError(string message) { return new SyntaxError(message); }
+        protected override TokenClass GetSyntaxError(Match.IError message) { return new SyntaxError(message); }
 
         sealed class SyntaxError : TokenClasses.TokenClass
         {
-            readonly string _message;
-            public SyntaxError(string message) { _message = message; }
+            readonly Match.IError _message;
+            public SyntaxError(Match.IError message) { _message = message; }
         }
     }
 }

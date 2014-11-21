@@ -16,8 +16,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.4.0.8-alpha</version>
+        <version>14.4.0.9-alpha</version>
         <releaseNotes>
+            #21: Bug: Match-exception returns negative length
+            Change: Typed syntax errors
+            14.4.0.8-alpha
             Bug: PrioParser: Steck-empty-test has to be earlier
             14.4.0.7-alpha
             Bug: Priotable: Matchtag (=) reintroduced. It is required - really

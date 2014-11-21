@@ -100,7 +100,7 @@ namespace hw.Parser
             }
             catch(Match.Exception exception)
             {
-                throw new Exception(sourcePosn, sourcePosn - exception.SourcePosn, exception.Error);
+                throw new Exception(sourcePosn, exception.SourcePosn - sourcePosn, exception.Error);
             }
         }
     }
