@@ -6,7 +6,7 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public class Scanner<TTreeItem> : Dumpable, IScanner<TTreeItem>
+    public sealed class Scanner<TTreeItem> : Dumpable, IScanner<TTreeItem>
         where TTreeItem : class
     {
         readonly ILexer _lexer;
@@ -48,7 +48,7 @@ namespace hw.Parser
             return null;
         }
 
-        internal sealed class Exception : System.Exception
+        sealed class Exception : System.Exception
         {
             public readonly SourcePosn SourcePosn;
             internal readonly int Length;
@@ -92,7 +92,7 @@ namespace hw.Parser
             return result;
         }
 
-        TResult ExceptionGuard<TResult>(SourcePosn sourcePosn, Func<SourcePosn, TResult> match)
+        static TResult ExceptionGuard<TResult>(SourcePosn sourcePosn, Func<SourcePosn, TResult> match)
         {
             try
             {

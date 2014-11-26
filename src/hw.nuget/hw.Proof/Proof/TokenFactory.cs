@@ -8,13 +8,13 @@ using hw.Scanner;
 
 namespace hw.Proof
 {
-    sealed class TokenFactory : TokenFactory<TokenClasses.TokenClass , ParsedSyntax>
+    sealed class TokenFactory : TokenFactory<TokenClass, ParsedSyntax>
     {
         TokenFactory() { }
 
         internal static TokenFactory Instance { get { return new TokenFactory(); } }
 
-        protected override TokenClasses.TokenClass GetTokenClass(string name) { return new UserSymbol(); }
+        protected override TokenClass GetTokenClass(string name) { return new UserSymbol(); }
 
         internal static PrioTable PrioTable
         {
@@ -36,15 +36,16 @@ namespace hw.Proof
                 x += PrioTable.Right(",");
                 x += PrioTable.Right(";");
 
-                x = x.ParenthesisLevelLeft(new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
+                x = x.ParenthesisLevelLeft
+                    (new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
                 //Tracer.FlaggedLine("\n"+x+"\n");
                 return x;
             }
         }
 
-        protected override FunctionCache<string, TokenClasses.TokenClass> GetPredefinedTokenClasses()
+        protected override FunctionCache<string, TokenClass> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClasses.TokenClass>
+            var result = new FunctionCache<string, TokenClass>
             {
                 {"{", new LeftParenthesis(1)},
                 {"[", new LeftParenthesis(2)},
@@ -65,16 +66,17 @@ namespace hw.Proof
             };
             return result;
         }
-        protected override TokenClasses.TokenClass GetEndOfText() { return new RightParenthesis(0); }
-        protected override TokenClasses.TokenClass GetNumber() { return new Number(); }
+        protected override TokenClass GetEndOfText() { return new RightParenthesis(0); }
+        protected override TokenClass GetNumber() { return new Number(); }
+        protected override TokenClass GetText() { throw new NotImplementedException(); }
 
         internal Minus Minus { get { return (Minus) TokenClass("-"); } }
         internal Equal Equal { get { return (Equal) TokenClass("="); } }
         internal Plus Plus { get { return (Plus) TokenClass("+"); } }
 
-        protected override TokenClass GetSyntaxError(Match.IError message) { return new SyntaxError(message); }
+        protected override TokenClass GetError(Match.IError message) { return new SyntaxError(message); }
 
-        sealed class SyntaxError : TokenClasses.TokenClass
+        sealed class SyntaxError : TokenClass
         {
             readonly Match.IError _message;
             public SyntaxError(Match.IError message) { _message = message; }

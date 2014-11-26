@@ -29,7 +29,7 @@ namespace hw.Parser
             result.Name = PrioTable.EndOfText;
             return result;
         }
-
+                                                                    
         FunctionCache<string, TTokenClass> GetTokenClasses()
         {
             var result = new FunctionCache<string, TTokenClass>(GetPredefinedTokenClasses(), InternalGetTokenClass);
@@ -64,28 +64,17 @@ namespace hw.Parser
         IType<TTreeItem> ITokenFactory<TTreeItem>.Number { get { return _number.Value; } }
         IType<TTreeItem> ITokenFactory<TTreeItem>.Text { get { return _text.Value; } }
         IType<TTreeItem> ITokenFactory<TTreeItem>.EndOfText { get { return _endOfText.Value; } }
-        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error) { return GetSyntaxError(error); }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error) { return GetError(error); }
 
-        protected abstract TTokenClass GetSyntaxError(Match.IError message);
+        protected abstract TTokenClass GetError(Match.IError message);
         protected abstract FunctionCache<string, TTokenClass> GetPredefinedTokenClasses();
-
-        protected virtual TTokenClass GetEndOfText() { return GetSyntaxError(Error.UnexpectedEndOfText); }
-        protected virtual TTokenClass GetTokenClass(string name) { return GetSyntaxError(Error.InvalidSymbol(name)); }
-        protected virtual TTokenClass GetNumber() { return GetSyntaxError(Error.UnexpectedNumber); }
-        protected virtual TTokenClass GetText() { return GetSyntaxError(Error.UnexpectedString); }
+        protected abstract TTokenClass GetEndOfText();
+        protected abstract TTokenClass GetTokenClass(string name);
+        protected abstract TTokenClass GetNumber();
+        protected abstract TTokenClass GetText();
 
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
         protected IType<TTreeItem> TokenClass(string name) { return TokenClasses[name]; }
     }
 
-    public sealed class Error : DumpableObject, Match.IError
-    {
-        public static readonly Error UnexpectedEndOfText = new Error("unexpected end of text");
-        public static readonly Error UnexpectedNumber = new Error("unexpected number");
-        public static readonly Error UnexpectedString = new Error("unexpected string");
-        public static Error InvalidSymbol(string name) { return new Error("invalid symbol: " + name); }
-
-        public readonly string Message;
-        Error(string message) { Message = message; }
-    }
 }

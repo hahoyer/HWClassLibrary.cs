@@ -16,25 +16,20 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.4.0.9-alpha</version>
+        <version>14.5</version>
         <releaseNotes>
+            Change: Typed syntax errors again
             #21: Bug: Match-exception returns negative length
             Change: Typed syntax errors
-            14.4.0.8-alpha
             Bug: PrioParser: Steck-empty-test has to be earlier
-            14.4.0.7-alpha
             Bug: Priotable: Matchtag (=) reintroduced. It is required - really
             Refactor: PrioParser: Function size, long parameter lists
             Test: PrioParser: more test
             Test: Much more and better trace dump
-            14.4.0.6-alpha
             Bug: PrioParser: result should be right operand at last create
-            14.4.0.5-alpha
             ApiBug: Extra function Match
-            14.4.0.4-alpha
             Change: Priotable: Parenthesis levels can be right or left associative
             Change: Priotable: Matchtag (=) removed and completely replaced by lowertag (-)
-            14.4.0.3-alpha
             New: Subparsing support
             Change: Ability to use templates improved
             Change: Better decomposition of objects involved in compiling process

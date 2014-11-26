@@ -13,7 +13,7 @@ namespace hw.Tests.CompilerTool.Util
     {
         protected static readonly IScanner<Syntax> Scanner = new Scanner<Syntax>(new ReniLexer());
 
-        protected override TokenClass<Syntax> GetSyntaxError(Match.IError message) { return new SyntaxError(message); }
+        protected override TokenClass<Syntax> GetError(Match.IError message) { return new SyntaxError(message); }
         protected override TokenClass<Syntax> GetEndOfText() { return new EndOfText(); }
 
         sealed class SyntaxError : TokenClass<Syntax>
@@ -71,6 +71,8 @@ namespace hw.Tests.CompilerTool.Util
         }
 
         protected override TokenClass<Syntax> GetTokenClass(string name) { return new MainToken(name); }
+        protected override TokenClass<Syntax> GetNumber() { throw new NotImplementedException(); }
+        protected override TokenClass<Syntax> GetText() { throw new NotImplementedException(); }
     }
 
     sealed class NestedTokenFactory : TokenFactory
@@ -108,6 +110,8 @@ namespace hw.Tests.CompilerTool.Util
         }
 
         protected override TokenClass<Syntax> GetTokenClass(string name) { return new NestedToken(name); }
+        protected override TokenClass<Syntax> GetNumber() { throw new NotImplementedException(); }
+        protected override TokenClass<Syntax> GetText() { throw new NotImplementedException(); }
     }
 
     sealed class SwitchToken : NamedToken
