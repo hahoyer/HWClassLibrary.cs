@@ -30,15 +30,15 @@ namespace hw.Parser
             {
                 Tracer.Assert(sourcePosn.IsValid);
                 sourcePosn.Position += WhiteSpace(sourcePosn);
-                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?) 0 : null, tokenFactory.EndOfText)
-                    ?? CreateAndAdvance(sourcePosn, Number, tokenFactory.Number)
-                        ?? CreateAndAdvance(sourcePosn, Text, tokenFactory.Text)
+                return CreateAndAdvance(sourcePosn, sp => sp.IsEnd ? (int?) 0 : null, () => tokenFactory.EndOfText)
+                    ?? CreateAndAdvance(sourcePosn, Number, () => tokenFactory.Number)
+                        ?? CreateAndAdvance(sourcePosn, Text, () => tokenFactory.Text)
                             ?? CreateAndAdvance(sourcePosn, Any, tokenFactory.TokenClass)
                                 ?? WillReturnNull(sourcePosn);
             }
             catch(Exception exception)
             {
-                return CreateAndAdvance(exception.SourcePosn, sp => exception.Length, tokenFactory.Error(exception.Error));
+                return CreateAndAdvance(exception.SourcePosn, sp => exception.Length, () => tokenFactory.Error(exception.Error));
             }
         }
 
@@ -63,9 +63,9 @@ namespace hw.Parser
         }
 
         static ScannerItem<TTreeItem> CreateAndAdvance
-            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, IType<TTreeItem> tokenClass)
+            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<IType<TTreeItem>> getTokenClass)
         {
-            return CreateAndAdvance(sourcePosn, getLength, (sp, l) => tokenClass);
+            return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass());
         }
         static ScannerItem<TTreeItem> CreateAndAdvance
             (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, Func<string, IType<TTreeItem>> getTokenClass)

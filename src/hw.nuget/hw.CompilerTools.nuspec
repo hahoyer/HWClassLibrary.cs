@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.5</version>
+        <version>14.5.1</version>
         <releaseNotes>
+            ApiBug: GetToken functions are called even if not used
+            14.5
             Change: Typed syntax errors again
             #21: Bug: Match-exception returns negative length
             Change: Typed syntax errors
