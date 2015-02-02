@@ -67,7 +67,7 @@ namespace hw.Parser
         IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error) { return GetError(error); }
 
         protected abstract TTokenClass GetError(Match.IError message);
-        protected abstract FunctionCache<string, TTokenClass> GetPredefinedTokenClasses();
+        protected abstract IDictionary<string, TTokenClass> GetPredefinedTokenClasses();
         protected abstract TTokenClass GetEndOfText();
         protected abstract TTokenClass GetTokenClass(string name);
         protected abstract TTokenClass GetNumber();

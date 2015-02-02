@@ -43,9 +43,9 @@ namespace hw.Proof
             }
         }
 
-        protected override FunctionCache<string, TokenClass> GetPredefinedTokenClasses()
+        protected override IDictionary<string, TokenClass> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass>
+            var result = new Dictionary<string, TokenClass>
             {
                 {"{", new LeftParenthesis(1)},
                 {"[", new LeftParenthesis(2)},

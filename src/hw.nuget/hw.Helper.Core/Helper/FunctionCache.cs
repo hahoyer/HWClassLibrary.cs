@@ -29,7 +29,7 @@ namespace hw.Helper
         public FunctionCache(FunctionCache<TKey, TValue> x, IEqualityComparer<TKey> comparer)
             : base(x, comparer) { _createValue = x._createValue; }
 
-        public FunctionCache(FunctionCache<TKey, TValue> x, Func<TKey, TValue> createValue)
+        public FunctionCache(IDictionary<TKey, TValue> x, Func<TKey, TValue> createValue)
             : base(x) { _createValue = createValue; }
 
         public FunctionCache(FunctionCache<TKey, TValue> x)

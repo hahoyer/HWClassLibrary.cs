@@ -14,33 +14,14 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <language>en-US</language>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2014</copyright>
+        <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>14.5.1</version>
+        <version>15.1</version>
         <releaseNotes>
-            ApiBug: GetToken functions are called even if not used
-            14.5
-            Change: Typed syntax errors again
-            #21: Bug: Match-exception returns negative length
-            Change: Typed syntax errors
-            Bug: PrioParser: Steck-empty-test has to be earlier
-            Bug: Priotable: Matchtag (=) reintroduced. It is required - really
-            Refactor: PrioParser: Function size, long parameter lists
-            Test: PrioParser: more test
-            Test: Much more and better trace dump
-            Bug: PrioParser: result should be right operand at last create
-            ApiBug: Extra function Match
-            Change: Priotable: Parenthesis levels can be right or left associative
-            Change: Priotable: Matchtag (=) removed and completely replaced by lowertag (-)
-            New: Subparsing support
-            Change: Ability to use templates improved
-            Change: Better decomposition of objects involved in compiling process
-            ApiBug: Extension.Operation is not an extension method
-            ApiBug: missing default value for IParser.Execute.stack
-            Change: prio parser: inner loop is controlled by parsed item instead of result
+            Change: TokenFactory: GetPredefinedTokenClasses is now IDictionary
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="14.16.2.0" />
+            <dependency id="hw.Helper.Core" version="14.16.6" />
         </dependencies>
 
     </metadata>

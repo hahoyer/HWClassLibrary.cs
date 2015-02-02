@@ -59,9 +59,9 @@ namespace hw.Tests.CompilerTool.Util
             }
         }
 
-        protected override FunctionCache<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
+        protected override IDictionary<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass<Syntax>>
+            var result = new Dictionary<string, TokenClass<Syntax>>
             {
                 {"-->", new SwitchToken()},
                 {"(", new LeftParenthesis()},
@@ -99,9 +99,9 @@ namespace hw.Tests.CompilerTool.Util
             }
         }
 
-        protected override FunctionCache<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
+        protected override IDictionary<string, TokenClass<Syntax>> GetPredefinedTokenClasses()
         {
-            var result = new FunctionCache<string, TokenClass<Syntax>>
+            var result = new Dictionary<string, TokenClass<Syntax>>
             {
                 {"(", new LeftParenthesis()},
                 {")", new RightParenthesis()}
