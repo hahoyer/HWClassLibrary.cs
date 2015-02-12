@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using hw.Helper;
+using System.Linq;
 
 namespace hw.Debug
 {
@@ -76,6 +76,12 @@ namespace hw.Debug
 
         [DebuggerHidden]
         internal void StopByObjectId(int objectId) { StopByObjectId(1, objectId); }
+        [DebuggerHidden]
+        internal void StopByObjectIds(params int[] objectIds)
+        {
+            foreach(var objectId in objectIds)
+                StopByObjectId(1, objectId);
+        }
 
         [DebuggerHidden]
         internal void StopByObjectId(int stackFrameDepth, int objectId)
@@ -109,5 +115,4 @@ namespace hw.Debug
         /// </summary>
         public string Property { get { return _property; } }
     }
-
 }
