@@ -173,8 +173,8 @@ namespace hw.Tests.CompilerTool.Util
 
     abstract class Syntax : ParsedSyntax, ITreeItem
     {
-        protected Syntax(SourcePart part)
-            : base(part)
+        protected Syntax(SourcePart sourcePart, SourcePart token)
+            : base(sourcePart, token)
         {}
         ITreeItem ITreeItem.Left { get { return Left; } }
         public abstract Syntax Left { get; }
@@ -204,8 +204,8 @@ namespace hw.Tests.CompilerTool.Util
     {
         readonly Syntax _left;
         readonly Syntax _right;
-        protected TreeSyntax(Syntax left, SourcePart part, Syntax right)
-            : base(part)
+        protected TreeSyntax(Syntax left, SourcePart token, Syntax right)
+            : base(left.SourcePart + token + right.SourcePart,token)
         {
             _left = left;
             _right = right;

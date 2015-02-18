@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using hw.Debug;
 using hw.Forms;
@@ -14,23 +15,34 @@ namespace hw.Parser
         [UsedImplicitly]
         internal static bool IsDetailedDumpRequired = true;
 
-        readonly SourcePart _token;
+        [DisableDump]
+        public readonly SourcePart Token;
+        [DisableDump]
+        public readonly SourcePart SourcePart;
 
-        protected ParsedSyntax(SourcePart token) { _token = token; }
+        protected ParsedSyntax(SourcePart sourcePart, SourcePart token)
+        {
+            SourcePart = sourcePart;
+            Token = token;
+        }
 
-        protected ParsedSyntax(SourcePart token, int nextObjectId)
-            : base(nextObjectId) { _token = token; }
+        protected ParsedSyntax(SourcePart sourcePart, SourcePart token, int nextObjectId)
+            : base(nextObjectId)
+        {
+            SourcePart = sourcePart;
+            Token = token;
+        }
 
 
         [DisableDump]
         string IIconKeyProvider.IconKey { get { return "Syntax"; } }
 
-        [DisableDump]
-        internal SourcePart Token { get { return _token; } }
-
-        protected override string GetNodeDump() { return Token.Name; }
-        protected virtual string FilePosition() { return Token.FilePosition; }
-        internal string FileErrorPosition(string errorTag) { return Token.FileErrorPosition(errorTag); }
+        protected override string GetNodeDump() { return SourcePart.Name; }
+        protected virtual string FilePosition() { return SourcePart.FilePosition; }
+        internal string FileErrorPosition(string errorTag)
+        {
+            return SourcePart.FileErrorPosition(errorTag);
+        }
 
         string IGraphTarget.Title { get { return Token.Name; } }
         IGraphTarget[] IGraphTarget.Children { get { return Children.ToArray<IGraphTarget>(); } }

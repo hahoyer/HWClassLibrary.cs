@@ -35,7 +35,7 @@ namespace hw.Proof
     abstract class ParsedSyntax : Parser.ParsedSyntax, IComparable<ParsedSyntax>
     {
         protected ParsedSyntax(SourcePart token)
-            : base(token) { }
+            : base(token, token) { }
 
         [DisableDump]
         internal virtual Set<string> Variables

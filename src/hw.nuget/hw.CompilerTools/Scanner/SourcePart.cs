@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using hw.Debug;
+using hw.Helper;
 using JetBrains.Annotations;
 
 namespace hw.Scanner
 {
     [DebuggerDisplay("{NodeDump}")]
-    public sealed class SourcePart : Dumpable
+    public sealed class SourcePart : Dumpable, IAggregateable<SourcePart>
     {
         readonly int _length;
         readonly Source _source;
@@ -30,12 +31,35 @@ namespace hw.Scanner
         [DisableDump]
         int Length { get { return _length; } }
 
+        SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) { return Overlay(other); }
+
+        public SourcePart Overlay(SourcePart other)
+        {
+            if(Source != other.Source)
+                return this;
+            var start = Math.Min(Position, other.Position);
+            var end = Math.Max(Position + Length, other.Position + other.Length);
+            return new SourcePart(Source, start, end - start);
+        }
+
+        public static SourcePart operator +(SourcePart left, SourcePart right)
+        {
+            return left == null 
+                ? right 
+                : right == null 
+                ? left 
+                : left.Overlay(right);
+        }
+
         public string Name { get { return Source.SubString(Position, Length); } }
 
         [DisableDump]
         public string FilePosition { get { return "\n" + Source.FilePosn(Position, Name); } }
 
-        public string FileErrorPosition(string errorTag) { return "\n" + Source.FilePosn(Position, Name, "error " + errorTag); }
+        public string FileErrorPosition(string errorTag)
+        {
+            return "\n" + Source.FilePosn(Position, Name, "error " + errorTag);
+        }
 
         [UsedImplicitly]
         string DumpCurrent { get { return Name; } }
@@ -73,7 +97,7 @@ namespace hw.Scanner
                 + "]"
                 + GetDumpAfterCurrent(dumpWidth);
         }
-        
+
         [DisableDump]
         public SourcePosn Start { get { return Source + Position; } }
 
