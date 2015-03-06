@@ -6,7 +6,7 @@ using hw.Debug;
 namespace hw.Helper
 {
     [Serializable]
-    sealed class ValueCache<TValueType>
+    public sealed class ValueCache<TValueType>
     {
         readonly Func<TValueType> _createValue;
         bool _isValid;

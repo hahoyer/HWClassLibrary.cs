@@ -15,8 +15,10 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>14.16.7</version>
+        <version>15.1</version>
         <releaseNotes>
+            Change: ValueCache: is now public
+            14.16.7
             New: DumpableObject: StopByObjectIds, is like StopByObjectId, but allows multiple ids to watch
             14.16.6
             Change: FunctionCache: initial data can be IDictionary in ctor providing initial data and create-value function
