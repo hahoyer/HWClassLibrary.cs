@@ -19,13 +19,13 @@ namespace hw.Parser
         [DisableDump]
         public readonly SourcePart Token;
 
-        protected ParsedSyntax(SourcePart sourcePart, SourcePart token)
+        protected ParsedSyntax(SourcePart token, SourcePart sourcePart= null)
         {
             _sourcePart = sourcePart;
             Token = token;
         }
 
-        protected ParsedSyntax(SourcePart sourcePart, SourcePart token, int objectId)
+        protected ParsedSyntax(SourcePart token, int objectId, SourcePart sourcePart= null)
             : base(objectId)
         {
             _sourcePart = sourcePart;
