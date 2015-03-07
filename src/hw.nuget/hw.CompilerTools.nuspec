@@ -16,8 +16,14 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.2.2</version>
+        <version>15.3</version>
         <releaseNotes>
+            Change: ParsedSyntax: argument to provide additional source part has been moved to end and made optional
+            Watch out: Unfortunately it is not signature change. All usages have to be modified manually!
+            15.2.3
+            Change: use Children and token to obtain SourcePar
+            Change: Convenience
+            15.2.2
             Change: Provide SourcePart for ParseSyntax, via additional ctor parameter
             15.1.1
             Change: Provide SourcePart for ParseSyntax
