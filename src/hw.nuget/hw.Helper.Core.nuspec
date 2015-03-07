@@ -15,7 +15,7 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>15.1</version>
+        <version>15.1.1</version>
         <releaseNotes>
             Change: ValueCache: is now public
             14.16.7
