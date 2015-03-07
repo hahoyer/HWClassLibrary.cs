@@ -124,5 +124,9 @@ namespace hw.Scanner
             var length = data.Length;
             return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length) == data;
         }
+
+        public SourcePart Span(SourcePosn other) { return SourcePart.Span(this, other); }
+        public SourcePart Span(int length) { return SourcePart.Span(this, length); }
+
     }
 }
