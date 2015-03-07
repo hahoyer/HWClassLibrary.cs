@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.3</version>
+        <version>15.3.1</version>
         <releaseNotes>
+            Bug: ParsedSyntax: SourcePart crashed when any child is null
+            15.3
             Change: ParsedSyntax: argument to provide additional source part has been moved to end and made optional
             Watch out: Unfortunately it is not signature change. All usages have to be modified manually!
             15.2.3

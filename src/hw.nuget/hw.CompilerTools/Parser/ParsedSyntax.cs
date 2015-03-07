@@ -15,20 +15,20 @@ namespace hw.Parser
         [UsedImplicitly]
         internal static bool IsDetailedDumpRequired = true;
 
-        readonly SourcePart _sourcePart;
+        readonly SourcePart _additionalSourcePart;
         [DisableDump]
         public readonly SourcePart Token;
 
-        protected ParsedSyntax(SourcePart token, SourcePart sourcePart= null)
+        protected ParsedSyntax(SourcePart token, SourcePart additionalSourcePart= null)
         {
-            _sourcePart = sourcePart;
+            _additionalSourcePart = additionalSourcePart;
             Token = token;
         }
 
-        protected ParsedSyntax(SourcePart token, int objectId, SourcePart sourcePart= null)
+        protected ParsedSyntax(SourcePart token, int objectId, SourcePart additionalSourcePart= null)
             : base(objectId)
         {
-            _sourcePart = sourcePart;
+            _additionalSourcePart = additionalSourcePart;
             Token = token;
         }
 
@@ -53,10 +53,11 @@ namespace hw.Parser
         {
             get
             {
-                return _sourcePart
+                return _additionalSourcePart
                     + Token
                     + Children
-                        .Select(item => item == null ? null : item.SourcePart)
+                        .Where(item => item != null)
+                        .Select(item => item.SourcePart)
                         .Aggregate();
             }
         }
