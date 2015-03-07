@@ -205,7 +205,7 @@ namespace hw.Tests.CompilerTool.Util
         readonly Syntax _left;
         readonly Syntax _right;
         protected TreeSyntax(Syntax left, SourcePart token, Syntax right)
-            : base(left.SourcePart + token + right.SourcePart,token)
+            : base((left==null?null:left.SourcePart) + token + (right == null?null:right.SourcePart),token)
         {
             _left = left;
             _right = right;
