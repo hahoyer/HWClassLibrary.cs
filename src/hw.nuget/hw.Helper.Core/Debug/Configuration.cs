@@ -14,12 +14,13 @@ namespace hw.Debug
         internal Configuration()
         {
             Handlers = new HandlerGroup();
-            Handlers.Add(typeof(IList), (type, o) => Dump(((IList) o).Cast<object>()));
+            Handlers.Add(typeof(IList), (type, o) => Dump(((IList)o).Cast<object>()));
             Handlers.Add(typeof(IDictionary), (type, o) => DumpIDictionary(o));
-            Handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection) o).Cast<object>()));
-            Handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject) o));
-            Handlers.Add(typeof(Type), (type, o) => ((Type) o).PrettyName());
+            Handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection)o).Cast<object>()));
+            Handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject)o));
+            Handlers.Add(typeof(Type), (type, o) => ((Type)o).PrettyName());
             Handlers.Add(typeof(string), (type, o) => ((string)o).Quote());
+            Handlers.Add(t => t.IsEnum, DumpEnum);
             Handlers.Add(t => t.IsPrimitive, (type, o) => o.ToString());
             Handlers.Add(IsOutlookClass, (type, o) => o.ToString());
         }
@@ -35,7 +36,7 @@ namespace hw.Debug
         static string Dump(CodeObject co)
         {
             var cse = co as CodeSnippetExpression;
-            if(cse != null)
+            if (cse != null)
                 return cse.Value;
 
             throw new NotImplementedException();
@@ -52,9 +53,21 @@ namespace hw.Debug
                         .Surround("{", "}");
         }
 
+        static string DumpEnum(Type type, object o)
+        {
+            var result = o
+                .ToString()
+                .Split(',')
+                .Select(item => type.PrettyName() + "." + item)
+                .Stringify(", ");
+            if (result.Contains(","))
+                return "(" + result + ")";
+            return result;
+        }
+
         static string DumpIDictionary(object o)
         {
-            var dictionary = (IDictionary) o;
+            var dictionary = (IDictionary)o;
             return dictionary
                 .Keys
                 .Cast<object>()
