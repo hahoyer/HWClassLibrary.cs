@@ -22,30 +22,30 @@ namespace hw.Parser
     public sealed class Token
     {
         public readonly WhiteSpaceToken[] PreceededBy;
-        public readonly SourcePart Part;
+        public readonly SourcePart Characters;
 
-        public Token(SourcePart part, WhiteSpaceToken[] preceededBy)
+        public Token(SourcePart characters, WhiteSpaceToken[] preceededBy)
         {
-            Part = part;
+            Characters = characters;
             PreceededBy = preceededBy ?? new WhiteSpaceToken[0];
         }
 
         public SourcePosn Start { get { return SourcePart.Start; } }
         public SourcePart SourcePart
         {
-            get { return (Part + PreceededBy.Select(item => item.Part).Aggregate()); }
+            get { return (Characters + PreceededBy.Select(item => item.Characters).Aggregate()); }
         }
-        public string Name { get { return Part.Name; } }
+        public string Name { get { return Characters.Name; } }
     }
 
     public sealed class WhiteSpaceToken
     {
         public readonly int Index;
-        public readonly SourcePart Part;
-        public WhiteSpaceToken(int index, SourcePart part)
+        public readonly SourcePart Characters;
+        public WhiteSpaceToken(int index, SourcePart characters)
         {
             Index = index;
-            Part = part;
+            Characters = characters;
         }
     }
 }

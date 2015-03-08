@@ -48,7 +48,7 @@ namespace hw.Parser
             {
                 Tracer.Assert(sourcePosn.IsValid);
                 var preceededBy = GuardedWhiteSpace(sourcePosn);
-                sourcePosn.Position += preceededBy.Sum(item => item.Part.Length);
+                sourcePosn.Position += preceededBy.Sum(item => item.Characters.Length);
                 return CreateAndAdvance
                     (
                         sourcePosn,
