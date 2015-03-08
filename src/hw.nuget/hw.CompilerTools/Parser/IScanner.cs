@@ -11,7 +11,6 @@ namespace hw.Parser
         ScannerItem<TTreeItem> NextToken
             (
             SourcePosn sourcePosn,
-            ITokenFactory<TTreeItem> tokenFactory,
-            Stack<OpenItem<TTreeItem>> stack);
+            ITokenFactory<TTreeItem> tokenFactory);
     }
 }

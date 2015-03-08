@@ -50,7 +50,7 @@ namespace hw.Parser
             void ReadNextToken(SourcePosn sourcePosn)
             {
                 TraceNextToken(sourcePosn);
-                var result = _parent._scanner.NextToken(sourcePosn, _parent._tokenFactory, _stack);
+                var result = _parent._scanner.NextToken(sourcePosn, _parent._tokenFactory);
                 if(result.Type == null || result.Type.NextParser == null)
                 {
                     _part = result.Part;

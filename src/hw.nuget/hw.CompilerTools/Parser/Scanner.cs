@@ -19,7 +19,7 @@ namespace hw.Parser
         int? Any(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Any); }
 
         ScannerItem<TTreeItem> IScanner<TTreeItem>.NextToken
-            (SourcePosn sourcePosn, ITokenFactory<TTreeItem> tokenFactory, Stack<OpenItem<TTreeItem>> stack)
+            (SourcePosn sourcePosn, ITokenFactory<TTreeItem> tokenFactory)
         {
             return NextToken(sourcePosn, tokenFactory);
         }
