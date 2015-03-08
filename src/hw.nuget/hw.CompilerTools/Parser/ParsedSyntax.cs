@@ -15,24 +15,20 @@ namespace hw.Parser
         [UsedImplicitly]
         internal static bool IsDetailedDumpRequired = true;
 
-        readonly SourcePart _additionalSourcePart;
         [DisableDump]
         public readonly Token Token;
 
-        protected ParsedSyntax(Token token, SourcePart additionalSourcePart = null)
+        protected ParsedSyntax(Token token)
         {
-            _additionalSourcePart = additionalSourcePart;
             Token = token;
         }
 
         protected ParsedSyntax
-            (Token token, int objectId, SourcePart additionalSourcePart = null)
+            (Token token, int objectId)
             : base(objectId)
         {
-            _additionalSourcePart = additionalSourcePart;
             Token = token;
         }
-
 
         [DisableDump]
         string IIconKeyProvider.IconKey { get { return "Syntax"; } }
@@ -50,16 +46,16 @@ namespace hw.Parser
         [DisableDump]
         protected virtual ParsedSyntax[] Children { get { return new ParsedSyntax[0]; } }
         [DisableDump]
-        public SourcePart SourcePart
+        public virtual SourcePart SourcePart
         {
             get
             {
-                return _additionalSourcePart
-                    + Token.SourcePart
-                    + Children
-                        .Where(item => item != null)
-                        .Select(item => item.SourcePart)
-                        .Aggregate();
+                return
+                        Token.SourcePart
+                        + Children
+                            .Where(item => item != null)
+                            .Select(item => item.SourcePart)
+                            .Aggregate();
             }
         }
     }

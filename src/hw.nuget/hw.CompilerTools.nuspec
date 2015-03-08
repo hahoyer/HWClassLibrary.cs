@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.5.3</version>
+        <version>15.6.1-alpha</version>
         <releaseNotes>
             Change: Introducing white space fine structure
             15.4
