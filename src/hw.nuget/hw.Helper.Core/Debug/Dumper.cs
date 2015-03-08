@@ -24,7 +24,7 @@ namespace hw.Debug
             {
                 if(key == -1)
                     _activeObjects[x] = _nextObjectId++;
-                return "[==>{" + key + "#}";
+                return "[see{" + key + "#}]";
             }
 
             _activeObjects.Add(x, -1);
