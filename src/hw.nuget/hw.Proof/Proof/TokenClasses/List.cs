@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using hw.Debug;
-using hw.Helper;
 using hw.Parser;
-using hw.Scanner;
 
 namespace hw.Proof.TokenClasses
 {
     sealed class List : TokenClass, IAssociative, ISmartDumpToken
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, SourcePart token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
         {
             if(left == null)
                 return right ?? TrueSyntax.Instance;
@@ -28,11 +27,12 @@ namespace hw.Proof.TokenClasses
         string IAssociative.SmartDump(Set<ParsedSyntax> set)
         {
             var i = 0;
-            var resultList = set.Aggregate("", (s, x) => s + "\n[" + i++ + "] " + SmartDump(x, false)).Indent();
+            var resultList =
+                set.Aggregate("", (s, x) => s + "\n[" + i++ + "] " + SmartDump(x, false)).Indent();
             return "Clauses:" + resultList;
         }
 
-        AssociativeSyntax IAssociative.Syntax(SourcePart token, Set<ParsedSyntax> set)
+        AssociativeSyntax IAssociative.Syntax(Token token, Set<ParsedSyntax> set)
         {
             return new ClauseSyntax(this, token, set);
         }

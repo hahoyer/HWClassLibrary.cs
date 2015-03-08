@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using hw.Debug;
-using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -18,7 +18,7 @@ namespace hw.Parser
 
             TTreeItem _left;
             IType<TTreeItem> _type;
-            SourcePart _part;
+            Token _token;
             TTreeItem _result;
 
             public PrioParserWorker(PrioParser<TTreeItem> parent, Stack<OpenItem<TTreeItem>> stack)
@@ -50,16 +50,16 @@ namespace hw.Parser
             void ReadNextToken(SourcePosn sourcePosn)
             {
                 TraceNextToken(sourcePosn);
-                var result = _parent._scanner.NextToken(sourcePosn, _parent._tokenFactory);
+                var result = _parent._scanner.NextToken(sourcePosn);
                 if(result.Type == null || result.Type.NextParser == null)
                 {
-                    _part = result.Part;
+                    _token = result.Token;
                     _type = result.Type;
                 }
                 else
                 {
                     var subType = result.Type.NextParser.Execute(sourcePosn, _stack);
-                    _part = SourcePart.Span(result.Part.Start, sourcePosn);
+                    _token = new Token(result.Token.Start.Span(sourcePosn), null);
                     _type = subType;
                 }
                 TraceNewItem(sourcePosn);
@@ -75,25 +75,25 @@ namespace hw.Parser
                     _left = _stack.Pop().Create(_left);
                     TracePop();
 
-                    if (_startLevel > _stack.Count)
+                    if(_startLevel > _stack.Count)
                     {
-                        _result = _type.Create(_left, _part, null);
+                        _result = _type.Create(_left, _token, null);
                         return;
                     }
                 }
 
-                if (relation == '-')
+                if(relation == '-')
                     return;
 
                 var matchedItemType = relation == '=' ? _type.NextTypeIfMatched : null;
                 TraceItemLine("matchedItemType", matchedItemType);
                 if(matchedItemType == null)
                 {
-                    _stack.Push(new OpenItem<TTreeItem>(_left, _type, _part));
+                    _stack.Push(new OpenItem<TTreeItem>(_left, _type, _token));
                     _left = null;
                 }
                 else
-                    _left = _type.Create(_left, _part, null);
+                    _left = _type.Create(_left, _token, null);
                 _type = matchedItemType;
             }
 
@@ -108,7 +108,7 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
-                Tracer.Line(_part.GetDumpAroundCurrent(50));
+                Tracer.Line(_token.SourcePart.GetDumpAroundCurrent(50));
                 Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
                 Tracer.Line("=================>");
                 TraceItemLine("_type", _type);
@@ -196,29 +196,29 @@ namespace hw.Parser
 
             static string TreeDump(OpenItem<TTreeItem> value)
             {
-                return Extension.TreeDump(value.Left) + " " + (value.Type == null ? "null" : value.Type.PrioTableName);
+                return Extension.TreeDump(value.Left) + " "
+                    + (value.Type == null ? "null" : value.Type.PrioTableName);
             }
         }
 
         readonly PrioTable _prioTable;
         readonly IScanner<TTreeItem> _scanner;
-        readonly ITokenFactory<TTreeItem> _tokenFactory;
         public bool Trace { get; set; }
 
-        public PrioParser(PrioTable prioTable, IScanner<TTreeItem> scanner, ITokenFactory<TTreeItem> tokenFactory)
+        public PrioParser(PrioTable prioTable, IScanner<TTreeItem> scanner)
         {
             _prioTable = prioTable;
             _scanner = scanner;
-            _tokenFactory = tokenFactory;
         }
 
 
-        TTreeItem IParser<TTreeItem>.Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> initialStack)
+        TTreeItem IParser<TTreeItem>.Execute
+            (SourcePosn start, Stack<OpenItem<TTreeItem>> initialStack)
         {
-            StartMethodDump(Trace, sourcePosn.GetDumpAroundCurrent(50), initialStack);
+            StartMethodDump(Trace, start.GetDumpAroundCurrent(50), initialStack);
             try
             {
-                return ReturnMethodDump(CreateWorker(sourcePosn, initialStack).Execute(sourcePosn));
+                return ReturnMethodDump(CreateWorker(start, initialStack).Execute(start));
             }
             finally
             {
@@ -233,13 +233,14 @@ namespace hw.Parser
             return _prioTable.Relation(newTokenName, recentTokenName);
         }
 
-        PrioParserWorker CreateWorker(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> initialStack)
+        PrioParserWorker CreateWorker
+            (SourcePosn start, Stack<OpenItem<TTreeItem>> initialStack)
         {
             Stack<OpenItem<TTreeItem>> stack;
             if(initialStack == null)
             {
                 stack = new Stack<OpenItem<TTreeItem>>();
-                var openItem = OpenItem<TTreeItem>.StartItem(SourcePart.Span(sourcePosn, sourcePosn));
+                var openItem = OpenItem<TTreeItem>.StartItem(new Token(start.Span(0), null));
                 stack.Push(openItem);
             }
             else

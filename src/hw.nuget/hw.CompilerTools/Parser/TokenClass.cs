@@ -19,7 +19,7 @@ namespace hw.Parser
 
         string IIconKeyProvider.IconKey { get { return "Symbol"; } }
         string INameProvider.Name { set { Name = value; } }
-        TTreeItem IType<TTreeItem>.Create(TTreeItem left, SourcePart part, TTreeItem right) { return Create(left, part, right); }
+        TTreeItem IType<TTreeItem>.Create(TTreeItem left, Token part, TTreeItem right) { return Create(left, part, right); }
         string IType<TTreeItem>.PrioTableName { get { return Name; } }
         ISubParser<TTreeItem> IType<TTreeItem>.NextParser { get { return Next; } }
         IType<TTreeItem> IType<TTreeItem>.NextTypeIfMatched { get { return NextTypeIfMatched; } }
@@ -30,7 +30,7 @@ namespace hw.Parser
 
         protected virtual ISubParser<TTreeItem> Next { get { return null; } }
         protected virtual IType<TTreeItem> NextTypeIfMatched { get { return null; } }
-        protected abstract TTreeItem Create(TTreeItem left, SourcePart part, TTreeItem right);
+        protected abstract TTreeItem Create(TTreeItem left, Token part, TTreeItem right);
         protected override string GetNodeDump() { return base.GetNodeDump() + "(" + Name.Quote() + ")"; }
 
         public override string ToString() { return base.ToString() + " Name=" + _name.Quote(); }

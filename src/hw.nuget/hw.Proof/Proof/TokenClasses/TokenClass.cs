@@ -11,7 +11,7 @@ namespace hw.Proof.TokenClasses
     {
         string _name;
 
-        protected virtual ParsedSyntax Syntax(ParsedSyntax left, SourcePart token, ParsedSyntax right)
+        protected virtual ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
         {
             NotImplementedMethod(left, token, right);
             return null;
@@ -29,7 +29,7 @@ namespace hw.Proof.TokenClasses
             }
             return "(" + result + ")";
         }
-        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
+        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, Token part, ParsedSyntax right)
         {
             return Syntax(left, part, right);
         }

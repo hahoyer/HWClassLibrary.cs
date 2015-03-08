@@ -1,25 +1,3 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,15 +5,14 @@ using hw.Debug;
 using hw.Helper;
 using hw.Parser;
 using hw.Proof.TokenClasses;
-using hw.Scanner;
 using JetBrains.Annotations;
 
 namespace hw.Proof
 {
     abstract class ParsedSyntax : Parser.ParsedSyntax, IComparable<ParsedSyntax>
     {
-        protected ParsedSyntax(SourcePart token)
-            : base(token) { }
+        protected ParsedSyntax(Token token)
+            : base(token) {}
 
         [DisableDump]
         internal virtual Set<string> Variables
@@ -53,7 +30,12 @@ namespace hw.Proof
         [DisableDump]
         internal virtual bool IsNegative { get { return false; } }
 
-        internal ParsedSyntax Associative<TOperation>(TOperation operation, SourcePart token, ParsedSyntax other) where TOperation : IAssociative { return operation.CombineAssosiative(token, new[] {this, other}); }
+        internal ParsedSyntax Associative<TOperation>
+            (TOperation operation, Token token, ParsedSyntax other)
+            where TOperation : IAssociative
+        {
+            return operation.CombineAssosiative(token, new[] {this, other});
+        }
 
         internal virtual bool IsDistinct(ParsedSyntax other)
         {
@@ -81,12 +63,21 @@ namespace hw.Proof
 
         int IComparable<ParsedSyntax>.CompareTo(ParsedSyntax other) { return CompareTo(other); }
 
-        internal virtual ParsedSyntax IsolateFromEquation(string variable, ParsedSyntax otherSite) { return null; }
+        internal virtual ParsedSyntax IsolateFromEquation(string variable, ParsedSyntax otherSite)
+        {
+            return null;
+        }
 
-        internal ParsedSyntax Minus(IEnumerable<ParsedSyntax> others) { return others.Aggregate(this, (x, y) => x.Minus(y)); }
+        internal ParsedSyntax Minus(IEnumerable<ParsedSyntax> others)
+        {
+            return others.Aggregate(this, (x, y) => x.Minus(y));
+        }
 
         internal ParsedSyntax Minus(ParsedSyntax other) { return Minus(null, other); }
-        internal ParsedSyntax Minus(SourcePart token, ParsedSyntax other) { return Plus(token, other.Negative()); }
+        internal ParsedSyntax Minus(Token token, ParsedSyntax other)
+        {
+            return Plus(token, other.Negative());
+        }
         internal ParsedSyntax Negative() { return Times(-1); }
         internal virtual ParsedSyntax Times(BigRational value)
         {
@@ -97,9 +88,12 @@ namespace hw.Proof
             return new FactorSyntax(this, value);
         }
 
-        internal virtual ParsedSyntax IsolateFromSum(string variable, ParsedSyntax other) { return null; }
+        internal virtual ParsedSyntax IsolateFromSum(string variable, ParsedSyntax other)
+        {
+            return null;
+        }
 
-        internal ParsedSyntax Equal(SourcePart token, ParsedSyntax other)
+        internal ParsedSyntax Equal(Token token, ParsedSyntax other)
         {
             var difference = CompareTo(other);
             if(difference == 0)
@@ -115,9 +109,15 @@ namespace hw.Proof
             return null;
         }
 
-        EqualSyntax DefaultEqual(SourcePart token, ParsedSyntax other) { return new EqualSyntax(this, token, other); }
+        EqualSyntax DefaultEqual(Token token, ParsedSyntax other)
+        {
+            return new EqualSyntax(this, token, other);
+        }
 
-        internal ParsedSyntax Plus(SourcePart token, ParsedSyntax otherSite) { return Associative(Main.TokenFactory.Plus, token, otherSite); }
+        internal ParsedSyntax Plus(Token token, ParsedSyntax otherSite)
+        {
+            return Associative(Main.TokenFactory.Plus, token, otherSite);
+        }
 
         int? GenericCompareTo<T>(ParsedSyntax other) where T : ParsedSyntax, IComparableEx<T>
         {
@@ -139,13 +139,17 @@ namespace hw.Proof
             return 0;
         }
 
-        internal virtual Set<ParsedSyntax> Replace(IEnumerable<KeyValuePair<string, ParsedSyntax>> definitions)
+        internal virtual Set<ParsedSyntax> Replace
+            (IEnumerable<KeyValuePair<string, ParsedSyntax>> definitions)
         {
             NotImplementedMethod(definitions);
             return null;
         }
 
-        internal ParsedSyntax Pair(IPair @operator, ParsedSyntax right) { return @operator.Pair(this, right); }
+        internal ParsedSyntax Pair(IPair @operator, ParsedSyntax right)
+        {
+            return @operator.Pair(this, right);
+        }
         protected Set<ParsedSyntax> DefaultReplace() { return this.ToSet(); }
 
         internal int CompareTo(ParsedSyntax right)
@@ -224,19 +228,24 @@ namespace hw.Proof
             return null;
         }
 
-        internal virtual ParsedSyntax CombineForPlus(ParsedSyntax other, BigRational otherValue, BigRational thisValue)
+        internal virtual ParsedSyntax CombineForPlus
+            (ParsedSyntax other, BigRational otherValue, BigRational thisValue)
         {
             NotImplementedMethod(other, otherValue, thisValue);
             return null;
         }
 
-        internal virtual ParsedSyntax CombineForPlus(VariableSyntax other, BigRational otherValue, BigRational thisValue)
+        internal virtual ParsedSyntax CombineForPlus
+            (VariableSyntax other, BigRational otherValue, BigRational thisValue)
         {
             NotImplementedMethod(other, otherValue, thisValue);
             return null;
         }
 
-        internal KeyValuePair<string, ParsedSyntax> GetDefinition(string variable) { return new KeyValuePair<string, ParsedSyntax>(variable, IsolateClause(variable)); }
+        internal KeyValuePair<string, ParsedSyntax> GetDefinition(string variable)
+        {
+            return new KeyValuePair<string, ParsedSyntax>(variable, IsolateClause(variable));
+        }
     }
 
     interface IComparableEx<in T>

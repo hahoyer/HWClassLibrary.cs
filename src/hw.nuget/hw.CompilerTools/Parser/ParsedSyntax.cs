@@ -17,15 +17,16 @@ namespace hw.Parser
 
         readonly SourcePart _additionalSourcePart;
         [DisableDump]
-        public readonly SourcePart Token;
+        public readonly Token Token;
 
-        protected ParsedSyntax(SourcePart token, SourcePart additionalSourcePart= null)
+        protected ParsedSyntax(Token token, SourcePart additionalSourcePart = null)
         {
             _additionalSourcePart = additionalSourcePart;
             Token = token;
         }
 
-        protected ParsedSyntax(SourcePart token, int objectId, SourcePart additionalSourcePart= null)
+        protected ParsedSyntax
+            (Token token, int objectId, SourcePart additionalSourcePart = null)
             : base(objectId)
         {
             _additionalSourcePart = additionalSourcePart;
@@ -54,7 +55,7 @@ namespace hw.Parser
             get
             {
                 return _additionalSourcePart
-                    + Token
+                    + Token.SourcePart
                     + Children
                         .Where(item => item != null)
                         .Select(item => item.SourcePart)

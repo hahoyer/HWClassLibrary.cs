@@ -10,7 +10,10 @@ namespace hw.Tests.CompilerTool.Util
 {
     abstract class TokenFactory : TokenFactory<TokenClass<Syntax>, Syntax>
     {
-        protected static readonly IScanner<Syntax> Scanner = new Scanner<Syntax>(new ReniLexer());
+        protected static IScanner<Syntax> Scanner(TokenFactory t)
+        {
+            return new Scanner<Syntax>(new ReniLexer(), t);
+        }
 
         protected override TokenClass<Syntax> GetError(Match.IError message)
         {
@@ -23,7 +26,7 @@ namespace hw.Tests.CompilerTool.Util
             [EnableDump]
             readonly Match.IError _message;
             public SyntaxError(Match.IError message) { _message = message; }
-            protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+            protected override Syntax Create(Syntax left, Token part, Syntax right)
             {
                 NotImplementedMethod(left, part, right);
                 return null;
@@ -34,7 +37,7 @@ namespace hw.Tests.CompilerTool.Util
     sealed class MainTokenFactory : TokenFactory
     {
         public static readonly IParser<Syntax> Instance = new PrioParser<Syntax>
-            (PrioTable, Scanner, new MainTokenFactory());
+            (PrioTable, Scanner(new MainTokenFactory()));
 
         MainTokenFactory() { }
 
@@ -84,7 +87,7 @@ namespace hw.Tests.CompilerTool.Util
     sealed class NestedTokenFactory : TokenFactory
     {
         public static readonly IParser<Syntax> Instance = new PrioParser<Syntax>
-            (PrioTable, Scanner, new NestedTokenFactory());
+            (PrioTable, Scanner(new NestedTokenFactory()));
 
         NestedTokenFactory() { }
 
@@ -129,7 +132,7 @@ namespace hw.Tests.CompilerTool.Util
         public SwitchToken()
             : base("-->") {}
         public override bool IsMain { get { return true; } }
-        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+        protected override Syntax Create(Syntax left, Token part, Syntax right)
         {
             NotImplementedMethod(left, part, right);
             return null;
@@ -146,7 +149,7 @@ namespace hw.Tests.CompilerTool.Util
             [EnableDump]
             readonly Syntax _content;
             public SyntaxBoxToken(Syntax content) { _content = content; }
-            protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+            protected override Syntax Create(Syntax left, Token part, Syntax right)
             {
                 Tracer.Assert(left == null);
                 Tracer.Assert(right == null);
@@ -159,7 +162,7 @@ namespace hw.Tests.CompilerTool.Util
     {
         protected NamedToken(string name) { Name = name; }
         public abstract bool IsMain { get; }
-        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+        protected override Syntax Create(Syntax left, Token part, Syntax right)
         {
             return new NamedTreeSyntax(left, this, part, right);
         }
@@ -183,7 +186,7 @@ namespace hw.Tests.CompilerTool.Util
 
     abstract class Syntax : ParsedSyntax, ITreeItem
     {
-        protected Syntax(SourcePart token)
+        protected Syntax(Token token)
             : base(token) {}
         ITreeItem ITreeItem.Left { get { return Left; } }
         public abstract Syntax Left { get; }
@@ -194,18 +197,14 @@ namespace hw.Tests.CompilerTool.Util
         ITreeItem ITreeItem.Right { get { return Right; } }
         public abstract Syntax Right { get; }
         protected override string Dump(bool isRecursion) { return this.TreeDump(); }
-        public SourcePart Span(SourcePart token)
-        {
-            return Left == null ? Token.Combine(token) : Left.Span(token);
-        }
 
-        public virtual Syntax MatchedRightParenthesis(SourcePart token)
+        public virtual Syntax MatchedRightParenthesis(Token token)
         {
             NotImplementedMethod(token);
             return null;
         }
 
-        public virtual Syntax CheckedRightParenthesis(SourcePart part)
+        public virtual Syntax CheckedRightParenthesis(Token part)
         {
             NotImplementedMethod(part);
             return null;
@@ -216,7 +215,7 @@ namespace hw.Tests.CompilerTool.Util
     {
         readonly Syntax _left;
         readonly Syntax _right;
-        protected TreeSyntax(Syntax left, SourcePart token, Syntax right)
+        protected TreeSyntax(Syntax left, Token token, Syntax right)
             : base(token)
         {
             _left = left;
@@ -229,25 +228,25 @@ namespace hw.Tests.CompilerTool.Util
     sealed class NamedTreeSyntax : TreeSyntax
     {
         readonly NamedToken _tokenClass;
-        public NamedTreeSyntax(Syntax left, NamedToken tokenClass, SourcePart part, Syntax right)
+        public NamedTreeSyntax(Syntax left, NamedToken tokenClass, Token part, Syntax right)
             : base(left, part, right)
         {
             _tokenClass = tokenClass;
         }
         public override string TokenClassName { get { return _tokenClass.Name; } }
         public override bool TokenClassIsMain { get { return _tokenClass.IsMain; } }
-        public override Syntax MatchedRightParenthesis(SourcePart token) { return this; }
-        public override Syntax CheckedRightParenthesis(SourcePart part) { return null; }
+        public override Syntax MatchedRightParenthesis(Token token) { return this; }
+        public override Syntax CheckedRightParenthesis(Token part) { return null; }
     }
 
     [DebuggerDisplay("{NodeDump}")]
     sealed class LeftParenthesisSyntax : TreeSyntax
     {
-        public LeftParenthesisSyntax(Syntax left, SourcePart part, Syntax right)
+        public LeftParenthesisSyntax(Syntax left, Token part, Syntax right)
             : base(left, part, right) {}
         public override string TokenClassName { get { return "?(?"; } }
         public override bool TokenClassIsMain { get { return false; } }
-        public override Syntax CheckedRightParenthesis(SourcePart token)
+        public override Syntax CheckedRightParenthesis(Token token)
         {
             if(Left == null && Right != null)
                 return Right;
@@ -257,7 +256,7 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class RightParenthesisSyntax : TreeSyntax
     {
-        public RightParenthesisSyntax(Syntax left, SourcePart part, Syntax right)
+        public RightParenthesisSyntax(Syntax left, Token part, Syntax right)
             : base(left, part, right) {}
         public override string TokenClassName { get { return "?)?"; } }
         public override bool TokenClassIsMain { get { return false; } }
@@ -265,7 +264,7 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class MatchedSyntax : TreeSyntax
     {
-        public MatchedSyntax(Syntax left, SourcePart part, Syntax right)
+        public MatchedSyntax(Syntax left, Token part, Syntax right)
             : base(left, part, right) {}
         public override string TokenClassName { get { return "?()?"; } }
         public override bool TokenClassIsMain { get { return false; } }
@@ -280,15 +279,15 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class UnNamedSyntax : TreeSyntax
     {
-        public UnNamedSyntax(Syntax left, SourcePart part, Syntax right)
+        public UnNamedSyntax(Syntax left, Token part, Syntax right)
             : base(left, part, right) {}
         public override string TokenClassName { get { return ""; } }
-        public override Syntax MatchedRightParenthesis(SourcePart token) { return this; }
+        public override Syntax MatchedRightParenthesis(Token token) { return this; }
     }
 
     sealed class LeftParenthesis : TokenClass<Syntax>
     {
-        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+        protected override Syntax Create(Syntax left, Token part, Syntax right)
         {
             return new LeftParenthesisSyntax(left, part, right);
         }
@@ -296,7 +295,7 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class EndOfText : TokenClass<Syntax>
     {
-        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+        protected override Syntax Create(Syntax left, Token part, Syntax right)
         {
             Tracer.Assert(right == null);
             return left ?? new UnNamedSyntax(null, part, null);
@@ -307,7 +306,7 @@ namespace hw.Tests.CompilerTool.Util
     {
         sealed class Matched : TokenClass<Syntax>
         {
-            protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+            protected override Syntax Create(Syntax left, Token part, Syntax right)
             {
                 if(right == null && left != null)
                     return left.MatchedRightParenthesis(part);
@@ -324,7 +323,7 @@ namespace hw.Tests.CompilerTool.Util
             };
         }
         protected override IType<Syntax> NextTypeIfMatched { get { return _matchedInstance; } }
-        protected override Syntax Create(Syntax left, SourcePart part, Syntax right)
+        protected override Syntax Create(Syntax left, Token part, Syntax right)
         {
             if(right == null && left != null)
             {

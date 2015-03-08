@@ -12,14 +12,14 @@ namespace hw.Proof
     {
         readonly string _text;
         readonly ClauseSyntax _statement;
-        readonly Scanner<ParsedSyntax> _scanner = new Scanner<ParsedSyntax>(new ReniLexer());
+        readonly Scanner<ParsedSyntax> _scanner = new Scanner<ParsedSyntax>(new ReniLexer(),Main.TokenFactory);
 
         public Holder(string text)
         {
             var file = "main.proof".FileHandle();
             file.String = text;
             _text = text;
-            IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>(TokenFactory.PrioTable, _scanner, Main.TokenFactory);
+            IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>(TokenFactory.PrioTable, _scanner);
             var parsedSyntax =
                 prioParser.Execute(new Source(file) + 0, null);
             _statement = (ClauseSyntax) parsedSyntax;

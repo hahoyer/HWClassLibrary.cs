@@ -14,7 +14,7 @@ namespace hw.Proof
 
         public SyntaxError(IssueId issueId) { _issueId = issueId; }
 
-        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, SourcePart part, ParsedSyntax right)
+        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, Token part, ParsedSyntax right)
         {
             NotImplementedMethod(left, part, right);
             return null;

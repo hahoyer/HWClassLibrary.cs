@@ -8,7 +8,7 @@ namespace hw.Parser
     public interface IParser<TTreeItem>
         where TTreeItem : class
     {
-        TTreeItem Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack = null);
+        TTreeItem Execute(SourcePosn start, Stack<OpenItem<TTreeItem>> stack = null);
         bool Trace{ get; set; }
     }
 

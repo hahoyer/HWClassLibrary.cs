@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.4</version>
+        <version>15.5.3</version>
         <releaseNotes>
+            Change: Introducing white space fine structure
+            15.4
             Change: IScanner: Extra parameter removed
             15.3.1
             Bug: ParsedSyntax: SourcePart crashed when any child is null

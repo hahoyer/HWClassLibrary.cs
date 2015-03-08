@@ -27,7 +27,11 @@ namespace hw.Scanner
             Source = source;
         }
 
-        public bool IsValid { get { return 0 <= Position && Position <= Source.Length; } set { Position = (value ? 0 : -1); } }
+        public bool IsValid
+        {
+            get { return 0 <= Position && Position <= Source.Length; }
+            set { Position = (value ? 0 : -1); }
+        }
 
         /// <summary>
         ///     The current character
@@ -51,14 +55,20 @@ namespace hw.Scanner
         /// <param name="start">start position</param>
         /// <param name="length">number of characters</param>
         /// <returns></returns>
-        public string SubString(int start, int length) { return Source.SubString(Position + start, length); }
+        public string SubString(int start, int length)
+        {
+            return Source.SubString(Position + start, length);
+        }
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
         /// <param name="flagText">the flag text</param>
         /// <returns>the "FileName(LineNr,ColNr): tag: " string</returns>
-        public string FilePosn(string flagText) { return Source.FilePosn(Position, flagText); }
+        public string FilePosn(string flagText)
+        {
+            return Source.FilePosn(Position, flagText);
+        }
 
         /// <summary>
         ///     Default dump behaviour
@@ -109,7 +119,10 @@ namespace hw.Scanner
 
         public SourcePosn Clone { get { return new SourcePosn(Source, Position); } }
 
-        public static SourcePosn operator +(SourcePosn x, int y) { return x.Source + (x.Position + y); }
+        public static SourcePosn operator +(SourcePosn x, int y)
+        {
+            return x.Source + (x.Position + y);
+        }
 
         public static int operator -(SourcePosn x, SourcePosn y)
         {
@@ -122,11 +135,11 @@ namespace hw.Scanner
         public bool StartsWith(string data)
         {
             var length = data.Length;
-            return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length) == data;
+            return !Source.IsEnd(Position + length - 1)
+                && Source.SubString(Position, length) == data;
         }
 
         public SourcePart Span(SourcePosn other) { return SourcePart.Span(this, other); }
         public SourcePart Span(int length) { return SourcePart.Span(this, length); }
-
     }
 }

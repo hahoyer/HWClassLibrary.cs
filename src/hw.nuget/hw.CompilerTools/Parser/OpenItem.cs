@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using hw.Debug;
-using hw.Helper;
-using hw.Scanner;
 
 namespace hw.Parser
 {
@@ -12,33 +11,36 @@ namespace hw.Parser
     {
         internal readonly TTreeItem Left;
         internal readonly IType<TTreeItem> Type;
-        readonly SourcePart _part;
+        readonly Token _token;
 
-        internal OpenItem(TTreeItem left, IType<TTreeItem> type, SourcePart part)
+        internal OpenItem(TTreeItem left, IType<TTreeItem> type, Token token)
         {
             Left = left;
             Type = type;
-            _part = part;
+            _token = token;
         }
 
         internal TTreeItem Create(TTreeItem right)
         {
             if(Type != null)
-                return Type.Create(Left, _part, right);
+                return Type.Create(Left, _token, right);
             Tracer.Assert(Left == null);
             return right;
         }
 
-        internal static OpenItem<TTreeItem> StartItem(SourcePart sourcePart)
+        internal static OpenItem<TTreeItem> StartItem(Token startItem)
         {
-            return StartItem(null, sourcePart);
+            return StartItem(null, startItem);
         }
 
-        static OpenItem<TTreeItem> StartItem(IType<TTreeItem> type, SourcePart partOfStartItem)
+        static OpenItem<TTreeItem> StartItem(IType<TTreeItem> type, Token partOfStartItem)
         {
             return new OpenItem<TTreeItem>(default(TTreeItem), type, partOfStartItem);
         }
 
-        protected override string GetNodeDump() { return Tracer.Dump(Left) + " " + Type.GetType().PrettyName(); }
+        protected override string GetNodeDump()
+        {
+            return Tracer.Dump(Left) + " " + Type.GetType().PrettyName();
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class And : TokenClass, IAssociative, ISmartDumpToken
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, SourcePart token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
         {
             Tracer.Assert(left != null);
             Tracer.Assert(right != null);
@@ -23,12 +23,18 @@ namespace hw.Proof.TokenClasses
         [DisableDump]
         ParsedSyntax IAssociative.Empty { get { return TrueSyntax.Instance; } }
 
-        AssociativeSyntax IAssociative.Syntax(SourcePart token, Set<ParsedSyntax> x) { return new AndSyntax(this, token, x); }
+        AssociativeSyntax IAssociative.Syntax(Token token, Set<ParsedSyntax> x)
+        {
+            return new AndSyntax(this, token, x);
+        }
         ParsedSyntax IAssociative.Combine(ParsedSyntax left, ParsedSyntax right) { return null; }
         bool IAssociative.IsEmpty(ParsedSyntax parsedSyntax) { return parsedSyntax is TrueSyntax; }
         string IAssociative.SmartDump(Set<ParsedSyntax> set) { return SmartDump(this, set); }
 
-        string ISmartDumpToken.SmartDumpListDelim(ParsedSyntax parsedSyntax, bool isFirst) { return isFirst ? "" : " & "; }
+        string ISmartDumpToken.SmartDumpListDelim(ParsedSyntax parsedSyntax, bool isFirst)
+        {
+            return isFirst ? "" : " & ";
+        }
 
         [DisableDump]
         bool ISmartDumpToken.IsIgnoreSignSituation { get { return false; } }

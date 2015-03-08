@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using hw.Debug;
-using hw.Parser;
 using hw.Scanner;
+using System.Linq;
+using hw.Parser;
 
 namespace hw.Proof
 {
@@ -41,7 +40,7 @@ namespace hw.Proof
                     .Else("#(" + _any.Value(id => (Match.WhiteSpace + id + ")#").Box().Find))
                     .Else("#(" + Match.End.Find + _invalidComment)
                     .Else("#" + Match.End.Find + _invalidLineComment)
-                    .Repeat();
+                    .Repeat(1);
 
             _number = Match.Digit.Repeat(1);
 
@@ -54,11 +53,12 @@ namespace hw.Proof
                     });
         }
 
-        int ILexer.WhiteSpace(SourcePosn sourcePosn)
+        Func<SourcePosn, int?>[] ILexer.WhiteSpace
         {
-            var result = sourcePosn.Match(_whiteSpaces);
-            Tracer.Assert(result != null);
-            return result.Value;
+            get
+            {
+                return new Func<SourcePosn, int?>[] {sourcePosn => sourcePosn.Match(_whiteSpaces)};
+            }
         }
 
         int? ILexer.Number(SourcePosn sourcePosn) { return sourcePosn.Match(_number); }
