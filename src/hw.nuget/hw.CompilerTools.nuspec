@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.6.4-alpha</version>
+        <version>15.6.5-alpha</version>
         <releaseNotes>
             Change: Customized debugger display for Token and WhiteSpaceToken
             Change: Introducing white space fine structure

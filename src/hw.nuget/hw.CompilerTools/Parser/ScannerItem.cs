@@ -56,6 +56,6 @@ namespace hw.Parser
             Characters = characters;
         }
         [UsedImplicitly]
-        public string NodeDump { get { return Characters + "."+Index+"i"; } }
+        public string NodeDump { get { return Characters.NodeDump + "."+Index+"i"; } }
     }
 }
