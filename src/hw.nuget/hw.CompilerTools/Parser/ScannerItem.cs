@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using hw.Helper;
 using System.Linq;
 using hw.Scanner;
+using JetBrains.Annotations;
 
 namespace hw.Parser
 {
@@ -19,6 +21,7 @@ namespace hw.Parser
         }
     }
 
+    [DebuggerDisplay("{NodeDump}")]
     public sealed class Token
     {
         public readonly WhiteSpaceToken[] PreceededBy;
@@ -36,8 +39,13 @@ namespace hw.Parser
             get { return (Characters + PreceededBy.Select(item => item.Characters).Aggregate()); }
         }
         public string Name { get { return Characters.Name; } }
+
+        [UsedImplicitly]
+        public string NodeDump { get { return Name; } }
+    
     }
 
+    [DebuggerDisplay("{NodeDump}")]
     public sealed class WhiteSpaceToken
     {
         public readonly int Index;
@@ -47,5 +55,7 @@ namespace hw.Parser
             Index = index;
             Characters = characters;
         }
+        [UsedImplicitly]
+        public string NodeDump { get { return Characters + "."+Index+"i"; } }
     }
 }
