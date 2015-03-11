@@ -11,8 +11,25 @@ namespace hw.Scanner
     ///     Source and position for compilation process
     /// </summary>
     [DebuggerDisplay("{NodeDump}")]
-    public sealed class SourcePosn : Dumpable
+    public sealed class SourcePosn : Dumpable, IEquatable<SourcePosn>
     {
+        public bool Equals(SourcePosn x, SourcePosn y) { return x.Equals(y); }
+        public bool Equals(SourcePosn other)
+        {
+            return Equals(Source, other.Source) && Position == other.Position;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(ReferenceEquals(null, obj))
+                return false;
+            if(ReferenceEquals(this, obj))
+                return true;
+            return obj is SourcePosn && Equals((SourcePosn) obj);
+        }
+
+        public override int GetHashCode() { return 0; }
+
         public readonly Source Source;
         public int Position;
 

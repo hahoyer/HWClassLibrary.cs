@@ -16,8 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.6.5-alpha</version>
+        <version>15.6.9-alpha</version>
         <releaseNotes>
+            Change: Token with preceding whitespaces must not contain gaps
             Change: Customized debugger display for Token and WhiteSpaceToken
             Change: Introducing white space fine structure
             15.4

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using hw.Helper;
 using System.Linq;
+using hw.Debug;
 using hw.Scanner;
 using JetBrains.Annotations;
 
@@ -24,25 +25,37 @@ namespace hw.Parser
     [DebuggerDisplay("{NodeDump}")]
     public sealed class Token
     {
-        public readonly WhiteSpaceToken[] PreceededBy;
+        public readonly WhiteSpaceToken[] PrecededWith;
         public readonly SourcePart Characters;
 
-        public Token(SourcePart characters, WhiteSpaceToken[] preceededBy)
+        public Token(SourcePart characters, WhiteSpaceToken[] precededWith)
         {
             Characters = characters;
-            PreceededBy = preceededBy ?? new WhiteSpaceToken[0];
+            PrecededWith = precededWith ?? new WhiteSpaceToken[0];
+            AssertValid();
+        }
+
+        void AssertValid()
+        {
+            for(var i = 1; i < PrecededWith.Length; i++)
+                Tracer.Assert
+                    (PrecededWith[i - 1].Characters.End.Equals(PrecededWith[i].Characters.Start));
+            var l = PrecededWith.LastOrDefault();
+            if(l == null)
+                return;
+            Tracer.Assert(l.Characters.End.Equals(Characters.Start));
         }
 
         public SourcePosn Start { get { return SourcePart.Start; } }
         public SourcePart SourcePart
         {
-            get { return (Characters + PreceededBy.Select(item => item.Characters).Aggregate()); }
+            get { return (Characters + PrecededWith.Select(item => item.Characters).Aggregate()); }
         }
+
         public string Name { get { return Characters.Name; } }
 
         [UsedImplicitly]
         public string NodeDump { get { return Name; } }
-    
     }
 
     [DebuggerDisplay("{NodeDump}")]
@@ -56,6 +69,6 @@ namespace hw.Parser
             Characters = characters;
         }
         [UsedImplicitly]
-        public string NodeDump { get { return Characters.NodeDump + "."+Index+"i"; } }
+        public string NodeDump { get { return Characters.NodeDump + "." + Index + "i"; } }
     }
 }
