@@ -10,37 +10,37 @@ namespace hw.Parser
         where TTreeItem : class
     {
         internal readonly TTreeItem Left;
-        internal readonly IType<TTreeItem> Type;
-        readonly Token _token;
+        readonly ScannerItem<TTreeItem> _current;
 
-        internal OpenItem(TTreeItem left, IType<TTreeItem> type, Token token)
+        internal OpenItem(TTreeItem left, ScannerItem<TTreeItem> current)
         {
             Left = left;
-            Type = type;
-            _token = token;
+            _current = current;
         }
+        
+        internal IType<TTreeItem> Type { get { return _current.Type; } }
 
         internal TTreeItem Create(TTreeItem right)
         {
-            if(Type != null)
-                return Type.Create(Left, _token, right);
+            if(_current.Type != null)
+                return _current.Create(Left, right);
             Tracer.Assert(Left == null);
             return right;
         }
 
         internal static OpenItem<TTreeItem> StartItem(Token startItem)
         {
-            return StartItem(null, startItem);
+            return StartItem(new ScannerItem<TTreeItem>(null, startItem));
         }
 
-        static OpenItem<TTreeItem> StartItem(IType<TTreeItem> type, Token partOfStartItem)
+        static OpenItem<TTreeItem> StartItem(ScannerItem<TTreeItem> current)
         {
-            return new OpenItem<TTreeItem>(default(TTreeItem), type, partOfStartItem);
+            return new OpenItem<TTreeItem>(default(TTreeItem), current);
         }
 
         protected override string GetNodeDump()
         {
-            return Tracer.Dump(Left) + " " + Type.GetType().PrettyName();
+            return Tracer.Dump(Left) + " " + _current.Type.GetType().PrettyName();
         }
     }
 }

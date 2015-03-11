@@ -8,7 +8,7 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public abstract class TokenClass<TTreeItem> : DumpableObject, IIconKeyProvider, IType<TTreeItem>, INameProvider
+    public abstract class TokenClass<TTreeItem> : DumpableObject, IIconKeyProvider, IType<TTreeItem>
         where TTreeItem : class
     {
         static int _nextObjectId;
@@ -18,9 +18,8 @@ namespace hw.Parser
             : base(_nextObjectId++) { StopByObjectId(-31); }
 
         string IIconKeyProvider.IconKey { get { return "Symbol"; } }
-        string INameProvider.Name { set { Name = value; } }
         TTreeItem IType<TTreeItem>.Create(TTreeItem left, Token part, TTreeItem right) { return Create(left, part, right); }
-        string IType<TTreeItem>.PrioTableName { get { return Name; } }
+        string IType<TTreeItem>.PrioTableId { get { return Name; } }
         ISubParser<TTreeItem> IType<TTreeItem>.NextParser { get { return Next; } }
         IType<TTreeItem> IType<TTreeItem>.NextTypeIfMatched { get { return NextTypeIfMatched; } }
 

@@ -13,6 +13,7 @@ namespace hw.Proof.TokenClasses
                 return base.Syntax(left, token, right);
             return new ElementSyntax(this, left, token, right);
         }
+        public override string Id { get { return "elem"; } }
     }
 
     sealed class ElementSyntax : PairSyntax

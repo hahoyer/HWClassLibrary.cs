@@ -8,7 +8,7 @@ using hw.Scanner;
 namespace hw.Parser
 {
     abstract class TokenFactory<TTokenClass, TTreeItem> : Dumpable, ITokenFactory<TTreeItem>
-        where TTokenClass : class, IType<TTreeItem>, INameProvider
+        where TTokenClass : class, IType<TTreeItem>
         where TTreeItem : class
     {
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
@@ -18,45 +18,15 @@ namespace hw.Parser
 
         internal TokenFactory()
         {
-            _endOfText = new ValueCache<TTokenClass>(InternalGetEndOfText);
-            _number = new ValueCache<TTokenClass>(InternalGetNumber);
+            _endOfText = new ValueCache<TTokenClass>(GetEndOfText);
+            _number = new ValueCache<TTokenClass>(GetNumber);
             _tokenClasses = new ValueCache<FunctionCache<string, TTokenClass>>(GetTokenClasses);
-            _text = new ValueCache<TTokenClass>(InternalGetText);
+            _text = new ValueCache<TTokenClass>(GetText);
         }
-        TTokenClass InternalGetEndOfText()
-        {
-            var result = GetEndOfText();
-            result.Name = PrioTable.EndOfText;
-            return result;
-        }
-                                                                    
+
         FunctionCache<string, TTokenClass> GetTokenClasses()
         {
-            var result = new FunctionCache<string, TTokenClass>(GetPredefinedTokenClasses(), InternalGetTokenClass);
-            foreach(var pair in result)
-                pair.Value.Name = pair.Key;
-            return result;
-        }
-
-        TTokenClass InternalGetTokenClass(string name)
-        {
-            var result = GetTokenClass(name);
-            result.Name = name;
-            return result;
-        }
-
-        TTokenClass InternalGetNumber()
-        {
-            var result = GetNumber();
-            result.Name = "<number>";
-            return result;
-        }
-
-        TTokenClass InternalGetText()
-        {
-            var result = GetText();
-            result.Name = "<Text>";
-            return result;
+            return new FunctionCache<string, TTokenClass>(GetPredefinedTokenClasses(), GetTokenClass);
         }
 
         IType<TTreeItem> ITokenFactory<TTreeItem>.TokenClass(string name) { return TokenClass(name); }

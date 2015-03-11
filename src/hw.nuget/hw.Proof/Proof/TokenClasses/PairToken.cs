@@ -5,7 +5,7 @@ using hw.Debug;
 
 namespace hw.Proof.TokenClasses
 {
-    class PairToken : TokenClass, IPair, ISmartDumpToken
+    abstract class PairToken : TokenClass, IPair, ISmartDumpToken
     {
         [DisableDump]
         bool IPair.IsVariablesProvider { get { return true; } }
@@ -30,7 +30,7 @@ namespace hw.Proof.TokenClasses
 
         string SmartDump(ParsedSyntax left, ParsedSyntax right)
         {
-            return "(" + left.SmartDump(this) + " " + Name + " " + right.SmartDump(this) + ")";
+            return "(" + left.SmartDump(this) + " " + Id + " " + right.SmartDump(this) + ")";
         }
     }
 }

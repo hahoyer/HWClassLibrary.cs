@@ -17,5 +17,6 @@ namespace hw.Proof.TokenClasses
             Tracer.Assert(left == null);
             return new LeftParenthesisSyntax(_level, token, right);
         }
+        public override string Id { get { return TokenFactory.LeftBrackets[_level]; } }
     }
 }

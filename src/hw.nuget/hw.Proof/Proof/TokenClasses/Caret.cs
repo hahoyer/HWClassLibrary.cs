@@ -14,6 +14,7 @@ namespace hw.Proof.TokenClasses
                 return base.Syntax(left, token, right);
             return new PowerSyntax(this, left, token, right);
         }
+        public override string Id { get { return "^"; } }
     }
 
     sealed class PowerSyntax : PairSyntax

@@ -19,7 +19,7 @@ namespace hw.Proof
             NotImplementedMethod(left, part, right);
             return null;
         }
-        string IType<ParsedSyntax>.PrioTableName { get { return PrioTable.Error; } }
+        string IType<ParsedSyntax>.PrioTableId { get { return PrioTable.Error; } }
         ISubParser<ParsedSyntax> IType<ParsedSyntax>.NextParser { get { return null; } }
         IType<ParsedSyntax> IType<ParsedSyntax>.NextTypeIfMatched { get { return null; } }
     }

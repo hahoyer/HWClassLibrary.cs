@@ -8,11 +8,17 @@ namespace hw.Proof.TokenClasses
 {
     sealed class UserSymbol : TokenClass
     {
+        readonly string _id;
+
+        public UserSymbol(string id) { _id = id; }
+        
         protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
         {
             if(left != null || right != null)
                 return base.Syntax(left, token, right);
-            return new VariableSyntax(token, Name);
+            return new VariableSyntax(token, Id);
         }
+        
+        public override string Id { get { return _id; } }
     }
 }

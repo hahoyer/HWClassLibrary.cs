@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Helper;
 using hw.Parser;
 using hw.Proof.TokenClasses;
 using hw.Scanner;
@@ -10,11 +9,14 @@ namespace hw.Proof
 {
     sealed class TokenFactory : TokenFactory<TokenClass, ParsedSyntax>
     {
+        public static readonly string[] LeftBrackets = {"(", "[", "{", PrioTable.BeginOfText};
+        public static readonly string[] RightBrackets = {")", "]", "}", PrioTable.EndOfText};
+
         TokenFactory() { }
 
         internal static TokenFactory Instance { get { return new TokenFactory(); } }
 
-        protected override TokenClass GetTokenClass(string name) { return new UserSymbol(); }
+        protected override TokenClass GetTokenClass(string name) { return new UserSymbol(name); }
 
         internal static PrioTable PrioTable
         {
@@ -37,7 +39,7 @@ namespace hw.Proof
                 x += PrioTable.Right(";");
 
                 x = x.ParenthesisLevelLeft
-                    (new[] {"(", "[", "{", PrioTable.BeginOfText}, new[] {")", "]", "}", PrioTable.EndOfText});
+                    (LeftBrackets, RightBrackets);
                 //Tracer.FlaggedLine("\n"+x+"\n");
                 return x;
             }
@@ -53,8 +55,8 @@ namespace hw.Proof
                 {"}", new RightParenthesis(1)},
                 {"]", new RightParenthesis(2)},
                 {")", new RightParenthesis(3)},
-                {",", new List()},
-                {";", new List()},
+                {",", new List(",")},
+                {";", new List(";")},
                 {"=", new Equal()},
                 {"-", new Minus()},
                 {"&", new And()},
@@ -74,12 +76,16 @@ namespace hw.Proof
         internal Equal Equal { get { return (Equal) TokenClass("="); } }
         internal Plus Plus { get { return (Plus) TokenClass("+"); } }
 
-        protected override TokenClass GetError(Match.IError message) { return new SyntaxError(message); }
+        protected override TokenClass GetError(Match.IError message)
+        {
+            return new SyntaxError(message);
+        }
 
         sealed class SyntaxError : TokenClass
         {
             readonly Match.IError _message;
             public SyntaxError(Match.IError message) { _message = message; }
+            public override string Id { get { return _message.ToString(); } }
         }
     }
 }

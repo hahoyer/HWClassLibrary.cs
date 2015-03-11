@@ -1,32 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using hw.Helper;
 using System.Linq;
 using hw.Debug;
+using hw.Helper;
 using hw.Scanner;
 using JetBrains.Annotations;
 
 namespace hw.Parser
 {
-    public sealed class ScannerItem<TTreeItem>
-        where TTreeItem : class
-    {
-        public readonly IType<TTreeItem> Type;
-        public readonly Token Token;
-
-        public ScannerItem(IType<TTreeItem> type, Token token)
-        {
-            Type = type;
-            Token = token;
-        }
-
-        public TTreeItem Create(TTreeItem left, TTreeItem right)
-        {
-            return Type.Create(left, Token, right);
-        }
-    }
-
     [DebuggerDisplay("{NodeDump}")]
     public sealed class Token
     {
@@ -61,19 +43,5 @@ namespace hw.Parser
 
         [UsedImplicitly]
         public string NodeDump { get { return Name; } }
-    }
-
-    [DebuggerDisplay("{NodeDump}")]
-    public sealed class WhiteSpaceToken
-    {
-        public readonly int Index;
-        public readonly SourcePart Characters;
-        public WhiteSpaceToken(int index, SourcePart characters)
-        {
-            Index = index;
-            Characters = characters;
-        }
-        [UsedImplicitly]
-        public string NodeDump { get { return Characters.NodeDump + "." + Index + "i"; } }
     }
 }

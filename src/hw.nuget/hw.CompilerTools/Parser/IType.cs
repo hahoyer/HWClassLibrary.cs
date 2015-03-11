@@ -9,7 +9,7 @@ namespace hw.Parser
         where TTreeItem : class
     {
         TTreeItem Create(TTreeItem left, Token part, TTreeItem right);
-        string PrioTableName { get; }
+        string PrioTableId { get; }
         ISubParser<TTreeItem> NextParser { get; }
         IType<TTreeItem> NextTypeIfMatched { get; }
     }

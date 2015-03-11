@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.Debug;
 using hw.Parser;
-using hw.Scanner;
 
 namespace hw.Proof.TokenClasses
 {
-    abstract class TokenClass : DumpableObject, IType<ParsedSyntax>, INameProvider
+    abstract class TokenClass : DumpableObject, IType<ParsedSyntax>
     {
-        string _name;
-
         protected virtual ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
         {
             NotImplementedMethod(left, token, right);
@@ -34,12 +31,11 @@ namespace hw.Proof.TokenClasses
             return Syntax(left, part, right);
         }
 
-        string IType<ParsedSyntax>.PrioTableName { get { return _name; } }
+        string IType<ParsedSyntax>.PrioTableId { get { return Id; } }
         ISubParser<ParsedSyntax> IType<ParsedSyntax>.NextParser { get { return Next; } }
-        string INameProvider.Name { set { _name = value; } }
         IType<ParsedSyntax> IType<ParsedSyntax>.NextTypeIfMatched { get { return null; } }
 
         protected virtual ISubParser<ParsedSyntax> Next { get { return null; } }
-        public string Name { get { return _name ; } }
+        public abstract string Id { get; }
     }
 }

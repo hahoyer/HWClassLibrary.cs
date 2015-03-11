@@ -15,6 +15,7 @@ namespace hw.Proof.TokenClasses
             Tracer.Assert(right != null);
             return left.Associative(this, token, right);
         }
+        public override string Id { get { return "+"; } }
 
         bool IAssociative.IsVariablesProvider { get { return true; } }
 

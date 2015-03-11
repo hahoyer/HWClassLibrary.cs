@@ -17,8 +17,7 @@ namespace hw.Parser
             readonly PrioParser<TTreeItem> _parent;
 
             TTreeItem _left;
-            IType<TTreeItem> _type;
-            Token _token;
+            ScannerItem<TTreeItem> _current;
             TTreeItem _result;
 
             public PrioParserWorker(PrioParser<TTreeItem> parent, Stack<OpenItem<TTreeItem>> stack)
@@ -42,7 +41,7 @@ namespace hw.Parser
                         TraceBeginInnerLoop();
                         Step();
                         TraceEndInnerLoop();
-                    } while(_result == null && _type != null);
+                    } while(_result == null && _current.Type != null);
                 } while(_result == null);
                 return _result;
             }
@@ -52,22 +51,19 @@ namespace hw.Parser
                 TraceNextToken(sourcePosn);
                 var result = _parent._scanner.NextToken(sourcePosn);
                 if(result.Type == null || result.Type.NextParser == null)
-                {
-                    _token = result.Token;
-                    _type = result.Type;
-                }
+                    _current = result;
                 else
                 {
                     var subType = result.Type.NextParser.Execute(sourcePosn, _stack);
-                    _token = new Token(result.Token.Start.Span(sourcePosn), null);
-                    _type = subType;
+                    var token = new Token(result.Token.Start.Span(sourcePosn), null);
+                    _current = new ScannerItem<TTreeItem>(subType, token);
                 }
                 TraceNewItem(sourcePosn);
             }
 
             void Step()
             {
-                var relation = _parent.Relation(_type, _stack.Peek().Type);
+                var relation = _parent.Relation(_current.Type, _stack.Peek().Type);
                 TraceRelation(relation);
 
                 if(relation != '+')
@@ -77,7 +73,7 @@ namespace hw.Parser
 
                     if(_startLevel > _stack.Count)
                     {
-                        _result = _type.Create(_left, _token, null);
+                        _result = _current.Create(_left, null);
                         return;
                     }
                 }
@@ -85,16 +81,16 @@ namespace hw.Parser
                 if(relation == '-')
                     return;
 
-                var matchedItemType = relation == '=' ? _type.NextTypeIfMatched : null;
+                var matchedItemType = relation == '=' ? _current.Type.NextTypeIfMatched : null;
                 TraceItemLine("matchedItemType", matchedItemType);
                 if(matchedItemType == null)
                 {
-                    _stack.Push(new OpenItem<TTreeItem>(_left, _type, _token));
+                    _stack.Push(new OpenItem<TTreeItem>(_left, _current));
                     _left = null;
                 }
                 else
-                    _left = _type.Create(_left, _token, null);
-                _type = matchedItemType;
+                    _left = _current.Type.Create(_left, _current.Token, null);
+                _current = new ScannerItem<TTreeItem>(matchedItemType,_current.Token);
             }
 
             void TraceRelation(char relation)
@@ -108,10 +104,10 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
-                Tracer.Line(_token.SourcePart.GetDumpAroundCurrent(50));
+                Tracer.Line(_current.Token.SourcePart.GetDumpAroundCurrent(50));
                 Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
                 Tracer.Line("=================>");
-                TraceItemLine("_type", _type);
+                TraceItemLine("_type", _current.Type);
             }
 
             void TraceNextToken(SourcePosn sourcePosn)
@@ -141,7 +137,7 @@ namespace hw.Parser
                 if(!Trace)
                     return;
                 Tracer.IndentStart();
-                Tracer.Line("itemType = " + (_type == null ? "null" : _type.GetType().PrettyName()));
+                Tracer.Line("itemType = " + (_current.Type == null ? "null" : _current.Type.GetType().PrettyName()));
                 Tracer.Line("left = " + Extension.TreeDump(_left));
                 Tracer.Line(FormatStackForTrace(_stack));
                 Tracer.IndentEnd();
@@ -187,7 +183,7 @@ namespace hw.Parser
                 Tracer.IndentStart();
                 var itemDump = item == null
                     ? "null"
-                    : item.PrioTableName
+                    : item.PrioTableId
                         + " Type = "
                         + item.GetType().PrettyName();
                 Tracer.Line(title + " = " + itemDump + "\n");
@@ -197,7 +193,7 @@ namespace hw.Parser
             static string TreeDump(OpenItem<TTreeItem> value)
             {
                 return Extension.TreeDump(value.Left) + " "
-                    + (value.Type == null ? "null" : value.Type.PrioTableName);
+                    + (value.Type == null ? "null" : value.Type.PrioTableId);
             }
         }
 
@@ -228,8 +224,8 @@ namespace hw.Parser
 
         char Relation(IType<TTreeItem> newType, IType<TTreeItem> topType)
         {
-            var newTokenName = newType == null ? PrioTable.EndOfText : newType.PrioTableName;
-            var recentTokenName = topType == null ? PrioTable.BeginOfText : topType.PrioTableName;
+            var newTokenName = newType == null ? PrioTable.EndOfText : newType.PrioTableId;
+            var recentTokenName = topType == null ? PrioTable.BeginOfText : topType.PrioTableId;
             return _prioTable.Relation(newTokenName, recentTokenName);
         }
 

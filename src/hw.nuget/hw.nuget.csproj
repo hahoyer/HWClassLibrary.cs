@@ -49,7 +49,6 @@
     <Compile Include="hw.CompilerTools\Parser\Control.cs" />
     <Compile Include="hw.CompilerTools\Parser\Extension.cs" />
     <Compile Include="hw.CompilerTools\Parser\ILexer.cs" />
-    <Compile Include="hw.CompilerTools\Parser\ITokenClass.cs" />
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParsedSyntax.cs" />
     <Compile Include="hw.CompilerTools\Parser\Scanner.cs" />
