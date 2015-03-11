@@ -54,6 +54,8 @@
     <Compile Include="hw.CompilerTools\Parser\Scanner.cs" />
     <Compile Include="hw.CompilerTools\Parser\ScannerItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\SubParser.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Token.cs" />
+    <Compile Include="hw.CompilerTools\Parser\WhiteSpaceToken.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePart.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenFactory.cs" />
