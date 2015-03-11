@@ -18,6 +18,9 @@
 
         <version>15.6.9-alpha</version>
         <releaseNotes>
+            Change: SourcePart: New functions
+            Refactor: Setter for Name removed
+            Refactor: Use ScannerItem when possible
             Change: Token with preceding whitespaces must not contain gaps
             Change: Customized debugger display for Token and WhiteSpaceToken
             Change: Introducing white space fine structure
