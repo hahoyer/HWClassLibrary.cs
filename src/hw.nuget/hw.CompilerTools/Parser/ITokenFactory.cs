@@ -6,7 +6,7 @@ using hw.Scanner;
 namespace hw.Parser
 {
     public interface ITokenFactory<TTreeItem>
-        where TTreeItem : class
+        where TTreeItem : class, ISourcePart
     {
         IType<TTreeItem> TokenClass(string name);
         IType<TTreeItem> Number { get; }

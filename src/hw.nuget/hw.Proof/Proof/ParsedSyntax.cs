@@ -5,13 +5,14 @@ using hw.Debug;
 using hw.Helper;
 using hw.Parser;
 using hw.Proof.TokenClasses;
+using hw.Scanner;
 using JetBrains.Annotations;
 
 namespace hw.Proof
 {
     abstract class ParsedSyntax : Parser.ParsedSyntax, IComparable<ParsedSyntax>
     {
-        protected ParsedSyntax(Token token)
+        protected ParsedSyntax(IToken token)
             : base(token) {}
 
         [DisableDump]
@@ -31,7 +32,7 @@ namespace hw.Proof
         internal virtual bool IsNegative { get { return false; } }
 
         internal ParsedSyntax Associative<TOperation>
-            (TOperation operation, Token token, ParsedSyntax other)
+            (TOperation operation, IToken token, ParsedSyntax other)
             where TOperation : IAssociative
         {
             return operation.CombineAssosiative(token, new[] {this, other});
@@ -74,7 +75,7 @@ namespace hw.Proof
         }
 
         internal ParsedSyntax Minus(ParsedSyntax other) { return Minus(null, other); }
-        internal ParsedSyntax Minus(Token token, ParsedSyntax other)
+        internal ParsedSyntax Minus(IToken token, ParsedSyntax other)
         {
             return Plus(token, other.Negative());
         }
@@ -93,7 +94,7 @@ namespace hw.Proof
             return null;
         }
 
-        internal ParsedSyntax Equal(Token token, ParsedSyntax other)
+        internal ParsedSyntax Equal(IToken token, ParsedSyntax other)
         {
             var difference = CompareTo(other);
             if(difference == 0)
@@ -109,12 +110,12 @@ namespace hw.Proof
             return null;
         }
 
-        EqualSyntax DefaultEqual(Token token, ParsedSyntax other)
+        EqualSyntax DefaultEqual(IToken token, ParsedSyntax other)
         {
             return new EqualSyntax(this, token, other);
         }
 
-        internal ParsedSyntax Plus(Token token, ParsedSyntax otherSite)
+        internal ParsedSyntax Plus(IToken token, ParsedSyntax otherSite)
         {
             return Associative(Main.TokenFactory.Plus, token, otherSite);
         }

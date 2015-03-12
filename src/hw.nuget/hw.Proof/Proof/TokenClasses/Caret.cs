@@ -8,7 +8,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Caret : PairToken
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);
@@ -19,7 +19,7 @@ namespace hw.Proof.TokenClasses
 
     sealed class PowerSyntax : PairSyntax
     {
-        public PowerSyntax(IPair @operator, ParsedSyntax left, Token token, ParsedSyntax right)
+        public PowerSyntax(IPair @operator, ParsedSyntax left, IToken token, ParsedSyntax right)
             : base(@operator, left, token, right) {}
 
         internal int CompareTo(PowerSyntax other)

@@ -11,7 +11,7 @@ namespace hw.Proof
     {
         internal readonly string Name;
 
-        public VariableSyntax(Token token, string name)
+        public VariableSyntax(IToken token, string name)
             : base(token)
         {
             Name = name;

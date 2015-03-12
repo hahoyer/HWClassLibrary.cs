@@ -8,8 +8,8 @@ using hw.Scanner;
 namespace hw.Parser
 {
     abstract class TokenFactory<TTokenClass, TTreeItem> : Dumpable, ITokenFactory<TTreeItem>
-        where TTokenClass : class, IType<TTreeItem>
-        where TTreeItem : class
+        where TTokenClass : class, IType<TTreeItem>, ITokenClassWithId
+        where TTreeItem : class, ISourcePart
     {
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
         readonly ValueCache<TTokenClass> _number;
@@ -26,18 +26,30 @@ namespace hw.Parser
 
         FunctionCache<string, TTokenClass> GetTokenClasses()
         {
-            return new FunctionCache<string, TTokenClass>(GetPredefinedTokenClasses(), GetTokenClass);
+            return new FunctionCache<string, TTokenClass>
+                (ScanPredefinedTokenClasses(), GetTokenClass);
         }
 
-        IType<TTreeItem> ITokenFactory<TTreeItem>.TokenClass(string name) { return TokenClass(name); }
+        IDictionary<string, TTokenClass> ScanPredefinedTokenClasses()
+        {
+            return GetPredefinedTokenClasses().ToDictionary(item => item.Id);
+        }
+
+        IType<TTreeItem> ITokenFactory<TTreeItem>.TokenClass(string name)
+        {
+            return TokenClass(name);
+        }
 
         IType<TTreeItem> ITokenFactory<TTreeItem>.Number { get { return _number.Value; } }
         IType<TTreeItem> ITokenFactory<TTreeItem>.Text { get { return _text.Value; } }
         IType<TTreeItem> ITokenFactory<TTreeItem>.EndOfText { get { return _endOfText.Value; } }
-        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error) { return GetError(error); }
+        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error)
+        {
+            return GetError(error);
+        }
 
         protected abstract TTokenClass GetError(Match.IError message);
-        protected abstract IDictionary<string, TTokenClass> GetPredefinedTokenClasses();
+        protected abstract IEnumerable<TTokenClass> GetPredefinedTokenClasses();
         protected abstract TTokenClass GetEndOfText();
         protected abstract TTokenClass GetTokenClass(string name);
         protected abstract TTokenClass GetNumber();
@@ -46,5 +58,4 @@ namespace hw.Parser
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
         protected IType<TTreeItem> TokenClass(string name) { return TokenClasses[name]; }
     }
-
 }

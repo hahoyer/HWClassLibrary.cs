@@ -9,7 +9,7 @@ namespace hw.Proof.TokenClasses
     {
         public override string Id { get { return "="; } }
 
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);

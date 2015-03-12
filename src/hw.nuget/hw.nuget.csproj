@@ -46,8 +46,8 @@
     <Compile Include="hw.CompilerTools\Graphics\SVG\Text.cs" />
     <Compile Include="hw.CompilerTools\Graphics\Syntax.cs" />
     <Compile Include="hw.CompilerTools\Graphics\SyntaxDrawer.cs" />
-    <Compile Include="hw.CompilerTools\Parser\Control.cs" />
     <Compile Include="hw.CompilerTools\Parser\Extension.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IBinaryTreeItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\ILexer.cs" />
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParsedSyntax.cs" />
@@ -56,6 +56,7 @@
     <Compile Include="hw.CompilerTools\Parser\SubParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\Token.cs" />
     <Compile Include="hw.CompilerTools\Parser\WhiteSpaceToken.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\ISourcePart.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePart.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenFactory.cs" />

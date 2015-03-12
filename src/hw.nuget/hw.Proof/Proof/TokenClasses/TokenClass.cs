@@ -6,9 +6,9 @@ using hw.Parser;
 
 namespace hw.Proof.TokenClasses
 {
-    abstract class TokenClass : DumpableObject, IType<ParsedSyntax>
+    abstract class TokenClass : DumpableObject, IType<ParsedSyntax>, ITokenClassWithId
     {
-        protected virtual ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected virtual ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             NotImplementedMethod(left, token, right);
             return null;
@@ -26,9 +26,9 @@ namespace hw.Proof.TokenClasses
             }
             return "(" + result + ")";
         }
-        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, Token part, ParsedSyntax right)
+        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
-            return Syntax(left, part, right);
+            return Syntax(left, token, right);
         }
 
         string IType<ParsedSyntax>.PrioTableId { get { return Id; } }

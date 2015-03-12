@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.Debug;
 using hw.Forms;
@@ -10,21 +9,17 @@ using JetBrains.Annotations;
 
 namespace hw.Parser
 {
-    public abstract class ParsedSyntax : DumpableObject, IGraphTarget, IIconKeyProvider
+    public abstract class ParsedSyntax : DumpableObject, IGraphTarget, IIconKeyProvider, ISourcePart
     {
         [UsedImplicitly]
         internal static bool IsDetailedDumpRequired = true;
 
         [DisableDump]
-        public readonly Token Token;
+        public readonly IToken Token;
 
-        protected ParsedSyntax(Token token)
-        {
-            Token = token;
-        }
+        protected ParsedSyntax(IToken token) { Token = token; }
 
-        protected ParsedSyntax
-            (Token token, int objectId)
+        protected ParsedSyntax(IToken token, int objectId)
             : base(objectId)
         {
             Token = token;
@@ -33,30 +28,17 @@ namespace hw.Parser
         [DisableDump]
         string IIconKeyProvider.IconKey { get { return "Syntax"; } }
 
-        protected override string GetNodeDump() { return SourcePart.Name; }
+        protected override string GetNodeDump() { return SourcePart.Id; }
         protected virtual string FilePosition() { return SourcePart.FilePosition; }
         internal string FileErrorPosition(string errorTag)
         {
             return SourcePart.FileErrorPosition(errorTag);
         }
 
-        string IGraphTarget.Title { get { return Token.Name; } }
-        IGraphTarget[] IGraphTarget.Children { get { return Children.ToArray<IGraphTarget>(); } }
+        string IGraphTarget.Title { get { return Token.Id; } }
+        IGraphTarget[] IGraphTarget.Children { get { return Token.OtherParts<IGraphTarget>(); } }
 
-        [DisableDump]
-        protected virtual ParsedSyntax[] Children { get { return new ParsedSyntax[0]; } }
-        [DisableDump]
-        public virtual SourcePart SourcePart
-        {
-            get
-            {
-                return
-                        Token.SourcePart
-                        + Children
-                            .Where(item => item != null)
-                            .Select(item => item.SourcePart)
-                            .Aggregate();
-            }
-        }
+        public SourcePart SourcePart { get { return Token.SourcePart; } }
+        SourcePart ISourcePart.All { get { return SourcePart; } }
     }
 }

@@ -10,7 +10,7 @@ namespace hw.Proof
 {
     sealed class PlusSyntax : AssociativeSyntax, IComparableEx<PlusSyntax>
     {
-        public PlusSyntax(Plus @operator, Token token, Set<ParsedSyntax> set)
+        public PlusSyntax(Plus @operator, IToken token, Set<ParsedSyntax> set)
             : base(@operator, token, set)
         {
             Tracer.Assert(set.All(x => !(x is PlusSyntax)));

@@ -1,24 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using hw.Scanner;
 
 namespace hw.Parser
 {
     public sealed class ScannerItem<TTreeItem>
-        where TTreeItem : class
+        where TTreeItem : class, ISourcePart
     {
-        public readonly IType<TTreeItem> Type;
-        public readonly Token Token;
+        internal readonly IType<TTreeItem> Type;
+        internal readonly ScannerToken Token;
 
-        public ScannerItem(IType<TTreeItem> type, Token token)
+        internal ScannerItem(IType<TTreeItem> type, ScannerToken token)
         {
             Type = type;
             Token = token;
         }
 
-        public TTreeItem Create(TTreeItem left, TTreeItem right)
+        internal TTreeItem Create(TTreeItem left, TTreeItem right)
         {
-            return Type.Create(left, Token, right);
+            return Type.Create(left, new Token<TTreeItem>(Token.PrecededWith, Token.Characters, left, right), right);
         }
     }
 }

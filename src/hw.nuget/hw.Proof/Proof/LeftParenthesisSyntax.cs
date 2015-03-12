@@ -11,7 +11,7 @@ namespace hw.Proof
         internal readonly int Level;
         internal readonly ParsedSyntax Right;
 
-        public LeftParenthesisSyntax(int level, Token token, ParsedSyntax right)
+        public LeftParenthesisSyntax(int level, IToken token, ParsedSyntax right)
             : base(token)
         {
             Level = level;

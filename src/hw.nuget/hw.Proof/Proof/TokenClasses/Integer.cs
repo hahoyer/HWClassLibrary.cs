@@ -8,7 +8,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Integer : TokenClass
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left != null || right != null)
                 return base.Syntax(left, token, right);

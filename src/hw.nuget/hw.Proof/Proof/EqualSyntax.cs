@@ -8,7 +8,7 @@ namespace hw.Proof
 {
     sealed class EqualSyntax : PairSyntax, IComparableEx<EqualSyntax>
     {
-        public EqualSyntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        public EqualSyntax(ParsedSyntax left, IToken token, ParsedSyntax right)
             : base(Main.TokenFactory.Equal, left, token, right) { }
 
         int IComparableEx<EqualSyntax>.CompareToEx(EqualSyntax other)

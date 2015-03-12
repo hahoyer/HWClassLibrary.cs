@@ -7,7 +7,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Element : PairToken
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);
@@ -18,7 +18,7 @@ namespace hw.Proof.TokenClasses
 
     sealed class ElementSyntax : PairSyntax
     {
-        public ElementSyntax(IPair @operator, ParsedSyntax left, Token token, ParsedSyntax right)
+        public ElementSyntax(IPair @operator, ParsedSyntax left, IToken token, ParsedSyntax right)
             : base(@operator, left, token, right) {}
 
         protected override ParsedSyntax IsolateClause(string variable) { return null; }

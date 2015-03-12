@@ -9,7 +9,7 @@ namespace hw.Proof.TokenClasses
     {
         public override string Id { get { return "gcd"; } }
 
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);
@@ -20,7 +20,7 @@ namespace hw.Proof.TokenClasses
     sealed class GreatesCommonDenominatorSyntax : PairSyntax
     {
         public GreatesCommonDenominatorSyntax
-            (IPair @operator, ParsedSyntax left, Token token, ParsedSyntax right)
+            (IPair @operator, ParsedSyntax left, IToken token, ParsedSyntax right)
             : base(@operator, left, token, right) {}
 
         internal int CompareTo(GreatesCommonDenominatorSyntax other)

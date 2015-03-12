@@ -9,13 +9,13 @@ namespace hw.Proof
 {
     sealed class IntegerSyntax : ParsedSyntax, IComparableEx<IntegerSyntax>
     {
-        public IntegerSyntax(Token token)
+        public IntegerSyntax(IToken token)
             : base(token) { }
 
         [DisableDump]
         internal override Set<string> Variables { get { return new Set<string>(); } }
 
-        internal override string SmartDump(ISmartDumpToken @operator) { return Token.Name; }
+        internal override string SmartDump(ISmartDumpToken @operator) { return Token.Id; }
         public int CompareToEx(IntegerSyntax other) { return 0; }
     }
 }

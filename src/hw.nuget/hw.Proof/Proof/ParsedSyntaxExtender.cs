@@ -1,30 +1,7 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Parser;
-using hw.Scanner;
 
 namespace hw.Proof
 {
@@ -48,7 +25,11 @@ namespace hw.Proof
             }
         }
 
-        internal static bool IsDistinct(this IEnumerable<ParsedSyntax> x2, IEnumerable<ParsedSyntax> x1) { return x1.All(x => x2.All(xx => IsDistinct(x, xx))); }
+        internal static bool IsDistinct
+            (this IEnumerable<ParsedSyntax> x2, IEnumerable<ParsedSyntax> x1)
+        {
+            return x1.All(x => x2.All(xx => IsDistinct(x, xx)));
+        }
 
         internal static bool IsDistinct(ParsedSyntax x, ParsedSyntax y)
         {
@@ -57,7 +38,9 @@ namespace hw.Proof
             return x.IsDistinct(y);
         }
 
-        internal static ParsedSyntax CombineAssosiative<TOperation>(this TOperation operation, Token token, IEnumerable<ParsedSyntax> x) where TOperation : IAssociative
+        internal static ParsedSyntax CombineAssosiative<TOperation>
+            (this TOperation operation, IToken token, IEnumerable<ParsedSyntax> x)
+            where TOperation : IAssociative
         {
             var xx = operation.ToList(x);
             switch(xx.Count())
@@ -70,10 +53,13 @@ namespace hw.Proof
             return operation.Syntax(token, xx);
         }
 
-        internal static Set<ParsedSyntax> ToList(this IAssociative @operator, IEnumerable<ParsedSyntax> set)
+        internal static Set<ParsedSyntax> ToList
+            (this IAssociative @operator, IEnumerable<ParsedSyntax> set)
         {
-            var selectMany = set.SelectMany(parsedSyntax => ToList(@operator, parsedSyntax)).ToArray();
-            var parsedSyntaxs = selectMany.OrderBy(parsedSyntax => parsedSyntax, ParsedSyntax.Comparer).ToArray();
+            var selectMany =
+                set.SelectMany(parsedSyntax => ToList(@operator, parsedSyntax)).ToArray();
+            var parsedSyntaxs =
+                selectMany.OrderBy(parsedSyntax => parsedSyntax, ParsedSyntax.Comparer).ToArray();
             var result = new List<ParsedSyntax>();
             var current = parsedSyntaxs.First();
             for(var i = 1; i < parsedSyntaxs.Count(); i++)
@@ -84,7 +70,12 @@ namespace hw.Proof
             return result.ToArray().ToSet<ParsedSyntax>();
         }
 
-        static ParsedSyntax ComineCheck(IAssociative @operator, ICollection<ParsedSyntax> result, ParsedSyntax current, ParsedSyntax parsedSyntax)
+        static ParsedSyntax ComineCheck
+            (
+            IAssociative @operator,
+            ICollection<ParsedSyntax> result,
+            ParsedSyntax current,
+            ParsedSyntax parsedSyntax)
         {
             if(!(current.Variables & parsedSyntax.Variables).IsEmpty)
             {
@@ -98,7 +89,8 @@ namespace hw.Proof
             return parsedSyntax;
         }
 
-        internal static Set<ParsedSyntax> ToList(this IAssociative @operator, ParsedSyntax parsedSyntax)
+        internal static Set<ParsedSyntax> ToList
+            (this IAssociative @operator, ParsedSyntax parsedSyntax)
         {
             var associativeSyntax = parsedSyntax as AssociativeSyntax;
             if(associativeSyntax != null && associativeSyntax.Operator == @operator)
@@ -109,7 +101,11 @@ namespace hw.Proof
         internal static bool HasDistinctElements(this IEnumerable<ParsedSyntax> set)
         {
             var varses = set.Select(x => x.Variables).ToArray();
-            var xx = varses.Aggregate("", (current, varse) => current + "(" + varse.Aggregate("", (x, y) => x + " " + y) + ")");
+            var xx = varses.Aggregate
+                (
+                    "",
+                    (current, varse) =>
+                        current + "(" + varse.Aggregate("", (x, y) => x + " " + y) + ")");
             var vars = Set<string>.Empty;
             foreach(var varse in varses)
                 if((vars & varse).IsEmpty)

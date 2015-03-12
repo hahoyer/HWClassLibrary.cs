@@ -6,7 +6,7 @@ using hw.Scanner;
 namespace hw.Parser
 {
     sealed class SubParser<TTreeItem> : ISubParser<TTreeItem>
-        where TTreeItem : class
+        where TTreeItem : class, ISourcePart
     {
         readonly IParser<TTreeItem> _parser;
         readonly Func<TTreeItem, IType<TTreeItem>> _converter;

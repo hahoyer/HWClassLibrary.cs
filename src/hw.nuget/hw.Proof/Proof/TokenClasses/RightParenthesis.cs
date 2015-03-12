@@ -12,7 +12,7 @@ namespace hw.Proof.TokenClasses
         readonly int _level;
         public RightParenthesis(int level) { _level = level; }
 
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             Tracer.Assert(right == null);
             var leftParenthesisSyntax = left as LeftParenthesisSyntax;

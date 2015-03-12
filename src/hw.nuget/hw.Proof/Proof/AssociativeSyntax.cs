@@ -12,7 +12,7 @@ namespace hw.Proof
         internal readonly IAssociative Operator;
         internal readonly Set<ParsedSyntax> Set;
 
-        protected AssociativeSyntax(IAssociative @operator, Token token, Set<ParsedSyntax> set)
+        protected AssociativeSyntax(IAssociative @operator, IToken token, Set<ParsedSyntax> set)
             : base(token)
         {
             Operator = @operator;
@@ -58,7 +58,7 @@ namespace hw.Proof
         bool IsVariablesProvider { get; }
         ParsedSyntax Empty { get; }
         string SmartDump(Set<ParsedSyntax> set);
-        AssociativeSyntax Syntax(Token token, Set<ParsedSyntax> x);
+        AssociativeSyntax Syntax(IToken token, Set<ParsedSyntax> x);
         ParsedSyntax Combine(ParsedSyntax left, ParsedSyntax right);
         bool IsEmpty(ParsedSyntax parsedSyntax);
     }

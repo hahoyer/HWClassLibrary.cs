@@ -7,7 +7,7 @@ namespace hw.Proof
 {
     sealed class ClauseSyntax : AssociativeSyntax
     {
-        public ClauseSyntax(IAssociative @operator, Token token, Set<ParsedSyntax> set)
+        public ClauseSyntax(IAssociative @operator, IToken token, Set<ParsedSyntax> set)
             : base(@operator, token, set) {}
 
         public IEnumerable<KeyValuePair<string, ParsedSyntax>> GetDefinitions(int variableCount)

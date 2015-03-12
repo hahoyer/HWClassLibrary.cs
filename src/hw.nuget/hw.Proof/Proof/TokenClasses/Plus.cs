@@ -9,7 +9,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Plus : TokenClass, IAssociative, ISmartDumpToken
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             Tracer.Assert(left != null);
             Tracer.Assert(right != null);
@@ -23,7 +23,7 @@ namespace hw.Proof.TokenClasses
         ParsedSyntax IAssociative.Empty { get { return new NumberSyntax(0); } }
 
         string IAssociative.SmartDump(Set<ParsedSyntax> set) { return SmartDump(this, set); }
-        AssociativeSyntax IAssociative.Syntax(Token token, Set<ParsedSyntax> set) { return new PlusSyntax(this, token, set); }
+        AssociativeSyntax IAssociative.Syntax(IToken token, Set<ParsedSyntax> set) { return new PlusSyntax(this, token, set); }
         ParsedSyntax IAssociative.Combine(ParsedSyntax left, ParsedSyntax right) { return left.CombineForPlus(right); }
 
         bool IAssociative.IsEmpty(ParsedSyntax parsedSyntax)

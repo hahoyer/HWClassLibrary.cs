@@ -14,9 +14,9 @@ namespace hw.Proof
 
         public SyntaxError(IssueId issueId) { _issueId = issueId; }
 
-        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, Token part, ParsedSyntax right)
+        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
-            NotImplementedMethod(left, part, right);
+            NotImplementedMethod(left, token, right);
             return null;
         }
         string IType<ParsedSyntax>.PrioTableId { get { return PrioTable.Error; } }

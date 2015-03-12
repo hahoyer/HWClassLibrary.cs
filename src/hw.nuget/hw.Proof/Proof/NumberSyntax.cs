@@ -12,10 +12,10 @@ namespace hw.Proof
     {
         internal readonly BigRational Value;
 
-        internal NumberSyntax(Token token)
+        internal NumberSyntax(IToken token)
             : base(token)
         {
-            Value = BigInteger.Parse(token.Name);
+            Value = BigInteger.Parse(token.Id);
         }
 
         internal NumberSyntax(BigRational value)

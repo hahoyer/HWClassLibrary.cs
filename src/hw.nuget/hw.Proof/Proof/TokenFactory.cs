@@ -45,28 +45,27 @@ namespace hw.Proof
             }
         }
 
-        protected override IDictionary<string, TokenClass> GetPredefinedTokenClasses()
+        protected override IEnumerable<TokenClass> GetPredefinedTokenClasses()
         {
-            var result = new Dictionary<string, TokenClass>
+            return new TokenClass[]
             {
-                {"{", new LeftParenthesis(1)},
-                {"[", new LeftParenthesis(2)},
-                {"(", new LeftParenthesis(3)},
-                {"}", new RightParenthesis(1)},
-                {"]", new RightParenthesis(2)},
-                {")", new RightParenthesis(3)},
-                {",", new List(",")},
-                {";", new List(";")},
-                {"=", new Equal()},
-                {"-", new Minus()},
-                {"&", new And()},
-                {"+", new Plus()},
-                {"^", new Caret()},
-                {"Integer", new Integer()},
-                {"gcd", new GreatesCommonDenominator()},
-                {"elem", new Element()}
+                new LeftParenthesis(1),
+                new LeftParenthesis(2),
+                new LeftParenthesis(3),
+                new RightParenthesis(1),
+                new RightParenthesis(2),
+                new RightParenthesis(3),
+                new List(","),
+                new List(";"),
+                new Equal(),
+                new Minus(),
+                new And(),
+                new Plus(),
+                new Caret(),
+                new Integer(),
+                new GreatesCommonDenominator(),
+                new Element()
             };
-            return result;
         }
         protected override TokenClass GetEndOfText() { return new RightParenthesis(0); }
         protected override TokenClass GetNumber() { return new Number(); }

@@ -6,22 +6,15 @@ using hw.Scanner;
 namespace hw.Parser
 {
     public interface IParser<TTreeItem>
-        where TTreeItem : class
+        where TTreeItem : class, ISourcePart
     {
         TTreeItem Execute(SourcePosn start, Stack<OpenItem<TTreeItem>> stack = null);
         bool Trace{ get; set; }
     }
 
     public interface ISubParser<TTreeItem>
-        where TTreeItem : class
+        where TTreeItem : class, ISourcePart
     {
         IType<TTreeItem> Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack = null);
-    }
-
-    public interface ITreeItem
-    {
-        ITreeItem Right { get; }
-        string TokenId { get; }
-        ITreeItem Left { get; }
     }
 }

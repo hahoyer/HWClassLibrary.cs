@@ -13,7 +13,7 @@ namespace hw.Proof.TokenClasses
 
         public List(string id) { _id = id; }
         
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null)
                 return right ?? TrueSyntax.Instance;
@@ -38,7 +38,7 @@ namespace hw.Proof.TokenClasses
             return "Clauses:" + resultList;
         }
 
-        AssociativeSyntax IAssociative.Syntax(Token token, Set<ParsedSyntax> set)
+        AssociativeSyntax IAssociative.Syntax(IToken token, Set<ParsedSyntax> set)
         {
             return new ClauseSyntax(this, token, set);
         }

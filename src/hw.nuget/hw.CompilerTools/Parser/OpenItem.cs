@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using hw.Helper;
 using System.Linq;
 using hw.Debug;
+using hw.Scanner;
 
 namespace hw.Parser
 {
     public sealed class OpenItem<TTreeItem> : DumpableObject
-        where TTreeItem : class
+        where TTreeItem : class, ISourcePart
     {
         internal readonly TTreeItem Left;
         readonly ScannerItem<TTreeItem> _current;
@@ -28,7 +29,7 @@ namespace hw.Parser
             return right;
         }
 
-        internal static OpenItem<TTreeItem> StartItem(Token startItem)
+        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem)
         {
             return StartItem(new ScannerItem<TTreeItem>(null, startItem));
         }

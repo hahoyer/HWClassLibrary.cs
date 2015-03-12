@@ -9,7 +9,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class And : TokenClass, IAssociative, ISmartDumpToken
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, Token token, ParsedSyntax right)
+        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             Tracer.Assert(left != null);
             Tracer.Assert(right != null);
@@ -24,7 +24,7 @@ namespace hw.Proof.TokenClasses
         [DisableDump]
         ParsedSyntax IAssociative.Empty { get { return TrueSyntax.Instance; } }
 
-        AssociativeSyntax IAssociative.Syntax(Token token, Set<ParsedSyntax> x)
+        AssociativeSyntax IAssociative.Syntax(IToken token, Set<ParsedSyntax> x)
         {
             return new AndSyntax(this, token, x);
         }

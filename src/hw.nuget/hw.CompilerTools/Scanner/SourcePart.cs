@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 namespace hw.Scanner
 {
     [DebuggerDisplay("{NodeDump}")]
-    public sealed class SourcePart : Dumpable, IAggregateable<SourcePart>
+    public sealed class SourcePart : Dumpable, IAggregateable<SourcePart>, ISourcePart
     {
         readonly int _length;
         readonly Source _source;
@@ -55,18 +55,18 @@ namespace hw.Scanner
                     : left.Overlay(right);
         }
 
-        public string Name { get { return Source.SubString(Position, Length); } }
+        public string Id { get { return Source.SubString(Position, Length); } }
 
         [DisableDump]
-        public string FilePosition { get { return "\n" + Source.FilePosn(Position, Name); } }
+        public string FilePosition { get { return "\n" + Source.FilePosn(Position, Id); } }
 
         public string FileErrorPosition(string errorTag)
         {
-            return "\n" + Source.FilePosn(Position, Name, "error " + errorTag);
+            return "\n" + Source.FilePosn(Position, Id, "error " + errorTag);
         }
 
         [UsedImplicitly]
-        string DumpCurrent { get { return Name; } }
+        string DumpCurrent { get { return Id; } }
 
         const int DumpWidth = 10;
 
@@ -131,5 +131,7 @@ namespace hw.Scanner
                 Position <= sourcePosn.Position &&
                 EndPosition > sourcePosn.Position;
         }
+
+        SourcePart ISourcePart.All { get { return this; } }
     }
 }

@@ -8,7 +8,7 @@ using hw.Scanner;
 namespace hw.Parser
 {
     public sealed class Scanner<TTreeItem> : Dumpable, IScanner<TTreeItem>
-        where TTreeItem : class
+        where TTreeItem : class, ISourcePart
     {
         readonly ILexer _lexer;
         readonly ITokenFactory<TTreeItem> _tokenFactory;
@@ -170,7 +170,7 @@ namespace hw.Parser
             var result = new ScannerItem<TTreeItem>
                 (
                 getTokenClass(sourcePosn, length.Value),
-                new Token(SourcePart.Span(sourcePosn, length.Value), preceededBy)
+                new ScannerToken(SourcePart.Span(sourcePosn, length.Value), preceededBy)
                 );
             var wasEnd = sourcePosn.IsEnd;
             sourcePosn.Position += length.Value;
