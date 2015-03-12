@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.6.17-alpha</version>
+        <version>15.6.20-alpha</version>
         <releaseNotes>
             Change: SourcePart: New functions
             Refactor: Setter for Name removed

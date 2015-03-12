@@ -7,7 +7,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Equal : PairToken
     {
-        public override string Id { get { return "="; } }
+        public override string Value { get { return "="; } }
 
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {

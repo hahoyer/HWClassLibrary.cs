@@ -84,7 +84,7 @@ namespace hw.Proof
         {
             readonly Match.IError _message;
             public SyntaxError(Match.IError message) { _message = message; }
-            public override string Id { get { return _message.ToString(); } }
+            public override string Value { get { return _message.ToString(); } }
         }
     }
 }

@@ -15,6 +15,6 @@ namespace hw.Proof.TokenClasses
             return new NumberSyntax(token);
         }
 
-        public override string Id { get { return ""; } }
+        public override string Value { get { return ""; } }
     }
 }

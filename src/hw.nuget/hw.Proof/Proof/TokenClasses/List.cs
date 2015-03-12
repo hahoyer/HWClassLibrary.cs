@@ -9,9 +9,9 @@ namespace hw.Proof.TokenClasses
 {
     sealed class List : TokenClass, IAssociative, ISmartDumpToken
     {
-        readonly string _id;
+        readonly string _value;
 
-        public List(string id) { _id = id; }
+        public List(string value) { _value = value; }
         
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
@@ -22,7 +22,7 @@ namespace hw.Proof.TokenClasses
             return left.Associative(this, token, right);
         }
         
-        public override string Id { get { return _id; } }
+        public override string Value { get { return _value; } }
 
         [DisableDump]
         bool IAssociative.IsVariablesProvider { get { return true; } }

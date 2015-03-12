@@ -8,7 +8,7 @@ using hw.Scanner;
 namespace hw.Parser
 {
     abstract class TokenFactory<TTokenClass, TTreeItem> : Dumpable, ITokenFactory<TTreeItem>
-        where TTokenClass : class, IType<TTreeItem>, ITokenClassWithId
+        where TTokenClass : class, IType<TTreeItem>, IUniqueIdProvider
         where TTreeItem : class, ISourcePart
     {
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
@@ -32,7 +32,7 @@ namespace hw.Parser
 
         IDictionary<string, TTokenClass> ScanPredefinedTokenClasses()
         {
-            return GetPredefinedTokenClasses().ToDictionary(item => item.Id);
+            return GetPredefinedTokenClasses().ToDictionary(item => item.Value);
         }
 
         IType<TTreeItem> ITokenFactory<TTreeItem>.TokenClass(string name)

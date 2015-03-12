@@ -7,7 +7,7 @@ namespace hw.Proof.TokenClasses
 {
     sealed class GreatesCommonDenominator : PairToken
     {
-        public override string Id { get { return "gcd"; } }
+        public override string Value { get { return "gcd"; } }
 
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {

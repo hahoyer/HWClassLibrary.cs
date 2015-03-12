@@ -30,7 +30,7 @@ namespace hw.Proof.TokenClasses
 
         string SmartDump(ParsedSyntax left, ParsedSyntax right)
         {
-            return "(" + left.SmartDump(this) + " " + Id + " " + right.SmartDump(this) + ")";
+            return "(" + left.SmartDump(this) + " " + Value + " " + right.SmartDump(this) + ")";
         }
     }
 }

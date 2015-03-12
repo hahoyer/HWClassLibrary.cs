@@ -16,7 +16,7 @@ namespace hw.Proof.TokenClasses
 
             return left.Associative(this, token, right);
         }
-        public override string Id { get { return "&"; } }
+        public override string Value { get { return "&"; } }
 
         [DisableDump]
         bool IAssociative.IsVariablesProvider { get { return true; } }

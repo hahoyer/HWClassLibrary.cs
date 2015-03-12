@@ -8,7 +8,8 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public abstract class TokenClass<TTreeItem> : DumpableObject, IIconKeyProvider, IType<TTreeItem>, ITokenClassWithId
+    public abstract class TokenClass<TTreeItem>
+        : DumpableObject, IIconKeyProvider, IType<TTreeItem>, IUniqueIdProvider
         where TTreeItem : class, ISourcePart
     {
         static int _nextObjectId;
@@ -35,14 +36,14 @@ namespace hw.Parser
         {
             return base.GetNodeDump() + "(" + Id.Quote() + ")";
         }
-
-        public override string ToString() { return base.ToString() + " Name=" + Id.Quote(); }
-        abstract public string Id { get; }
+        
+        public override string ToString() { return base.ToString() + " Id=" + Id.Quote(); }
+        string IUniqueIdProvider.Value { get { return Id; } }
+        public abstract string Id { get; }
     }
 
-    interface ITokenClassWithId
+    public interface IUniqueIdProvider
     {
-        string Id { get; }
+        string Value { get; }
     }
-
 }
