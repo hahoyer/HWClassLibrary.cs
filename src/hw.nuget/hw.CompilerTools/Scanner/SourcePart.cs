@@ -132,6 +132,40 @@ namespace hw.Scanner
                 EndPosition > sourcePosn.Position;
         }
 
+        public bool IsMatch(SourcePart sourcePosn)
+        {
+            if(Source != sourcePosn.Source)
+                return false;
+            if(EndPosition == sourcePosn.Position)
+                return true;
+            return Position == sourcePosn.EndPosition;
+        }
+
+        public static IEnumerable<SourcePart> SaveCombine(IEnumerable<SourcePart> values)
+        {
+            return values
+                .GroupBy(item => item.Source)
+                .SelectMany(SaveCombineForSource);
+        }
+
+        static IEnumerable<SourcePart> SaveCombineForSource(IEnumerable<SourcePart> values)
+        {
+            var sortedValues = values.OrderBy(item => item.Position).ToArray();
+            var currentValue = sortedValues[0];
+
+            foreach(var value in sortedValues.Skip(1))
+            {
+                if(currentValue.EndPosition == value.Position)
+                    currentValue = currentValue.Combine(value);
+                else
+                {
+                    yield return currentValue;
+                    currentValue = value;
+                }
+            }
+            yield return currentValue;
+        }
+
         SourcePart ISourcePart.All { get { return this; } }
     }
 }

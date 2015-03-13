@@ -16,8 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.6.20-alpha</version>
+        <version>15.6.21-alpha</version>
         <releaseNotes>
+            New: SourcePart safe combine
             Change: SourcePart: New functions
             Refactor: Setter for Name removed
             Refactor: Use ScannerItem when possible
