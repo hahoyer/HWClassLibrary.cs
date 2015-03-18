@@ -154,7 +154,6 @@ namespace hw.Scanner
             var currentValue = sortedValues[0];
 
             foreach(var value in sortedValues.Skip(1))
-            {
                 if(currentValue.EndPosition == value.Position)
                     currentValue = currentValue.Combine(value);
                 else
@@ -162,10 +161,40 @@ namespace hw.Scanner
                     yield return currentValue;
                     currentValue = value;
                 }
-            }
             yield return currentValue;
         }
 
         SourcePart ISourcePart.All { get { return this; } }
+
+        public static bool operator !=(SourcePart left, SourcePart right)
+        {
+            return !(left == right);
+        }
+        public static bool operator >(SourcePart left, SourcePosn right) { return right < left; }
+        public static bool operator >(SourcePosn left, SourcePart right) { return right < left; }
+        public static bool operator >(SourcePart left, SourcePart right) { return right < left; }
+
+        public static bool operator <(SourcePart left, SourcePosn right)
+        {
+            return left != null && left.End < right;
+        }
+
+        public static bool operator <(SourcePosn left, SourcePart right)
+        {
+            return right != null && left <= right.Start;
+        }
+
+        public static bool operator <(SourcePart left, SourcePart right)
+        {
+            return left != null && right != null && left.End <= right.Start;
+        }
+
+        public static bool operator ==(SourcePart left, SourcePart right)
+        {
+            return left != null &&
+                right != null &&
+                left.Start == right.Start &&
+                left.Length == right.Length;
+        }
     }
 }

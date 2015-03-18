@@ -158,5 +158,33 @@ namespace hw.Scanner
 
         public SourcePart Span(SourcePosn other) { return SourcePart.Span(this, other); }
         public SourcePart Span(int length) { return SourcePart.Span(this, length); }
+
+        public static bool operator <(SourcePosn left, SourcePosn right)
+        {
+            return left != null &&
+                right != null &&
+                left.Source == right.Source &&
+                left.Position < right.Position;
+        }
+
+        public static bool operator <=(SourcePosn left, SourcePosn right)
+        {
+            return left < right || left == right;
+        }
+
+        public static bool operator >(SourcePosn left, SourcePosn right) { return right < left; }
+        public static bool operator >=(SourcePosn left, SourcePosn right) { return right <= left; }
+        public static bool operator !=(SourcePosn left, SourcePosn right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator ==(SourcePosn left, SourcePosn right)
+        {
+            return left != null &&
+                right != null &&
+                left.Source == right.Source &&
+                left.Position == right.Position;
+        }
     }
 }
