@@ -181,9 +181,11 @@ namespace hw.Scanner
 
         public static bool operator ==(SourcePosn left, SourcePosn right)
         {
-            return left != null &&
-                right != null &&
-                left.Source == right.Source &&
+            if((object) left == null)
+                return ((object) right == null);
+            if((object) right == null)
+                return false;
+            return left.Source == right.Source &&
                 left.Position == right.Position;
         }
     }
