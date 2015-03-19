@@ -150,7 +150,17 @@ namespace hw.Scanner
 
         static IEnumerable<SourcePart> SaveCombineForSource(IEnumerable<SourcePart> values)
         {
-            var sortedValues = values.OrderBy(item => item.Position).ToArray();
+            var sortedValues = values
+                .Where(item => item.Length > 0)
+                .OrderBy(item => item.Position)
+                .ToArray();
+
+            if(!sortedValues.Any())
+            {
+                yield return values.First();
+                yield break;
+            }
+
             var currentValue = sortedValues[0];
 
             foreach(var value in sortedValues.Skip(1))

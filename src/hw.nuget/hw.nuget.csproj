@@ -29,10 +29,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <Prefer32Bit>false</Prefer32Bit>
-    <NoWarn>660, 661</NoWarn>
+    <NoWarn>660;661</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>660;661</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="hw.CompilerTools\Parser\Extension.cs" />
     <Compile Include="hw.CompilerTools\Parser\IBinaryTreeItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\ILexer.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IToken.cs" />
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParsedSyntax.cs" />
     <Compile Include="hw.CompilerTools\Parser\Scanner.cs" />

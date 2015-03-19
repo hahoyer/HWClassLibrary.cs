@@ -19,12 +19,6 @@ namespace hw.Parser
             OtherParts = otherParts;
             _precededWith = precededWith ?? new WhiteSpaceToken[0];
             _characters = characters;
-            AssertValid();
-        }
-
-        static void AssertValid()
-        {
-            //ToDo
         }
 
         public SourcePosn Start { get { return SourcePart.Start; } }
@@ -33,8 +27,7 @@ namespace hw.Parser
             get
             {
                 return _characters +
-                    _precededWith.Select(item => item.Characters).Aggregate() +
-                    OtherParts.Where(item => item != null).Select(item => item.All).Aggregate();
+                    _precededWith.Select(item => item.Characters).Aggregate();
             }
         }
 
@@ -49,15 +42,5 @@ namespace hw.Parser
 
         [UsedImplicitly]
         public string NodeDump { get { return Id; } }
-    }
-
-    public interface IToken
-    {
-        SourcePosn Start { get; }
-        SourcePart SourcePart { get; }
-        string Id { get; }
-        WhiteSpaceToken[] PrecededWith { get; }
-        SourcePart Characters { get; }
-        TTreeItem[] OtherParts<TTreeItem>();
     }
 }

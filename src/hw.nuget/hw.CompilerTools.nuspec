@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.6.23-alpha</version>
+        <version>15.6.25-alpha</version>
         <releaseNotes>
             New: SourcePart safe combine
             Change: SourcePart: New functions
