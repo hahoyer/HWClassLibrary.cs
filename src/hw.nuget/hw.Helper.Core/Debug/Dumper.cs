@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using System.Reflection;
-using hw.Helper;
 
 namespace hw.Debug
 {
     public sealed class Dumper
     {
-        static BindingFlags AnyBinding { get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; } }
+        static BindingFlags AnyBinding
+        {
+            get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; }
+        }
 
         public readonly Configuration Configuration = new Configuration();
         readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
-        long _nextObjectId = 0;
+        long _nextObjectId;
 
         internal string Dump(object x)
         {
@@ -23,7 +26,10 @@ namespace hw.Debug
             if(_activeObjects.TryGetValue(x, out key))
             {
                 if(key == -1)
-                    _activeObjects[x] = _nextObjectId++;
+                {
+                    key = _nextObjectId++;
+                    _activeObjects[x] = key;
+                }
                 return "[see{" + key + "#}]";
             }
 
@@ -51,7 +57,7 @@ namespace hw.Debug
             if(handler != null)
                 return handler(t, x);
 
-            string result = ",\n".SaveConcat(BaseDump(t, x),DumpData(t, x));
+            var result = ",\n".SaveConcat(BaseDump(t, x), DumpData(t, x));
             if(result != "")
                 result = result.Surround("{", "}");
 
@@ -162,7 +168,11 @@ namespace hw.Debug
 
         static bool CheckDumpExceptAttribute(MemberInfo f, object x)
         {
-            foreach(var dea in Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase)).Select(ax => ax as IDumpExceptAttribute).Where(ax => ax != null))
+            foreach(
+                var dea in
+                    Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase))
+                        .Select(ax => ax as IDumpExceptAttribute)
+                        .Where(ax => ax != null))
             {
                 var v = x.InvokeValue(f);
                 return !dea.IsException(v);
