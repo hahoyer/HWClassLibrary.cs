@@ -36,7 +36,7 @@ namespace hw.Parser
         {
             return base.GetNodeDump() + "(" + Id.Quote() + ")";
         }
-        
+
         public override string ToString() { return base.ToString() + " Id=" + Id.Quote(); }
         string IUniqueIdProvider.Value { get { return Id; } }
         public abstract string Id { get; }

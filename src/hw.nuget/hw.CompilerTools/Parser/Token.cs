@@ -2,21 +2,21 @@ using System;
 using System.Collections.Generic;
 using hw.Helper;
 using System.Linq;
+using hw.Debug;
 using hw.Scanner;
 using JetBrains.Annotations;
 
 namespace hw.Parser
 {
-    public sealed class Token<TTreeItem> : IToken
-        where TTreeItem : ISourcePart
+    public sealed class Token : DumpableObject, IToken
     {
-        public readonly TTreeItem[] OtherParts;
+        static int _nextObjectId;
         readonly WhiteSpaceToken[] _precededWith;
         readonly SourcePart _characters;
         public Token
-            (WhiteSpaceToken[] precededWith, SourcePart characters, params TTreeItem[] otherParts)
+            (WhiteSpaceToken[] precededWith, SourcePart characters)
+            : base(_nextObjectId++)
         {
-            OtherParts = otherParts;
             _precededWith = precededWith ?? new WhiteSpaceToken[0];
             _characters = characters;
         }
@@ -35,12 +35,7 @@ namespace hw.Parser
         WhiteSpaceToken[] IToken.PrecededWith { get { return _precededWith; } }
         SourcePart IToken.Characters { get { return _characters; } }
 
-        TTreeItemParts[] IToken.OtherParts<TTreeItemParts>()
-        {
-            return OtherParts.Cast<TTreeItemParts>().ToArray();
-        }
-
         [UsedImplicitly]
-        public string NodeDump { get { return Id; } }
+        public new string NodeDump { get { return Id; } }
     }
 }

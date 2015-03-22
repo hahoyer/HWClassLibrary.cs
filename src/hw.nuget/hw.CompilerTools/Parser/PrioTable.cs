@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using hw.Helper;
 using System.Linq;
 using hw.Forms;
-using hw.Helper;
 using JetBrains.Annotations;
 
 namespace hw.Parser
@@ -37,7 +37,10 @@ namespace hw.Parser
             return x.Equals(y);
         }
 
-        public override int GetHashCode() { return _token.GetHashCode() + _dataCache.GetHashCode(); }
+        public override int GetHashCode()
+        {
+            return _token.GetHashCode() + _dataCache.GetHashCode();
+        }
 
         public static bool operator !=(PrioTable x, PrioTable y)
         {
@@ -82,9 +85,12 @@ namespace hw.Parser
 
         public override string ToString() { return Title ?? Dump(); }
 
-        public static PrioTable FromText(string text) { return FromText(text.Split(new[] {'\n', '\r'})); }
+        public static PrioTable FromText(string text) { return FromText(text.Split('\n', '\r')); }
 
-        static PrioTable FromText(string[] text) { return FromText(text.Select(l => l.Split(new[] {' ', '\t'})).ToArray()); }
+        static PrioTable FromText(string[] text)
+        {
+            return FromText(text.Select(l => l.Split(' ', '\t')).ToArray());
+        }
 
         static PrioTable FromText(string[][] text)
         {
@@ -103,11 +109,15 @@ namespace hw.Parser
                         break;
                     case "parlevel":
                         result = result.ParenthesisLevelLeft
-                            (data.Take(tokenCount).ToArray(), data.Skip(tokenCount).Take(tokenCount).ToArray());
+                            (
+                                data.Take(tokenCount).ToArray(),
+                                data.Skip(tokenCount).Take(tokenCount).ToArray());
                         break;
                     case "televel":
                         result = result.ThenElseLevel
-                            (data.Take(tokenCount).ToArray(), data.Skip(tokenCount).Take(tokenCount).ToArray());
+                            (
+                                data.Take(tokenCount).ToArray(),
+                                data.Skip(tokenCount).Take(tokenCount).ToArray());
                         break;
                     case "-":
                     case "+":
@@ -320,7 +330,10 @@ namespace hw.Parser
         {
             return Level(_parenthesisTableRight, lToken, rToken);
         }
-        public PrioTable ThenElseLevel(string[] lToken, string[] rToken) { return Level(_thenElseTable, lToken, rToken); }
+        public PrioTable ThenElseLevel(string[] lToken, string[] rToken)
+        {
+            return Level(_thenElseTable, lToken, rToken);
+        }
         public PrioTable ParenthesisLevel(string lToken, string rToken)
         {
             return Level(_parenthesisTableLeft, new[] {lToken}, new[] {rToken});
@@ -379,7 +392,10 @@ namespace hw.Parser
             return n;
         }
 
-        static bool IsNormalName(string name) { return name != BeginOfText && name != EndOfText && name != Any && name != Error; }
+        static bool IsNormalName(string name)
+        {
+            return name != BeginOfText && name != EndOfText && name != Any && name != Error;
+        }
 
         /// <summary>
         ///     Returns the priority information of a pair of tokens
@@ -434,7 +450,13 @@ namespace hw.Parser
         {
             var comparer = new PrioComparer(this);
             var newOrder = Length.Select().OrderBy(d => d, comparer);
-            var toDo = newOrder.Select((iOld, iNew) => new {iOld, iNew}).FirstOrDefault(x => x.iOld != x.iNew);
+            var toDo = newOrder.Select
+                (
+                    (iOld, iNew) => new
+                    {
+                        iOld,
+                        iNew
+                    }).FirstOrDefault(x => x.iOld != x.iNew);
             if(toDo == null)
                 return false;
 

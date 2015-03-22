@@ -9,7 +9,7 @@ namespace hw.Parser
         where TTreeItem : class, ISourcePart
     {
         TTreeItem Execute(SourcePosn start, Stack<OpenItem<TTreeItem>> stack = null);
-        bool Trace{ get; set; }
+        bool Trace { get; set; }
     }
 
     public interface ISubParser<TTreeItem>

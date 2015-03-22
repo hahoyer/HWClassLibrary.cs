@@ -39,6 +39,7 @@ namespace hw.Parser
             get { return (Characters + PrecededWith.Select(item => item.Characters).Aggregate()); }
         }
 
+        [UsedImplicitly]
         public string Id { get { return Characters.Id; } }
 
         [UsedImplicitly]

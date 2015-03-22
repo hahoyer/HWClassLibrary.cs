@@ -12,6 +12,5 @@ namespace hw.Parser
         string Id { get; }
         WhiteSpaceToken[] PrecededWith { get; }
         SourcePart Characters { get; }
-        TTreeItem[] OtherParts<TTreeItem>();
     }
 }

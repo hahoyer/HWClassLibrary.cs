@@ -18,7 +18,7 @@ namespace hw.Parser
             Left = left;
             _current = current;
         }
-        
+
         internal IType<TTreeItem> Type { get { return _current.Type; } }
 
         internal TTreeItem Create(TTreeItem right)

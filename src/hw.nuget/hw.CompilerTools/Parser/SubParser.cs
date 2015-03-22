@@ -23,7 +23,8 @@ namespace hw.Parser
             _prepareStack = prepareStack ?? (stack => null);
         }
 
-        IType<TTreeItem> ISubParser<TTreeItem>.Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack)
+        IType<TTreeItem> ISubParser<TTreeItem>.Execute
+            (SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack)
         {
             return _converter(_parser.Execute(sourcePosn, _prepareStack(stack)));
         }

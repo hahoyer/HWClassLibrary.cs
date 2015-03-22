@@ -36,7 +36,7 @@ namespace hw.Parser
         }
 
         string IGraphTarget.Title { get { return Token.Id; } }
-        IGraphTarget[] IGraphTarget.Children { get { return Token.OtherParts<IGraphTarget>(); } }
+        IGraphTarget[] IGraphTarget.Children { get { return null; } }
 
         public SourcePart SourcePart { get { return Token.SourcePart; } }
         SourcePart ISourcePart.All { get { return SourcePart; } }

@@ -19,7 +19,7 @@ namespace hw.Parser
 
         internal TTreeItem Create(TTreeItem left, TTreeItem right)
         {
-            return Type.Create(left, new Token<TTreeItem>(Token.PrecededWith, Token.Characters, left, right), right);
+            return Type.Create(left, new Token(Token.PrecededWith, Token.Characters), right);
         }
     }
 }

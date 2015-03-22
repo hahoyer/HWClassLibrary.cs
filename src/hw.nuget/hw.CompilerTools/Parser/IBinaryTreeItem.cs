@@ -10,5 +10,4 @@ namespace hw.Parser
         string TokenId { get; }
         IBinaryTreeItem Left { get; }
     }
-
 }

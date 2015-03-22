@@ -79,7 +79,7 @@ namespace hw.Parser
             while(runAgain)
             {
                 runAgain = false;
-                
+
                 var result = _lexer
                     .WhiteSpace
                     .SelectMany((f, i) => CreateAndAdvance(current, f, i).NullableToArray())
@@ -91,13 +91,6 @@ namespace hw.Parser
                     runAgain = true;
                 }
             }
-        }
-        static IEnumerable<WhiteSpaceToken> WhiteSpaceTokens
-            (SourcePosn current, Func<SourcePosn, int?> func, int index)
-        {
-            var item = CreateAndAdvance(current, func, index);
-            if(item != null)
-                yield return item;
         }
 
         static WhiteSpaceToken CreateAndAdvance

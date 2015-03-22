@@ -7,7 +7,7 @@ namespace hw.Parser
 {
     public interface ILexer
     {
-        Func<SourcePosn,int?>[] WhiteSpace { get; }
+        Func<SourcePosn, int?>[] WhiteSpace { get; }
         int? Number(SourcePosn sourcePosn);
         int? Text(SourcePosn sourcePosn);
         int? Any(SourcePosn sourcePosn);
