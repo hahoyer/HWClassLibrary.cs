@@ -8,6 +8,6 @@ namespace hw.Parser
     public interface IScanner<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
-        ScannerItem<TTreeItem> NextToken(SourcePosn sourcePosn);
+        Scanner<TTreeItem> .Item NextToken(SourcePosn sourcePosn);
     }
 }

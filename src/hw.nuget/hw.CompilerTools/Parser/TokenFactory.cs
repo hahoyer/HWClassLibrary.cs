@@ -8,7 +8,7 @@ using hw.Scanner;
 namespace hw.Parser
 {
     abstract class TokenFactory<TTokenClass, TTreeItem> : Dumpable, ITokenFactory<TTreeItem>
-        where TTokenClass : class, IType<TTreeItem>, IUniqueIdProvider
+        where TTokenClass : class, Scanner<TTreeItem>.IType, IUniqueIdProvider
         where TTreeItem : class, ISourcePart
     {
         readonly ValueCache<FunctionCache<string, TTokenClass>> _tokenClasses;
@@ -35,15 +35,15 @@ namespace hw.Parser
             return GetPredefinedTokenClasses().ToDictionary(item => item.Value);
         }
 
-        IType<TTreeItem> ITokenFactory<TTreeItem>.TokenClass(string name)
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.TokenClass(string name)
         {
             return TokenClass(name);
         }
 
-        IType<TTreeItem> ITokenFactory<TTreeItem>.Number { get { return _number.Value; } }
-        IType<TTreeItem> ITokenFactory<TTreeItem>.Text { get { return _text.Value; } }
-        IType<TTreeItem> ITokenFactory<TTreeItem>.EndOfText { get { return _endOfText.Value; } }
-        IType<TTreeItem> ITokenFactory<TTreeItem>.Error(Match.IError error)
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Number { get { return _number.Value; } }
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Text { get { return _text.Value; } }
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.EndOfText { get { return _endOfText.Value; } }
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Error(Match.IError error)
         {
             return GetError(error);
         }
@@ -56,6 +56,6 @@ namespace hw.Parser
         protected abstract TTokenClass GetText();
 
         FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
-        protected IType<TTreeItem> TokenClass(string name) { return TokenClasses[name]; }
+        protected Scanner<TTreeItem>.IType TokenClass(string name) { return TokenClasses[name]; }
     }
 }

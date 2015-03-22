@@ -35,13 +35,13 @@ namespace hw.Parser
         int? Text(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Text); }
         int? Any(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Any); }
 
-        ScannerItem<TTreeItem> IScanner<TTreeItem>.NextToken
+        Item IScanner<TTreeItem>.NextToken
             (SourcePosn sourcePosn)
         {
             return NextToken(sourcePosn);
         }
 
-        ScannerItem<TTreeItem> NextToken
+        Item NextToken
             (SourcePosn sourcePosn)
         {
             try
@@ -109,7 +109,7 @@ namespace hw.Parser
         }
 
 
-        ScannerItem<TTreeItem> WillReturnNull(SourcePosn sourcePosn)
+        Item WillReturnNull(SourcePosn sourcePosn)
         {
             NotImplementedMethod(sourcePosn);
             return null;
@@ -129,38 +129,38 @@ namespace hw.Parser
             }
         }
 
-        static ScannerItem<TTreeItem> CreateAndAdvance
+        static Item CreateAndAdvance
             (
             SourcePosn sourcePosn,
             Func<SourcePosn, int?> getLength,
-            Func<IType<TTreeItem>> getTokenClass,
+            Func<IType> getTokenClass,
             WhiteSpaceToken[] preceededBy)
         {
             return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass(), preceededBy);
         }
-        static ScannerItem<TTreeItem> CreateAndAdvance
+        static Item CreateAndAdvance
             (
             SourcePosn sourcePosn,
             Func<SourcePosn, int?> getLength,
-            Func<string, IType<TTreeItem>> getTokenClass,
+            Func<string, IType> getTokenClass,
             WhiteSpaceToken[] preceededBy)
         {
             return CreateAndAdvance
                 (sourcePosn, getLength, (sp, l) => getTokenClass(sp.SubString(0, l)), preceededBy);
         }
 
-        static ScannerItem<TTreeItem> CreateAndAdvance
+        static Item CreateAndAdvance
             (
             SourcePosn sourcePosn,
             Func<SourcePosn, int?> getLength,
-            Func<SourcePosn, int, IType<TTreeItem>> getTokenClass,
+            Func<SourcePosn, int, IType> getTokenClass,
             WhiteSpaceToken[] preceededBy)
         {
             var length = getLength(sourcePosn);
             if(length == null)
                 return null;
 
-            var result = new ScannerItem<TTreeItem>
+            var result = new Item
                 (
                 getTokenClass(sourcePosn, length.Value),
                 new ScannerToken(SourcePart.Span(sourcePosn, length.Value), preceededBy)
@@ -183,6 +183,24 @@ namespace hw.Parser
             {
                 throw new Exception(sourcePosn, exception.SourcePosn - sourcePosn, exception.Error);
             }
+        }
+
+        public sealed class Item
+        {
+            internal readonly IType Type;
+            internal readonly ScannerToken Token;
+
+            internal Item(IType type, ScannerToken token)
+            {
+                Type = type;
+                Token = token;
+            }
+        }
+
+        public interface IType
+        {
+            ISubParser<TTreeItem> NextParser { get; }
+            IType<TTreeItem> Type { get; }
         }
     }
 }

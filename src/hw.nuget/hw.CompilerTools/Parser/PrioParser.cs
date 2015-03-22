@@ -17,7 +17,7 @@ namespace hw.Parser
             readonly PrioParser<TTreeItem> _parent;
 
             TTreeItem _left;
-            ScannerItem<TTreeItem> _current;
+            Item<TTreeItem> _current;
             TTreeItem _result;
 
             public PrioParserWorker(PrioParser<TTreeItem> parent, Stack<OpenItem<TTreeItem>> stack)
@@ -47,16 +47,15 @@ namespace hw.Parser
                 return _result;
             }
 
-            ScannerItem<TTreeItem> ReadNextToken(SourcePosn sourcePosn)
+            Item<TTreeItem> ReadNextToken(SourcePosn sourcePosn)
             {
                 TraceNextToken(sourcePosn);
                 var result = _parent._scanner.NextToken(sourcePosn);
                 if(result.Type == null || result.Type.NextParser == null)
-                    return result;
+                    return new Item<TTreeItem>(result);
 
                 var subType = result.Type.NextParser.Execute(sourcePosn, _stack);
-                var token = new ScannerToken(result.Token.Start.Span(sourcePosn), null);
-                return new ScannerItem<TTreeItem>(subType, token);
+                return new Item<TTreeItem>(subType, result.Token);
             }
 
             void Step()
@@ -88,7 +87,7 @@ namespace hw.Parser
                 }
                 else
                     _left = _current.Create(_left, null);
-                _current = new ScannerItem<TTreeItem>(matchedItemType, _current.Token);
+                _current = new Item<TTreeItem>(matchedItemType, _current.Token);
             }
 
             void TraceRelation(char relation)

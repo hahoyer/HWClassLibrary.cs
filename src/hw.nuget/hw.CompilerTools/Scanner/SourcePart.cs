@@ -191,7 +191,7 @@ namespace hw.Scanner
 
         public static bool operator <(SourcePosn left, SourcePart right)
         {
-            return right != null && left <= right.Start;
+            return right != null && left < right.Start;
         }
 
         public static bool operator <(SourcePart left, SourcePart right)

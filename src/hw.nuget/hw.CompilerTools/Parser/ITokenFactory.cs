@@ -8,10 +8,10 @@ namespace hw.Parser
     public interface ITokenFactory<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
-        IType<TTreeItem> TokenClass(string name);
-        IType<TTreeItem> Number { get; }
-        IType<TTreeItem> Text { get; }
-        IType<TTreeItem> EndOfText { get; }
-        IType<TTreeItem> Error(Match.IError error);
+        Scanner<TTreeItem>.IType TokenClass(string name);
+        Scanner<TTreeItem>.IType Number { get; }
+        Scanner<TTreeItem>.IType Text { get; }
+        Scanner<TTreeItem>.IType EndOfText { get; }
+        Scanner<TTreeItem>.IType Error(Match.IError error);
     }
 }

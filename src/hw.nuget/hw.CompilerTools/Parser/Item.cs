@@ -5,17 +5,20 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public sealed class ScannerItem<TTreeItem>
+    public sealed class Item<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
         internal readonly IType<TTreeItem> Type;
         internal readonly ScannerToken Token;
 
-        internal ScannerItem(IType<TTreeItem> type, ScannerToken token)
+        internal Item(IType<TTreeItem> type, ScannerToken token)
         {
             Type = type;
             Token = token;
         }
+
+        internal Item(Scanner<TTreeItem>.Item other)
+            : this(other.Type.Type, other.Token) {}
 
         internal TTreeItem Create(TTreeItem left, TTreeItem right)
         {

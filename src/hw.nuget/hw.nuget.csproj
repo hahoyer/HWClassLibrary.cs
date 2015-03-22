@@ -55,7 +55,7 @@
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParsedSyntax.cs" />
     <Compile Include="hw.CompilerTools\Parser\Scanner.cs" />
-    <Compile Include="hw.CompilerTools\Parser\ScannerItem.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Item.cs" />
     <Compile Include="hw.CompilerTools\Parser\ScannerToken.cs" />
     <Compile Include="hw.CompilerTools\Parser\SubParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\Token.cs" />

@@ -20,7 +20,6 @@ namespace hw.Proof
             return null;
         }
         string IType<ParsedSyntax>.PrioTableId { get { return PrioTable.Error; } }
-        ISubParser<ParsedSyntax> IType<ParsedSyntax>.NextParser { get { return null; } }
         IType<ParsedSyntax> IType<ParsedSyntax>.NextTypeIfMatched { get { return null; } }
     }
 }

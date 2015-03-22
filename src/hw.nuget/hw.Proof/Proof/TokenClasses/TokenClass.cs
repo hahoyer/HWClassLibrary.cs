@@ -6,7 +6,8 @@ using hw.Parser;
 
 namespace hw.Proof.TokenClasses
 {
-    abstract class TokenClass : DumpableObject, IType<ParsedSyntax>, IUniqueIdProvider
+    abstract class TokenClass
+        : DumpableObject, Scanner<ParsedSyntax>.IType, IUniqueIdProvider, IType<ParsedSyntax>
     {
         protected virtual ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
@@ -26,14 +27,21 @@ namespace hw.Proof.TokenClasses
             }
             return "(" + result + ")";
         }
+
         ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             return Syntax(left, token, right);
         }
 
+
         string IType<ParsedSyntax>.PrioTableId { get { return Value; } }
-        ISubParser<ParsedSyntax> IType<ParsedSyntax>.NextParser { get { return Next; } }
+
+        ISubParser<ParsedSyntax> Scanner<ParsedSyntax>.IType.NextParser { get { return Next; } }
+
         IType<ParsedSyntax> IType<ParsedSyntax>.NextTypeIfMatched { get { return null; } }
+
+        IType<ParsedSyntax> Scanner<ParsedSyntax>.IType.Type { get { return this; } }
+
 
         protected virtual ISubParser<ParsedSyntax> Next { get { return null; } }
         public abstract string Value { get; }

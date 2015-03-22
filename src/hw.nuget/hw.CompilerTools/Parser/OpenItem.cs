@@ -11,9 +11,9 @@ namespace hw.Parser
         where TTreeItem : class, ISourcePart
     {
         internal readonly TTreeItem Left;
-        readonly ScannerItem<TTreeItem> _current;
+        readonly Item<TTreeItem> _current;
 
-        internal OpenItem(TTreeItem left, ScannerItem<TTreeItem> current)
+        internal OpenItem(TTreeItem left, Item<TTreeItem> current)
         {
             Left = left;
             _current = current;
@@ -31,10 +31,10 @@ namespace hw.Parser
 
         internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem)
         {
-            return StartItem(new ScannerItem<TTreeItem>(null, startItem));
+            return StartItem(new Item<TTreeItem>(null, startItem));
         }
 
-        static OpenItem<TTreeItem> StartItem(ScannerItem<TTreeItem> current)
+        static OpenItem<TTreeItem> StartItem(Item<TTreeItem> current)
         {
             return new OpenItem<TTreeItem>(default(TTreeItem), current);
         }
