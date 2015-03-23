@@ -24,30 +24,22 @@ namespace hw.Parser
 
         WhiteSpaceToken[] GuardedWhiteSpace(SourcePosn sourcePosn)
         {
-            return ExceptionGuard
-                (
-                    sourcePosn,
-                    posn => WhiteSpace(posn).ToArray()
-                );
+            return ExceptionGuard(sourcePosn, posn => WhiteSpace(posn).ToArray());
         }
 
         int? Number(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Number); }
         int? Text(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Text); }
         int? Any(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Any); }
 
-        Item IScanner<TTreeItem>.NextToken
-            (SourcePosn sourcePosn)
-        {
-            return NextToken(sourcePosn);
-        }
+        Item IScanner<TTreeItem>.NextToken(SourcePosn sourcePosn) { return NextToken(sourcePosn); }
 
-        Item NextToken
-            (SourcePosn sourcePosn)
+        Item NextToken(SourcePosn sourcePosn)
         {
+            var preceededBy = new WhiteSpaceToken[0];
             try
             {
                 Tracer.Assert(sourcePosn.IsValid);
-                var preceededBy = GuardedWhiteSpace(sourcePosn);
+                preceededBy = GuardedWhiteSpace(sourcePosn);
                 sourcePosn.Position += preceededBy.Sum(item => item.Characters.Length);
                 return CreateAndAdvance
                     (
@@ -68,7 +60,7 @@ namespace hw.Parser
                         exception.SourcePosn,
                         sp => exception.Length,
                         () => _tokenFactory.Error(exception.Error),
-                        new WhiteSpaceToken[0]);
+                        preceededBy);
             }
         }
 

@@ -16,8 +16,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.6.28-alpha</version>
+        <version>15.6.29-alpha</version>
         <releaseNotes>
+            Bug: preceeding whitespaces are ignored in case of scanner errors
             Change: Splitting IType into scanner and and parser relevant parts
             Change: IToken Otherparts removed
             Refactor: Reformats
