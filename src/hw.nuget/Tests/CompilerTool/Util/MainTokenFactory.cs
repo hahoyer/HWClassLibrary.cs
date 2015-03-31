@@ -310,19 +310,17 @@ namespace hw.Tests.CompilerTool.Util
     {
         sealed class Matched : TokenClass<Syntax>
         {
-            readonly string _id;
-            public override string Id { get { return _id; } }
+            public override string Id { get { return PrioTable.Any; } }
             protected override Syntax Create(Syntax left, IToken token, Syntax right)
             {
                 if(right == null && left != null)
                     return left.MatchedRightParenthesis(token);
                 return new UnNamedSyntax(left, token, right);
             }
-            public Matched(string id) { _id = id; }
         }
 
         readonly TokenClass<Syntax> _matchedInstance;
-        public RightParenthesis() { _matchedInstance = new Matched(Id); }
+        public RightParenthesis() { _matchedInstance = new Matched(); }
         protected override IType<Syntax> NextTypeIfMatched { get { return _matchedInstance; } }
         public override string Id { get { return ")"; } }
         protected override Syntax Create(Syntax left, IToken token, Syntax right)

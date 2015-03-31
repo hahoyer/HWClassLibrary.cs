@@ -5,13 +5,15 @@ using hw.Debug;
 using hw.Scanner;
 using hw.Tests.CompilerTool.Util;
 using hw.UnitTest;
+using NUnit.Framework;
 
 namespace hw.Tests.CompilerTool
 {
+    [UnitTest]
     [TestFixture]
     public static class Parser
     {
-        [Test]
+        [UnitTest]
         public static void WrongExpression()
         {
             ParseAndCheck
@@ -21,20 +23,30 @@ namespace hw.Tests.CompilerTool
                 );
         }
 
+        [UnitTest]
         [Test]
         public static void Expression()
         {
-            ParseAndCheck
-                (
-                    "(a*b+c*d)*(e*f+g*h) +(a*b+c*d)*(e*f+g*h)",
-                    "("
-                        + "((((<null> a <null>) * (<null> b <null>)) + ((<null> c <null>) * (<null> d <null>))) * (((<null> e <null>) * (<null> f <null>)) + ((<null> g <null>) * (<null> h <null>))))"
-                        + " + "
-                        + "((((<null> a <null>) * (<null> b <null>)) + ((<null> c <null>) * (<null> d <null>))) * (((<null> e <null>) * (<null> f <null>)) + ((<null> g <null>) * (<null> h <null>))))"
-                        + ")"
-                );
+            var expr = "(a*b+c*d)*(e*f+g*h)";
+            var subResult = Parse(expr).Dump();
+
+            var result = Parse(expr + " + " + expr).Dump();
+            var xresult = result
+                .Replace(subResult, "<expr>")
+                .Replace("(<null> a <null>)", "<a>")
+                .Replace("(<null> b <null>)", "<b>")
+                .Replace("(<null> c <null>)", "<c>")
+                .Replace("(<null> d <null>)", "<d>")
+                .Replace("(<null> e <null>)", "<e>")
+                .Replace("(<null> f <null>)", "<f>")
+                .Replace("(<null> g <null>)", "<g>")
+                .Replace("(<null> h <null>)", "<h>")
+                ;
+
+            ParseAndCheck(expr + " + " + expr, "(" + subResult + " + " + subResult + ")");
         }
-        [Test]
+
+        [UnitTest]
         public static void NormalParser()
         {
             var text = "a b c";
@@ -57,7 +69,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left.Left.Right == null);
         }
 
-        [Test]
+        [UnitTest]
         public static void NestedParser()
         {
             var result = Parse("--> b c");
@@ -71,7 +83,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left.Left == null);
             Tracer.Assert(result.Left.Right == null);
         }
-        [Test]
+        [UnitTest]
         public static void NestedParserMultipleEntries()
         {
             var result = Parse("--> (b c) c");
@@ -90,7 +102,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left.Left.Right == null);
         }
 
-        [Test]
+        [UnitTest]
         public static void Parenthesis()
         {
             var text = "(anton)";
@@ -101,27 +113,38 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left == null);
             Tracer.Assert(result.Right == null);
         }
-        [Test]
-        public static void ParenthesisAndSuffix() { ParseAndCheck("(anton)berta", "((<null> anton <null>) berta <null>)"); }
+        [UnitTest]
+        public static void ParenthesisAndSuffix()
+        {
+            ParseAndCheck("(anton)berta", "((<null> anton <null>) berta <null>)");
+        }
 
         static void ParseAndCheck(string text, string expectedResultDump, int stackFrameDepth = 0)
         {
             var result = Parse(text);
-            Tracer.Assert(result.Dump() == expectedResultDump, result.Dump, stackFrameDepth + 1);
+            Tracer.Assert
+                (
+                    result.Dump() == expectedResultDump,
+                    () =>
+                        "\nResult: " + result.Dump() +
+                            "\nXpcted: " + expectedResultDump,
+                    stackFrameDepth + 1);
         }
 
-        static Syntax Parse(string text)
+        static Syntax Parse(string text) { return Parse(text, TestRunner.IsModeErrorFocus); }
+
+        static Syntax Parse(string text, bool trace)
         {
             var source = new Source(text);
-            MainTokenFactory.Instance.Trace = TestRunner.IsModeErrorFocus;
-            NestedTokenFactory.Instance.Trace = TestRunner.IsModeErrorFocus;
+            MainTokenFactory.Instance.Trace = trace;
+            NestedTokenFactory.Instance.Trace = trace;
             var result = MainTokenFactory.Instance.Execute(source + 0);
             MainTokenFactory.Instance.Trace = false;
             NestedTokenFactory.Instance.Trace = false;
             return result;
         }
 
-        [Test]
+        [UnitTest]
         public static void ParenthesisAndPrefix()
         {
             var text = "zulu(anton)";
@@ -137,7 +160,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Right.Right == null, result.Dump);
         }
 
-        [Test]
+        [UnitTest]
         public static void ParenthesisSuffixAndPrefix()
         {
             var text = "zulu(anton)berta";
@@ -156,7 +179,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left.Right.Left == null, result.Dump);
             Tracer.Assert(result.Left.Right.Right == null, result.Dump);
         }
-        [Test]
+        [UnitTest]
         public static void EmptyParenthesis()
         {
             var result = Parse("()");
@@ -166,7 +189,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Right == null, result.Dump);
         }
 
-        [Test]
+        [UnitTest]
         public static void EmptyParenthesisAndSuffix()
         {
             var result = Parse("()berta");
@@ -180,7 +203,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left.Right == null, result.Dump);
         }
 
-        [Test]
+        [UnitTest]
         public static void EmptyParenthesisAndPrefix()
         {
             var text = "zulu()";
@@ -196,7 +219,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Right.Right == null, result.Dump);
         }
 
-        [Test]
+        [UnitTest]
         public static void EmptyParenthesisSuffixAndPrefix()
         {
             var result = Parse("zulu()berta");
@@ -214,7 +237,7 @@ namespace hw.Tests.CompilerTool
             Tracer.Assert(result.Left.Right.Right == null, result.Dump);
         }
 
-        [Test]
+        [UnitTest]
         public static void ParenthesisSuffixAndPrefixAndSequence()
         {
             ParseAndCheck
@@ -229,7 +252,7 @@ namespace hw.Tests.CompilerTool
                 );
         }
 
-        [Test]
+        [UnitTest]
         public static void RealParenthesisTest()
         {
             var text = " (x5 type x5) instance () dump_print           ";
@@ -242,7 +265,10 @@ namespace hw.Tests.CompilerTool
                         == "(((((<null> x5 <null>) type <null>) x5 <null>) instance (<null>  <null>)) dump_print <null>)",
                     result.Dump());
         }
-        [Test]
-        public static void LotOfParenthesisTest() { ParseAndCheck(" x()()", "((<null> x (<null>  <null>))  (<null>  <null>))"); }
+        [UnitTest]
+        public static void LotOfParenthesisTest()
+        {
+            ParseAndCheck(" x()()", "((<null> x (<null>  <null>))  (<null>  <null>))");
+        }
     }
 }
