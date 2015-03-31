@@ -98,14 +98,12 @@ namespace hw.Scanner
             return GetDumpAroundCurrent(Source.DumpWidth);
         }
 
-        string DumpCurrent { get { return IsEnd ? "" : ("" + Current); } }
-
         string GetDumpAfterCurrent(int dumpWidth)
         {
             if(IsEnd)
                 return "";
-            var length = Math.Min(dumpWidth, Source.Length - Position - 1);
-            var result = Source.SubString(Position + 1, length);
+            var length = Math.Min(dumpWidth, Source.Length - Position);
+            var result = Source.SubString(Position, length);
             if(length == dumpWidth)
                 result += "...";
             return result;
@@ -127,9 +125,7 @@ namespace hw.Scanner
         {
             if(IsValid)
                 return GetDumpBeforeCurrent(dumpWidth)
-                    + "["
-                    + DumpCurrent
-                    + "]"
+                    + "[]"
                     + GetDumpAfterCurrent(dumpWidth);
             return "<invalid>";
         }

@@ -80,7 +80,9 @@ namespace hw.Parser
 
                 var matchedItemType = relation == '=' ? _current.Type.NextTypeIfMatched : null;
                 TraceItemLine("matchedItemType", matchedItemType);
-                if(matchedItemType == null)
+                Tracer.Line("");
+
+                if (matchedItemType == null)
                 {
                     _stack.Push(new OpenItem<TTreeItem>(_left, _current));
                     _left = null;
@@ -97,6 +99,14 @@ namespace hw.Parser
                 Tracer.Line(("" + relation).Repeat(16));
             }
 
+            void TraceNextToken(SourcePosn sourcePosn)
+            {
+                if (!Trace)
+                    return;
+                Tracer.Line("\n== NextToken ====>");
+                Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
+            }
+
             void TraceNewItem(SourcePosn sourcePosn)
             {
                 if(!Trace)
@@ -104,15 +114,6 @@ namespace hw.Parser
                 Tracer.Line(_current.Token.SourcePart.GetDumpAroundCurrent(50));
                 Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
                 Tracer.Line("=================>");
-                TraceItemLine("_type", _current.Type);
-            }
-
-            void TraceNextToken(SourcePosn sourcePosn)
-            {
-                if(!Trace)
-                    return;
-                Tracer.Line("\n== NextToken ====>");
-                Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
             }
 
             void TraceBeginInnerLoop()
@@ -124,7 +125,8 @@ namespace hw.Parser
                 Tracer.Line("begin of inner loop ==>");
                 Tracer.Line("======================>");
                 Tracer.IndentStart();
-                Tracer.Line("left = " + Extension.TreeDump(_left));
+                TraceItemLine("_type", _current.Type);
+                Tracer.Line("_left = " + Extension.TreeDump(_left));
                 Tracer.Line(FormatStackForTrace(_stack));
                 Tracer.IndentEnd();
             }
@@ -136,7 +138,7 @@ namespace hw.Parser
                 Tracer.IndentStart();
                 Tracer.Line
                     (
-                        "itemType = "
+                        "_type = "
                             + (_current.Type == null ? "null" : _current.Type.GetType().PrettyName()));
                 Tracer.Line("left = " + Extension.TreeDump(_left));
                 Tracer.Line(FormatStackForTrace(_stack));
@@ -153,7 +155,7 @@ namespace hw.Parser
                     return;
                 Tracer.Line("<<<<<<");
                 Tracer.IndentStart();
-                Tracer.Line("left = " + Extension.TreeDump(_left));
+                Tracer.Line("_left = " + Extension.TreeDump(_left));
                 Tracer.Line(FormatStackForTrace(_stack));
                 Tracer.IndentEnd();
             }
@@ -180,14 +182,12 @@ namespace hw.Parser
                 if(!Trace)
                     return;
 
-                Tracer.IndentStart();
                 var itemDump = item == null
                     ? "null"
                     : item.PrioTableId
                         + " Type = "
                         + item.GetType().PrettyName();
-                Tracer.Line(title + " = " + itemDump + "\n");
-                Tracer.IndentEnd();
+                Tracer.Line(title + " = " + itemDump);
             }
 
             static string TreeDump(OpenItem<TTreeItem> value)
