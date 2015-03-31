@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace hw.Parser
 {
-    public interface IOperator<TTreeItem>
+    public interface IOperator<in TIn, out TOut>
     {
-        TTreeItem Terminal(IToken token);
-        TTreeItem Prefix(IToken token, TTreeItem right);
-        TTreeItem Suffix(TTreeItem left, IToken token);
-        TTreeItem Infix(TTreeItem left, IToken token, TTreeItem right);
+        TOut Terminal(IToken token);
+        TOut Prefix(IToken token, TIn right);
+        TOut Suffix(TIn left, IToken token);
+        TOut Infix(TIn left, IToken token, TIn right);
     }
 }

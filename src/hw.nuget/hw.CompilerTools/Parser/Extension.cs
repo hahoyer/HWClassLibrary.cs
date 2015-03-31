@@ -8,9 +8,9 @@ namespace hw.Parser
 {
     public static class Extension
     {
-        public static TTreeItem Operation<TTreeItem>
-            (this IOperator<TTreeItem> @operator, TTreeItem left, IToken token, TTreeItem right)
-            where TTreeItem : class
+        public static TOut Operation<TIn, TOut>
+            (this IOperator<TIn, TOut> @operator, TIn left, IToken token, TIn right)
+            where TIn : class
         {
             return left == null
                 ? (right == null ? @operator.Terminal(token) : @operator.Prefix(token, right))
