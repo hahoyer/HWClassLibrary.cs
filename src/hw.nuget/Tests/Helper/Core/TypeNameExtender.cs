@@ -7,10 +7,10 @@ using hw.UnitTest;
 
 namespace hw.Tests.Helper.Core
 {
-    [TestFixture]
+    [UnitTest]
     public static class TypeNameExtender
     {
-        [Test]
+        [UnitTest]
         public static void SimpleTypes()
         {
             Tracer.Assert(typeof(int).PrettyName() == "int");

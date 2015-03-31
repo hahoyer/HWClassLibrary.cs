@@ -21,7 +21,7 @@ namespace hw.UnitTest
             {
                 return Type
                     .GetMethods()
-                    .Where(methodInfo => methodInfo.GetAttribute<TestAttribute>(true) != null)
+                    .Where(methodInfo => methodInfo.GetAttribute<UnitTestAttribute>(true) != null)
                     .Select(methodInfo => new TestMethod(methodInfo, Type))
                     .Concat(DefaultTestMethods)
                     .Concat(InterfaceMethods);
@@ -41,7 +41,7 @@ namespace hw.UnitTest
         {
             get
             {
-                var testAttribute = Type.GetAttribute<TestFixtureAttribute>(true);
+                var testAttribute = Type.GetAttribute<UnitTestAttribute>(true);
                 if(testAttribute != null && testAttribute.DefaultMethod != null)
                     yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod), Type);
             }

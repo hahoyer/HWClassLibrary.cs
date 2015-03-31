@@ -7,7 +7,7 @@ using hw.UnitTest;
 
 namespace hw.Tests.Helper.Core
 {
-    [TestFixture]
+    [UnitTest]
     public sealed class TestEnumEx
     {
         class MyEnum : EnumEx
@@ -25,7 +25,7 @@ namespace hw.Tests.Helper.Core
         class MyEnumDerived : MyEnum
         { }
 
-        [Test]
+        [UnitTest]
         public void Test()
         {
             var all = MyEnum.All.ToArray();

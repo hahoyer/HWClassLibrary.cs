@@ -170,7 +170,9 @@
     <None Include="hw.ReplaceVariables.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="hw.CompilerTools.nuspec" />
+    <None Include="hw.CompilerTools.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="hw.Helper.Core.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -183,7 +185,9 @@
     <None Include="hw.Forms.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="hw.UnitTest.nuspec" />
+    <None Include="hw.UnitTest.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="hw.T4Helper\Helper\T4Extender.cs" />
     <None Include="hw.T4Helper\Helper\T4Context.cs" />
     <Compile Include="hw.Forms\Forms\Extender.cs" />
@@ -202,9 +206,11 @@
     <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestRunner.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestType.cs" />
+    <None Include="packages.config" />
     <None Include="sys.targets" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>

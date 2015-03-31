@@ -159,7 +159,7 @@ namespace hw.UnitTest
             return rootAssembly
                 .GetReferencedTypes()
                 .Where
-                (type => type.IsSealed && type.GetAttribute<TestFixtureAttribute>(true) != null)
+                (type => type.IsSealed && type.GetAttribute<UnitTestAttribute>(true) != null)
                 .Select(type => new TestType(type));
         }
     }

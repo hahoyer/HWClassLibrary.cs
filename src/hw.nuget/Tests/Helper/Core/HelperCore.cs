@@ -7,10 +7,10 @@ using hw.UnitTest;
 
 namespace hw.Tests.Helper.Core
 {
-    [TestFixture]
+    [UnitTest]
     public static class DateTimeExtender
     {
-        [Test]
+        [UnitTest]
         public static void Format3Digits()
         {
             var t1 = TimeSpan.FromMinutes(3) + TimeSpan.FromSeconds(12);

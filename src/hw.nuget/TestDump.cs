@@ -6,7 +6,7 @@ using hw.UnitTest;
 
 namespace hw
 {
-    [TestFixture]
+    [UnitTest]
     public static class TestDump
     {
         class Foo
@@ -25,7 +25,7 @@ namespace hw
             public new string S1 = "BlaString";
         }
 
-        [Test]
+        [UnitTest]
         public static void M1()
         {
             const string expectedTrace = @"hw.TestDump+Bla

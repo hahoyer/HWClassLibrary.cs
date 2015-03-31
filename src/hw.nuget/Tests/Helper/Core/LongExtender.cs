@@ -7,10 +7,10 @@ using hw.UnitTest;
 
 namespace hw.Tests.Helper.Core
 {
-    [TestFixture]
+    [UnitTest]
     public static class LongExtender
     {
-        [Test]
+        [UnitTest]
         public static void TestMethod()
         {
             InternalTest(1, "1");

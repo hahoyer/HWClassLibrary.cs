@@ -5,10 +5,10 @@ using hw.UnitTest;
 
 namespace hw.Tests.ReplaceVariables
 {
-    [TestFixture]
+    [UnitTest]
     static public class Example
     {
-        [Test]
+        [UnitTest]
         public static void TestMethod()
         {
             var myData = new MyData();

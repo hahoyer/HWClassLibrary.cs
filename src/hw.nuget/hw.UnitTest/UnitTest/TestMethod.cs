@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using System.Reflection;
 using hw.Debug;
-using hw.Helper;
 
 namespace hw.UnitTest
 {
@@ -11,7 +11,10 @@ namespace hw.UnitTest
     {
         public string FileName;
         public int LineNumber;
-        public string ToString(FilePositionTag tag) { return Tracer.FilePosn(FileName, LineNumber, 0, tag); }
+        public string ToString(FilePositionTag tag)
+        {
+            return Tracer.FilePosn(FileName, LineNumber, 0, tag);
+        }
     }
 
     sealed class TestMethod : Dumpable
@@ -56,11 +59,11 @@ namespace hw.UnitTest
             {
                 get
                 {
-                    var b = _type.GetAttribute<TestFixtureAttribute>(true);
-                    if (b != null)
+                    var b = _type.GetAttribute<UnitTestAttribute>(true);
+                    if(b != null)
                         yield return b.Where;
-                    var a = _target.GetAttribute<TestAttribute>(true);
-                    if (a != null)
+                    var a = _target.GetAttribute<UnitTestAttribute>(true);
+                    if(a != null)
                         yield return a.Where;
                 }
             }
@@ -78,8 +81,8 @@ namespace hw.UnitTest
             {
                 get
                 {
-                    var b = _target.GetAttribute<TestFixtureAttribute>(true);
-                    if (b != null)
+                    var b = _target.GetAttribute<UnitTestAttribute>(true);
+                    if(b != null)
                         yield return b.Where;
                 }
             }
@@ -88,7 +91,10 @@ namespace hw.UnitTest
 
         readonly IActor _actor;
         public bool IsSuspended;
-        public TestMethod(MethodInfo methodInfo, Type type) { _actor = new MethodActor(methodInfo, type); }
+        public TestMethod(MethodInfo methodInfo, Type type)
+        {
+            _actor = new MethodActor(methodInfo, type);
+        }
 
         public TestMethod(Type type) { _actor = new InterfaceActor(type); }
 
@@ -109,7 +115,11 @@ namespace hw.UnitTest
         {
             Tracer.Line("Start " + _actor.LongName);
             Tracer.IndentStart();
-            Tracer.Line(_actor.FilePositions.Select(p=> p.ToString(FilePositionTag.Test)+ " position of test").Stringify("\n"));
+            Tracer.Line
+                (
+                    _actor.FilePositions.Select
+                        (p => p.ToString(FilePositionTag.Test) + " position of test")
+                        .Stringify("\n"));
             try
             {
                 if(!IsSuspended)
