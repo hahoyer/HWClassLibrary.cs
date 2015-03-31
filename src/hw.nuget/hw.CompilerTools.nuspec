@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.7</version>
+        <version>15.7.1</version>
         <releaseNotes>
+            Bug: Extra lines are written to output during parse
+            15.7
             Change: Trace dump improved
             15.6.30-alpha
             Change: separate input and output parameter types for IOperation

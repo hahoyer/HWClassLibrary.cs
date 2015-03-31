@@ -80,7 +80,7 @@ namespace hw.Parser
 
                 var matchedItemType = relation == '=' ? _current.Type.NextTypeIfMatched : null;
                 TraceItemLine("matchedItemType", matchedItemType);
-                Tracer.Line("");
+                if(Trace)Tracer.Line("");
 
                 if (matchedItemType == null)
                 {
