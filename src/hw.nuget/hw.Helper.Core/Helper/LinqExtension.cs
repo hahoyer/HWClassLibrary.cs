@@ -9,16 +9,19 @@ namespace hw.Helper
 {
     public static class LinqExtension
     {
-        public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
+        public static bool AddDistinct<T>
+            (this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
         {
             return InternalAddDistinct(a, b, isEqual);
         }
-        public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class
+        public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine)
+            where T : class
         {
             return InternalAddDistinct(a, b, combine);
         }
 
-        static bool InternalAddDistinct<T>(ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
+        static bool InternalAddDistinct<T>
+            (ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
         {
             var result = false;
             foreach(var bi in b)
@@ -27,7 +30,8 @@ namespace hw.Helper
             return result;
         }
 
-        static bool InternalAddDistinct<T>(IList<T> a, IEnumerable<T> b, Func<T, T, T> combine) where T : class
+        static bool InternalAddDistinct<T>(IList<T> a, IEnumerable<T> b, Func<T, T, T> combine)
+            where T : class
         {
             var result = false;
             foreach(var bi in b)
@@ -59,7 +63,8 @@ namespace hw.Helper
             return true;
         }
 
-        public static IEnumerable<IEnumerable<T>> Separate<T>(this IEnumerable<T> x, Func<T, bool> isHead)
+        public static IEnumerable<IEnumerable<T>> Separate<T>
+            (this IEnumerable<T> x, Func<T, bool> isHead)
         {
             var subResult = new List<T>();
 
@@ -104,7 +109,8 @@ namespace hw.Helper
             return Stringify(x, separator);
         }
 
-        public static string Stringify<T>(this IEnumerable<T> x, string separator, bool showNumbers = false)
+        public static string Stringify<T>
+            (this IEnumerable<T> x, string separator, bool showNumbers = false)
         {
             var result = new StringBuilder();
             var i = 0;
@@ -136,7 +142,8 @@ namespace hw.Helper
         /// <param name="list"></param>
         /// <param name="isInRelation"></param>
         /// <returns></returns>
-        public static IEnumerable<int> FrameIndexList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
+        public static IEnumerable<int> FrameIndexList<T>
+            (this IEnumerable<T> list, Func<T, T, bool> isInRelation)
         {
             var listArray = list.ToArray();
             return
@@ -152,17 +159,20 @@ namespace hw.Helper
         /// <param name="list"></param>
         /// <param name="isInRelation"></param>
         /// <returns></returns>
-        public static IEnumerable<T> FrameElementList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
+        public static IEnumerable<T> FrameElementList<T>
+            (this IEnumerable<T> list, Func<T, T, bool> isInRelation)
         {
             var listArray = list.ToArray();
             return listArray.FrameIndexList(isInRelation).Select(index => listArray[index]);
         }
 
-        public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list) where T : IComparable<T>
+        public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list)
+            where T : IComparable<T>
         {
             return list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
         }
-        public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list) where T : IComparable<T>
+        public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list)
+            where T : IComparable<T>
         {
             return list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
         }
@@ -195,7 +205,8 @@ namespace hw.Helper
             return x.StartsWith(y);
         }
 
-        public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function) where T : class
+        public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
+            where T : class
             where TResult : class
         {
             return target == default(T) ? default(TResult) : function(target);
@@ -257,9 +268,15 @@ namespace hw.Helper
             Func<TLeft, TKey> getLeftKey,
             Func<TRight, TKey> getRightKey) where TLeft : class where TRight : class
         {
-            var leftCommon = left.Select(l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
-            var rightCommon = right.Select(r => new Tuple<TKey, TLeft, TRight>(getRightKey(r), null, r));
-            return leftCommon.Union(rightCommon).GroupBy(t => t.Item1).Select(Merge);
+            var leftCommon = left.Select
+                (l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
+            var rightCommon = right.Select
+                (r => new Tuple<TKey, TLeft, TRight>(getRightKey(r), null, r));
+            return
+                leftCommon.Union(rightCommon)
+                    .GroupBy(t => t.Item1)
+                    .Select<IGrouping<TKey, Tuple<TKey, TLeft, TRight>>, Tuple<TKey, TLeft, TRight>>
+                    (Merge);
         }
 
         public static IEnumerable<Tuple<TKey, T, T>> Merge<TKey, T>
@@ -269,7 +286,8 @@ namespace hw.Helper
             return Merge(left, right, getKey, getKey);
         }
 
-        public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>(IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping)
+        public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>
+            (IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping)
             where TLeft : class where TRight : class
         {
             var list = grouping.ToArray();
@@ -279,9 +297,11 @@ namespace hw.Helper
                     return list[0];
                 case 2:
                     if(list[0].Item2 == null && list[1].Item3 == null)
-                        return new Tuple<TKey, TLeft, TRight>(grouping.Key, list[1].Item2, list[0].Item3);
+                        return new Tuple<TKey, TLeft, TRight>
+                            (grouping.Key, list[1].Item2, list[0].Item3);
                     if(list[1].Item2 == null && list[0].Item3 == null)
-                        return new Tuple<TKey, TLeft, TRight>(grouping.Key, list[0].Item2, list[1].Item3);
+                        return new Tuple<TKey, TLeft, TRight>
+                            (grouping.Key, list[0].Item2, list[1].Item3);
                     break;
             }
             throw new DuplicateKeyException();
@@ -290,11 +310,14 @@ namespace hw.Helper
         public static FunctionCache<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>
             (this IEnumerable<T> list, Func<T, TKey> selector)
         {
-            return new FunctionCache<TKey, IEnumerable<T>>(key => list.Where(item => Equals(selector(item), key)));
+            return new FunctionCache<TKey, IEnumerable<T>>
+                (key => list.Where(item => Equals(selector(item), key)));
         }
 
         public static void AddRange<TKey, TValue>
-            (this IDictionary<TKey, TValue> target, IEnumerable<KeyValuePair<TKey, TValue>> newEntries)
+            (
+            this IDictionary<TKey, TValue> target,
+            IEnumerable<KeyValuePair<TKey, TValue>> newEntries)
         {
             foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
                 target.Add(item);
@@ -339,14 +362,16 @@ namespace hw.Helper
 
         public static bool In<T>(this T a, params T[] b) { return b.Contains(a); }
 
-        internal static IEnumerable<T> SelectHierachical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
+        internal static IEnumerable<T> SelectHierachical<T>
+            (this T root, Func<T, IEnumerable<T>> getChildren)
         {
             yield return root;
             foreach(var item in getChildren(root).SelectMany(i => i.SelectHierachical(getChildren)))
                 yield return item;
         }
 
-        public static IEnumerable<TType> Sort<TType>(this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+        public static IEnumerable<TType> Sort<TType>
+            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
         {
             var xx = x.ToArray();
             Tracer.Assert(xx.IsCircuidFree(immediateParents));
@@ -367,11 +392,13 @@ namespace hw.Helper
             }
         }
 
-        public static bool IsCircuidFree<TType>(this TType x, Func<TType, IEnumerable<TType>> immediateParents)
+        public static bool IsCircuidFree<TType>
+            (this TType x, Func<TType, IEnumerable<TType>> immediateParents)
         {
             return immediateParents(x).Closure(immediateParents).All(xx => !xx.Equals(x));
         }
-        public static bool IsCircuidFree<TType>(this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+        public static bool IsCircuidFree<TType>
+            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
         {
             return x.All(xx => xx.IsCircuidFree(immediateParents));
         }
@@ -391,6 +418,27 @@ namespace hw.Helper
         {
             return target == null ? new T[0] : new[] {target.Value};
         }
+
+
+        // taken from http://dotnet-snippets.de/snippet/linq-erweiterung-split/4893
+        public static IEnumerable<IEnumerable<T>> Split<T>
+            (this IEnumerable<T> source, Func<T, bool> splitter)
+        {
+            using(var enumerator = source.GetEnumerator())
+                while(enumerator.MoveNext())
+                    yield return GetInnerSequence(enumerator, splitter).ToList();
+        }
+
+        // taken from http://dotnet-snippets.de/snippet/linq-erweiterung-split/4893
+        static IEnumerable<T> GetInnerSequence<T>(IEnumerator<T> enumerator, Func<T, bool> splitter)
+        {
+            do
+            {
+                if(splitter(enumerator.Current))
+                    yield break;
+                yield return enumerator.Current;
+            } while(enumerator.MoveNext());
+        }
     }
 
     public interface IAggregateable<T>
@@ -398,6 +446,5 @@ namespace hw.Helper
         T Aggregate(T other);
     }
 
-    sealed class DuplicateKeyException : Exception
-    {}
+    sealed class DuplicateKeyException : Exception {}
 }
