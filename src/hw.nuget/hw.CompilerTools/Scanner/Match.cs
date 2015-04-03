@@ -22,22 +22,22 @@ namespace hw.Scanner
 
         int? IMatch.Match(SourcePosn sourcePosn) { return _data.Match(sourcePosn); }
 
-        internal IMatch UnBox { get { return _data.UnBox(); } }
-        internal static Match Break { get { return new Match(new BreakMatch()); } }
+        public IMatch UnBox { get { return _data.UnBox(); } }
+        public static Match Break { get { return new Match(new BreakMatch()); } }
 
-        internal Match Repeat(int minCount = 0, int? maxCount = null) { return _data.Repeat(minCount, maxCount); }
-        internal Match Else(IMatch other) { return _data.Else(other); }
-        internal Match Value(Func<string, IMatch> func) { return new Match(new ValueMatch(_data, func)); }
-        internal Match Find { get { return new Match(new FindMatch(_data)); } }
+        public Match Repeat(int minCount = 0, int? maxCount = null) { return _data.Repeat(minCount, maxCount); }
+        public Match Else(IMatch other) { return _data.Else(other); }
+        public Match Value(Func<string, IMatch> func) { return new Match(new ValueMatch(_data, func)); }
+        public Match Find { get { return new Match(new FindMatch(_data)); } }
 
-        internal static Match WhiteSpace { get { return Box(char.IsWhiteSpace); } }
-        internal static Match LineEnd { get { return "\n\r".AnyChar().Else(End); } }
-        internal static Match End { get { return new Match(new EndMatch()); } }
-        internal static Match Digit { get { return Box(char.IsDigit); } }
-        internal static Match Letter { get { return Box(char.IsLetter); } }
+        public static Match WhiteSpace { get { return Box(char.IsWhiteSpace); } }
+        public static Match LineEnd { get { return "\n\r".AnyChar().Else(End); } }
+        public static Match End { get { return new Match(new EndMatch()); } }
+        public static Match Digit { get { return Box(char.IsDigit); } }
+        public static Match Letter { get { return Box(char.IsLetter); } }
         public Match Not { get { return new Match(new NotMatch(this)); } }
 
-        internal static Match Box(Func<char, bool> func) { return new Match(new FunctionalMatch(func, true)); }
+        public static Match Box(Func<char, bool> func) { return new Match(new FunctionalMatch(func, true)); }
 
         public static Match operator +(string x, Match y) { return x.Box() + y; }
         public static Match operator +(Match x, string y) { return x + y.Box(); }
@@ -161,7 +161,7 @@ namespace hw.Scanner
         public interface IError
         {}
 
-        internal sealed class Exception : System.Exception
+        public sealed class Exception : System.Exception
         {
             public readonly SourcePosn SourcePosn;
             public readonly IError Error;
