@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using hw.Debug;
 using hw.Helper;
 
@@ -21,13 +22,19 @@ namespace hw.UnitTest
             {
                 return Type
                     .GetMethods()
-                    .Where(methodInfo => methodInfo.GetAttribute<UnitTestAttribute>(true) != null)
+                    .Where(IsUnitTestMethod)
                     .Select(methodInfo => new TestMethod(methodInfo, Type))
                     .Concat(DefaultTestMethods)
                     .Concat(InterfaceMethods);
             }
         }
-       
+
+        static bool IsUnitTestMethod(MethodInfo methodInfo)
+        {
+            return methodInfo.GetAttribute<UnitTestAttribute>(true) != null
+                || TestRunner.RegisteredFrameworks.Any(item=> item.IsUnitTestMethod(methodInfo));
+        }
+
         IEnumerable<TestMethod> InterfaceMethods
         {
             get

@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>15.0.1</version>
+        <version>15.0.2</version>
         <releaseNotes>
+            New: Ability to register other test frameworks
+            15.0.1
             Change: Test runner returns false when any test has failed
             15.0
             Breaking Change: Attributes TestFixture and Test renamed to UnitTest

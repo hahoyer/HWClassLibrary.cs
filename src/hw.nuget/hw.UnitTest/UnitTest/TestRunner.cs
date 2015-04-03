@@ -65,7 +65,6 @@ namespace hw.UnitTest
 
             _status = "ran";
             SaveConfiguration();
-
         }
 
         bool AllIsFine { get { return _testTypes.All(t => !t.IsStarted || t.IsSuccessfull); } }
@@ -162,8 +161,36 @@ namespace hw.UnitTest
             return rootAssembly
                 .GetReferencedTypes()
                 .Where
-                (type => type.IsSealed && type.GetAttribute<UnitTestAttribute>(true) != null)
+                (type => IsUnitTestType(type))
                 .Select(type => new TestType(type));
+        }
+
+        static bool IsUnitTestType(Type type)
+        {
+            if(!type.IsSealed)
+                return false;
+            if(type.GetAttribute<UnitTestAttribute>(true) != null)
+                return true;
+            return RegisteredFrameworks.Any(any => any.IsUnitTestType(type));
+        }
+
+        public static readonly List<IFramework> RegisteredFrameworks = new List<IFramework>();
+    }
+
+    public interface IFramework
+    {
+        bool IsUnitTestType(Type type);
+        bool IsUnitTestMethod(MethodInfo methodInfo);
+    }
+
+    public class AttributedFramework<TType, TMethod> : IFramework
+        where TType : Attribute
+        where TMethod : Attribute
+    {
+        bool IFramework.IsUnitTestType(Type type) { return type.GetAttributes<TType>(true).Any(); }
+        bool IFramework.IsUnitTestMethod(MethodInfo methodInfo)
+        {
+            return methodInfo.GetAttributes<TMethod>(true).Any();
         }
     }
 
