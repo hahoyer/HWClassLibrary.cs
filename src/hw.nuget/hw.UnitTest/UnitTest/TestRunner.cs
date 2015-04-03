@@ -37,9 +37,11 @@ namespace hw.UnitTest
                 LoadConfiguration();
         }
 
-        public static void RunTests(Assembly rootAssembly)
+        public static bool RunTests(Assembly rootAssembly)
         {
-            new TestRunner(GetUnitTestTypes(rootAssembly)).Run();
+            var testRunner = new TestRunner(GetUnitTestTypes(rootAssembly));
+            testRunner.Run();
+            return testRunner.AllIsFine;
         }
 
         TestType[] Dependants(TestType type)
@@ -63,6 +65,7 @@ namespace hw.UnitTest
 
             _status = "ran";
             SaveConfiguration();
+
         }
 
         bool AllIsFine { get { return _testTypes.All(t => !t.IsStarted || t.IsSuccessfull); } }

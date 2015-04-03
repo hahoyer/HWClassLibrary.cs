@@ -7,6 +7,9 @@ namespace hw.UnitTest
 {
     public static class TestExtender
     {
-        public static void RunTests(this Assembly rootAssembly) { TestRunner.RunTests(rootAssembly); }
+        public static bool RunTests(this Assembly rootAssembly)
+        {
+            return TestRunner.RunTests(rootAssembly);
+        }
     }
 }

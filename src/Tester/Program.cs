@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using hw.Debug;
 using hw.UnitTest;
 
 namespace Tester
@@ -13,7 +14,8 @@ namespace Tester
             TestRunner.IsModeErrorFocus = true;
             //Parser.ParenthesisSuffixAndPrefixAndSequence();
             TestRunner.IsModeErrorFocus = false;
-            TestRunner.RunTests(Assembly.GetExecutingAssembly());
+            var result = TestRunner.RunTests(Assembly.GetExecutingAssembly());
+            Tracer.Assert(result);
         }
     }
 }
