@@ -25,6 +25,25 @@ namespace hw.Tests.CompilerTool
 
         [UnitTest]
         [Test]
+        public static void InvalidComment()
+        {
+            ParseAndCheck
+                (
+                    "#( \na",
+                    "(<null> ?EOFInComment <null>)"
+                );
+        }
+
+        [UnitTest]
+        [Test]
+        public static void PreceededInvalidComment()
+        {
+            var result = Parse("    #( \na");
+            Tracer.Assert(result.Token.PrecededWith.Any());
+        }
+
+        [UnitTest]
+        [Test]
         public static void Expression()
         {
             var expr = "(a*b+c*d)*(e*f+g*h)";

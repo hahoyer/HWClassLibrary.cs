@@ -22,6 +22,7 @@ namespace hw.Tests.CompilerTool.Util
         readonly Error _invalidLineComment = new Error(IssueId.EOFInLineComment);
         readonly Error _invalidComment = new Error(IssueId.EOFInComment);
         readonly IMatch _number;
+        readonly Match _comment;
 
         public ReniLexer()
         {
@@ -34,13 +35,15 @@ namespace hw.Tests.CompilerTool.Util
 
             _any = symbol1.Else(identifier);
 
-            _whiteSpaces =
-                Match.WhiteSpace.Else("#" + " \t".AnyChar() + Match.LineEnd.Find)
+            _whiteSpaces = Match.WhiteSpace.Repeat(1);
+
+            _comment =
+                ("#" + " \t".AnyChar() + Match.LineEnd.Find)
                     .Else("#(" + Match.WhiteSpace + (Match.WhiteSpace + ")#").Find)
                     .Else("#(" + _any.Value(id => (Match.WhiteSpace + id + ")#").Box().Find))
                     .Else("#(" + Match.End.Find + _invalidComment)
                     .Else("#" + Match.End.Find + _invalidLineComment)
-                    .Repeat(1);
+                ;
 
             _number = Match.Digit.Repeat(1);
 
@@ -57,7 +60,11 @@ namespace hw.Tests.CompilerTool.Util
         {
             get
             {
-                return new Func<SourcePosn, int?>[] { sourcePosn => sourcePosn.Match(_whiteSpaces) };
+                return new Func<SourcePosn, int?>[]
+                {
+                    sourcePosn => sourcePosn.Match(_whiteSpaces),
+                    sourcePosn => sourcePosn.Match(_comment)
+                };
             }
         }
 

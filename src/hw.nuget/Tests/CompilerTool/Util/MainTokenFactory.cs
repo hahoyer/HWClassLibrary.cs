@@ -29,8 +29,7 @@ namespace hw.Tests.CompilerTool.Util
             public override string Id { get { return "<error>"; } }
             protected override Syntax Create(Syntax left, IToken token, Syntax right)
             {
-                NotImplementedMethod(left, token, right);
-                return null;
+                return new ErrorSyntax(left, token, right, _message);
             }
         }
     }
@@ -225,6 +224,17 @@ namespace hw.Tests.CompilerTool.Util
         }
         public override sealed Syntax Left { get { return _left; } }
         public override sealed Syntax Right { get { return _right; } }
+    }
+
+    class ErrorSyntax : TreeSyntax
+    {
+        readonly Match.IError _message;
+        public ErrorSyntax(Syntax left, IToken token, Syntax right, Match.IError message)
+            : base(left, token, right)
+        {
+            _message = message;
+        }
+        public override string TokenClassName { get { return "?" + _message; } }
     }
 
     sealed class NamedTreeSyntax : TreeSyntax

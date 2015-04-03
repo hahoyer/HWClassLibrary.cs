@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.7.1</version>
+        <version>15.7.2</version>
         <releaseNotes>
+            Bug: Whitespace errors occupy all preceeding whitespaces
+            15.7.1
             Bug: Extra lines are written to output during parse
             15.7
             Change: Trace dump improved

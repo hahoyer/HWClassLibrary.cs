@@ -31,15 +31,25 @@ namespace hw.Parser
         int? Text(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Text); }
         int? Any(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Any); }
 
+        int? WhiteSpaceError(SourcePosn sourcePosn)
+        {
+            // this statement will normally throw an exception, usual return is not expected
+            var result = _lexer
+                .WhiteSpace
+                .All(f => ExceptionGuard(sourcePosn, f) == null);
+            Tracer.Assert(!result);
+            return null;
+        }
+
+
         Item IScanner<TTreeItem>.NextToken(SourcePosn sourcePosn) { return NextToken(sourcePosn); }
 
         Item NextToken(SourcePosn sourcePosn)
         {
-            var preceededBy = new WhiteSpaceToken[0];
+            Tracer.Assert(sourcePosn.IsValid);
+            var preceededBy = GuardedWhiteSpace(sourcePosn);
             try
             {
-                Tracer.Assert(sourcePosn.IsValid);
-                preceededBy = GuardedWhiteSpace(sourcePosn);
                 sourcePosn.Position += preceededBy.Sum(item => item.Characters.Length);
                 return CreateAndAdvance
                     (
@@ -51,7 +61,9 @@ namespace hw.Parser
                         ?? CreateAndAdvance(sourcePosn, Text, () => _tokenFactory.Text, preceededBy)
                             ?? CreateAndAdvance
                                 (sourcePosn, Any, _tokenFactory.TokenClass, preceededBy)
-                                ?? WillReturnNull(sourcePosn);
+                                ?? CreateAndAdvance
+                                    (sourcePosn, WhiteSpaceError, ()=>null, preceededBy)
+                                    ?? WillReturnNull(sourcePosn);
             }
             catch(Exception exception)
             {
@@ -88,7 +100,7 @@ namespace hw.Parser
         static WhiteSpaceToken CreateAndAdvance
             (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, int index)
         {
-            var length = getLength(sourcePosn);
+            var length = IgnorantExceptionGuard(sourcePosn, getLength);
             if(length == null)
                 return null;
 
@@ -162,6 +174,18 @@ namespace hw.Parser
             if(wasEnd)
                 sourcePosn.IsValid = false;
             return result;
+        }
+
+        static int? IgnorantExceptionGuard(SourcePosn sourcePosn, Func<SourcePosn, int?> match)
+        {
+            try
+            {
+                return match(sourcePosn);
+            }
+            catch(Match.Exception)
+            {
+                return null;
+            }
         }
 
         static TResult ExceptionGuard<TResult>
