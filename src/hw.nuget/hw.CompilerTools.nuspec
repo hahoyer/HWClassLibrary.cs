@@ -16,8 +16,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.7.2</version>
+        <version>15.7.3</version>
         <releaseNotes>
+            Change: Source handling: Functions to convert position from and to line and column index
+            Change: Members made public
+            15.7.2
             Bug: Whitespace errors occupy all preceeding whitespaces
             15.7.1
             Bug: Extra lines are written to output during parse
@@ -36,22 +39,6 @@
             Change: Token with preceding whitespaces must not contain gaps
             Change: Customized debugger display for Token and WhiteSpaceToken
             Change: Introducing white space fine structure
-            15.4
-            Change: IScanner: Extra parameter removed
-            15.3.1
-            Bug: ParsedSyntax: SourcePart crashed when any child is null
-            15.3
-            Change: ParsedSyntax: argument to provide additional source part has been moved to end and made optional
-            Watch out: Unfortunately it is not signature change. All usages have to be modified manually!
-            15.2.3
-            Change: use Children and token to obtain SourcePar
-            Change: Convenience
-            15.2.2
-            Change: Provide SourcePart for ParseSyntax, via additional ctor parameter
-            15.1.1
-            Change: Provide SourcePart for ParseSyntax
-            15.1
-            Change: TokenFactory: GetPredefinedTokenClasses is now IDictionary
         </releaseNotes>
         <dependencies>
             <dependency id="hw.Helper.Core" version="14.16.6" />
