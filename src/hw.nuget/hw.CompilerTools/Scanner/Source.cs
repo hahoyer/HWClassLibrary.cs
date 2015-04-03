@@ -27,16 +27,45 @@ namespace hw.Scanner
         public bool IsPersistent { get { return _file != null; } }
         public string SubString(int start, int length) { return _data.Substring(start, length); }
 
-        public string FilePosn(int i, string flagText, string tag = null)
+        public string FilePosn(int position, string flagText, string tag = null)
         {
             if(_file == null)
                 return "????";
-            return Tracer.FilePosn(_file.FullName, LineNr(i), ColNr(i) + 1, tag ?? FilePositionTag.Debug.ToString()) + flagText;
+            return Tracer.FilePosn
+                (
+                    _file.FullName,
+                    LineIndex(position),
+                    ColumnIndex(position) + 1,
+                    tag ?? FilePositionTag.Debug.ToString()) + flagText;
         }
 
-        int LineNr(int iEnd) { return _data.Take(iEnd).Count(c => c == '\n'); }
+        public int LineIndex(int position) { return _data.Take(position).Count(c => c == '\n'); }
 
-        int ColNr(int iEnd) { return _data.Take(iEnd).Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1); }
+        public int ColumnIndex(int position)
+        {
+            return _data
+                .Take(position)
+                .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
+        }
+
+        public SourcePosn FromLineAndColumn(int lineIndex, int columnIndex)
+        {
+            return this + PositionFromLineAndColumn(lineIndex, columnIndex);
+        }
+
+        int PositionFromLineAndColumn(int lineIndex, int columnIndex)
+        {
+            var match = "\n".AnyChar().Find.Repeat(lineIndex, lineIndex);
+            var l = (this + 0).Match(match);
+            if(l == null)
+                return Length;
+
+            var nextLine = (this + l.Value).Match("\r\n".AnyChar().Find);
+            if(nextLine != null)
+                return l.Value + Math.Min(columnIndex, nextLine.Value - 1);
+
+            return Math.Min(l.Value + columnIndex, Length);
+        }
 
         protected override string Dump(bool isRecursion) { return FilePosn(0, "see there"); }
 

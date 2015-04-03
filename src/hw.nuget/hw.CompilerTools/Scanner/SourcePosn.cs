@@ -131,6 +131,9 @@ namespace hw.Scanner
         }
 
         public SourcePosn Clone { get { return new SourcePosn(Source, Position); } }
+        
+        public int LineIndex { get { return Source.LineIndex(Position); } }
+        public int ColumnIndex { get { return Source.ColumnIndex(Position); } }
 
         public static SourcePosn operator +(SourcePosn x, int y)
         {
