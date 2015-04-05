@@ -48,12 +48,12 @@ namespace hw.Scanner
                 .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
         }
 
-        public SourcePosn FromLineAndColumn(int lineIndex, int columnIndex)
+        public SourcePosn FromLineAndColumn(int lineIndex, int? columnIndex)
         {
             return this + PositionFromLineAndColumn(lineIndex, columnIndex);
         }
 
-        int PositionFromLineAndColumn(int lineIndex, int columnIndex)
+        int PositionFromLineAndColumn(int lineIndex, int? columnIndex)
         {
             var match = "\n".AnyChar().Find.Repeat(lineIndex, lineIndex);
             var l = (this + 0).Match(match);
@@ -62,13 +62,25 @@ namespace hw.Scanner
 
             var nextLine = (this + l.Value).Match("\r\n".AnyChar().Find);
             if(nextLine != null)
-                return l.Value + Math.Min(columnIndex, nextLine.Value - 1);
+            {
+                var effectiveColumnIndex = nextLine.Value - 1;
+                if(columnIndex != null && columnIndex.Value < effectiveColumnIndex)
+                    effectiveColumnIndex = columnIndex.Value;
+                return l.Value + effectiveColumnIndex;
+            }
 
-            return Math.Min(l.Value + columnIndex, Length);
+            if(columnIndex != null && l.Value + columnIndex.Value < Length)
+                return l.Value + columnIndex.Value;
+            return Length;
         }
 
         protected override string Dump(bool isRecursion) { return FilePosn(0, "see there"); }
 
         public static SourcePosn operator +(Source x, int y) { return new SourcePosn(x, y); }
+
+        public int LineLength(int lineIndex)
+        {
+            return FromLineAndColumn(lineIndex + 1, 0) - FromLineAndColumn(lineIndex, 0);
+        }
     }
 }

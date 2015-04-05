@@ -18,6 +18,8 @@
 
         <version>15.7.4</version>
         <releaseNotes>
+            New: Source: additional functions
+            15.7.4
             Refactor
             15.7.3
             Change: Source handling: Functions to convert position from and to line and column index
