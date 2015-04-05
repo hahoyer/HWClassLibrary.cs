@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.7.3</version>
+        <version>15.7.4</version>
         <releaseNotes>
+            Refactor
+            15.7.3
             Change: Source handling: Functions to convert position from and to line and column index
             Change: Members made public
             15.7.2
