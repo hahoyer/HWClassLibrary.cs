@@ -132,6 +132,13 @@ namespace hw.Scanner
                 EndPosition > sourcePosn.Position;
         }
 
+        public bool Contains(SourcePart sourcePart)
+        {
+            return Source == sourcePart.Source &&
+                Position <= sourcePart.Position &&
+                sourcePart.EndPosition <= EndPosition;
+        }
+
         public bool IsMatch(SourcePart sourcePosn)
         {
             if(Source != sourcePosn.Source)

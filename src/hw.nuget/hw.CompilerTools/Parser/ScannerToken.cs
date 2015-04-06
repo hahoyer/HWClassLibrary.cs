@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using hw.Debug;
-using hw.Helper;
 using hw.Scanner;
 using JetBrains.Annotations;
 
@@ -33,11 +32,7 @@ namespace hw.Parser
             Tracer.Assert(l.Characters.End.Equals(Characters.Start));
         }
 
-        public SourcePosn Start { get { return SourcePart.Start; } }
-        public SourcePart SourcePart
-        {
-            get { return (Characters + PrecededWith.Select(item => item.Characters).Aggregate()); }
-        }
+        public SourcePart SourcePart { get { return (Characters + PrecededWith.SourcePart()); } }
 
         [UsedImplicitly]
         public string Id { get { return Characters.Id; } }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.Debug;
 using hw.Scanner;
@@ -21,15 +20,7 @@ namespace hw.Parser
             _characters = characters;
         }
 
-        public SourcePosn Start { get { return SourcePart.Start; } }
-        public SourcePart SourcePart
-        {
-            get
-            {
-                return _characters +
-                    _precededWith.Select(item => item.Characters).Aggregate();
-            }
-        }
+        public SourcePart SourcePart { get { return _characters + _precededWith.SourcePart(); } }
 
         public string Id { get { return _characters.Id; } }
         WhiteSpaceToken[] IToken.PrecededWith { get { return _precededWith; } }

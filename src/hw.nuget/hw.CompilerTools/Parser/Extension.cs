@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using hw.Helper;
 using System.Linq;
 using hw.Debug;
 using hw.Scanner;
@@ -45,6 +46,11 @@ namespace hw.Parser
             result += TreeDump(value.Right);
             result += ")";
             return result;
+        }
+
+        public static SourcePart SourcePart(this IEnumerable<WhiteSpaceToken> whiteSpaceTokens)
+        {
+            return whiteSpaceTokens.Select(item => item.Characters).Aggregate();
         }
     }
 }
