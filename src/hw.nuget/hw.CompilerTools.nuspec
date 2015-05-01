@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.7.5</version>
+        <version>15.7.6</version>
         <releaseNotes>
+            New: Source/SourcePart: additional functions
+            15.7.5
             New: Helper function for Whitespace array
             New: Source: additional functions
             15.7.4
