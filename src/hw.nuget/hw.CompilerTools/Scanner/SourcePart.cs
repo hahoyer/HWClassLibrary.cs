@@ -48,11 +48,12 @@ namespace hw.Scanner
 
         public SourcePart Intersect(SourcePart other)
         {
-            Tracer.Assert(Source == other.Source);
+            if(Source != other.Source)
+                return null;
+
             var start = Math.Max(Position, other.Position);
             var end = Math.Min(EndPosition, other.EndPosition);
-            var length = Math.Max(0, end - start);
-            return new SourcePart(Source, start, length);
+            return end < start ? null : new SourcePart(Source, start, end - start);
         }
 
         public static SourcePart operator +(SourcePart left, SourcePart right)

@@ -18,6 +18,8 @@
 
         <version>15.7.6</version>
         <releaseNotes>
+            Change: SourcePart.Intersect: will return null when there is no intersection
+            15.7.6
             New: Source/SourcePart: additional functions
             15.7.5
             New: Helper function for Whitespace array
