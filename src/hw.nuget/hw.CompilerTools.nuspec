@@ -16,7 +16,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.7.6</version>
+        <version>15.7.7</version>
         <releaseNotes>
             Change: SourcePart.Intersect: will return null when there is no intersection
             15.7.6
