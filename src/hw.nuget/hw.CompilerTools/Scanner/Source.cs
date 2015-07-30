@@ -26,6 +26,7 @@ namespace hw.Scanner
         public int Length { get { return _data.Length; } }
         public bool IsPersistent { get { return _file != null; } }
         public string SubString(int start, int length) { return _data.Substring(start, length); }
+        public SourcePart All { get { return (this + 0).Span(Length); } }
 
         public string FilePosn(int position, string flagText, string tag = null)
         {

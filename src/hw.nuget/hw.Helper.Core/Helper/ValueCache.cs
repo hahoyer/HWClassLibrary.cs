@@ -31,9 +31,15 @@ namespace hw.Helper
                 return;
 
             _isBusy = true;
-            _value = _createValue();
-            _isValid = true;
-            _isBusy = false;
+            try
+            {
+                _value = _createValue();
+                _isValid = true;
+            }
+            finally
+            {
+                _isBusy = false;
+            }
         }
 
         void Reset()
