@@ -1,36 +1,39 @@
-<?xml version="1.0"?>
+<?xml
+  version="1.0"?>
 
 <package>
-    <metadata>
-        <id>hw.Forms</id>
-        <title>hw.Forms</title>
-        <authors>hahoyer</authors>
-        <description>
-            - tree view controlled by attributes.
-            - persistor for windows location
-        </description>
-        <summary>
-            Needful things for forms 
-        </summary>
-        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
-        <language>en-US</language>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2013</copyright>
+  <metadata>
+    <id>hw.Forms</id>
+    <title>hw.Forms</title>
+    <authors>hahoyer</authors>
+    <description>
+      - tree view controlled by attributes.
+      - persistor for windows location
+    </description>
+    <summary>
+      Needful things for forms
+    </summary>
+    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+    <language>en-US</language>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <frameworkAssemblies>
-            <frameworkAssembly assemblyName="System.Drawing" />
-        </frameworkAssemblies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Drawing" />
+    </frameworkAssemblies>
 
-        <version>13.0.0.0</version>
-        <releaseNotes>
-            New: Some more functions
-        </releaseNotes>
-        <dependencies>
-            <dependency id="hw.Helper.Core" version="13.1.0.0" />
-        </dependencies>
+    <version>15.0.0.0</version>
+    <releaseNotes>
+      Bugfix: PositionConfig: Catch position when it moved completetly out of sight
+      13.0.0.0
+      New: Some more functions
+    </releaseNotes>
+    <dependencies>
+      <dependency id="hw.Helper.Core" version="13.1.0.0" />
+    </dependencies>
 
-    </metadata>
-    <files>
-        <file src="hw.Forms\" target="content\hw" />
-    </files>
+  </metadata>
+  <files>
+    <file src="hw.Forms\" target="content\hw" />
+  </files>
 </package>

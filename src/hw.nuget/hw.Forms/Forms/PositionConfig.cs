@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using hw.Debug;
+using hw.DebugFormatter;
 using hw.Helper;
+using JetBrains.Annotations;
+
+// ReSharper disable ConvertMethodToExpressionBody
+// ReSharper disable MergeConditionalExpression
 
 namespace hw.Forms
 {
@@ -25,13 +29,17 @@ namespace hw.Forms
         ///     <para>It will be called each time the name is required. </para>
         ///     <para>Default: Target.Name</para>
         /// </param>
-        public PositionConfig(Func<string> getFileName = null) { _getFileName = getFileName ?? (() => _target == null ? null : _target.Name); }
+        public PositionConfig(Func<string> getFileName = null)
+        {
+            _getFileName = getFileName ?? (() => _target == null ? null : _target.Name);
+        }
 
         /// <summary>
         ///     Form that will be controlled by this instance
         /// </summary>
         public Form Target
         {
+            [UsedImplicitly]
             get { return _target; }
             set
             {
@@ -80,6 +88,7 @@ namespace hw.Forms
                 return;
             SavePosition();
         }
+
         void OnLoad(object target, EventArgs e)
         {
             if(target != _target)
@@ -87,7 +96,15 @@ namespace hw.Forms
             LoadPosition();
         }
 
-        Rectangle? Position { get { return Convert(0, null, s => (Rectangle?) new RectangleConverter().ConvertFromString(s)); } set { Save(value, WindowState); } }
+        Rectangle? Position
+        {
+            get
+            {
+                return Convert
+                    (0, null, s => (Rectangle?) new RectangleConverter().ConvertFromString(s));
+            }
+            set { Save(value, WindowState); }
+        }
 
         string[] ParameterStrings
         {
@@ -115,14 +132,25 @@ namespace hw.Forms
             var fileHandle = FileHandle;
             Tracer.Assert(fileHandle != null);
             fileHandle.String = "{0}\n{1}"
-                .ReplaceArgs(
+                .ReplaceArgs
+                (
                     position == null ? "" : new RectangleConverter().ConvertToString(position.Value),
                     state
                 );
         }
 
-        FormWindowState WindowState { get { return Convert(1, FormWindowState.Normal, s => s.Parse<FormWindowState>()); } set { Save(Position, value); } }
-        T Convert<T>(int position, T defaultValue, Func<string, T> converter) { return ParameterStrings == null ? defaultValue : converter(ParameterStrings[position]); }
+        FormWindowState WindowState
+        {
+            get { return Convert(1, FormWindowState.Normal, s => s.Parse<FormWindowState>()); }
+            set { Save(Position, value); }
+        }
+
+        T Convert<T>(int position, T defaultValue, Func<string, T> converter)
+        {
+            return ParameterStrings == null || ParameterStrings.Length <= position
+                ? defaultValue
+                : converter(ParameterStrings[position]);
+        }
 
         void LoadPosition()
         {
@@ -154,10 +182,26 @@ namespace hw.Forms
 
         static Rectangle EnsureVisible(Rectangle value)
         {
-            if(Screen.AllScreens.Any(s => s.Bounds.IntersectsWith(value)))
+            var allScreens = Screen.AllScreens;
+            if(allScreens.Any(s => s.Bounds.IntersectsWith(value)))
                 return value;
             var closestScreen = Screen.FromRectangle(value);
-            throw new NotImplementedException();
+            var result = value;
+
+            var leftDistance = value.Left - closestScreen.Bounds.Right;
+            var rightDistance = value.Right - closestScreen.Bounds.Left;
+
+            if(leftDistance > 0 && rightDistance > 0)
+                result.X += leftDistance < rightDistance ? -(leftDistance + 10) : rightDistance + 10;
+
+            var topDistance = value.Top - closestScreen.Bounds.Bottom;
+            var bottomDistance = value.Bottom - closestScreen.Bounds.Top;
+
+            if(topDistance > 0 && bottomDistance > 0)
+                result.Y += topDistance < bottomDistance ? -(topDistance + 10) : bottomDistance + 10;
+
+            Tracer.Assert(closestScreen.Bounds.IntersectsWith(result));
+            return result;
         }
     }
 }
