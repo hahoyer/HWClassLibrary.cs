@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using hw.Debug;
+using hw.DebugFormatter;
 using hw.Helper;
 using hw.Parser;
 

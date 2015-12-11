@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using hw.Debug;
+using hw.DebugFormatter;
 using JetBrains.Annotations;
 
 namespace hw.Helper

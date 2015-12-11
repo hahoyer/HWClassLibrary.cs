@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Debug;
+using hw.DebugFormatter;
 
 namespace hw.Helper
 {
@@ -10,7 +10,6 @@ namespace hw.Helper
     {
         readonly Func<TValueType> _createValue;
         bool _isValid;
-        bool _isBusy;
         TValueType _value;
 
         public ValueCache(Func<TValueType> createValue) { _createValue = createValue; }
@@ -26,11 +25,11 @@ namespace hw.Helper
 
         void Ensure()
         {
-            Tracer.Assert(!_isBusy);
+            Tracer.Assert(!IsBusy);
             if(_isValid)
                 return;
 
-            _isBusy = true;
+            IsBusy = true;
             try
             {
                 _value = _createValue();
@@ -38,20 +37,20 @@ namespace hw.Helper
             }
             finally
             {
-                _isBusy = false;
+                IsBusy = false;
             }
         }
 
         void Reset()
         {
-            Tracer.Assert(!_isBusy);
+            Tracer.Assert(!IsBusy);
             if(!_isValid)
                 return;
 
-            _isBusy = true;
+            IsBusy = true;
             _value = default(TValueType);
             _isValid = false;
-            _isBusy = false;
+            IsBusy = false;
         }
 
         public bool IsValid
@@ -67,6 +66,14 @@ namespace hw.Helper
         }
 
         [EnableDumpExcept(false)]
-        public bool IsBusy { get { return _isBusy; } }
+        public bool IsBusy { get; private set; }
+    }
+
+    public sealed class ValueCache : Dictionary<object, object>
+    {
+        public interface IContainer
+        {
+            ValueCache Cache { get; }
+        }
     }
 }

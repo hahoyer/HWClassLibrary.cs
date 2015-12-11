@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Xml.Serialization;
-using hw.Debug;
+using hw.DebugFormatter;
 
 namespace hw.Graphics.SVG
 {

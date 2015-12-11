@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using hw.Helper;
 using System.Linq;
 using System.Reflection;
-using hw.Debug;
+using hw.DebugFormatter;
 
 namespace hw.UnitTest
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using hw.Debug;
+using hw.DebugFormatter;
 using JetBrains.Annotations;
 
 namespace hw.Scanner

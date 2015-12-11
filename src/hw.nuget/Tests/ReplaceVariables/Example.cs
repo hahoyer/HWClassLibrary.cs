@@ -1,5 +1,5 @@
 using System;
-using hw.Debug;
+using hw.DebugFormatter;
 using hw.ReplaceVariables;
 using hw.UnitTest;
 

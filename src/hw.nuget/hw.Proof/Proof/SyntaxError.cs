@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.Debug;
+using hw.DebugFormatter;
 using hw.Parser;
 using hw.Scanner;
 

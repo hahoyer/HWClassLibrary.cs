@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using hw.Parser;
 using System.Linq;
-using hw.Debug;
+using hw.DebugFormatter;
 using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util

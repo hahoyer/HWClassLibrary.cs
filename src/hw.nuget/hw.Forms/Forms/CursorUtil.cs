@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using hw.Debug;
+using hw.DebugFormatter;
 
 namespace hw.Forms
 {

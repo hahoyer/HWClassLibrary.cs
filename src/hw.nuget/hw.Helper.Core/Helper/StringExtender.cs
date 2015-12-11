@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using hw.Debug;
+using hw.DebugFormatter;
 using JetBrains.Annotations;
 
 namespace hw.Helper

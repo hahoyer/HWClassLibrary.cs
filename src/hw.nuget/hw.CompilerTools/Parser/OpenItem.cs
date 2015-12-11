@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using hw.Helper;
 using System.Linq;
-using hw.Debug;
+using hw.DebugFormatter;
 using hw.Scanner;
 
 namespace hw.Parser
