@@ -24,20 +24,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     /// <summary>
-    ///     Used to control dump. Use ToString function
+    ///     Used to control dump.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public sealed class DumpToStringAttribute : DumpClassAttribute
+    public abstract class DumpClassAttribute : Attribute
     {
         /// <summary>
-        ///     set "ToString" as dump behaviour of class
+        ///     override this function to define special dump behaviour of class
         /// </summary>
         /// <param name="t"> the type to dump. Is the type of any base class of "x" </param>
         /// <param name="x"> the object to dump </param>
         /// <returns> </returns>
-        public override string Dump(Type t, object x) { return x.ToString(); }
+        public abstract string Dump(Type t, object x);
     }
 }

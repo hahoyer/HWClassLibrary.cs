@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using hw.Helper;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     public sealed class Configuration
     {

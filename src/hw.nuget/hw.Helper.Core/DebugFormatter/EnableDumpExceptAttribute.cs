@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     /// <summary>
     ///     Used to control dump of data element

@@ -5,7 +5,7 @@ using System.Linq;
 using hw.Helper;
 using JetBrains.Annotations;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     /// <summary>
     ///     Summary description for Dumpable.
@@ -72,6 +72,22 @@ namespace hw.Debug
             if(IsMethodDumpTraceActive)
             {
                 var os = Tracer.DumpData("", new[] {name, value}, 1);
+                Tracer.Line(os);
+            }
+        }
+
+        /// <summary>
+        ///     Method start dump,
+        /// </summary>
+        /// <param name="name"> </param>
+        /// <param name="getValue"> </param>
+        /// <returns> </returns>
+        [DebuggerHidden]
+        public static void Dump(string name, Func<object> getValue)
+        {
+            if (IsMethodDumpTraceActive)
+            {
+                var os = Tracer.DumpData("", new[] { name, getValue() }, 1);
                 Tracer.Line(os);
             }
         }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using hw.Helper;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     sealed class Writer
     {

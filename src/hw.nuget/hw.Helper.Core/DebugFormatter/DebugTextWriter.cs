@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     public sealed class DebugTextWriter : TextWriter
     {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using hw.Helper;
 using System.Linq;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     [AdditionalNodeInfo("NodeDump")]
     [DebuggerDisplay("{NodeDump}")]

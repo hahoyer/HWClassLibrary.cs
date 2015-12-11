@@ -6,7 +6,7 @@ using System.Reflection;
 using hw.Helper;
 using JetBrains.Annotations;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     /// <summary>     Summary description for Tracer. </summary>
     public static class Tracer

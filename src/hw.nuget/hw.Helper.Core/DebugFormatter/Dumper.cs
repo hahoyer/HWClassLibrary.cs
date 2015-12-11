@@ -4,7 +4,7 @@ using hw.Helper;
 using System.Linq;
 using System.Reflection;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     public sealed class Dumper
     {

@@ -23,21 +23,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using hw.Helper;
+using JetBrains.Annotations;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
-    /// <summary>
-    ///     Used to control dump.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public abstract class DumpClassAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [MeansImplicitUse]
+    public sealed class EnableDumpWithExceptionPredicateAttribute : DumpEnabledAttribute, IDumpExceptAttribute
     {
-        /// <summary>
-        ///     override this function to define special dump behaviour of class
-        /// </summary>
-        /// <param name="t"> the type to dump. Is the type of any base class of "x" </param>
-        /// <param name="x"> the object to dump </param>
-        /// <returns> </returns>
-        public abstract string Dump(Type t, object x);
+        readonly string _predicate;
+        public EnableDumpWithExceptionPredicateAttribute(string predicate = "")
+            : base(true) { _predicate = predicate == "" ? "IsDumpException" : predicate; }
+        bool IDumpExceptAttribute.IsException(object target)
+        {
+            try
+            {
+                return (bool) target.GetType().GetMethod(_predicate).Invoke(target, null);
+            }
+            catch(Exception e)
+            {
+                Tracer.AssertionFailed("Exception when calling " + target.GetType().PrettyName() + _predicate, () => e.Message);
+                return false;
+            }
+        }
     }
 }

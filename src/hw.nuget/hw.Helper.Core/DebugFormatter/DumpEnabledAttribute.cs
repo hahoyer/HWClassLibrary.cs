@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     public abstract class DumpEnabledAttribute : DumpAttributeBase
     {
