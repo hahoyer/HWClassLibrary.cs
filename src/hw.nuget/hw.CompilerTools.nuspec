@@ -16,43 +16,45 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>15.7.8</version>
+        <version>15.8</version>
         <releaseNotes>
-            New: Source: additional function
-            15.7.7
-            Change: SourcePart.Intersect: will return null when there is no intersection
-            15.7.6
-            New: Source/SourcePart: additional functions
-            15.7.5
-            New: Helper function for Whitespace array
-            New: Source: additional functions
-            15.7.4
-            Refactor
-            15.7.3
-            Change: Source handling: Functions to convert position from and to line and column index
-            Change: Members made public
-            15.7.2
-            Bug: Whitespace errors occupy all preceeding whitespaces
-            15.7.1
-            Bug: Extra lines are written to output during parse
-            15.7
-            Change: Trace dump improved
-            15.6.30-alpha
-            Change: separate input and output parameter types for IOperation
-            Bug: preceeding whitespaces are ignored in case of scanner errors
-            Change: Splitting IType into scanner and and parser relevant parts
-            Change: IToken Otherparts removed
-            Refactor: Reformats
-            New: SourcePart safe combine
-            Change: SourcePart: New functions
-            Refactor: Setter for Name removed
-            Refactor: Use ScannerItem when possible
-            Change: Token with preceding whitespaces must not contain gaps
-            Change: Customized debugger display for Token and WhiteSpaceToken
-            Change: Introducing white space fine structure
+          Use Breaking changes of hw.Helper.Core
+          15.7.8
+          New: Source: additional function
+          15.7.7
+          Change: SourcePart.Intersect: will return null when there is no intersection
+          15.7.6
+          New: Source/SourcePart: additional functions
+          15.7.5
+          New: Helper function for Whitespace array
+          New: Source: additional functions
+          15.7.4
+          Refactor
+          15.7.3
+          Change: Source handling: Functions to convert position from and to line and column index
+          Change: Members made public
+          15.7.2
+          Bug: Whitespace errors occupy all preceeding whitespaces
+          15.7.1
+          Bug: Extra lines are written to output during parse
+          15.7
+          Change: Trace dump improved
+          15.6.30-alpha
+          Change: separate input and output parameter types for IOperation
+          Bug: preceeding whitespaces are ignored in case of scanner errors
+          Change: Splitting IType into scanner and and parser relevant parts
+          Change: IToken Otherparts removed
+          Refactor: Reformats
+          New: SourcePart safe combine
+          Change: SourcePart: New functions
+          Refactor: Setter for Name removed
+          Refactor: Use ScannerItem when possible
+          Change: Token with preceding whitespaces must not contain gaps
+          Change: Customized debugger display for Token and WhiteSpaceToken
+          Change: Introducing white space fine structure
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="14.16.6" />
+            <dependency id="hw.Helper.Core" version="15.2" />
         </dependencies>
 
     </metadata>

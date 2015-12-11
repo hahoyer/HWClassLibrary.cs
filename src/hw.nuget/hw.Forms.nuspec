@@ -22,14 +22,14 @@
       <frameworkAssembly assemblyName="System.Drawing" />
     </frameworkAssemblies>
 
-    <version>15.0.0.0</version>
+    <version>15.1</version>
     <releaseNotes>
+      Use Breaking changes of hw.Helper.Core
+      15.0.0.0
       Bugfix: PositionConfig: Catch position when it moved completetly out of sight
-      13.0.0.0
-      New: Some more functions
     </releaseNotes>
     <dependencies>
-      <dependency id="hw.Helper.Core" version="13.1.0.0" />
+      <dependency id="hw.Helper.Core" version="15.2" />
     </dependencies>
 
   </metadata>

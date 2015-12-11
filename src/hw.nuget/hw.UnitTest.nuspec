@@ -1,44 +1,39 @@
-<?xml version="1.0"?>
+<?xml
+  version="1.0"?>
 
 <package>
-    <metadata>
-        <id>hw.UnitTest</id>
-        <title>hw.UnitTest</title>
-        <authors>hahoyer</authors>
-        <description>
-            Provide some basic extensions for everyday programming.
-        </description>
-        <summary>
-            Unit test support.
-        </summary>
-        <language>en-US</language>
-        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2014</copyright>
+  <metadata>
+    <id>hw.UnitTest</id>
+    <title>hw.UnitTest</title>
+    <authors>hahoyer</authors>
+    <description>
+      Provide some basic extensions for everyday programming.
+    </description>
+    <summary>
+      Unit test support.
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>15.0.2</version>
-        <releaseNotes>
-            New: Ability to register other test frameworks
-            15.0.1
-            Change: Test runner returns false when any test has failed
-            15.0
-            Breaking Change: Attributes TestFixture and Test renamed to UnitTest
-            14.1.4
-            #22: Bug: misleading exception when ommiting "TestFixture" attribute for class derived from "DependantAttribute"
-            14.1.3
-            Bug: Wrong sequence of test-attribute controlled location traces
-            14.1.2.1
-            New: Ability to provide default method at textfixture
-            New: Ability to define textfixture by use of an interface
-            New: Log improved
-        </releaseNotes>
-        <dependencies>
-            <dependency id="hw.Helper.Core" version="14.16" />
-        </dependencies>
+    <version>15.1</version>
+    <releaseNotes>
+      Use Breaking changes of hw.Helper.Core
+      15.0.2
+      New: Ability to register other test frameworks
+      15.0.1
+      Change: Test runner returns false when any test has failed
+      15.0
+      Breaking Change: Attributes TestFixture and Test renamed to UnitTest
+    </releaseNotes>
+    <dependencies>
+      <dependency id="hw.Helper.Core" version="15.2" />
+    </dependencies>
 
-    </metadata>
-    <files>
+  </metadata>
+  <files>
 
-        <file src="hw.UnitTest\" target="content\hw" />
-    </files>
+    <file src="hw.UnitTest\" target="content\hw" />
+  </files>
 </package>

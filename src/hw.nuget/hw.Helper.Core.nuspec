@@ -15,7 +15,7 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>15.2.0</version>
+        <version>15.2</version>
         <releaseNotes>
           Refactor: Debug subfolder renamed DebugFormatter
           New: Inline ability for ValueCache
@@ -32,16 +32,6 @@
           Change: Better tag for recursive objects
           15.1.1
           Change: ValueCache: is now public
-          14.16.7
-          New: DumpableObject: StopByObjectIds, is like StopByObjectId, but allows multiple ids to watch
-          14.16.6
-          Change: FunctionCache: initial data can be IDictionary in ctor providing initial data and create-value function
-          14.16.5
-          Change: Function In made generic
-          14.16.4
-          Change: NullableToArray function
-          Bug: extra using statement
-          Change: Test moved to outer namespace
         </releaseNotes>
     </metadata>
     <files>
