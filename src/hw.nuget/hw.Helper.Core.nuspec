@@ -15,8 +15,10 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>15.2</version>
+        <version>15.2.1</version>
         <releaseNotes>
+          Bug: Dumpable: Performance problem at methods that use method dump frame
+          15.2
           Refactor: Debug subfolder renamed DebugFormatter
           New: Inline ability for ValueCache
           15.1.6
