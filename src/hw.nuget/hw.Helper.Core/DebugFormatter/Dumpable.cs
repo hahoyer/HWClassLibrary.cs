@@ -151,7 +151,8 @@ namespace hw.DebugFormatter
             if(!Debugger.IsAttached)
                 return;
             var top = _methodDumpTraceSwitches.Peek();
-            Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
+            if(top.Trace)
+                Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
         }
 
         /// <summary>
@@ -256,7 +257,7 @@ namespace hw.DebugFormatter
         {
             if(!Debugger.IsAttached)
                 return;
-            var frameCount = Tracer.CurrentFrameCount(depth + 1);
+            var frameCount = trace ? Tracer.CurrentFrameCount(depth + 1) : 0;
             _methodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
         }
 
