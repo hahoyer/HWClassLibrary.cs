@@ -7,14 +7,27 @@ namespace hw.Helper
 {
     public static class TypeNameExtender
     {
-        static readonly ValueCache<TypeLibrary> _referencedTypesCache = new ValueCache<TypeLibrary>(ObtainReferencedTypes);
+        static readonly ValueCache<TypeLibrary> _referencedTypesCache = new ValueCache<TypeLibrary>
+            (ObtainReferencedTypes);
 
         public static void OnModuleLoaded() { _referencedTypesCache.IsValid = false; }
 
-        public static Type[] ResolveType(this string typeName) { return ReferencedTypes.ByNamePartMulti[typeName]; }
-        public static Type ResolveUniqueType(this string typeName) { return ReferencedTypes.ByNamePart[typeName]; }
+        public static Type[] ResolveType(this string typeName)
+        {
+            return ReferencedTypes.ByNamePartMulti[typeName];
+        }
+
+        public static Type ResolveUniqueType(this string typeName)
+        {
+            return ReferencedTypes.ByNamePart[typeName];
+        }
+
         public static string PrettyName(this Type type) { return ReferencedTypes.PrettyName[type]; }
-        public static string CompleteName(this Type type) { return ReferencedTypes.CompleteName[type]; }
+
+        public static string CompleteName(this Type type)
+        {
+            return ReferencedTypes.CompleteName[type];
+        }
 
         static TypeLibrary ObtainReferencedTypes()
         {
@@ -22,7 +35,14 @@ namespace hw.Helper
             return new TypeLibrary(assembly.GetReferencedTypes());
         }
 
-        static TypeLibrary ReferencedTypes { get { return _referencedTypesCache.Value; } }
+        static TypeLibrary ReferencedTypes
+        {
+            get
+            {
+                lock(_referencedTypesCache)
+                    return _referencedTypesCache.Value;
+            }
+        }
 
         public static string NullableName(this Type type)
         {
