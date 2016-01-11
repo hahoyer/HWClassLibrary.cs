@@ -18,7 +18,7 @@ namespace hw.Parser
         protected TokenClass()
             : base(_nextObjectId++)
         {
-            StopByObjectId(-31);
+            StopByObjectIds(-31);
         }
 
         string IIconKeyProvider.IconKey { get { return "Symbol"; } }

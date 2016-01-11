@@ -75,8 +75,6 @@ namespace hw.DebugFormatter
         public override string DebuggerDump() { return base.DebuggerDump() + " ObjectId=" + ObjectId; }
 
         [DebuggerHidden]
-        internal void StopByObjectId(int objectId) { StopByObjectId(1, objectId); }
-        [DebuggerHidden]
         internal void StopByObjectIds(params int[] objectIds)
         {
             foreach(var objectId in objectIds)
@@ -84,7 +82,7 @@ namespace hw.DebugFormatter
         }
 
         [DebuggerHidden]
-        internal void StopByObjectId(int stackFrameDepth, int objectId)
+        void StopByObjectId(int stackFrameDepth, int objectId)
         {
             var isStopByObjectIdActive = IsStopByObjectIdActive;
             IsStopByObjectIdActive = true;
