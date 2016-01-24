@@ -113,12 +113,6 @@ namespace hw.Parser
                                 data.Take(tokenCount).ToArray(),
                                 data.Skip(tokenCount).Take(tokenCount).ToArray());
                         break;
-                    case "televel":
-                        result = result.ThenElseLevel
-                            (
-                                data.Take(tokenCount).ToArray(),
-                                data.Skip(tokenCount).Take(tokenCount).ToArray());
-                        break;
                     case "-":
                     case "+":
                     case "=":
@@ -314,14 +308,6 @@ namespace hw.Parser
             "?--"
         };
 
-        static readonly string[] _thenElseTable =
-        {
-            "+--",
-            "+?+",
-            "?-+"
-        };
-
-
         public PrioTable ParenthesisLevelLeft(string[] lToken, string[] rToken)
         {
             return Level(_parenthesisTableLeft, lToken, rToken);
@@ -330,17 +316,9 @@ namespace hw.Parser
         {
             return Level(_parenthesisTableRight, lToken, rToken);
         }
-        public PrioTable ThenElseLevel(string[] lToken, string[] rToken)
-        {
-            return Level(_thenElseTable, lToken, rToken);
-        }
         public PrioTable ParenthesisLevel(string lToken, string rToken)
         {
             return Level(_parenthesisTableLeft, new[] {lToken}, new[] {rToken});
-        }
-        public PrioTable ThenElseLevel(string lToken, string rToken)
-        {
-            return Level(_thenElseTable, new[] {lToken}, new[] {rToken});
         }
 
         public static PrioTable operator +(PrioTable x, PrioTable y) { return new PrioTable(x, y); }
