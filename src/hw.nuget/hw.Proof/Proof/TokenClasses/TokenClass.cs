@@ -38,8 +38,6 @@ namespace hw.Proof.TokenClasses
 
         ISubParser<ParsedSyntax> Scanner<ParsedSyntax>.IType.NextParser { get { return Next; } }
 
-        IType<ParsedSyntax> IType<ParsedSyntax>.NextTypeIfMatched { get { return null; } }
-
         IType<ParsedSyntax> Scanner<ParsedSyntax>.IType.Type { get { return this; } }
 
 
