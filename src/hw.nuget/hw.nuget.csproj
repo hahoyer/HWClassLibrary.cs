@@ -84,6 +84,8 @@
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
+    <Compile Include="Tests\CompilerTool\AdvancedParser.cs" />
+    <Compile Include="Tests\CompilerTool\ParserUtil.cs" />
     <Compile Include="Tests\CompilerTool\SourceTests.cs" />
     <Compile Include="Tests\CompilerTool\Util\IssueId.cs" />
     <Compile Include="Tests\CompilerTool\Util\MainTokenFactory.cs" />
@@ -162,7 +164,7 @@
     <Compile Include="hw.CompilerTools\Parser\IParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\IType.cs" />
     <Compile Include="hw.CompilerTools\Parser\OpenItem.cs" />
-    <Compile Include="Tests\CompilerTool\Parser.cs" />
+    <Compile Include="Tests\CompilerTool\SimpleParser.cs" />
     <Compile Include="Tests\CompilerTool\Util\ReniLexer.cs" />
     <Compile Include="Tests\Helper\Core\HelperCore.cs" />
     <Compile Include="Tests\Helper\Core\LongExtender.cs" />

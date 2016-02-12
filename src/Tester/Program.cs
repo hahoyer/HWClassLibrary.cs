@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using hw.DebugFormatter;
@@ -11,9 +12,7 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            TestRunner.IsModeErrorFocus = true;
-            //Parser.ParenthesisSuffixAndPrefixAndSequence();
-            TestRunner.IsModeErrorFocus = false;
+            TestRunner.IsModeErrorFocus = Debugger.IsAttached;
             var result = TestRunner.RunTests(Assembly.GetExecutingAssembly());
             Tracer.Assert(result);
         }
