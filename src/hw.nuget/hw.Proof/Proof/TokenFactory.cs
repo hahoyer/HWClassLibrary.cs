@@ -38,8 +38,8 @@ namespace hw.Proof
                 x += PrioTable.Right(",");
                 x += PrioTable.Right(";");
 
-                x = x.ParenthesisLevelLeft
-                    (LeftBrackets, RightBrackets);
+                x += PrioTable.BracketParallels(LeftBrackets, RightBrackets);
+
                 //Tracer.FlaggedLine("\n"+x+"\n");
                 return x;
             }

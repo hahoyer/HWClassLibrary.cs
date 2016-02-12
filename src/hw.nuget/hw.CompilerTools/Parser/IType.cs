@@ -10,6 +10,5 @@ namespace hw.Parser
     {
         TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
         string PrioTableId { get; }
-        IType<TTreeItem> NextTypeIfMatched { get; }
     }
 }

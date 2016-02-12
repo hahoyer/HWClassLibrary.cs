@@ -32,13 +32,9 @@ namespace hw.Parser
 
         ISubParser<TTreeItem> Scanner<TTreeItem>.IType.NextParser { get { return Next; } }
 
-        IType<TTreeItem> IType<TTreeItem>.NextTypeIfMatched { get { return NextTypeIfMatched; } }
-
         IType<TTreeItem> Scanner<TTreeItem>.IType.Type { get { return this; } }
 
-
         protected virtual ISubParser<TTreeItem> Next { get { return null; } }
-        protected virtual IType<TTreeItem> NextTypeIfMatched { get { return null; } }
         protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
         protected override string GetNodeDump()
         {
