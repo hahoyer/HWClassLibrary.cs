@@ -11,27 +11,28 @@ namespace hw.Parser
         where TTreeItem : class, ISourcePart
     {
         internal readonly TTreeItem Left;
-        readonly Item<TTreeItem> _current;
+        internal readonly Item<TTreeItem> Current;
 
         internal OpenItem(TTreeItem left, Item<TTreeItem> current)
         {
             Left = left;
-            _current = current;
+            Current = current;
         }
 
-        internal IType<TTreeItem> Type { get { return _current.Type; } }
+        internal IType<TTreeItem> Type { get { return Current.Type; } }
+        internal PrioTable.IItem Item { get { return Current; } }
 
         internal TTreeItem Create(TTreeItem right)
         {
-            if(_current.Type != null)
-                return _current.Create(Left, right);
+            if(Current.Type != null)
+                return Current.Create(Left, right);
             Tracer.Assert(Left == null);
             return right;
         }
 
-        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem)
+        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem, PrioTable.Context context)
         {
-            return StartItem(new Item<TTreeItem>(null, startItem));
+            return StartItem(new Item<TTreeItem>(null, startItem, context));
         }
 
         static OpenItem<TTreeItem> StartItem(Item<TTreeItem> current)
@@ -41,7 +42,7 @@ namespace hw.Parser
 
         protected override string GetNodeDump()
         {
-            return Tracer.Dump(Left) + " " + _current.Type.GetType().PrettyName();
+            return Tracer.Dump(Left) + " " + Current.Type.GetType().PrettyName();
         }
     }
 }
