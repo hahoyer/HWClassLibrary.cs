@@ -33,6 +33,6 @@ namespace hw.Parser
         }
 
         PrioTable.Context PrioTable.IItem.Context => Context;
-        string PrioTable.IItem.Token => Token.Id;
+        string PrioTable.IItem.Token => Type?.PrioTableId ?? PrioTable.BeginOfText;
     }
 }
