@@ -30,9 +30,9 @@ namespace hw.Parser
             return right;
         }
 
-        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem, PrioTable.Context context)
+        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem, PrioTable.Context context, IType<TTreeItem> startType)
         {
-            return StartItem(new Item<TTreeItem>(null, startItem, context));
+            return StartItem(new Item<TTreeItem>(startType, startItem, context));
         }
 
         static OpenItem<TTreeItem> StartItem(Item<TTreeItem> current)
