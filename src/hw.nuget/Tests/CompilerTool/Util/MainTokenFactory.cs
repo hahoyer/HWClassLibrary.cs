@@ -81,7 +81,7 @@ namespace hw.Tests.CompilerTool.Util
     sealed class NestedTokenFactory : TokenFactory
     {
         public static readonly IParser<Syntax> Instance = new PrioParser<Syntax>
-            (PrioTable, Scanner(new NestedTokenFactory()));
+            (PrioTable, Scanner(new NestedTokenFactory()), SwitchToken.Instance);
 
         NestedTokenFactory() { }
 
@@ -102,6 +102,7 @@ namespace hw.Tests.CompilerTool.Util
         {
             return new TokenClass<Syntax>[]
             {
+                SwitchToken.Instance,
                 new LeftParenthesis(),
                 new RightParenthesis()
             };
@@ -118,6 +119,8 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class SwitchToken : NamedToken
     {
+        public static readonly SwitchToken Instance = new SwitchToken();
+
         public SwitchToken()
             : base("-->") {}
 
@@ -125,7 +128,6 @@ namespace hw.Tests.CompilerTool.Util
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
-            NotImplementedMethod(left, token, right);
             return null;
         }
 
