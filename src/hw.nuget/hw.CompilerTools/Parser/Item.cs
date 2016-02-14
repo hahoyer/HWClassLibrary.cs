@@ -6,33 +6,48 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public sealed class Item<TTreeItem> : DumpableObject, PrioTable.IItem
+    public sealed class Item<TTreeItem> : DumpableObject, PrioTable.ITargetItem
         where TTreeItem : class, ISourcePart
     {
         [EnableDump]
         internal readonly IType<TTreeItem> Type;
         internal readonly ScannerToken Token;
-        internal readonly PrioTable.Context Context;
+        internal readonly BracketContext Context;
+        internal readonly BracketContext NextContext;
+        Item<TTreeItem> _match;
 
-        internal Item(IType<TTreeItem> type, ScannerToken token, PrioTable.Context context)
+        internal Item
+            (
+            IType<TTreeItem> type,
+            ScannerToken token,
+            BracketContext context,
+            BracketContext nextContext)
         {
             Type = type;
             Token = token;
             Context = context;
+            NextContext = nextContext;
         }
 
         [EnableDump]
-        internal int Depth => Context?.Depth??0;
+        internal int Depth => Context?.Depth ?? 0;
 
-        internal Item(Scanner<TTreeItem>.Item other, PrioTable.Context context)
-            : this(other.Type.Type, other.Token, context) {}
+        internal Item
+            (Scanner<TTreeItem>.Item other, BracketContext context, BracketContext nextContext)
+            : this(other.Type.Type, other.Token, context, nextContext) {}
 
         internal TTreeItem Create(TTreeItem left, TTreeItem right)
         {
             return Type.Create(left, new Token(Token.PrecededWith, Token.Characters), right);
         }
 
-        PrioTable.Context PrioTable.IItem.Context => Context;
-        string PrioTable.IItem.Token => Type?.PrioTableId ?? PrioTable.BeginOfText;
+        BracketContext PrioTable.ITargetItem.Context => Context;
+        string PrioTable.ITargetItem.Token => Type?.PrioTableId ?? PrioTable.BeginOfText;
+        [DisableDump]
+        internal Item<TTreeItem> Match => _match ?? (_match = CreateMatch());
+
+        Item<TTreeItem> CreateMatch()
+            // Since it is a match, Context changes to NextContext
+            => new Item<TTreeItem>(Type.Match, Token, NextContext, NextContext);
     }
 }

@@ -20,7 +20,7 @@ namespace hw.Parser
         }
 
         internal IType<TTreeItem> Type { get { return Current.Type; } }
-        internal PrioTable.IItem Item { get { return Current; } }
+        internal PrioTable.ITargetItem Item { get { return Current; } }
 
         internal TTreeItem Create(TTreeItem right)
         {
@@ -30,9 +30,9 @@ namespace hw.Parser
             return right;
         }
 
-        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem, PrioTable.Context context, IType<TTreeItem> startType)
+        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem, BracketContext context, IType<TTreeItem> startType, BracketContext nextContext)
         {
-            return StartItem(new Item<TTreeItem>(startType, startItem, context));
+            return StartItem(new Item<TTreeItem>(startType, startItem, context, nextContext));
         }
 
         static OpenItem<TTreeItem> StartItem(Item<TTreeItem> current)

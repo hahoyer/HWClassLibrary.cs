@@ -10,7 +10,7 @@ namespace hw.Parser
     public sealed class PrioParser<TTreeItem> : DumpableObject, IParser<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
-        sealed class PrioParserWorker
+        sealed class PrioParserWorker : DumpableObject
         {
             readonly Stack<OpenItem<TTreeItem>> _stack;
             readonly int _startLevel;
@@ -22,9 +22,8 @@ namespace hw.Parser
             public PrioParserWorker(PrioParser<TTreeItem> parent, Stack<OpenItem<TTreeItem>> stack)
             {
                 _parent = parent;
-                _stack = stack;
-                _startLevel = stack.Count;
-                _current = stack.Peek().Current;
+                _stack = stack ?? new Stack<OpenItem<TTreeItem>>();
+                _startLevel = _stack.Count;
                 if(Trace)
                     Tracer.Line(_parent._prioTable.Title);
             }
@@ -33,68 +32,109 @@ namespace hw.Parser
 
             public TTreeItem Execute(SourcePosn sourcePosn)
             {
-                do
-                {
-                    _current = ReadNextToken(sourcePosn);
-                    TraceNewItem(sourcePosn);
+                _current = sourcePosn.Position == 0
+                    ? CreateStartItem(sourcePosn)
+                    : ReadNextToken(sourcePosn, BracketContext.Empty);
+                TraceNewItem(sourcePosn);
 
+                while(_current.NextContext.Depth > 0)
+                {
                     _left = null;
                     do
                     {
-                        TraceBeginInnerLoop();
-                        var result = Step();
-                        TraceEndInnerLoop();
-                        if(result != null)
-                            return result;
+                        TraceBeginPhase("inner loop");
+                        Step();
+                        TraceEndPhase("inner loop");
+                        Tracer.Assert(!IsBaseLevel);
                     } while(_left != null);
-                } while(true);
+
+                    _current = ReadNextToken(sourcePosn, _current.NextContext);
+                    TraceNewItem(sourcePosn);
+                }
+
+                while(!IsBaseLevel)
+                {
+                    TraceBeginPhase("end phase");
+                    TraceRelation(false);
+                    _left = _stack.Pop().Create(_left);
+                    TraceEndPhase("end phase");
+                }
+
+                Tracer.Assert(IsBaseLevel);
+
+                if(_current.NextContext.Depth > 0)
+                    NotImplementedMethod(sourcePosn);
+
+                return _current.Create(_left, null);
             }
 
-            Item<TTreeItem> ReadNextToken(SourcePosn sourcePosn)
+            Item<TTreeItem> CreateStartItem(SourcePosn sourcePosn)
+                => new Item<TTreeItem>
+                    (
+                    null,
+                    new ScannerToken(sourcePosn.Span(0), null),
+                    BracketContext.Empty,
+                    _parent._prioTable.NextContext(BracketContext.Empty, PrioTable.BeginOfText)
+                    );
+
+            Item<TTreeItem> ReadNextToken(SourcePosn sourcePosn, BracketContext context)
             {
                 TraceNextToken(sourcePosn);
-                var newContext = _parent._prioTable.NextContext(_current);
                 var result = _parent._scanner.NextToken(sourcePosn);
+                var nextContext = _parent._prioTable.NextContext
+                    (context, result.Type.Type.PrioTableId);
 
                 if(result.Type?.NextParser == null)
-                    return new Item<TTreeItem>(result, newContext);
+                    return new Item<TTreeItem>(result, context, nextContext);
 
                 TraceSubParserStart(result);
                 var subType = result.Type.NextParser.Execute(sourcePosn, _stack);
                 TraceSubParserEnd(result);
 
-                return new Item<TTreeItem>(subType, result.Token, newContext);
+                return new Item<TTreeItem>(subType, result.Token, context, nextContext);
             }
 
-            TTreeItem Step()
+            void Step()
             {
-                var relation = _parent.Relation(_current, _stack.Peek().Item);
-                TraceRelation(relation);
-
-                if(relation != '+')
+                do
                 {
-                    _left = _stack.Pop().Create(_left);
-                    TracePop();
+                    var isPush = IsPush();
+                    TraceRelation(isPush);
 
-                    if(_startLevel > _stack.Count)
-                        return _current.Create(_left, null);
-                }
+                    if(isPush != true)
+                        _left = _stack.Pop().Create(_left);
+                    if(isPush == true)
+                    {
+                        _stack.Push(new OpenItem<TTreeItem>(_left, _current));
+                        _left = null;
+                    }
 
-                if(relation == '-')
-                    return null;
+                    if(isPush != null)
+                        return;
 
-                if(Trace)
-                    Tracer.Line("");
-                _stack.Push(new OpenItem<TTreeItem>(_left, _current));
-                _left = null;
-                return null;
+                    _left = _current.Create(_left, null);
+                    _current = _current.Match;
+
+                    TraceMatchPhase();
+                } while(_current.Type != null);
+
+                NotImplementedMethod();
             }
 
-            void TraceRelation(char relation)
+            bool? IsPush()
+            {
+                if(IsBaseLevel)
+                    return true;
+                return _parent.IsPush(_current, _stack.Peek().Item);
+            }
+
+            bool IsBaseLevel { get { return _stack.Count == _startLevel; } }
+
+            void TraceRelation(bool? relation)
             {
                 if(!Trace)
                     return;
-                Tracer.Line(("" + relation).Repeat(16));
+                Tracer.Line((relation == true ? "+" : relation == false ? "-" : "=").Repeat(16));
             }
 
             void TraceNextToken(SourcePosn sourcePosn)
@@ -115,13 +155,12 @@ namespace hw.Parser
                 Tracer.Line("=================>");
             }
 
-            void TraceBeginInnerLoop()
+            void TraceMatchPhase()
             {
-                if(!Trace)
+                if (!Trace)
                     return;
-                Tracer.IndentStart();
                 Tracer.Line("\n======================>");
-                Tracer.Line("begin of inner loop ==>");
+                Tracer.Line("match ================>");
                 Tracer.Line("======================>");
                 Tracer.IndentStart();
                 TraceItemLine("_current", _current);
@@ -130,18 +169,34 @@ namespace hw.Parser
                 Tracer.IndentEnd();
             }
 
-            void TraceEndInnerLoop()
+            void TraceBeginPhase(string tag)
             {
                 if(!Trace)
                     return;
                 Tracer.IndentStart();
-                Tracer.Line("");
+                Tracer.Line("\n======================>");
+                Tracer.Line("begin of " + tag + " ==>");
+                Tracer.Line("======================>");
+                Tracer.IndentStart();
+                TraceItemLine("_current", _current);
+                Tracer.Line("_left = " + Extension.TreeDump(_left));
+                Tracer.Line(FormatStackForTrace(_stack));
+                Tracer.IndentEnd();
+            }
+
+            void TraceEndPhase(string tag)
+            {
+                if(!Trace)
+                    return;
+                Tracer.IndentStart();
                 TraceItemLine("_current", _current);
                 Tracer.Line("left = " + Extension.TreeDump(_left));
                 Tracer.Line(FormatStackForTrace(_stack));
+                if(_startLevel > _stack.Count)
+                    Tracer.Line("*** End reached ***");
                 Tracer.IndentEnd();
                 Tracer.Line("\n<======================");
-                Tracer.Line("end of inner loop <==");
+                Tracer.Line("end of " + tag + " <==");
                 Tracer.Line("<======================\n");
                 Tracer.IndentEnd();
             }
@@ -168,27 +223,16 @@ namespace hw.Parser
                 Tracer.Line("======================>");
             }
 
-            void TracePop()
-            {
-                if(!Trace)
-                    return;
-                Tracer.Line("<<<<<<");
-                Tracer.IndentStart();
-                Tracer.Line("_left = " + Extension.TreeDump(_left));
-                Tracer.Line(FormatStackForTrace(_stack));
-                Tracer.IndentEnd();
-            }
-
             static string FormatStackForTrace(Stack<OpenItem<TTreeItem>> stack)
             {
                 var count = stack.Count;
                 if(count == 0)
                     return "stack empty";
-                const int maxLines = 5;
+                const int MaxLines = 5;
 
-                var isBig = count > maxLines;
+                var isBig = count > MaxLines;
                 var result =
-                    stack.Take(maxLines - (isBig ? 1 : 0))
+                    stack.Take(MaxLines - (isBig ? 1 : 0))
                         .Select((item, i) => i.ToString() + ": " + TreeDump(item))
                         .Stringify("\n");
                 if(isBig)
@@ -226,16 +270,13 @@ namespace hw.Parser
 
         readonly PrioTable _prioTable;
         readonly IScanner<TTreeItem> _scanner;
-        readonly IType<TTreeItem> StartType;
         public bool Trace { get; set; }
 
-        public PrioParser(PrioTable prioTable, IScanner<TTreeItem> scanner, IType<TTreeItem> startType = null)
+        public PrioParser(PrioTable prioTable, IScanner<TTreeItem> scanner)
         {
             _prioTable = prioTable;
             _scanner = scanner;
-            StartType = startType;
         }
-
 
         TTreeItem IParser<TTreeItem>.Execute
             (SourcePosn start, Stack<OpenItem<TTreeItem>> initialStack)
@@ -243,7 +284,7 @@ namespace hw.Parser
             StartMethodDump(Trace, start.GetDumpAroundCurrent(50), initialStack);
             try
             {
-                return ReturnMethodDump(CreateWorker(start, initialStack).Execute(start));
+                return ReturnMethodDump(CreateWorker(initialStack).Execute(start));
             }
             finally
             {
@@ -251,25 +292,10 @@ namespace hw.Parser
             }
         }
 
-        char Relation(PrioTable.IItem newType, PrioTable.IItem topType)
-        {
-            return _prioTable.Relation(newType, topType);
-        }
+        bool? IsPush(PrioTable.ITargetItem newType, PrioTable.ITargetItem topType)
+            => _prioTable.IsPush(newType, topType);
 
-        PrioParserWorker CreateWorker
-            (SourcePosn start, Stack<OpenItem<TTreeItem>> initialStack)
-        {
-            Stack<OpenItem<TTreeItem>> stack;
-            if(initialStack == null)
-            {
-                stack = new Stack<OpenItem<TTreeItem>>();
-                var openItem = OpenItem<TTreeItem>
-                    .StartItem(new ScannerToken(start.Span(0), null), PrioTable.StartContext, StartType);
-                stack.Push(openItem);
-            }
-            else
-                stack = initialStack;
-            return new PrioParserWorker(this, stack);
-        }
+        PrioParserWorker CreateWorker(Stack<OpenItem<TTreeItem>> stack)
+            => new PrioParserWorker(this, stack);
     }
 }

@@ -48,6 +48,7 @@
     <Compile Include="hw.CompilerTools\Graphics\SVG\Text.cs" />
     <Compile Include="hw.CompilerTools\Graphics\Syntax.cs" />
     <Compile Include="hw.CompilerTools\Graphics\SyntaxDrawer.cs" />
+    <Compile Include="hw.CompilerTools\Parser\BracketContext.cs" />
     <Compile Include="hw.CompilerTools\Parser\Extension.cs" />
     <Compile Include="hw.CompilerTools\Parser\IBinaryTreeItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\ILexer.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
     <Compile Include="Tests\CompilerTool\AdvancedParser.cs" />
+    <Compile Include="Tests\CompilerTool\NestedParser.cs" />
     <Compile Include="Tests\CompilerTool\ParserUtil.cs" />
     <Compile Include="Tests\CompilerTool\SourceTests.cs" />
     <Compile Include="Tests\CompilerTool\Util\IssueId.cs" />

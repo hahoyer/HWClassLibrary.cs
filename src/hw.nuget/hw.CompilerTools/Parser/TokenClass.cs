@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Forms;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -25,6 +25,18 @@ namespace hw.Parser
 
         string IType<TTreeItem>.PrioTableId { get { return Id; } }
 
+        IType<TTreeItem> IType<TTreeItem>.Match => Match;
+
+        [DisableDump]
+        protected virtual IType<TTreeItem> Match
+        {
+            get
+            {
+                NotImplementedMethod();
+                return null;
+            }
+        }
+
         TTreeItem IType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right)
         {
             return Create(left, token, right);
@@ -36,6 +48,7 @@ namespace hw.Parser
 
         protected virtual ISubParser<TTreeItem> Next { get { return null; } }
         protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
+
         protected override string GetNodeDump()
         {
             return base.GetNodeDump() + "(" + Id.Quote() + ")";

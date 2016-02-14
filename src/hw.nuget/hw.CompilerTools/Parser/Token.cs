@@ -20,6 +20,7 @@ namespace hw.Parser
             _characters = characters;
         }
 
+        [DisableDump]
         public SourcePart SourcePart { get { return _characters + _precededWith.SourcePart(); } }
 
         public string Id { get { return _characters.Id; } }

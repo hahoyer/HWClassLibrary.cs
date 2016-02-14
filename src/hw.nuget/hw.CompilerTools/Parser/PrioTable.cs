@@ -16,49 +16,29 @@ namespace hw.Parser
         public const string EndOfText = "(eot)";
         public const string BeginOfText = "(bot)";
         public const string Error = "(err)";
+        public const string LeftBracket = "(left)";
+        public const string RightBracket = "(right)";
+        public const string Bracket = "(bracket)";
 
-        public sealed class Context : DumpableObject
-        {
-            internal static readonly Context Empty = new Context(new int[] {});
-
-            [EnableDump]
-            readonly int[] Data;
-
-            Context(int[] data) { Data = data; }
-
-            internal int Depth => Data.Length;
-
-            public Context Add(int index)
-            {
-                if(index == 0)
-                    return this;
-
-                var xx = Data.SkipWhile(item => item < 0 && item + index > 0).ToArray();
-                if(index > 0 && xx.FirstOrDefault() + index == 0)
-                    return new Context(xx.Skip(1).ToArray());
-                return new Context(new[] {index}.Concat(xx).ToArray());
-            }
-        }
-
-        public interface IItem
+        public interface ITargetItem
         {
             string Token { get; }
-            Context Context { get; }
+            BracketContext Context { get; }
         }
 
-        sealed class Item
+        internal sealed class RelationDefinitionItem
         {
             public readonly string[] Token;
             internal readonly bool IsRight;
 
-            public Item(bool isRight, string[] token)
+            public RelationDefinitionItem(bool isRight, string[] token)
             {
                 IsRight = isRight;
                 Token = token;
             }
         }
 
-        sealed class BracketPairItem
+        internal sealed class BracketPairItem
         {
             public readonly string Left;
             public readonly string Right;
@@ -105,32 +85,32 @@ namespace hw.Parser
 
         public static PrioTable FromText(string text) { return FromText(text.Split('\n', '\r')); }
 
-        readonly Item[] BaseRelation;
-        readonly BracketPairItem[] Brackets;
-        readonly bool NormalOnRightBracket;
+        [DisableDump]
+        internal readonly RelationDefinitionItem[] BaseRelation;
+        [DisableDump]
+        internal readonly BracketPairItem[] Brackets;
 
         PrioTable()
         {
-            BaseRelation = new Item[] {};
+            BaseRelation = new RelationDefinitionItem[] {};
             Brackets = new BracketPairItem[] {};
         }
 
         PrioTable(bool isRight, string[] token)
         {
-            BaseRelation = new[] {new Item(isRight, token)};
+            BaseRelation = new[] {new RelationDefinitionItem(isRight, token)};
             Brackets = new BracketPairItem[] {};
         }
 
         PrioTable(PrioTable x, PrioTable y)
         {
-            NormalOnRightBracket = x.NormalOnRightBracket;
             BaseRelation = x.BaseRelation.Concat(y.BaseRelation).ToArray();
             Brackets = x.Brackets.Concat(y.Brackets).ToArray();
         }
 
         PrioTable(BracketPairItem bracketPairItem)
         {
-            BaseRelation = new Item[] {};
+            BaseRelation = new RelationDefinitionItem[] {};
             Brackets = new[] {bracketPairItem};
         }
 
@@ -143,143 +123,30 @@ namespace hw.Parser
             return x.Equals(y);
         }
 
-        /// <summary>
-        ///     Returns the priority information of a pair of tokens
-        ///     The characters have the following meaning:
-        ///     Plus: New token is higher the recent token,
-        ///     Minus: Recent token is higher than new token
-        ///     Equal sign: New token and recent token are matching
-        /// </summary>
-        /// <param name="newItem"> </param>
-        /// <param name="recentItem"> </param>
-        /// <returns> </returns>
-        public char Relation(IItem newItem, IItem recentItem)
+        internal bool? IsPush(ITargetItem newItem, ITargetItem recentItem)
         {
-            var newToken = newItem.Token == "" ? EndOfText : newItem.Token;
-            var recentToken = recentItem.Token == "" ? BeginOfText : recentItem.Token;
-            var newType = Type(newToken);
-            var recentType = Type(recentToken);
-            var depthDelta = newItem.Context.Depth - recentItem.Context.Depth;
-            var indexDelta = Index(recentToken) - Index(newToken);
+            var delta = newItem.Context.Depth
+                - NextContext(recentItem.Context, recentItem.Token).Depth;
 
-            if(depthDelta == 1)
+            switch(delta)
             {
-                if(newType == TokenType.Left && recentType == TokenType.Left)
-                    return '+';
-                if(newType == TokenType.Normal && recentType == TokenType.Left)
-                    return '+';
-                if(newType == TokenType.Right && recentType == TokenType.Left && indexDelta == 0)
-                    return '=';
-                NotImplementedMethod(newItem, recentItem);
-                return default(char);
+            case 0:
+                return IsPushOnSameDepth
+                    (
+                        GetSubTypeIndex(newItem),
+                        GetSubTypeIndex(recentItem),
+                        newItem.Token,
+                        recentItem.Token);
+            case 1:
+                return true;
+            default:
+                NotImplementedMethod(newItem, recentItem, nameof(delta), delta);
+                return false;
             }
-
-            if(depthDelta == 0)
-            {
-                switch(newType)
-                {
-                    case TokenType.Left:
-                        switch(recentType)
-                        {
-                            case TokenType.Left:
-                                NotImplementedMethod(newItem, recentItem);
-                                if(indexDelta > 0)
-                                    return '+';
-                                NotImplementedMethod(newItem, recentItem);
-                                return default(char);
-                            case TokenType.Normal:
-                                return '+';
-                            case TokenType.Right:
-                                NotImplementedMethod(newItem, recentItem);
-                                return default(char);
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-
-                    case TokenType.Normal:
-                        switch(recentType)
-                        {
-                            case TokenType.Left:
-                                NotImplementedMethod(newItem, recentItem);
-                                return '+';
-                            case TokenType.Right:
-                                NotImplementedMethod(newItem, recentItem);
-                                return '-';
-                            case TokenType.Normal:
-                                if(indexDelta < 0)
-                                    return '-';
-                                if(indexDelta > 0)
-                                    return '+';
-                                return BaseRelation[Index(recentToken)].IsRight ? '+' : '-';
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-
-                    case TokenType.Right:
-                        switch(recentType)
-                        {
-                            case TokenType.Normal:
-                                return '-';
-                            case TokenType.Left:
-                                NotImplementedMethod(newItem, recentItem);
-                                return default(char);
-                            case TokenType.Right:
-                                NotImplementedMethod(newItem, recentItem);
-                                if(indexDelta < 0)
-                                    return '-';
-                                NotImplementedMethod(newItem, recentItem);
-                                return default(char);
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            if(depthDelta == -1)
-            {
-                if(newType == TokenType.Normal && recentType == TokenType.Right)
-                    return '-';
-                if(newType == TokenType.Right && recentType == TokenType.Right && indexDelta < 0)
-                    return '-';
-
-                NotImplementedMethod(newItem, recentItem);
-                return default(char);
-            }
-
-            NotImplementedMethod(newItem, recentItem);
-            return default(char);
         }
 
-        enum TokenType
-        {
-            Left,
-            Normal,
-            Right
-        }
-
-        TokenType Type(string token)
-        {
-            if(Brackets.Any(item => item.Left == token))
-                return TokenType.Left;
-            if(Brackets.Any(item => item.Right == token))
-                return TokenType.Right;
-            return TokenType.Normal;
-        }
-
-        int Index(string token)
-        {
-            return
-                (Brackets.IndexWhere(item => item.Left == token || item.Right == token)
-                    ?? BaseRelation.IndexWhere(item => item.Token.Contains(token))
-                        ?? BaseRelation.IndexWhere(item => item.Token.Contains(Any))).AssertValue();
-        }
-
-        public Context NextContext(IItem current)
-            => current.Context.Add(GetContextIndex(current.Token));
-
-        public static Context StartContext => Context.Empty;
+        internal BracketContext NextContext(BracketContext context, string token)
+            => context.Add(GetContextIndex(token));
 
         int GetContextIndex(string token)
         {
@@ -332,25 +199,124 @@ namespace hw.Parser
                 var tokenCount = data.Length / 2;
                 switch(line[0].ToLowerInvariant())
                 {
-                    case "left":
-                        result += Left(data);
-                        break;
-                    case "right":
-                        result += Right(data);
-                        break;
-                    case "parlevel":
-                        result += BracketParallels
-                            (
-                                data.Take(tokenCount).ToArray(),
-                                data.Skip(tokenCount).Take(tokenCount).ToArray());
-                        break;
-                    default:
-                        throw new ArgumentException();
+                case "left":
+                    result += Left(data);
+                    break;
+                case "right":
+                    result += Right(data);
+                    break;
+                case "parlevel":
+                    result += BracketParallels
+                        (
+                            data.Take(tokenCount).ToArray(),
+                            data.Skip(tokenCount).Take(tokenCount).ToArray());
+                    break;
+                default:
+                    throw new ArgumentException();
                 }
             }
 
             result += BracketParallels(new[] {BeginOfText}, new[] {EndOfText});
             return result;
+        }
+
+        internal int? BaseRelationIndex(string token)
+        {
+            return BaseRelation.IndexWhere(item => item.Token.Contains(token));
+        }
+
+        internal int GetSubTypeIndex(ITargetItem target)
+        {
+            var parent = this;
+            Tracer.Assert(!string.IsNullOrWhiteSpace(target.Token));
+            var token = target.Token;
+            if(parent.Brackets.Any(item => item.Left == token))
+                return 0;
+            if(parent.Brackets.Any(item => item.Right == token))
+                return 2;
+            return 1;
+        }
+
+        enum FunctionType
+        {
+            Unkown,
+            Push,
+            Relation,
+            Pull,
+            Match
+        }
+
+        static readonly FunctionType[][] SameDepth =
+        {
+            new[] {FunctionType.Push, FunctionType.Push, FunctionType.Push},
+            new[] {FunctionType.Push, FunctionType.Relation, FunctionType.Relation},
+            new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Unkown}
+        };
+
+        bool NotImplemented(string newToken, string recentToken)
+        {
+            NotImplementedMethod(newToken, recentToken);
+            return false;
+        }
+
+        internal bool? IsPushOnSameDepth(int newIndex, int otherIndex, string newToken, string otherToken)
+        {
+            switch(SameDepth[newIndex][otherIndex])
+            {
+            case FunctionType.Unkown:
+                return NotImplemented(newToken, otherToken);
+            case FunctionType.Push:
+                return true;
+            case FunctionType.Relation:
+                return IsPushByRelation(newIndex, otherIndex, newToken, otherToken);
+            case FunctionType.Pull:
+                return false;
+            case FunctionType.Match:
+                return IsPushByMatch(newToken, otherToken);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        bool? IsPushByMatch(string newToken, string otherToken)
+        {
+            if(GetRightBracketIndex(newToken) == GetLeftBracketIndex(otherToken))
+                return null;
+
+            NotImplementedMethod(newToken, otherToken);
+            return false;
+        }
+
+        internal int GetLeftBracketIndex(string token)
+            => Brackets
+                .IndexWhere(item => item.Left == token)
+                .AssertValue();
+
+        internal int GetRightBracketIndex(string token)
+            => Brackets
+                .IndexWhere(item => item.Right == token)
+                .AssertValue();
+
+        bool IsPushByRelation
+            (int newTypeIndex, int otherTypeIndex, string newToken, string otherToken)
+        {
+            var index = GetRelationIndex(newToken, newTypeIndex);
+            var delta = index - GetRelationIndex(otherToken, otherTypeIndex);
+            return delta == 0 ? BaseRelation[index].IsRight : delta < 0;
+        }
+
+        internal int GetRelationIndex(string token, int type)
+        {
+            var result = BaseRelationIndex(token);
+            if(type == 0)
+                result = result ?? BaseRelationIndex(LeftBracket);
+            if(type == 2)
+                result = result ?? BaseRelationIndex(RightBracket);
+            if(type != 1)
+                result = result ?? BaseRelationIndex(Bracket);
+            result = result ?? BaseRelationIndex(Any);
+            return result.AssertValue();
         }
     }
 }
