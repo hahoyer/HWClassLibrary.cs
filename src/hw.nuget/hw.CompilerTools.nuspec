@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.2</version>
+        <version>16.2.1</version>
       <releaseNotes>
+        Bug: Token for bracket match should not overlap with other token
+        16.2
         Change: Bracket match definition
         16.1
         Change: depth-controlled Prioparser
