@@ -20,14 +20,20 @@ namespace hw.Parser
             _characters = characters;
         }
 
-        [DisableDump]
-        public SourcePart SourcePart { get { return _characters + _precededWith.SourcePart(); } }
+        internal Token(ScannerToken token)
+            : this(token.PrecededWith, token.Characters)
+        {
+        }
 
-        public string Id { get { return _characters.Id; } }
-        WhiteSpaceToken[] IToken.PrecededWith { get { return _precededWith; } }
-        SourcePart IToken.Characters { get { return _characters; } }
+
+        [DisableDump]
+        public SourcePart SourcePart => _characters + _precededWith.SourcePart();
+
+        public string Id => _characters.Id;
+        WhiteSpaceToken[] IToken.PrecededWith => _precededWith;
+        SourcePart IToken.Characters => _characters;
 
         [UsedImplicitly]
-        public new string NodeDump { get { return Id; } }
+        public new string NodeDump => Id;
     }
 }

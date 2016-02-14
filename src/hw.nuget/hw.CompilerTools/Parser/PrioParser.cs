@@ -25,10 +25,10 @@ namespace hw.Parser
                 _stack = stack ?? new Stack<OpenItem<TTreeItem>>();
                 _startLevel = _stack.Count;
                 if(Trace)
-                    Tracer.Line(_parent._prioTable.Title??"");
+                    Tracer.Line(_parent._prioTable.Title ?? "");
             }
 
-            bool Trace { get { return _parent.Trace; } }
+            bool Trace => _parent.Trace;
 
             public TTreeItem Execute(SourcePosn sourcePosn)
             {
@@ -65,14 +65,14 @@ namespace hw.Parser
                 if(_current.NextContext.Depth > 0)
                     NotImplementedMethod(sourcePosn);
 
-                return _current.Create(_left, null);
+                return _current.Type.Create(_left, _current.Token, null);
             }
 
             Item<TTreeItem> CreateStartItem(SourcePosn sourcePosn)
                 => new Item<TTreeItem>
                     (
                     null,
-                    new ScannerToken(sourcePosn.Span(0), null),
+                    new Token(null,sourcePosn.Span(0)),
                     BracketContext.Empty,
                     _parent._prioTable.NextContext(BracketContext.Empty, PrioTable.BeginOfText)
                     );
@@ -91,14 +91,16 @@ namespace hw.Parser
                 var subType = result.Type.NextParser.Execute(sourcePosn, _stack);
                 TraceSubParserEnd(result);
 
-                return new Item<TTreeItem>(subType, result.Token, context, nextContext);
+                var token = new Token(result.Token);
+                return new Item<TTreeItem>(subType, token, context, nextContext);
             }
 
             void Step()
             {
                 do
                 {
-                    var isPush = IsPush();
+                    var other = IsBaseLevel ? null : _stack.Peek().BracketItem;
+                    bool? isPush = other == null ? true : _parent.IsPush(_current, other);
                     TraceRelation(isPush);
 
                     if(isPush != true)
@@ -112,8 +114,8 @@ namespace hw.Parser
                     if(isPush != null)
                         return;
 
-                    _left = _current.Create(_left, null);
-                    _current = _current.Match;
+                    _left = _current.Type.Create(_left, _current.Token, null);
+                    _current = _current.GetMatch(other);
 
                     TraceMatchPhase();
                 } while(_current.Type != null);
@@ -121,14 +123,7 @@ namespace hw.Parser
                 NotImplementedMethod();
             }
 
-            bool? IsPush()
-            {
-                if(IsBaseLevel)
-                    return true;
-                return _parent.IsPush(_current, _stack.Peek().Item);
-            }
-
-            bool IsBaseLevel { get { return _stack.Count == _startLevel; } }
+            bool IsBaseLevel => _stack.Count == _startLevel;
 
             void TraceRelation(bool? relation)
             {
@@ -157,7 +152,7 @@ namespace hw.Parser
 
             void TraceMatchPhase()
             {
-                if (!Trace)
+                if(!Trace)
                     return;
                 Tracer.Line("\n======================>");
                 Tracer.Line("match ================>");
@@ -264,7 +259,7 @@ namespace hw.Parser
                 return Extension.TreeDump(value.Left) + " "
                     + (value.Type == null
                         ? "null"
-                        : value.Type.PrioTableId + " Depth=" + value.Current.Depth);
+                        : value.Type.PrioTableId + " NextDepth=" + value.BracketItem.NextDepth);
             }
         }
 

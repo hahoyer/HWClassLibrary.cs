@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.DebugFormatter;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -10,39 +10,29 @@ namespace hw.Parser
     public sealed class OpenItem<TTreeItem> : DumpableObject
         where TTreeItem : class, ISourcePart
     {
+        readonly Token Token;
         internal readonly TTreeItem Left;
-        internal readonly Item<TTreeItem> Current;
+        internal readonly IType<TTreeItem> Type;
+        internal readonly PrioTable.ITargetItem BracketItem;
 
         internal OpenItem(TTreeItem left, Item<TTreeItem> current)
         {
             Left = left;
-            Current = current;
+            Type = current.Type;
+            Token = current.Token;
+            BracketItem = current;
         }
 
-        internal IType<TTreeItem> Type { get { return Current.Type; } }
-        internal PrioTable.ITargetItem Item { get { return Current; } }
 
         internal TTreeItem Create(TTreeItem right)
         {
-            if(Current.Type != null)
-                return Current.Create(Left, right);
+            if(Type != null)
+                return Type.Create(Left, Token, right);
             Tracer.Assert(Left == null);
             return right;
         }
 
-        internal static OpenItem<TTreeItem> StartItem(ScannerToken startItem, BracketContext context, IType<TTreeItem> startType, BracketContext nextContext)
-        {
-            return StartItem(new Item<TTreeItem>(startType, startItem, context, nextContext));
-        }
-
-        static OpenItem<TTreeItem> StartItem(Item<TTreeItem> current)
-        {
-            return new OpenItem<TTreeItem>(default(TTreeItem), current);
-        }
-
         protected override string GetNodeDump()
-        {
-            return Tracer.Dump(Left) + " " + Current.Type.GetType().PrettyName();
-        }
+            => Tracer.Dump(Left) + " " + Type.GetType().PrettyName();
     }
 }

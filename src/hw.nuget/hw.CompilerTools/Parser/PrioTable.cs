@@ -23,7 +23,8 @@ namespace hw.Parser
         public interface ITargetItem
         {
             string Token { get; }
-            BracketContext Context { get; }
+            BracketContext LeftContext { get; }
+            int NextDepth { get; }
         }
 
         internal sealed class RelationDefinitionItem
@@ -125,8 +126,7 @@ namespace hw.Parser
 
         internal bool? IsPush(ITargetItem newItem, ITargetItem recentItem)
         {
-            var delta = newItem.Context.Depth
-                - NextContext(recentItem.Context, recentItem.Token).Depth;
+            var delta = newItem.LeftContext.Depth - recentItem.NextDepth;
 
             switch(delta)
             {
@@ -250,7 +250,7 @@ namespace hw.Parser
         {
             new[] {FunctionType.Push, FunctionType.Push, FunctionType.Push},
             new[] {FunctionType.Push, FunctionType.Relation, FunctionType.Relation},
-            new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Unkown}
+            new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Pull}
         };
 
         bool NotImplemented(string newToken, string recentToken)
@@ -259,7 +259,8 @@ namespace hw.Parser
             return false;
         }
 
-        internal bool? IsPushOnSameDepth(int newIndex, int otherIndex, string newToken, string otherToken)
+        internal bool? IsPushOnSameDepth
+            (int newIndex, int otherIndex, string newToken, string otherToken)
         {
             switch(SameDepth[newIndex][otherIndex])
             {
@@ -283,13 +284,7 @@ namespace hw.Parser
         {
             var newTokenIndex = GetRightBracketIndex(newToken);
             var otherIndex = GetLeftBracketIndex(otherToken);
-            if (newTokenIndex == otherIndex)
-                return null;
-            if (newTokenIndex > otherIndex)
-                return false;
-
-            NotImplementedMethod(newToken, otherToken);
-            return false;
+            return newTokenIndex >= otherIndex ? (bool?) null : true;
         }
 
         internal int GetLeftBracketIndex(string token)
