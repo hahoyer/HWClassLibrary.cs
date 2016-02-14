@@ -14,12 +14,20 @@ namespace hw.Tests.CompilerTool
     public sealed class SimpleParser : DependantAttribute
     {
         [UnitTest]
+        public static void NormalParser() 
+            => ParserUtil.ParseAndCheck
+            (
+                "a b c",
+                "(((<null> a <null>) b <null>) c <null>)"
+            );
+
+        [UnitTest]
         public static void NotWrongExpression()
         {
             ParserUtil.ParseAndCheck
                 (
                     "(a;b);c",
-                    "(((<null> a <null>) ; (<null> b <null>)) ; (<null> c <null>))"
+                    "((((<null> a <null>) ; (<null> b <null>)) () <null>) ; (<null> c <null>))"
                 );
         }
 
@@ -63,29 +71,6 @@ namespace hw.Tests.CompilerTool
                 ;
 
             ParserUtil.ParseAndCheck(expr + " + " + expr, "(" + subResult + " + " + subResult + ")");
-        }
-
-        [UnitTest]
-        public static void NormalParser()
-        {
-            var text = "a b c";
-            var source = new Source(text);
-
-
-            var result = MainTokenFactory.Instance.Execute(source + 0, null);
-
-            Tracer.Assert(result.TokenClassName == "c");
-            Tracer.Assert(result.TokenClassIsMain);
-            Tracer.Assert(result.Left != null);
-            Tracer.Assert(result.Right == null);
-            Tracer.Assert(result.Left.TokenClassName == "b");
-            Tracer.Assert(result.Left.TokenClassIsMain);
-            Tracer.Assert(result.Left.Left != null);
-            Tracer.Assert(result.Left.Right == null);
-            Tracer.Assert(result.Left.Left.TokenClassName == "a");
-            Tracer.Assert(result.Left.Left.TokenClassIsMain);
-            Tracer.Assert(result.Left.Left.Left == null);
-            Tracer.Assert(result.Left.Left.Right == null);
         }
     }
 }
