@@ -15,6 +15,6 @@ namespace hw.Parser
     public interface IBracketMatch<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
-        IType<TTreeItem> GetValue(string left);
+        IType<TTreeItem> Value { get; }
     }
 }

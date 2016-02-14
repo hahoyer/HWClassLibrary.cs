@@ -124,24 +124,56 @@ namespace hw.Parser
             return x.Equals(y);
         }
 
-        internal bool? IsPush(ITargetItem newItem, ITargetItem recentItem)
+
+        internal sealed class Relation : EnumEx
+        {
+            internal static readonly Relation Push = new Relation
+            {
+                IsPush = true
+            };
+
+            internal static readonly Relation Pull = new Relation
+            {
+                IsPull = true
+            };
+
+            internal static readonly Relation Match = new Relation
+            {
+                IsPull = true,
+                IsBracket = true,
+                IsMatch = true
+            };
+
+            internal static readonly Relation Mismatch = new Relation
+            {
+                IsPull = true,
+                IsBracket = true
+            };
+
+            public bool IsPull;
+            public bool IsPush;
+            public bool IsBracket;
+            public bool IsMatch;
+        }
+
+        internal Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
         {
             var delta = newItem.LeftContext.Depth - recentItem.NextDepth;
 
             switch(delta)
             {
             case 0:
-                return IsPushOnSameDepth
+                return GetRelationOnSameDepth
                     (
                         GetSubTypeIndex(newItem),
                         GetSubTypeIndex(recentItem),
                         newItem.Token,
                         recentItem.Token);
             case 1:
-                return true;
+                return Relation.Push;
             default:
                 NotImplementedMethod(newItem, recentItem, nameof(delta), delta);
-                return false;
+                return null;
             }
         }
 
@@ -253,13 +285,13 @@ namespace hw.Parser
             new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Pull}
         };
 
-        bool NotImplemented(string newToken, string recentToken)
+        Relation NotImplemented(string newToken, string recentToken)
         {
             NotImplementedMethod(newToken, recentToken);
-            return false;
+            return null;
         }
 
-        internal bool? IsPushOnSameDepth
+        internal Relation GetRelationOnSameDepth
             (int newIndex, int otherIndex, string newToken, string otherToken)
         {
             switch(SameDepth[newIndex][otherIndex])
@@ -267,24 +299,28 @@ namespace hw.Parser
             case FunctionType.Unkown:
                 return NotImplemented(newToken, otherToken);
             case FunctionType.Push:
-                return true;
+                return Relation.Push;
             case FunctionType.Relation:
-                return IsPushByRelation(newIndex, otherIndex, newToken, otherToken);
+                return GetRelation(newIndex, otherIndex, newToken, otherToken);
             case FunctionType.Pull:
-                return false;
+                return Relation.Pull;
             case FunctionType.Match:
-                return IsPushByMatch(newToken, otherToken);
+                return GetBracketMatch(newToken, otherToken);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
             }
         }
 
-        bool? IsPushByMatch(string newToken, string otherToken)
+        Relation GetBracketMatch(string newToken, string otherToken)
         {
-            var newTokenIndex = GetRightBracketIndex(newToken);
+            var newIndex = GetRightBracketIndex(newToken);
             var otherIndex = GetLeftBracketIndex(otherToken);
-            return newTokenIndex >= otherIndex ? (bool?) null : true;
+            if(newIndex == otherIndex)
+                return Relation.Match;
+            if(newIndex > otherIndex)
+                return Relation.Mismatch;
+            return Relation.Push;
         }
 
         internal int GetLeftBracketIndex(string token)
@@ -297,12 +333,15 @@ namespace hw.Parser
                 .IndexWhere(item => item.Right == token)
                 .AssertValue();
 
-        bool IsPushByRelation
+        Relation GetRelation
             (int newTypeIndex, int otherTypeIndex, string newToken, string otherToken)
         {
             var index = GetRelationIndex(newToken, newTypeIndex);
             var delta = index - GetRelationIndex(otherToken, otherTypeIndex);
-            return delta == 0 ? BaseRelation[index].IsRight : delta < 0;
+            var isPush = delta == 0 ? BaseRelation[index].IsRight : delta < 0;
+            return isPush
+                ? Relation.Push
+                : Relation.Pull;
         }
 
         internal int GetRelationIndex(string token, int type)

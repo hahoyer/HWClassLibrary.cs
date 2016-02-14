@@ -55,7 +55,7 @@ namespace hw.Parser
                 while(!IsBaseLevel)
                 {
                     TraceBeginPhase("end phase");
-                    TraceRelation(false);
+                    TraceRelation(PrioTable.Relation.Pull);
                     _left = _stack.Pop().Create(_left);
                     TraceEndPhase("end phase");
                 }
@@ -72,7 +72,7 @@ namespace hw.Parser
                 => new Item<TTreeItem>
                     (
                     null,
-                    new Token(null,sourcePosn.Span(0)),
+                    new Token(null, sourcePosn.Span(0)),
                     BracketContext.Empty,
                     _parent._prioTable.NextContext(BracketContext.Empty, PrioTable.BeginOfText)
                     );
@@ -100,22 +100,27 @@ namespace hw.Parser
                 do
                 {
                     var other = IsBaseLevel ? null : _stack.Peek().BracketItem;
-                    bool? isPush = other == null ? true : _parent.IsPush(_current, other);
-                    TraceRelation(isPush);
+                    var relation = other == null
+                        ? PrioTable.Relation.Push
+                        : _parent.GetRelation(_current, other);
+                    TraceRelation(relation);
 
-                    if(isPush != true)
+                    if(relation.IsPull)
                         _left = _stack.Pop().Create(_left);
-                    if(isPush == true)
+                    if(relation.IsPush)
                     {
                         _stack.Push(new OpenItem<TTreeItem>(_left, _current));
                         _left = null;
                     }
 
-                    if(isPush != null)
+                    if (!relation.IsBracket)
                         return;
 
                     _left = _current.Type.Create(_left, _current.Token, null);
-                    _current = _current.GetMatch(other);
+                    if (relation.IsMatch)
+                        _current = _current.GetMatch(other);
+                    else
+                        _current = _current.GetMismatch(other);
 
                     TraceMatchPhase();
                 } while(_current.Type != null);
@@ -125,11 +130,11 @@ namespace hw.Parser
 
             bool IsBaseLevel => _stack.Count == _startLevel;
 
-            void TraceRelation(bool? relation)
+            void TraceRelation(PrioTable.Relation relation)
             {
                 if(!Trace)
                     return;
-                Tracer.Line((relation == true ? "+" : relation == false ? "-" : "=").Repeat(16));
+                Tracer.Line("---- "+ relation +" ----");
             }
 
             void TraceNextToken(SourcePosn sourcePosn)
@@ -287,8 +292,8 @@ namespace hw.Parser
             }
         }
 
-        bool? IsPush(PrioTable.ITargetItem newType, PrioTable.ITargetItem topType)
-            => _prioTable.IsPush(newType, topType);
+        PrioTable.Relation GetRelation(PrioTable.ITargetItem newType, PrioTable.ITargetItem topType)
+            => _prioTable.GetRelation(newType, topType);
 
         PrioParserWorker CreateWorker(Stack<OpenItem<TTreeItem>> stack)
             => new PrioParserWorker(this, stack);

@@ -271,7 +271,6 @@ namespace hw.Tests.CompilerTool.Util
         {
             NotImplementedMethod(token, right);
             return null;
-
         }
     }
 
@@ -280,26 +279,28 @@ namespace hw.Tests.CompilerTool.Util
     {
         public readonly LeftParenthesis TokenClass;
 
-        public LeftParenthesisSyntax(LeftParenthesis tokenClass, Syntax left, IToken part, Syntax right)
+        public LeftParenthesisSyntax
+            (LeftParenthesis tokenClass, Syntax left, IToken part, Syntax right)
             : base(left, part, right)
-        { TokenClass = tokenClass; }
+        {
+            TokenClass = tokenClass;
+        }
 
         public override string TokenClassName { get { return "?(?"; } }
         public override bool TokenClassIsMain { get { return false; } }
 
         public override Syntax RightParenthesis(IToken token, Syntax right)
         {
-            if ("({".Substring(")}".IndexOf(token.Id), 1) != TokenClass.Id)
+            if("({".Substring(")}".IndexOf(token.Id), 1) != TokenClass.Id)
             {
-                if (right == null)
+                if(right == null)
                     return this;
 
                 NotImplementedMethod(token, right);
                 return null;
-
             }
 
-            if (right == null && Left == null)
+            if(right == null && Left == null)
                 return new ParenthesisSyntax(Token, Right, token);
 
             NotImplementedMethod(token, right);
@@ -375,12 +376,7 @@ namespace hw.Tests.CompilerTool.Util
             public override string Id => "()";
         }
 
-        IType<Syntax> IBracketMatch<Syntax>.GetValue(string left)
-        {
-            if ("({".Substring(")}".IndexOf(Id),1) == left) 
-                return new Matched();
-            return null;
-        }
+        IType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
