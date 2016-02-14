@@ -281,8 +281,12 @@ namespace hw.Parser
 
         bool? IsPushByMatch(string newToken, string otherToken)
         {
-            if(GetRightBracketIndex(newToken) == GetLeftBracketIndex(otherToken))
+            var newTokenIndex = GetRightBracketIndex(newToken);
+            var otherIndex = GetLeftBracketIndex(otherToken);
+            if (newTokenIndex == otherIndex)
                 return null;
+            if (newTokenIndex > otherIndex)
+                return false;
 
             NotImplementedMethod(newToken, otherToken);
             return false;

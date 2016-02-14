@@ -19,6 +19,8 @@
         <version>16.2.1</version>
       <releaseNotes>
         Bug: Token for bracket match should not overlap with other token
+        Bug: Exception when using trace for a parser without title
+        Change: Treat unbalanced brackets
         16.2
         Change: Bracket match definition
         16.1
