@@ -89,6 +89,7 @@
     <Compile Include="Tests\CompilerTool\NestedParser.cs" />
     <Compile Include="Tests\CompilerTool\ParserUtil.cs" />
     <Compile Include="Tests\CompilerTool\SourceTests.cs" />
+    <Compile Include="Tests\CompilerTool\UnmachedBrackets.cs" />
     <Compile Include="Tests\CompilerTool\Util\IssueId.cs" />
     <Compile Include="Tests\CompilerTool\Util\MainTokenFactory.cs" />
     <Compile Include="hw.UnitTest\UnitTest\ITestFixture.cs" />

@@ -14,7 +14,7 @@ namespace hw.Tests.CompilerTool
     public sealed class SimpleParser : DependantAttribute
     {
         [UnitTest]
-        public static void NormalParser() 
+        public static void NormalParser()
             => ParserUtil.ParseAndCheck
             (
                 "a b c",

@@ -50,8 +50,9 @@ namespace hw.Tests.CompilerTool.Util
                 var x = PrioTable.Left(PrioTable.Any);
                 x += PrioTable.Left("*");
                 x += PrioTable.Left("+");
-                x += PrioTable.BracketPair("(", ")");
                 x += PrioTable.Left(";");
+                x += PrioTable.BracketPair("(", ")");
+                x += PrioTable.BracketPair("{", "}");
                 x += PrioTable.BracketPair(PrioTable.BeginOfText, PrioTable.EndOfText);
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
@@ -64,8 +65,10 @@ namespace hw.Tests.CompilerTool.Util
             return new TokenClass<Syntax>[]
             {
                 new SwitchToken(),
-                new LeftParenthesis(),
-                new RightParenthesis()
+                new LeftParenthesis("("),
+                new RightParenthesis(")"),
+                new LeftParenthesis("{"),
+                new RightParenthesis("}")
             };
         }
 
@@ -103,8 +106,8 @@ namespace hw.Tests.CompilerTool.Util
             return new TokenClass<Syntax>[]
             {
                 SwitchToken.Instance,
-                new LeftParenthesis(),
-                new RightParenthesis()
+                new LeftParenthesis("("),
+                new RightParenthesis(")")
             };
         }
 
@@ -247,23 +250,56 @@ namespace hw.Tests.CompilerTool.Util
 
         public override Syntax RightParenthesis(IToken token, Syntax right)
         {
+            return new RightParenthesisSyntax(this, token, right);
             NotImplementedMethod(token, right);
             return null;
         }
     }
 
     [DebuggerDisplay("{NodeDump}")]
+    sealed class RightParenthesisSyntax : TreeSyntax
+    {
+        public readonly LeftParenthesis TokenClass;
+
+        public RightParenthesisSyntax(Syntax left, IToken part, Syntax right)
+            : base(left, part, right) {}
+
+        public override string TokenClassName { get { return "?)?"; } }
+        public override bool TokenClassIsMain { get { return false; } }
+
+        public override Syntax RightParenthesis(IToken token, Syntax right)
+        {
+            NotImplementedMethod(token, right);
+            return null;
+
+        }
+    }
+
+    [DebuggerDisplay("{NodeDump}")]
     sealed class LeftParenthesisSyntax : TreeSyntax
     {
-        public LeftParenthesisSyntax(Syntax left, IToken part, Syntax right)
-            : base(left, part, right) {}
+        public readonly LeftParenthesis TokenClass;
+
+        public LeftParenthesisSyntax(LeftParenthesis tokenClass, Syntax left, IToken part, Syntax right)
+            : base(left, part, right)
+        { TokenClass = tokenClass; }
 
         public override string TokenClassName { get { return "?(?"; } }
         public override bool TokenClassIsMain { get { return false; } }
 
         public override Syntax RightParenthesis(IToken token, Syntax right)
         {
-            if(right == null && Left == null)
+            if ("({".Substring(")}".IndexOf(token.Id), 1) != TokenClass.Id)
+            {
+                if (right == null)
+                    return this;
+
+                NotImplementedMethod(token, right);
+                return null;
+
+            }
+
+            if (right == null && Left == null)
                 return new ParenthesisSyntax(Token, Right, token);
 
             NotImplementedMethod(token, right);
@@ -306,11 +342,12 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class LeftParenthesis : TokenClass<Syntax>
     {
-        public override string Id { get { return "("; } }
+        public LeftParenthesis(string id) { Id = id; }
+        public override string Id { get; }
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
-            return new LeftParenthesisSyntax(left, token, right);
+            return new LeftParenthesisSyntax(this, left, token, right);
         }
     }
 
@@ -327,7 +364,8 @@ namespace hw.Tests.CompilerTool.Util
 
     sealed class RightParenthesis : TokenClass<Syntax>, IBracketMatch<Syntax>
     {
-        public override string Id => ")";
+        public RightParenthesis(string id) { Id = id; }
+        public override string Id { get; }
 
         sealed class Matched : TokenClass<Syntax>
         {
@@ -337,7 +375,12 @@ namespace hw.Tests.CompilerTool.Util
             public override string Id => "()";
         }
 
-        IType<Syntax> IBracketMatch<Syntax>.Value => new Matched();
+        IType<Syntax> IBracketMatch<Syntax>.GetValue(string left)
+        {
+            if ("({".Substring(")}".IndexOf(Id),1) == left) 
+                return new Matched();
+            return null;
+        }
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
