@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.1</version>
+        <version>16.2</version>
       <releaseNotes>
+        Change: Bracket match definition
+        16.1
         Change: depth-controlled Prioparser
         Change: Removing match processing
         16.0
