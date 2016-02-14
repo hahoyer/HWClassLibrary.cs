@@ -21,7 +21,5 @@ namespace hw.Proof
         }
         string IType<ParsedSyntax>.PrioTableId { get { return PrioTable.Error; } }
 
-        IType<ParsedSyntax> IType<ParsedSyntax>.Match => null;
-
     }
 }

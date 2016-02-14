@@ -35,8 +35,6 @@ namespace hw.Proof.TokenClasses
 
         string IType<ParsedSyntax>.PrioTableId { get { return Value; } }
 
-        IType<ParsedSyntax> IType<ParsedSyntax>.Match => Match;
-
         protected virtual IType<ParsedSyntax> Match => null;
 
 

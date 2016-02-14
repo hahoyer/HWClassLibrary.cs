@@ -325,7 +325,7 @@ namespace hw.Tests.CompilerTool.Util
         }
     }
 
-    sealed class RightParenthesis : TokenClass<Syntax>
+    sealed class RightParenthesis : TokenClass<Syntax>, IBracketMatch<Syntax>
     {
         public override string Id => ")";
 
@@ -337,7 +337,7 @@ namespace hw.Tests.CompilerTool.Util
             public override string Id => "()";
         }
 
-        protected override IType<Syntax> Match => new Matched();
+        IType<Syntax> IBracketMatch<Syntax>.Value => new Matched();
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
