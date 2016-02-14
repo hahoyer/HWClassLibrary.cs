@@ -33,8 +33,12 @@ namespace hw.Proof.TokenClasses
             return Syntax(left, token, right);
         }
 
-
         string IType<ParsedSyntax>.PrioTableId { get { return Value; } }
+
+        IType<ParsedSyntax> IType<ParsedSyntax>.Match => Match;
+
+        protected virtual IType<ParsedSyntax> Match => null;
+
 
         ISubParser<ParsedSyntax> Scanner<ParsedSyntax>.IType.NextParser { get { return Next; } }
 
