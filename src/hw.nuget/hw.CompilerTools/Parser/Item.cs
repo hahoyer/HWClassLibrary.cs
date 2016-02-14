@@ -47,7 +47,10 @@ namespace hw.Parser
         internal Item<TTreeItem> Match => _match ?? (_match = CreateMatch());
 
         Item<TTreeItem> CreateMatch()
+        {
+            var matchType = ((IBracketMatch<TTreeItem>) Type).Value;
             // Since it is a match, Context changes to NextContext
-            => new Item<TTreeItem>(Type.Match, Token, NextContext, NextContext);
+            return new Item<TTreeItem>(matchType, Token, NextContext, NextContext);
+        }
     }
 }

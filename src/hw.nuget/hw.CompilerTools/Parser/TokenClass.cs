@@ -25,18 +25,6 @@ namespace hw.Parser
 
         string IType<TTreeItem>.PrioTableId { get { return Id; } }
 
-        IType<TTreeItem> IType<TTreeItem>.Match => Match;
-
-        [DisableDump]
-        protected virtual IType<TTreeItem> Match
-        {
-            get
-            {
-                NotImplementedMethod();
-                return null;
-            }
-        }
-
         TTreeItem IType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right)
         {
             return Create(left, token, right);
