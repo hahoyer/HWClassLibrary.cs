@@ -48,9 +48,10 @@ namespace hw.Parser
 
         Item<TTreeItem> CreateMatch()
         {
-            var matchType = ((IBracketMatch<TTreeItem>) Type).Value;
+            var matchType = ((IBracketMatch<TTreeItem>)Type).Value;
+            var token = new ScannerToken(Token.Characters.End.Span(0), null);
             // Since it is a match, Context changes to NextContext
-            return new Item<TTreeItem>(matchType, Token, NextContext, NextContext);
+            return new Item<TTreeItem>(matchType, token, NextContext, NextContext);
         }
     }
 }
