@@ -25,7 +25,7 @@ namespace hw.Parser
                 _stack = stack ?? new Stack<OpenItem<TTreeItem>>();
                 _startLevel = _stack.Count;
                 if(Trace)
-                    Tracer.Line(_parent._prioTable.Title);
+                    Tracer.Line(_parent._prioTable.Title??"");
             }
 
             bool Trace { get { return _parent.Trace; } }
