@@ -37,14 +37,17 @@ namespace hw.Parser
         BracketContext PrioTable.ITargetItem.LeftContext => Context;
         int PrioTable.ITargetItem.NextDepth => NextContext.Depth;
 
-        internal Item<TTreeItem> GetMatch(PrioTable.ITargetItem left)
+        internal Item<TTreeItem> GetBracketMatch(bool isMatch, BracketContext context) 
         {
-            var matchType = ((IBracketMatch<TTreeItem>) Type).Value;
-            var token = new Token(null, Token.SourcePart.End.Span(0));
-            return new Item<TTreeItem>(matchType, token, left.LeftContext, NextContext);
-        }
+            var newType = Type;
+            if(isMatch)
+                newType = ((IBracketMatch<TTreeItem>) newType).Value;
 
-        internal Item<TTreeItem> GetMismatch(PrioTable.ITargetItem left)
-            => new Item<TTreeItem>(Type, Token, left.LeftContext, NextContext);
+            var newToken = Token;
+            if(isMatch)
+                newToken = new Token(null, newToken.SourcePart.End.Span(0));
+
+            return new Item<TTreeItem>(newType, newToken, context, NextContext);
+        }
     }
 }

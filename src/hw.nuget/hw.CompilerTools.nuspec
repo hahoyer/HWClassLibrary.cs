@@ -16,8 +16,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.4</version>
+        <version>16.4.1</version>
       <releaseNotes>
+        Refactor: 
+        16.4
         Change: Treat unbalanced brackets better
         16.3
         Bug: Token for bracket match should not overlap with other token

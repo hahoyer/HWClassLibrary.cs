@@ -100,9 +100,11 @@ namespace hw.Parser
                 do
                 {
                     var other = IsBaseLevel ? null : _stack.Peek().BracketItem;
+
                     var relation = other == null
                         ? PrioTable.Relation.Push
                         : _parent.GetRelation(_current, other);
+
                     TraceRelation(relation);
 
                     if(relation.IsPull)
@@ -113,14 +115,13 @@ namespace hw.Parser
                         _left = null;
                     }
 
-                    if (!relation.IsBracket)
+                    if(!relation.IsBracket)
                         return;
 
                     _left = _current.Type.Create(_left, _current.Token, null);
-                    if (relation.IsMatch)
-                        _current = _current.GetMatch(other);
-                    else
-                        _current = _current.GetMismatch(other);
+
+                    Tracer.Assert(other != null);
+                    _current = _current.GetBracketMatch(relation.IsMatch, other.LeftContext);
 
                     TraceMatchPhase();
                 } while(_current.Type != null);
@@ -134,7 +135,7 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
-                Tracer.Line("---- "+ relation +" ----");
+                Tracer.Line("---- " + relation + " ----");
             }
 
             void TraceNextToken(SourcePosn sourcePosn)
