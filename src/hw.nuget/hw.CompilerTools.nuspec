@@ -16,9 +16,12 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.4.1</version>
+        <version>16.4.2</version>
       <releaseNotes>
-        Refactor: 
+        Bug: Incorrect current position case of mismatch
+        Trace: Relation did not show anything
+        16.4.1
+        Refactor: Bracket match or mismatch
         16.4
         Change: Treat unbalanced brackets better
         16.3

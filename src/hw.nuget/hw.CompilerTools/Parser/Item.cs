@@ -28,7 +28,7 @@ namespace hw.Parser
 
         internal Item
             (Scanner<TTreeItem>.Item other, BracketContext context, BracketContext nextContext)
-            : this(other.Type.Type, new Token(other.Token), context, nextContext) {}
+            : this(other.Type.Type, new Token(other.Token), context, nextContext) { }
 
         [EnableDump]
         internal int Depth => Context?.Depth ?? 0;
@@ -37,17 +37,16 @@ namespace hw.Parser
         BracketContext PrioTable.ITargetItem.LeftContext => Context;
         int PrioTable.ITargetItem.NextDepth => NextContext.Depth;
 
-        internal Item<TTreeItem> GetBracketMatch(bool isMatch, BracketContext context) 
+        internal Item<TTreeItem> GetBracketMatch(bool isMatch, OpenItem<TTreeItem> other)
         {
             var newType = Type;
             if(isMatch)
                 newType = ((IBracketMatch<TTreeItem>) newType).Value;
 
-            var newToken = Token;
-            if(isMatch)
-                newToken = new Token(null, newToken.SourcePart.End.Span(0));
+            var newToken = new Token(null, Token.SourcePart.End.Span(0));
 
-            return new Item<TTreeItem>(newType, newToken, context, NextContext);
+            return new Item<TTreeItem>
+                (newType, newToken, other.BracketItem.LeftContext, NextContext);
         }
     }
 }

@@ -127,24 +127,24 @@ namespace hw.Parser
 
         internal sealed class Relation : EnumEx
         {
-            internal static readonly Relation Push = new Relation
+            public static readonly Relation Push = new Relation
             {
                 IsPush = true
             };
 
-            internal static readonly Relation Pull = new Relation
+            public static readonly Relation Pull = new Relation
             {
                 IsPull = true
             };
 
-            internal static readonly Relation Match = new Relation
+            public static readonly Relation Match = new Relation
             {
                 IsPull = true,
                 IsBracket = true,
                 IsMatch = true
             };
 
-            internal static readonly Relation Mismatch = new Relation
+            public static readonly Relation Mismatch = new Relation
             {
                 IsPull = true,
                 IsBracket = true
@@ -154,6 +154,7 @@ namespace hw.Parser
             public bool IsPush;
             public bool IsBracket;
             public bool IsMatch;
+
         }
 
         internal Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
@@ -306,7 +307,6 @@ namespace hw.Parser
                 return Relation.Pull;
             case FunctionType.Match:
                 return GetBracketMatch(newToken, otherToken);
-                break;
             default:
                 throw new ArgumentOutOfRangeException();
             }

@@ -200,7 +200,7 @@ namespace hw.Tests.CompilerTool.Util
         public abstract Syntax Right { get; }
         protected override string Dump(bool isRecursion) { return this.TreeDump(); }
 
-        public abstract Syntax RightParenthesis(IToken token, Syntax right);
+        public abstract Syntax RightParenthesis(string id, IToken token, Syntax right);
     }
 
     abstract class TreeSyntax : Syntax
@@ -228,9 +228,9 @@ namespace hw.Tests.CompilerTool.Util
 
         public override string TokenClassName { get { return "?" + _message; } }
 
-        public override Syntax RightParenthesis(IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
         {
-            NotImplementedMethod(token, right);
+            NotImplementedMethod(id, token, right);
             return null;
         }
     }
@@ -248,28 +248,26 @@ namespace hw.Tests.CompilerTool.Util
         public override string TokenClassName { get { return _tokenClass.Name; } }
         public override bool TokenClassIsMain { get { return _tokenClass.IsMain; } }
 
-        public override Syntax RightParenthesis(IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
         {
-            return new RightParenthesisSyntax(this, token, right);
-            NotImplementedMethod(token, right);
-            return null;
+            return new RightParenthesisSyntax(id, this, token, right);
         }
     }
 
     [DebuggerDisplay("{NodeDump}")]
     sealed class RightParenthesisSyntax : TreeSyntax
     {
-        public readonly LeftParenthesis TokenClass;
+        readonly string Id;
 
-        public RightParenthesisSyntax(Syntax left, IToken part, Syntax right)
-            : base(left, part, right) {}
+        public RightParenthesisSyntax(string id, Syntax left, IToken part, Syntax right)
+            : base(left, part, right) { Id = id; }
 
         public override string TokenClassName { get { return "?)?"; } }
         public override bool TokenClassIsMain { get { return false; } }
 
-        public override Syntax RightParenthesis(IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
         {
-            NotImplementedMethod(token, right);
+            NotImplementedMethod(id, token, right);
             return null;
         }
     }
@@ -289,21 +287,21 @@ namespace hw.Tests.CompilerTool.Util
         public override string TokenClassName { get { return "?(?"; } }
         public override bool TokenClassIsMain { get { return false; } }
 
-        public override Syntax RightParenthesis(IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
         {
-            if("({".Substring(")}".IndexOf(token.Id), 1) != TokenClass.Id)
+            if("({".Substring(")}".IndexOf(id), 1) != TokenClass.Id)
             {
                 if(right == null)
                     return this;
 
-                NotImplementedMethod(token, right);
+                NotImplementedMethod(id, token, right);
                 return null;
             }
 
             if(right == null && Left == null)
                 return new ParenthesisSyntax(Token, Right, token);
 
-            NotImplementedMethod(token, right);
+            NotImplementedMethod(id, token, right);
             return null;
         }
     }
@@ -320,9 +318,9 @@ namespace hw.Tests.CompilerTool.Util
 
         public override string TokenClassName => "()";
 
-        public override Syntax RightParenthesis(IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
         {
-            NotImplementedMethod(token, right);
+            NotImplementedMethod(id, token, right);
             return null;
         }
     }
@@ -334,9 +332,9 @@ namespace hw.Tests.CompilerTool.Util
 
         public override string TokenClassName => "<nameless>";
 
-        public override Syntax RightParenthesis(IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
         {
-            NotImplementedMethod(token, right);
+            NotImplementedMethod(id, token, right);
             return null;
         }
     }
@@ -381,7 +379,7 @@ namespace hw.Tests.CompilerTool.Util
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
             if(left != null)
-                return left.RightParenthesis(token, right);
+                return left.RightParenthesis(Id, token, right);
             NotImplementedMethod(left, token, right);
             return null;
         }

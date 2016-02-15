@@ -99,11 +99,11 @@ namespace hw.Parser
             {
                 do
                 {
-                    var other = IsBaseLevel ? null : _stack.Peek().BracketItem;
+                    var other = IsBaseLevel ? null : _stack.Peek();
 
                     var relation = other == null
                         ? PrioTable.Relation.Push
-                        : _parent.GetRelation(_current, other);
+                        : _parent.GetRelation(_current, other.BracketItem);
 
                     TraceRelation(relation);
 
@@ -121,7 +121,7 @@ namespace hw.Parser
                     _left = _current.Type.Create(_left, _current.Token, null);
 
                     Tracer.Assert(other != null);
-                    _current = _current.GetBracketMatch(relation.IsMatch, other.LeftContext);
+                    _current = _current.GetBracketMatch(relation.IsMatch, other);
 
                     TraceMatchPhase();
                 } while(_current.Type != null);

@@ -10,7 +10,7 @@ namespace hw.Parser
     public sealed class OpenItem<TTreeItem> : DumpableObject
         where TTreeItem : class, ISourcePart
     {
-        readonly Token Token;
+        internal readonly Token Token;
         internal readonly TTreeItem Left;
         internal readonly IType<TTreeItem> Type;
         internal readonly PrioTable.ITargetItem BracketItem;
