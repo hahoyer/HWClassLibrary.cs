@@ -14,21 +14,12 @@ namespace hw.Tests.CompilerTool
     {
         [UnitTest]
         public static void Simple()
-        {
-            var result = ParserUtil.Parse("--> b c");
-
-            Tracer.Assert(result.TokenClassName == "c", result.Dump);
-            Tracer.Assert(result.TokenClassIsMain, result.Dump);
-            Tracer.Assert(result.Left != null);
-            Tracer.Assert(result.Right == null);
-            Tracer.Assert(result.Left.TokenClassName == "b");
-            Tracer.Assert(!result.Left.TokenClassIsMain);
-            Tracer.Assert(result.Left.Left == null, result.Dump);
-            Tracer.Assert(result.Left.Right == null);
-        }
+            => ParserUtil.ParseAndCheck
+            ("--> b c", "((<null> b <null>) c <null>)");
 
         [UnitTest]
-        public static void MultipleEntries() => ParserUtil.ParseAndCheck
+        public static void MultipleEntries() 
+            => ParserUtil.ParseAndCheck
             ("--> (b c) c", "((((<null> b <null>) c <null>) () <null>) c <null>)");
     }
 }

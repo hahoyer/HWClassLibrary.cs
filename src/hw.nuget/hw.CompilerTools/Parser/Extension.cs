@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.DebugFormatter;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -52,5 +52,27 @@ namespace hw.Parser
         {
             return whiteSpaceTokens.Select(item => item.Characters).Aggregate();
         }
+
+        public static int BracketBalance(this IToken token)
+        {
+            switch(token.IsBracketAndLeftBracket)
+            {
+            case true:
+                return -1;
+            case false:
+                return 1;
+            default:
+                return 0;
+            }
+        }
+
+        internal static BracketContext RightCOntext(this PrioTable.ITargetItem item)
+            => item.LeftContext.Add(item.Token);
+
+        internal static int RightDepth(this PrioTable.ITargetItem item)
+            => item.RightCOntext().Depth;
+
+        internal static int LeftDepth(this PrioTable.ITargetItem item)
+            => item.LeftContext.Depth;
     }
 }

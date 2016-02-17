@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
-using hw.Scanner;
-using hw.Tests.CompilerTool.Util;
 using hw.UnitTest;
 using NUnit.Framework;
 
@@ -16,10 +14,10 @@ namespace hw.Tests.CompilerTool
         [UnitTest]
         public static void NormalParser()
             => ParserUtil.ParseAndCheck
-            (
-                "a b c",
-                "(((<null> a <null>) b <null>) c <null>)"
-            );
+                (
+                    "a b c",
+                    "(((<null> a <null>) b <null>) c <null>)"
+                );
 
         [UnitTest]
         public static void NotWrongExpression()

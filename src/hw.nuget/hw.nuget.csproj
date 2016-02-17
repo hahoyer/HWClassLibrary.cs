@@ -55,6 +55,7 @@
     <Compile Include="hw.CompilerTools\Parser\IToken.cs" />
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParsedSyntax.cs" />
+    <Compile Include="hw.CompilerTools\Parser\PrioParserWorker.cs" />
     <Compile Include="hw.CompilerTools\Parser\Scanner.cs" />
     <Compile Include="hw.CompilerTools\Parser\Item.cs" />
     <Compile Include="hw.CompilerTools\Parser\ScannerToken.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
     <Compile Include="Tests\CompilerTool\AdvancedParser.cs" />
+    <Compile Include="Tests\CompilerTool\BracketBalance.cs" />
     <Compile Include="Tests\CompilerTool\NestedParser.cs" />
     <Compile Include="Tests\CompilerTool\ParserUtil.cs" />
     <Compile Include="Tests\CompilerTool\SourceTests.cs" />

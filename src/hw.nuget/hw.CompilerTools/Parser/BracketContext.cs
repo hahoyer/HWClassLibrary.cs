@@ -8,24 +8,25 @@ namespace hw.Parser
 {
     public sealed class BracketContext : DumpableObject
     {
-        internal static readonly BracketContext Empty = new BracketContext(new int[] {});
-
-        readonly FunctionCache<int, BracketContext> AddCache;
+        readonly FunctionCache<string, BracketContext> AddCache;
 
         [EnableDump]
         readonly int[] Data;
+        readonly PrioTable.BracketPairItem[] Brackets;
 
-        BracketContext(int[] data)
+        BracketContext(int[] data, PrioTable.BracketPairItem[] brackets)
         {
             Data = data;
-            AddCache = new FunctionCache<int, BracketContext>(GetAddCache);
+            AddCache = new FunctionCache<string, BracketContext>(GetAddCache);
+            Brackets = brackets;
         }
 
         protected override string GetNodeDump() => Data.Stringify("/");
 
-        BracketContext GetAddCache(int index)
+        BracketContext GetAddCache(string token)
         {
-            if (index == 0)
+            var index = GetContextIndex(token);
+            if(index == 0)
                 return this;
 
             var xx = Data
@@ -33,16 +34,42 @@ namespace hw.Parser
                 .ToArray();
 
             if(index <= 0)
-                return new BracketContext(new[] {index}.Concat(xx).ToArray());
+                return new BracketContext
+                    (new[] {index}.Concat(xx).ToArray(), Brackets);
 
-            if (xx.FirstOrDefault() + index == 0)
-                return new BracketContext(xx.Skip(1).ToArray());
+            if(xx.FirstOrDefault() + index == 0)
+                return new BracketContext(xx.Skip(1).ToArray(), Brackets);
 
             return this;
         }
 
         internal int Depth => Data.Length;
 
-        public BracketContext Add(int index) => AddCache[index];
+        internal BracketContext Add(string index) => AddCache[index];
+
+        internal bool? IsBracketAndLeftBracket(string token)
+        {
+            var delta = Depth - Add(token).Depth;
+            return delta == 0 ? (bool?) null : delta < 0;
+        }
+
+        internal static BracketContext Instance(PrioTable.BracketPairItem[] brackets)
+            => new BracketContext(new int[0], brackets);
+
+        int GetContextIndex(string token)
+        {
+            if(token == "")
+                token = Depth == 0 ? PrioTable.BeginOfText : PrioTable.EndOfText;
+
+            for(var index = 0; index < Brackets.Length; index++)
+            {
+                var item = Brackets[index];
+                if(token == item.Left)
+                    return -index - 1;
+                if(token == item.Right)
+                    return index + 1;
+            }
+            return 0;
+        }
     }
 }

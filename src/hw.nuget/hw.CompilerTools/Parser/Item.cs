@@ -11,42 +11,36 @@ namespace hw.Parser
             , PrioTable.ITargetItem
         where TTreeItem : class, ISourcePart
     {
+        internal static Item<TTreeItem> Create
+            (IType<TTreeItem> type, Token token, BracketContext context)
+            => new Item<TTreeItem>(type, token, context);
+
+        internal static Item<TTreeItem> Create
+            (Scanner<TTreeItem>.Item other, BracketContext context)
+            => new Item<TTreeItem>(other.Type.Type, Token.Create(other.Token, context), context);
+
+        internal static Item<TTreeItem> CreateStart(Source source, PrioTable prioTable, IType<TTreeItem> startType)
+            => new Item<TTreeItem>(startType , Token.CreateStart(source), prioTable.BracketContext);
+
         [EnableDump]
         internal readonly IType<TTreeItem> Type;
         internal readonly BracketContext Context;
-        internal readonly BracketContext NextContext;
         internal readonly Token Token;
 
-        internal Item
-            (IType<TTreeItem> type, Token token, BracketContext context, BracketContext nextContext)
+        Item(IType<TTreeItem> type, Token token, BracketContext context)
         {
             Type = type;
             Context = context;
-            NextContext = nextContext;
             Token = token;
         }
 
-        internal Item
-            (Scanner<TTreeItem>.Item other, BracketContext context, BracketContext nextContext)
-            : this(other.Type.Type, new Token(other.Token), context, nextContext) { }
-
+        //context.IsBracketAndLeftBracket(result.Token.Id)
         [EnableDump]
         internal int Depth => Context?.Depth ?? 0;
 
         string PrioTable.ITargetItem.Token => Type?.PrioTableId ?? PrioTable.BeginOfText;
         BracketContext PrioTable.ITargetItem.LeftContext => Context;
-        int PrioTable.ITargetItem.NextDepth => NextContext.Depth;
 
-        internal Item<TTreeItem> GetBracketMatch(bool isMatch, OpenItem<TTreeItem> other)
-        {
-            var newType = Type;
-            if(isMatch)
-                newType = ((IBracketMatch<TTreeItem>) newType).Value;
-
-            var newToken = new Token(null, Token.SourcePart.End.Span(0));
-
-            return new Item<TTreeItem>
-                (newType, newToken, other.BracketItem.LeftContext, NextContext);
-        }
+        internal TTreeItem Create(TTreeItem left) => Type.Create(left, Token, null);
     }
 }

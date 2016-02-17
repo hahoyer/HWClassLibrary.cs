@@ -23,6 +23,7 @@ namespace hw.Parser
             BracketItem = current;
         }
 
+        internal int NextDepth => BracketItem.RightDepth();
 
         internal TTreeItem Create(TTreeItem right)
         {

@@ -16,5 +16,7 @@ namespace hw.Parser
         WhiteSpaceToken[] PrecededWith { get; }
         [DisableDump]
         SourcePart Characters { get; }
+        [DisableDump]
+        bool? IsBracketAndLeftBracket{ get; }
     }
 }

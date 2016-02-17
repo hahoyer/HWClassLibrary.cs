@@ -19,7 +19,7 @@ namespace hw.Proof
             var file = "main.proof".FileHandle();
             file.String = text;
             _text = text;
-            IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>(TokenFactory.PrioTable, _scanner);
+            IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>(TokenFactory.PrioTable, _scanner, null);
             var parsedSyntax =
                 prioParser.Execute(new Source(file) + 0, null);
             _statement = (ClauseSyntax) parsedSyntax;

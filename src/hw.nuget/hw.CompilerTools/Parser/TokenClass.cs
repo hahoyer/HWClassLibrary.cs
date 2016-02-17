@@ -21,29 +21,24 @@ namespace hw.Parser
             StopByObjectIds(-31);
         }
 
-        string IIconKeyProvider.IconKey { get { return "Symbol"; } }
+        string IIconKeyProvider.IconKey => "Symbol";
 
-        string IType<TTreeItem>.PrioTableId { get { return Id; } }
+        string IType<TTreeItem>.PrioTableId => Id;
 
         TTreeItem IType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right)
-        {
-            return Create(left, token, right);
-        }
+            => Create(left, token, right);
 
-        ISubParser<TTreeItem> Scanner<TTreeItem>.IType.NextParser { get { return Next; } }
+        ISubParser<TTreeItem> Scanner<TTreeItem>.IType.NextParser => Next;
 
-        IType<TTreeItem> Scanner<TTreeItem>.IType.Type { get { return this; } }
+        IType<TTreeItem> Scanner<TTreeItem>.IType.Type => this;
 
-        protected virtual ISubParser<TTreeItem> Next { get { return null; } }
+        protected virtual ISubParser<TTreeItem> Next => null;
         protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
 
-        protected override string GetNodeDump()
-        {
-            return base.GetNodeDump() + "(" + Id.Quote() + ")";
-        }
+        protected override string GetNodeDump() => base.GetNodeDump() + "(" + Id.Quote() + ")";
 
-        public override string ToString() { return base.ToString() + " Id=" + Id.Quote(); }
-        string IUniqueIdProvider.Value { get { return Id; } }
+        public override string ToString() => base.ToString() + " Id=" + Id.Quote();
+        string IUniqueIdProvider.Value => Id;
         public abstract string Id { get; }
     }
 
