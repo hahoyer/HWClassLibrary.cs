@@ -15,8 +15,10 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>15.2.4</version>
+        <version>15.2.5</version>
         <releaseNotes>
+          New: Nice shortcuts to use in debugger 
+          15.2.4
           Bug: TypeNameExtender: lock object during materializing cache
           Refactor: ValueCache: messages improved
           15.2.3

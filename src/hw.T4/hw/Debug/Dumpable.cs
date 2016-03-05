@@ -29,6 +29,11 @@ namespace hw.Debug
         [UsedImplicitly]
         public string DebuggerDumpString { get { return DebuggerDump().Replace("\n", "\r\n"); } }
 
+        [DisableDump]
+        [UsedImplicitly]
+        public string D => DebuggerDumpString;
+        public string T() => Tracer.Line(DebuggerDumpString);
+
         /// <summary>
         ///     Method dump with break,
         /// </summary>
