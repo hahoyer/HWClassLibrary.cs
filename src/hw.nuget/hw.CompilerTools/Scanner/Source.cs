@@ -8,7 +8,6 @@ namespace hw.Scanner
 {
     public sealed class Source : Dumpable
     {
-        readonly string _data;
         readonly File _file;
         public const int NodeDumpWidth = 10;
         public const int DumpWidth = 20;
@@ -16,17 +15,18 @@ namespace hw.Scanner
         public Source(File file)
         {
             _file = file;
-            _data = _file.String;
+            Data = _file.String;
         }
 
-        public string Data { get { return _data; } }
-        public Source(string data) { _data = data; }
-        public char this[int index] { get { return IsEnd(index) ? '\0' : _data[index]; } }
-        public bool IsEnd(int posn) { return Length <= posn; }
-        public int Length { get { return _data.Length; } }
-        public bool IsPersistent { get { return _file != null; } }
-        public string SubString(int start, int length) { return _data.Substring(start, length); }
-        public SourcePart All { get { return (this + 0).Span(Length); } }
+        public string Data { get; }
+
+        public Source(string data) { Data = data; }
+        public char this[int index] => IsEnd(index) ? '\0' : Data[index];
+        public bool IsEnd(int posn) => Length <= posn;
+        public int Length => Data.Length;
+        public bool IsPersistent => _file != null;
+        public string SubString(int start, int length) => Data.Substring(start, length);
+        public SourcePart All => (this + 0).Span(Length);
 
         public string FilePosn(int position, string flagText, string tag = null)
         {
@@ -40,19 +40,17 @@ namespace hw.Scanner
                     tag ?? FilePositionTag.Debug.ToString()) + flagText;
         }
 
-        public int LineIndex(int position) { return _data.Take(position).Count(c => c == '\n'); }
+        public int LineIndex(int position) { return Data.Take(position).Count(c => c == '\n'); }
 
         public int ColumnIndex(int position)
         {
-            return _data
+            return Data
                 .Take(position)
                 .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
         }
 
         public SourcePosn FromLineAndColumn(int lineIndex, int? columnIndex)
-        {
-            return this + PositionFromLineAndColumn(lineIndex, columnIndex);
-        }
+            => this + PositionFromLineAndColumn(lineIndex, columnIndex);
 
         int PositionFromLineAndColumn(int lineIndex, int? columnIndex)
         {
@@ -75,18 +73,14 @@ namespace hw.Scanner
             return Length;
         }
 
-        protected override string Dump(bool isRecursion) { return FilePosn(0, "see there"); }
+        protected override string Dump(bool isRecursion) => FilePosn(0, "see there");
 
-        public static SourcePosn operator +(Source x, int y) { return new SourcePosn(x, y); }
+        public static SourcePosn operator +(Source x, int y) => new SourcePosn(x, y);
 
         public int LineLength(int lineIndex)
-        {
-            return FromLineAndColumn(lineIndex + 1, 0) - FromLineAndColumn(lineIndex, 0);
-        }
+            => FromLineAndColumn(lineIndex + 1, 0) - FromLineAndColumn(lineIndex, 0);
 
         public SourcePart Line(int lineIndex)
-        {
-            return FromLineAndColumn(lineIndex, 0).Span(FromLineAndColumn(lineIndex, null));
-        }
+            => FromLineAndColumn(lineIndex, 0).Span(FromLineAndColumn(lineIndex, null));
     }
 }

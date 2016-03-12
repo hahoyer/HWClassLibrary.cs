@@ -16,9 +16,12 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.5</version>
+        <version>16.5.1</version>
       <releaseNotes>
-        
+		Refactor: C# 6.0 features used
+        Bug: PrioTabe.FromText: Empty lines not accepted
+        16.5
+        Change: Providing bracket-balance information on tokens
         16.4.2
         Bug: Incorrect current position case of mismatch
         Trace: Relation did not show anything

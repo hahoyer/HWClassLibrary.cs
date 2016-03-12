@@ -222,6 +222,8 @@ namespace hw.Parser
                             data.Take(tokenCount).ToArray(),
                             data.Skip(tokenCount).Take(tokenCount).ToArray());
                     break;
+                case "":
+                    break;
                 default:
                     throw new ArgumentException();
                 }
