@@ -17,8 +17,12 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.5.2</version>
+        <version>16.7</version>
         <releaseNotes>
+            Change: Source: Identifier implemented to be used to identify source in FilePosn function
+            Change: FilePosn can get a position range
+            Refactor: C# 6.0 features used
+            16.6
             Bug: Parser: Token in case of bracket match overlaps
             16.5.1
             Change: Match: Accept "\n" as well as "\r\n" as line end
@@ -81,7 +85,7 @@
             Change: Introducing white space fine structure
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="15.2" />
+            <dependency id="hw.Helper.Core" version="16.0" />
         </dependencies>
 
     </metadata>

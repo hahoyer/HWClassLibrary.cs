@@ -11,31 +11,27 @@ namespace hw.Scanner
     [DebuggerDisplay("{NodeDump}")]
     public sealed class SourcePart : Dumpable, IAggregateable<SourcePart>, ISourcePart
     {
-        readonly int _length;
-        readonly Source _source;
-        readonly int _position;
-
         SourcePart(Source source, int position, int length)
         {
-            _source = source;
-            _length = length;
-            _position = position;
+            Source = source;
+            Length = length;
+            Position = position;
         }
 
         [DisableDump]
-        public Source Source { get { return _source; } }
+        public Source Source { get; }
 
         [DisableDump]
-        public int Position { get { return _position; } }
+        public int Position { get; }
 
         [DisableDump]
-        public int Length { get { return _length; } }
+        public int Length { get; }
 
         [DisableDump]
-        public int EndPosition { get { return Position + Length; } }
+        public int EndPosition => Position + Length;
 
 
-        SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) { return Overlay(other); }
+        SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
 
         public SourcePart Overlay(SourcePart other)
         {
@@ -56,27 +52,21 @@ namespace hw.Scanner
             return end < start ? null : new SourcePart(Source, start, end - start);
         }
 
-        public static SourcePart operator +(SourcePart left, SourcePart right)
-        {
-            return left == null
-                ? right
-                : right == null
-                    ? left
-                    : left.Overlay(right);
-        }
+        public static SourcePart operator +(SourcePart left, SourcePart right) => left == null
+            ? right
+            : right == null
+                ? left
+                : left.Overlay(right);
 
-        public string Id { get { return Source.SubString(Position, Length); } }
+        public string Id => Source.SubString(Position, Length);
 
         [DisableDump]
-        public string FilePosition { get { return "\n" + Source.FilePosn(Position, Id); } }
+        public string FilePosition => "\n" + Source.FilePosn(Position, EndPosition, Id);
 
-        public string FileErrorPosition(string errorTag)
-        {
-            return "\n" + Source.FilePosn(Position, Id, "error " + errorTag);
-        }
+        public string FileErrorPosition(string errorTag) => "\n" + Source.FilePosn(Position, EndPosition, Id, "error " + errorTag);
 
         [UsedImplicitly]
-        string DumpCurrent { get { return Id; } }
+        string DumpCurrent => Id;
 
         const int DumpWidth = 10;
 
@@ -101,22 +91,19 @@ namespace hw.Scanner
         }
 
         [UsedImplicitly]
-        public string NodeDump { get { return GetDumpAroundCurrent(Source.NodeDumpWidth); } }
+        public string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
 
-        public string GetDumpAroundCurrent(int dumpWidth)
-        {
-            return GetDumpBeforeCurrent(dumpWidth)
-                + "["
-                + DumpCurrent
-                + "]"
-                + GetDumpAfterCurrent(dumpWidth);
-        }
+        public string GetDumpAroundCurrent(int dumpWidth) => GetDumpBeforeCurrent(dumpWidth)
+            + "["
+            + DumpCurrent
+            + "]"
+            + GetDumpAfterCurrent(dumpWidth);
 
         [DisableDump]
-        public SourcePosn Start { get { return Source + Position; } }
+        public SourcePosn Start => Source + Position;
 
         [DisableDump]
-        public SourcePosn End { get { return Source + EndPosition; } }
+        public SourcePosn End => Source + EndPosition;
 
         public SourcePart Combine(SourcePart other)
         {
@@ -131,24 +118,15 @@ namespace hw.Scanner
             return new SourcePart(first.Source, first.Position, length);
         }
 
-        public static SourcePart Span(SourcePosn first, int length)
-        {
-            return new SourcePart(first.Source, first.Position, length);
-        }
+        public static SourcePart Span(SourcePosn first, int length) => new SourcePart(first.Source, first.Position, length);
 
-        public bool Contains(SourcePosn sourcePosn)
-        {
-            return Source == sourcePosn.Source &&
-                Position <= sourcePosn.Position &&
-                EndPosition > sourcePosn.Position;
-        }
+        public bool Contains(SourcePosn sourcePosn) => Source == sourcePosn.Source &&
+            Position <= sourcePosn.Position &&
+            EndPosition > sourcePosn.Position;
 
-        public bool Contains(SourcePart sourcePart)
-        {
-            return Source == sourcePart.Source &&
-                Position <= sourcePart.Position &&
-                sourcePart.EndPosition <= EndPosition;
-        }
+        public bool Contains(SourcePart sourcePart) => Source == sourcePart.Source &&
+            Position <= sourcePart.Position &&
+            sourcePart.EndPosition <= EndPosition;
 
         public bool IsMatch(SourcePart sourcePosn)
         {
@@ -192,31 +170,19 @@ namespace hw.Scanner
             yield return currentValue;
         }
 
-        SourcePart ISourcePart.All { get { return this; } }
+        SourcePart ISourcePart.All => this;
 
-        public static bool operator !=(SourcePart left, SourcePart right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(SourcePart left, SourcePart right) => !(left == right);
 
-        public static bool operator >(SourcePart left, SourcePosn right) { return right < left; }
-        public static bool operator >(SourcePosn left, SourcePart right) { return right < left; }
-        public static bool operator >(SourcePart left, SourcePart right) { return right < left; }
+        public static bool operator >(SourcePart left, SourcePosn right) => right < left;
+        public static bool operator >(SourcePosn left, SourcePart right) => right < left;
+        public static bool operator >(SourcePart left, SourcePart right) => right < left;
 
-        public static bool operator <(SourcePart left, SourcePosn right)
-        {
-            return left != null && left.End < right;
-        }
+        public static bool operator <(SourcePart left, SourcePosn right) => left != null && left.End < right;
 
-        public static bool operator <(SourcePosn left, SourcePart right)
-        {
-            return right != null && left < right.Start;
-        }
+        public static bool operator <(SourcePosn left, SourcePart right) => right != null && left < right.Start;
 
-        public static bool operator <(SourcePart left, SourcePart right)
-        {
-            return left != null && right != null && left.End <= right.Start;
-        }
+        public static bool operator <(SourcePart left, SourcePart right) => left != null && right != null && left.End <= right.Start;
 
         public static bool operator ==(SourcePart left, SourcePart right)
         {

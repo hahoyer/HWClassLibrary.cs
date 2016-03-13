@@ -8,22 +8,23 @@ namespace hw.Scanner
 {
     public sealed class Source : Dumpable
     {
-        readonly string Id;
+        readonly string Identifier;
         readonly File File;
         public const int NodeDumpWidth = 10;
         public const int DumpWidth = 20;
 
-        public Source(File file)
+        public Source(File file, string identifier = null)
         {
             File = file;
+            Identifier = identifier ?? File.FullName;
             Data = File.String;
         }
 
         public string Data { get; }
 
-        public Source(string data, string id = null)
+        public Source(string data, string identifier = null)
         {
-            Id = id;
+            Identifier = identifier;
             Data = data;
         }
 
@@ -34,25 +35,27 @@ namespace hw.Scanner
         public string SubString(int start, int length) => Data.Substring(start, length);
         public SourcePart All => (this + 0).Span(Length);
 
-        public string FilePosn(int position, string flagText, string tag = null)
+        public string FilePosn(int position, int positionEnd, string flagText, string tag = null)
         {
-            if(File == null)
-                return Id ?? "????";
+            if(Identifier == null)
+                return "????";
 
             return Tracer.FilePosn
                 (
-                    File.FullName,
+                    Identifier,
                     LineIndex(position),
                     ColumnIndex(position) + 1,
+                    LineIndex(positionEnd),
+                    ColumnIndex(positionEnd) + 1,
                     tag ?? FilePositionTag.Debug.ToString()) + flagText;
         }
 
         public int LineIndex(int position) { return Data.Take(position).Count(c => c == '\n'); }
 
-        public int ColumnIndex(int position) 
+        public int ColumnIndex(int position)
             => Data
-            .Take(position)
-            .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
+                .Take(position)
+                .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
 
         public SourcePosn FromLineAndColumn(int lineIndex, int? columnIndex)
             => this + PositionFromLineAndColumn(lineIndex, columnIndex);
@@ -78,7 +81,7 @@ namespace hw.Scanner
             return Length;
         }
 
-        protected override string Dump(bool isRecursion) => FilePosn(0, "see there");
+        protected override string Dump(bool isRecursion) => FilePosn(0,Length, "see there");
 
         public static SourcePosn operator +(Source x, int y) => new SourcePosn(x, y);
 

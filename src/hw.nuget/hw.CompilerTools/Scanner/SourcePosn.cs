@@ -13,11 +13,9 @@ namespace hw.Scanner
     [DebuggerDisplay("{NodeDump}")]
     public sealed class SourcePosn : Dumpable, IEquatable<SourcePosn>
     {
-        public bool Equals(SourcePosn x, SourcePosn y) { return x.Equals(y); }
-        public bool Equals(SourcePosn other)
-        {
-            return Equals(Source, other.Source) && Position == other.Position;
-        }
+        public bool Equals(SourcePosn x, SourcePosn y) => x.Equals(y);
+
+        public bool Equals(SourcePosn other) => Equals(Source, other.Source) && Position == other.Position;
 
         public override bool Equals(object obj)
         {
@@ -28,7 +26,7 @@ namespace hw.Scanner
             return obj is SourcePosn && Equals((SourcePosn) obj);
         }
 
-        public override int GetHashCode() { return 0; }
+        public override int GetHashCode() => 0;
 
         public readonly Source Source;
         public int Position;
@@ -53,18 +51,18 @@ namespace hw.Scanner
         /// <summary>
         ///     The current character
         /// </summary>
-        public char Current { get { return Source[Position]; } }
+        public char Current => Source[Position];
 
         /// <summary>
         ///     Natuaral indexer
         /// </summary>
-        public char this[int index] { get { return Source[Position + index]; } }
+        public char this[int index] => Source[Position + index];
 
         /// <summary>
         ///     Checks if at or beyond end of source
         /// </summary>
         /// <value> </value>
-        public bool IsEnd { get { return Source.IsEnd(Position); } }
+        public bool IsEnd => Source.IsEnd(Position);
 
         /// <summary>
         ///     Obtains a piece
@@ -72,20 +70,14 @@ namespace hw.Scanner
         /// <param name="start">start position</param>
         /// <param name="length">number of characters</param>
         /// <returns></returns>
-        public string SubString(int start, int length)
-        {
-            return Source.SubString(Position + start, length);
-        }
+        public string SubString(int start, int length) => Source.SubString(Position + start, length);
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
         /// <param name="flagText">the flag text</param>
         /// <returns>the "FileName(LineNr,ColNr): tag: " string</returns>
-        public string FilePosn(string flagText)
-        {
-            return Source.FilePosn(Position, flagText);
-        }
+        public string FilePosn(string flagText) => Source.FilePosn(Position, Position,flagText);
 
         /// <summary>
         ///     Default dump behaviour
@@ -119,7 +111,7 @@ namespace hw.Scanner
         }
 
         [UsedImplicitly]
-        string NodeDump { get { return GetDumpAroundCurrent(Source.NodeDumpWidth); } }
+        string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
 
         public string GetDumpAroundCurrent(int dumpWidth)
         {
@@ -130,15 +122,12 @@ namespace hw.Scanner
             return "<invalid>";
         }
 
-        public SourcePosn Clone { get { return new SourcePosn(Source, Position); } }
-        
-        public int LineIndex { get { return Source.LineIndex(Position); } }
-        public int ColumnIndex { get { return Source.ColumnIndex(Position); } }
+        public SourcePosn Clone => new SourcePosn(Source, Position);
 
-        public static SourcePosn operator +(SourcePosn x, int y)
-        {
-            return x.Source + (x.Position + y);
-        }
+        public int LineIndex => Source.LineIndex(Position);
+        public int ColumnIndex => Source.ColumnIndex(Position);
+
+        public static SourcePosn operator +(SourcePosn x, int y) => x.Source + (x.Position + y);
 
         public static int operator -(SourcePosn x, SourcePosn y)
         {
@@ -146,7 +135,7 @@ namespace hw.Scanner
             return x.Position - y.Position;
         }
 
-        public int? Match(IMatch automaton) { return automaton.Match(this); }
+        public int? Match(IMatch automaton) => automaton.Match(this);
 
         public bool StartsWith(string data)
         {
@@ -155,28 +144,19 @@ namespace hw.Scanner
                 && Source.SubString(Position, length) == data;
         }
 
-        public SourcePart Span(SourcePosn other) { return SourcePart.Span(this, other); }
-        public SourcePart Span(int length) { return SourcePart.Span(this, length); }
+        public SourcePart Span(SourcePosn other) => SourcePart.Span(this, other);
+        public SourcePart Span(int length) => SourcePart.Span(this, length);
 
-        public static bool operator <(SourcePosn left, SourcePosn right)
-        {
-            return left != null &&
-                right != null &&
-                left.Source == right.Source &&
-                left.Position < right.Position;
-        }
+        public static bool operator <(SourcePosn left, SourcePosn right) => left != null &&
+            right != null &&
+            left.Source == right.Source &&
+            left.Position < right.Position;
 
-        public static bool operator <=(SourcePosn left, SourcePosn right)
-        {
-            return left < right || left == right;
-        }
+        public static bool operator <=(SourcePosn left, SourcePosn right) => left < right || left == right;
 
-        public static bool operator >(SourcePosn left, SourcePosn right) { return right < left; }
-        public static bool operator >=(SourcePosn left, SourcePosn right) { return right <= left; }
-        public static bool operator !=(SourcePosn left, SourcePosn right)
-        {
-            return !(left == right);
-        }
+        public static bool operator >(SourcePosn left, SourcePosn right) => right < left;
+        public static bool operator >=(SourcePosn left, SourcePosn right) => right <= left;
+        public static bool operator !=(SourcePosn left, SourcePosn right) => !(left == right);
 
         public static bool operator ==(SourcePosn left, SourcePosn right)
         {
