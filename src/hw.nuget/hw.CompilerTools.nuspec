@@ -17,8 +17,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.5.1</version>
+        <version>16.5.2</version>
         <releaseNotes>
+            Bug: Parser: Token in case of bracket match overlaps
+            16.5.1
             Change: Match: Accept "\n" as well as "\r\n" as line end
             Refactor: C# 6.0 features used
             Bug: PrioTabe.FromText: Empty lines not accepted
