@@ -8,33 +8,40 @@ namespace hw.Scanner
 {
     public sealed class Source : Dumpable
     {
-        readonly File _file;
+        readonly string Id;
+        readonly File File;
         public const int NodeDumpWidth = 10;
         public const int DumpWidth = 20;
 
         public Source(File file)
         {
-            _file = file;
-            Data = _file.String;
+            File = file;
+            Data = File.String;
         }
 
         public string Data { get; }
 
-        public Source(string data) { Data = data; }
+        public Source(string data, string id = null)
+        {
+            Id = id;
+            Data = data;
+        }
+
         public char this[int index] => IsEnd(index) ? '\0' : Data[index];
         public bool IsEnd(int posn) => Length <= posn;
         public int Length => Data.Length;
-        public bool IsPersistent => _file != null;
+        public bool IsPersistent => File != null;
         public string SubString(int start, int length) => Data.Substring(start, length);
         public SourcePart All => (this + 0).Span(Length);
 
         public string FilePosn(int position, string flagText, string tag = null)
         {
-            if(_file == null)
-                return "????";
+            if(File == null)
+                return Id ?? "????";
+
             return Tracer.FilePosn
                 (
-                    _file.FullName,
+                    File.FullName,
                     LineIndex(position),
                     ColumnIndex(position) + 1,
                     tag ?? FilePositionTag.Debug.ToString()) + flagText;
@@ -42,12 +49,10 @@ namespace hw.Scanner
 
         public int LineIndex(int position) { return Data.Take(position).Count(c => c == '\n'); }
 
-        public int ColumnIndex(int position)
-        {
-            return Data
-                .Take(position)
-                .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
-        }
+        public int ColumnIndex(int position) 
+            => Data
+            .Take(position)
+            .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
 
         public SourcePosn FromLineAndColumn(int lineIndex, int? columnIndex)
             => this + PositionFromLineAndColumn(lineIndex, columnIndex);
@@ -59,7 +64,7 @@ namespace hw.Scanner
             if(l == null)
                 return Length;
 
-            var nextLine = (this + l.Value).Match("\r\n".AnyChar().Find);
+            var nextLine = (this + l.Value).Match(Match.LineEnd.Find);
             if(nextLine != null)
             {
                 var effectiveColumnIndex = nextLine.Value - 1;
