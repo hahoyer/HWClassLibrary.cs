@@ -12,7 +12,6 @@ namespace hw.Scanner
 
     public sealed class Match : Dumpable, IMatch
     {
-        [EnableDump]
         readonly IMatch _data;
         internal Match(IMatch data)
         {
@@ -22,12 +21,14 @@ namespace hw.Scanner
 
         int? IMatch.Match(SourcePosn sourcePosn) => _data.Match(sourcePosn);
 
+        [DisableDump]
         public IMatch UnBox => _data.UnBox();
         public static Match Break => new Match(new BreakMatch());
 
         public Match Repeat(int minCount = 0, int? maxCount = null) => _data.Repeat(minCount, maxCount);
         public Match Else(IMatch other) => _data.Else(other);
         public Match Value(Func<string, IMatch> func) => new Match(new ValueMatch(_data, func));
+        [DisableDump]
         public Match Find => new Match(new FindMatch(_data));
 
         public static Match WhiteSpace => Box(char.IsWhiteSpace);
@@ -35,6 +36,7 @@ namespace hw.Scanner
         public static Match End => new Match(new EndMatch());
         public static Match Digit => Box(char.IsDigit);
         public static Match Letter => Box(char.IsLetter);
+        [DisableDump]
         public Match Not => new Match(new NotMatch(this));
 
         public static Match Box(Func<char, bool> func) => new Match(new FunctionalMatch(func, true));
