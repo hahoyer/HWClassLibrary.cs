@@ -20,32 +20,32 @@ namespace hw.Scanner
             _data = data;
         }
 
-        int? IMatch.Match(SourcePosn sourcePosn) { return _data.Match(sourcePosn); }
+        int? IMatch.Match(SourcePosn sourcePosn) => _data.Match(sourcePosn);
 
-        public IMatch UnBox { get { return _data.UnBox(); } }
-        public static Match Break { get { return new Match(new BreakMatch()); } }
+        public IMatch UnBox => _data.UnBox();
+        public static Match Break => new Match(new BreakMatch());
 
-        public Match Repeat(int minCount = 0, int? maxCount = null) { return _data.Repeat(minCount, maxCount); }
-        public Match Else(IMatch other) { return _data.Else(other); }
-        public Match Value(Func<string, IMatch> func) { return new Match(new ValueMatch(_data, func)); }
-        public Match Find { get { return new Match(new FindMatch(_data)); } }
+        public Match Repeat(int minCount = 0, int? maxCount = null) => _data.Repeat(minCount, maxCount);
+        public Match Else(IMatch other) => _data.Else(other);
+        public Match Value(Func<string, IMatch> func) => new Match(new ValueMatch(_data, func));
+        public Match Find => new Match(new FindMatch(_data));
 
-        public static Match WhiteSpace { get { return Box(char.IsWhiteSpace); } }
-        public static Match LineEnd { get { return "\n\r".AnyChar().Else(End); } }
-        public static Match End { get { return new Match(new EndMatch()); } }
-        public static Match Digit { get { return Box(char.IsDigit); } }
-        public static Match Letter { get { return Box(char.IsLetter); } }
-        public Match Not { get { return new Match(new NotMatch(this)); } }
+        public static Match WhiteSpace => Box(char.IsWhiteSpace);
+        public static Match LineEnd => "\n".Box().Else("\r\n").Else(End);
+        public static Match End => new Match(new EndMatch());
+        public static Match Digit => Box(char.IsDigit);
+        public static Match Letter => Box(char.IsLetter);
+        public Match Not => new Match(new NotMatch(this));
 
-        public static Match Box(Func<char, bool> func) { return new Match(new FunctionalMatch(func, true)); }
+        public static Match Box(Func<char, bool> func) => new Match(new FunctionalMatch(func, true));
 
-        public static Match operator +(string x, Match y) { return x.Box() + y; }
-        public static Match operator +(Match x, string y) { return x + y.Box(); }
+        public static Match operator +(string x, Match y) => x.Box() + y;
+        public static Match operator +(Match x, string y) => x + y.Box();
 
-        public static Match operator +(IError x, Match y) { return x.Box() + y; }
-        public static Match operator +(Match x, IError y) { return x + y.Box(); }
+        public static Match operator +(IError x, Match y) => x.Box() + y;
+        public static Match operator +(Match x, IError y) => x + y.Box();
 
-        public static Match operator +(Match x, Match y) { return new Match(new Sequence(x.UnBox(), y.UnBox())); }
+        public static Match operator +(Match x, Match y) => new Match(new Sequence(x.UnBox(), y.UnBox()));
 
         sealed class NotMatch : Dumpable, IMatch
         {
@@ -95,7 +95,7 @@ namespace hw.Scanner
                 _isTrue = isTrue;
             }
 
-            int? IMatch.Match(SourcePosn sourcePosn) { return _func(sourcePosn.Current) != _isTrue ? null : (int?) 1; }
+            int? IMatch.Match(SourcePosn sourcePosn) => _func(sourcePosn.Current) != _isTrue ? null : (int?) 1;
         }
 
         sealed class FindMatch : Dumpable, IMatch
@@ -146,7 +146,7 @@ namespace hw.Scanner
 
         sealed class EndMatch : Dumpable, IMatch
         {
-            int? IMatch.Match(SourcePosn sourcePosn) { return sourcePosn.IsEnd ? 0 : (int?) null; }
+            int? IMatch.Match(SourcePosn sourcePosn) => sourcePosn.IsEnd ? 0 : (int?) null;
         }
 
         sealed class BreakMatch : IMatch

@@ -13,45 +13,27 @@ namespace hw.Scanner
             return box == null ? data : box.UnBox;
         }
 
-        public static Match AnyChar(this string data) { return new Match(new AnyCharMatch(data)); }
-        
-        public static Match Box(this Match.IError error)
-        {
-            return new Match(new ErrorMatch(error));
-        }
-        
-        public static Match Box(this string data) { return new Match(new CharMatch(data)); }
-        
-        public static Match Box(this IMatch data) { return data as Match ?? new Match(data); }
-        
-        public static Match Repeat(this IMatch data, int minCount = 0, int? maxCount = null)
-        {
-            return new Match(new Repeater(data.UnBox(), minCount, maxCount));
-        }
+        public static Match AnyChar(this string data) => new Match(new AnyCharMatch(data));
+        public static Match Box(this Match.IError error) => new Match(new ErrorMatch(error));
+        public static Match Box(this string data) => new Match(new CharMatch(data));
+        public static Match Box(this IMatch data) => data as Match ?? new Match(data);
 
-        public static Match Else(this string data, IMatch other) { return data.Box().Else(other); }
-        
-        public static Match Else(this IMatch data, string other) { return data.Else(other.Box()); }
-        
-        public static Match Else(this Match.IError data, IMatch other)
-        {
-            return data.Box().Else(other);
-        }
-        
-        public static Match Else(this IMatch data, Match.IError other)
-        {
-            return data.Else(other.Box());
-        }
-        
+        public static Match Repeat(this IMatch data, int minCount = 0, int? maxCount = null)
+            => new Match(new Repeater(data.UnBox(), minCount, maxCount));
+
+        public static Match Else(this string data, IMatch other) => data.Box().Else(other);
+        public static Match Else(this IMatch data, string other) => data.Else(other.Box());
+        public static Match Else(this Match.IError data, IMatch other) => data.Box().Else(other);
+        public static Match Else(this IMatch data, Match.IError other) => data.Else(other.Box());
+
         public static Match Else(this IMatch data, IMatch other)
-        {
-            return new Match(new ElseMatch(data.UnBox(), other.UnBox()));
-        }
+            => new Match(new ElseMatch(data.UnBox(), other.UnBox()));
 
         sealed class ErrorMatch : Dumpable, IMatch
         {
             readonly Match.IError _error;
             public ErrorMatch(Match.IError error) { _error = error; }
+
             int? IMatch.Match(SourcePosn sourcePosn)
             {
                 throw new Match.Exception(sourcePosn, _error);
@@ -63,6 +45,7 @@ namespace hw.Scanner
             [EnableDump]
             readonly string _data;
             public CharMatch(string data) { _data = data; }
+
             int? IMatch.Match(SourcePosn sourcePosn)
             {
                 var result = _data.Length;
@@ -75,10 +58,9 @@ namespace hw.Scanner
             [EnableDump]
             readonly string _data;
             public AnyCharMatch(string data) { _data = data; }
+
             int? IMatch.Match(SourcePosn sourcePosn)
-            {
-                return _data.Contains(sourcePosn.Current) ? (int?) 1 : null;
-            }
+                => _data.Contains(sourcePosn.Current) ? (int?) 1 : null;
         }
 
         sealed class ElseMatch : Dumpable, IMatch
@@ -87,6 +69,7 @@ namespace hw.Scanner
             readonly IMatch _data;
             [EnableDump]
             readonly IMatch _other;
+
             public ElseMatch(IMatch data, IMatch other)
             {
                 _data = data;
@@ -94,9 +77,7 @@ namespace hw.Scanner
             }
 
             int? IMatch.Match(SourcePosn sourcePosn)
-            {
-                return _data.Match(sourcePosn) ?? _other.Match(sourcePosn);
-            }
+                => _data.Match(sourcePosn) ?? _other.Match(sourcePosn);
         }
 
         sealed class Repeater : Dumpable, IMatch
