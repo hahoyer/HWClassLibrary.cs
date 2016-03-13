@@ -32,7 +32,7 @@ namespace hw.Debug
         [DisableDump]
         [UsedImplicitly]
         public string D => DebuggerDumpString;
-        public string T() => Tracer.Line(DebuggerDumpString);
+        public void T() => Tracer.Line(DebuggerDumpString);
 
         /// <summary>
         ///     Method dump with break,
