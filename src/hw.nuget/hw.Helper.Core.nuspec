@@ -17,8 +17,8 @@
         <copyright>Copyright Harald Hoyer 2015</copyright>
         <version>16.0</version>
         <releaseNotes>
-            Change: FilePosn can get a position range 
-            
+            Change: FilePosn can get a position range
+            Refactor: C# 6.0 features used
             15.2.6
             Bug: T-Method must not return anything
             15.2.5
