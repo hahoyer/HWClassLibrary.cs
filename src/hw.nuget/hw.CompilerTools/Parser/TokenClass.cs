@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
-using hw.Forms;
 using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
 {
     public abstract class TokenClass<TTreeItem>
-        : DumpableObject, IIconKeyProvider, IType<TTreeItem>, IUniqueIdProvider,
+        : DumpableObject, IType<TTreeItem>, IUniqueIdProvider,
             Scanner<TTreeItem>.IType
         where TTreeItem : class, ISourcePart
     {
@@ -20,8 +19,6 @@ namespace hw.Parser
         {
             StopByObjectIds(-31);
         }
-
-        string IIconKeyProvider.IconKey => "Symbol";
 
         string IType<TTreeItem>.PrioTableId => Id;
 

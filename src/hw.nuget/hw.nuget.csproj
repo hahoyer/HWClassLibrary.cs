@@ -37,17 +37,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\IGraphTarget.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\Circle.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\Content.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\Path.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\Rect.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\Root.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\SVG.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\SyntaxDrawer.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SVG\Text.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\Syntax.cs" />
-    <Compile Include="hw.CompilerTools\Graphics\SyntaxDrawer.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\IGraphTarget.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Circle.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Content.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Path.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Rect.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Root.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\SVG.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\SyntaxDrawer.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Text.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\Syntax.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SyntaxDrawer.cs" />
     <Compile Include="hw.CompilerTools\Parser\BracketContext.cs" />
     <Compile Include="hw.CompilerTools\Parser\Extension.cs" />
     <Compile Include="hw.CompilerTools\Parser\IBinaryTreeItem.cs" />
@@ -177,6 +177,9 @@
     <Compile Include="Tests\Helper\Core\TypeNameExtender.cs" />
     <Compile Include="Tests\Helper\Core\ValueCache.cs" />
     <Compile Include="Tests\ReplaceVariables\Example.cs" />
+    <None Include="hw.GraphicCompilerTools.snippet.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="hw.ReplaceVariables.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -192,7 +195,7 @@
     <None Include="hw.T4Helper.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="hw.Forms.nuspec">
+    <None Include="hw.Forms.snippet.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="hw.UnitTest.nuspec">

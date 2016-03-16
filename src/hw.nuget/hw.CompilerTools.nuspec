@@ -17,8 +17,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.7.1</version>
+        <version>16.8</version>
         <releaseNotes>
+            User interface dependencies removed
+            16.7.1
             Change: Match: Solving debugging problems
             16.7
             Change: Source: Identifier implemented to be used to identify source in FilePosn function
