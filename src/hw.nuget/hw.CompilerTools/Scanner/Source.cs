@@ -8,7 +8,7 @@ namespace hw.Scanner
 {
     public sealed class Source : Dumpable
     {
-        readonly string Identifier;
+        public readonly string Identifier;
         readonly File File;
         public const int NodeDumpWidth = 10;
         public const int DumpWidth = 20;

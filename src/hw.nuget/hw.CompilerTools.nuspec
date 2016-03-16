@@ -17,8 +17,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.8</version>
+        <version>16.8.1</version>
         <releaseNotes>
+            Change: Source: Identifier made public
+            16.8
             User interface dependencies removed
             16.7.1
             Change: Match: Solving debugging problems
