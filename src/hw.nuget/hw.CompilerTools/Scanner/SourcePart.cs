@@ -37,6 +37,7 @@ namespace hw.Scanner
         {
             if(Source != other.Source)
                 return this;
+
             var start = Math.Min(Position, other.Position);
             var end = Math.Max(EndPosition, other.EndPosition);
             return new SourcePart(Source, start, end - start);
@@ -63,7 +64,8 @@ namespace hw.Scanner
         [DisableDump]
         public string FilePosition => "\n" + Source.FilePosn(Position, EndPosition, Id);
 
-        public string FileErrorPosition(string errorTag) => "\n" + Source.FilePosn(Position, EndPosition, Id, "error " + errorTag);
+        public string FileErrorPosition(string errorTag)
+            => "\n" + Source.FilePosn(Position, EndPosition, Id.Quote(), "error " + errorTag);
 
         [UsedImplicitly]
         string DumpCurrent => Id;
@@ -74,6 +76,7 @@ namespace hw.Scanner
         {
             if(Source.IsEnd(EndPosition))
                 return "";
+
             var length = Math.Min(dumpWidth, Source.Length - EndPosition);
             var result = Source.SubString(EndPosition, length);
             if(length == dumpWidth)
@@ -118,7 +121,8 @@ namespace hw.Scanner
             return new SourcePart(first.Source, first.Position, length);
         }
 
-        public static SourcePart Span(SourcePosn first, int length) => new SourcePart(first.Source, first.Position, length);
+        public static SourcePart Span(SourcePosn first, int length)
+            => new SourcePart(first.Source, first.Position, length);
 
         public bool Contains(SourcePosn sourcePosn) => Source == sourcePosn.Source &&
             Position <= sourcePosn.Position &&
@@ -134,6 +138,7 @@ namespace hw.Scanner
                 return false;
             if(EndPosition == sourcePosn.Position)
                 return true;
+
             return Position == sourcePosn.EndPosition;
         }
 
@@ -154,6 +159,7 @@ namespace hw.Scanner
             if(!sortedValues.Any())
             {
                 yield return values.First();
+
                 yield break;
             }
 
@@ -165,8 +171,10 @@ namespace hw.Scanner
                 else
                 {
                     yield return currentValue;
+
                     currentValue = value;
                 }
+
             yield return currentValue;
         }
 
@@ -178,18 +186,22 @@ namespace hw.Scanner
         public static bool operator >(SourcePosn left, SourcePart right) => right < left;
         public static bool operator >(SourcePart left, SourcePart right) => right < left;
 
-        public static bool operator <(SourcePart left, SourcePosn right) => left != null && left.End < right;
+        public static bool operator <(SourcePart left, SourcePosn right)
+            => left != null && left.End < right;
 
-        public static bool operator <(SourcePosn left, SourcePart right) => right != null && left < right.Start;
+        public static bool operator <(SourcePosn left, SourcePart right)
+            => right != null && left < right.Start;
 
-        public static bool operator <(SourcePart left, SourcePart right) => left != null && right != null && left.End <= right.Start;
+        public static bool operator <(SourcePart left, SourcePart right)
+            => left != null && right != null && left.End <= right.Start;
 
         public static bool operator ==(SourcePart left, SourcePart right)
         {
             if((object) left == null)
-                return ((object) right == null);
+                return (object) right == null;
             if((object) right == null)
                 return false;
+
             return left.Start == right.Start &&
                 left.Length == right.Length;
         }

@@ -17,8 +17,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
 
-        <version>16.9</version>
+        <version>16.9.1</version>
         <releaseNotes>
+            Change: SourcePart: FileErrorPosition provides quoted text
+            Refactor: Reformat
+            16.9
             Change: Scanner: treat invalid character
             Refactor: C# 6.0 features used
             16.8.1

@@ -12,6 +12,8 @@ namespace hw.Helper
 
         public static void OnModuleLoaded() { _referencedTypesCache.IsValid = false; }
 
+        public static Type[] Types => ReferencedTypes.Types;
+
         public static Type[] ResolveType(this string typeName)
         {
             return ReferencedTypes.ByNamePartMulti[typeName];

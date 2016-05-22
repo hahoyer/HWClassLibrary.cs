@@ -114,12 +114,15 @@ namespace hw.Parser
                 Tracer.Assert(other != null);
                 var newType = Current.Type;
 
-                if (relation.IsMatch)
-                    newType = ((IBracketMatch<TTreeItem>)newType).Value;
+                if(relation.IsMatch)
+                    newType = ((IBracketMatch<TTreeItem>) newType).Value;
 
                 var token = Current.Token;
-                if (relation.IsMatch)
-                    token = Token.Create(new ScannerToken(token.SourcePart.End.Span(0), null), Current.RightCOntext());
+                if(relation.IsMatch)
+                    token = Token.Create
+                        (
+                            new ScannerToken(token.SourcePart.End.Span(0), null),
+                            Current.RightCOntext());
 
                 Current = Item<TTreeItem>
                     .Create(newType, token, other.BracketItem.LeftContext);
@@ -133,6 +136,7 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.Line("---- " + relation + " ----");
             }
 
@@ -140,6 +144,7 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.Line("\n== NextToken ====>");
                 Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
             }
@@ -148,6 +153,7 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.Line(Current.Token.SourcePart.GetDumpAroundCurrent(50));
                 Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
                 Tracer.Line("Depth = " + Current.Depth);
@@ -158,12 +164,13 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.Line("\n======================>");
                 Tracer.Line("bracket matching======>");
                 Tracer.Line("======================>");
                 Tracer.IndentStart();
-                TraceItemLine("_current", Current);
-                Tracer.Line("_left = " + Extension.TreeDump(Left));
+                TraceItemLine(nameof(Current), Current);
+                Tracer.Line(nameof(Left) + " = " + Extension.TreeDump(Left));
                 Tracer.Line(FormatStackForTrace(Stack));
                 Tracer.IndentEnd();
             }
@@ -172,13 +179,14 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.IndentStart();
                 Tracer.Line("\n======================>");
                 Tracer.Line("begin of " + tag + " ==>");
                 Tracer.Line("======================>");
                 Tracer.IndentStart();
-                TraceItemLine("_current", Current);
-                Tracer.Line("_left = " + Extension.TreeDump(Left));
+                TraceItemLine(nameof(Current), Current);
+                Tracer.Line(nameof(Left) + " = " + Extension.TreeDump(Left));
                 Tracer.Line(FormatStackForTrace(Stack));
                 Tracer.IndentEnd();
             }
@@ -187,9 +195,10 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.IndentStart();
-                TraceItemLine("_current", Current);
-                Tracer.Line("left = " + Extension.TreeDump(Left));
+                TraceItemLine(nameof(Current), Current);
+                Tracer.Line(nameof(Left) + " = " + Extension.TreeDump(Left));
                 Tracer.Line(FormatStackForTrace(Stack));
                 if(StartLevel > Stack.Count)
                     Tracer.Line("*** End reached ***");
@@ -204,6 +213,7 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.Line("\n======================>");
                 Tracer.Line("begin of Subparser  ==>");
                 Tracer.Line("triggerd by " + item.Token.SourcePart.GetDumpAroundCurrent(50));
@@ -215,6 +225,7 @@ namespace hw.Parser
             {
                 if(!Trace)
                     return;
+
                 Tracer.IndentEnd();
                 Tracer.Line("\n======================>");
                 Tracer.Line("end of Subparser    ==>");
@@ -227,6 +238,7 @@ namespace hw.Parser
                 var count = stack.Count;
                 if(count == 0)
                     return "stack empty";
+
                 const int MaxLines = 5;
 
                 var isBig = count > MaxLines;

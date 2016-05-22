@@ -25,6 +25,7 @@ namespace hw.Helper
 
         Type GetTypeByNamePart(string arg) { return _types.Single(t => t.CompleteName().EndsWith(arg)); }
         Type[] GetTypesByNamePart(string arg) { return _types.Where(t => t.CompleteName().EndsWith(arg)).ToArray(); }
+        public Type[] Types => _types;
 
         Type[] ConflictingTypes(Type type)
         {
