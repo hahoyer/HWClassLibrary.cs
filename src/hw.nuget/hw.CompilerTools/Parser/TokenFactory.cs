@@ -25,10 +25,8 @@ namespace hw.Parser
         }
 
         FunctionCache<string, TTokenClass> GetTokenClasses()
-        {
-            return new FunctionCache<string, TTokenClass>
+            => new FunctionCache<string, TTokenClass>
                 (ScanPredefinedTokenClasses(), GetTokenClass);
-        }
 
         IDictionary<string, TTokenClass> ScanPredefinedTokenClasses()
         {
@@ -36,17 +34,14 @@ namespace hw.Parser
         }
 
         Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.TokenClass(string name)
-        {
-            return TokenClass(name);
-        }
+            => TokenClass(name);
 
-        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Number { get { return _number.Value; } }
-        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Text { get { return _text.Value; } }
-        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.EndOfText { get { return _endOfText.Value; } }
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Number => _number.Value;
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Text => _text.Value;
+        Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.EndOfText => _endOfText.Value;
+
         Scanner<TTreeItem>.IType ITokenFactory<TTreeItem>.Error(Match.IError error)
-        {
-            return GetError(error);
-        }
+            => GetError(error);
 
         protected abstract TTokenClass GetError(Match.IError message);
         protected abstract IEnumerable<TTokenClass> GetPredefinedTokenClasses();
@@ -55,7 +50,7 @@ namespace hw.Parser
         protected abstract TTokenClass GetNumber();
         protected abstract TTokenClass GetText();
 
-        FunctionCache<string, TTokenClass> TokenClasses { get { return _tokenClasses.Value; } }
-        protected Scanner<TTreeItem>.IType TokenClass(string name) { return TokenClasses[name]; }
+        FunctionCache<string, TTokenClass> TokenClasses => _tokenClasses.Value;
+        protected Scanner<TTreeItem>.IType TokenClass(string name) => TokenClasses[name];
     }
 }

@@ -31,8 +31,10 @@ namespace hw.DebugFormatter
 
         [DisableDump]
         [UsedImplicitly]
-        public string D => DebuggerDumpString;
-        public void T() => Tracer.Line(DebuggerDumpString);
+        // ReSharper disable once InconsistentNaming
+        public string d => DebuggerDumpString;
+        // ReSharper disable once InconsistentNaming
+        public void t() => Tracer.Line(DebuggerDumpString);
 
         /// <summary>
         ///     Method dump with break,

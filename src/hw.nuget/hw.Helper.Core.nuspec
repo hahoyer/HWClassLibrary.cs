@@ -15,8 +15,10 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>16.0.1</version>
+        <version>16.0.2</version>
         <releaseNotes>
+            Change: Publi
+            16.0.1
             New: Nice shortcuts to use in debugger (2nd trial)
             16.0
             Change: FilePosn can get a position range

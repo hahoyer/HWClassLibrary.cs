@@ -63,6 +63,9 @@ namespace hw.Proof
 
         int? ILexer.Number(SourcePosn sourcePosn) { return sourcePosn.Match(_number); }
         int? ILexer.Any(SourcePosn sourcePosn) { return sourcePosn.Match(_any); }
+
+        Match.IError ILexer.InvalidCharacterError { get; } = new Error(IssueId.UnexpectedSyntaxError);
+
         int? ILexer.Text(SourcePosn sourcePosn) { return sourcePosn.Match(_text); }
     }
 }

@@ -55,7 +55,7 @@ namespace hw.Scanner
         public int ColumnIndex(int position)
             => Data
                 .Take(position)
-                .Aggregate(0, (current, c) => c == '\n' ? 0 : current + 1);
+                .Aggregate(0, (current, c) => c.In('\r', '\n') ? 0 : current + 1);
 
         public SourcePosn FromLineAndColumn(int lineIndex, int? columnIndex)
             => this + PositionFromLineAndColumn(lineIndex, columnIndex);
@@ -67,10 +67,10 @@ namespace hw.Scanner
             if(l == null)
                 return Length;
 
-            var nextLine = (this + l.Value).Match(Match.LineEnd.Find);
+            var nextLine = (this + l.Value).Match(Match.LineEnd.Not.Repeat());
             if(nextLine != null)
             {
-                var effectiveColumnIndex = nextLine.Value - 1;
+                var effectiveColumnIndex = nextLine.Value;
                 if(columnIndex != null && columnIndex.Value < effectiveColumnIndex)
                     effectiveColumnIndex = columnIndex.Value;
                 return l.Value + effectiveColumnIndex;

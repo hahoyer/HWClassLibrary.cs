@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.DebugFormatter;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
@@ -10,113 +10,162 @@ namespace hw.Parser
     public sealed class Scanner<TTreeItem> : Dumpable, IScanner<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
-        readonly ILexer _lexer;
-        readonly ITokenFactory<TTreeItem> _tokenFactory;
+        readonly ILexer Lexer;
+        readonly ITokenFactory<TTreeItem> TokenFactory;
 
-        public Scanner
-            (
-            ILexer lexer,
-            ITokenFactory<TTreeItem> tokenFactory)
+        public Scanner(ILexer lexer, ITokenFactory<TTreeItem> tokenFactory)
         {
-            _lexer = lexer;
-            _tokenFactory = tokenFactory;
+            Lexer = lexer;
+            TokenFactory = tokenFactory;
         }
 
-        WhiteSpaceToken[] GuardedWhiteSpace(SourcePosn sourcePosn)
+        Item IScanner<TTreeItem>.NextToken(SourcePosn sourcePosn)
+            => new Worker(this, sourcePosn).GetNextToken();
+
+        IType InvalidCharacterError => TokenFactory.Error(Lexer.InvalidCharacterError);
+
+        sealed class Worker : DumpableObject
         {
-            return ExceptionGuard(sourcePosn, posn => WhiteSpace(posn).ToArray());
-        }
+            readonly Scanner<TTreeItem> Parent;
+            readonly SourcePosn SourcePosn;
+            readonly WhiteSpaceToken[] PreceededBy;
 
-        int? Number(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Number); }
-        int? Text(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Text); }
-        int? Any(SourcePosn sourcePosn) { return ExceptionGuard(sourcePosn, _lexer.Any); }
-
-        int? WhiteSpaceError(SourcePosn sourcePosn)
-        {
-            // this statement will normally throw an exception, usual return is not expected
-            var result = _lexer
-                .WhiteSpace
-                .All(f => ExceptionGuard(sourcePosn, f) == null);
-            Tracer.Assert(!result);
-            return null;
-        }
-
-
-        Item IScanner<TTreeItem>.NextToken(SourcePosn sourcePosn) { return NextToken(sourcePosn); }
-
-        Item NextToken(SourcePosn sourcePosn)
-        {
-            Tracer.Assert(sourcePosn.IsValid);
-            var preceededBy = GuardedWhiteSpace(sourcePosn);
-            try
+            internal Worker(Scanner<TTreeItem> parent, SourcePosn sourcePosn)
             {
-                sourcePosn.Position += preceededBy.Sum(item => item.Characters.Length);
-                return CreateAndAdvance
-                    (
-                        sourcePosn,
-                        sp => sp.IsEnd ? (int?) 0 : null,
-                        () => _tokenFactory.EndOfText,
-                        preceededBy)
-                    ?? CreateAndAdvance(sourcePosn, Number, () => _tokenFactory.Number, preceededBy)
-                        ?? CreateAndAdvance(sourcePosn, Text, () => _tokenFactory.Text, preceededBy)
-                            ?? CreateAndAdvance
-                                (sourcePosn, Any, _tokenFactory.TokenClass, preceededBy)
-                                ?? CreateAndAdvance
-                                    (sourcePosn, WhiteSpaceError, ()=>null, preceededBy)
-                                    ?? WillReturnNull(sourcePosn);
+                Tracer.Assert(sourcePosn.IsValid);
+                Parent = parent;
+                SourcePosn = sourcePosn;
+                PreceededBy = GuardedGetPreceededBy();
             }
-            catch(Exception exception)
+
+            WhiteSpaceToken[] GuardedGetPreceededBy()
+                => ExceptionGuard(posn => GetPreceededBy().ToArray());
+
+            IEnumerable<WhiteSpaceToken> GetPreceededBy()
             {
-                return CreateAndAdvance
-                    (
-                        exception.SourcePosn,
-                        sp => exception.Length,
-                        () => _tokenFactory.Error(exception.Error),
-                        preceededBy);
-            }
-        }
-
-        IEnumerable<WhiteSpaceToken> WhiteSpace(SourcePosn original)
-        {
-            var current = original.Clone;
-            var runAgain = true;
-            while(runAgain)
-            {
-                runAgain = false;
-
-                var result = _lexer
-                    .WhiteSpace
-                    .SelectMany((f, i) => CreateAndAdvance(current, f, i).NullableToArray())
-                    .ToArray();
-
-                foreach(var token in result)
+                var runAgain = true;
+                while(runAgain)
                 {
-                    yield return token;
-                    runAgain = true;
+                    runAgain = false;
+
+                    var result = Lexer
+                        .WhiteSpace
+                        .SelectMany
+                        (
+                            (getMatch, index) =>
+                                GetNextWhiteSpaceToken
+                                    (index, ExceptionGuard(() => getMatch(SourcePosn)))
+                                    .NullableToArray()
+                        )
+                        .ToArray();
+
+                    foreach(var token in result)
+                    {
+                        yield return token;
+
+                        runAgain = true;
+                    }
                 }
             }
-        }
-
-        static WhiteSpaceToken CreateAndAdvance
-            (SourcePosn sourcePosn, Func<SourcePosn, int?> getLength, int index)
-        {
-            var length = IgnorantExceptionGuard(sourcePosn, getLength);
-            if(length == null)
-                return null;
-
-            var result = new WhiteSpaceToken(index, SourcePart.Span(sourcePosn, length.Value));
-            var wasEnd = sourcePosn.IsEnd;
-            sourcePosn.Position += length.Value;
-            if(wasEnd)
-                sourcePosn.IsValid = false;
-            return result;
-        }
 
 
-        Item WillReturnNull(SourcePosn sourcePosn)
-        {
-            NotImplementedMethod(sourcePosn);
-            return null;
+            Item InvalidCharacter()
+            {
+                // this statement will throw an exception in case of error in whitespace
+                var result = Lexer
+                    .WhiteSpace
+                    .All(f => ExceptionGuard(f) == null);
+                // otherwise current character will not be any whitespace
+                Tracer.Assert(result);
+                // and is considered as invalid
+                return CreateAndAdvance(1, () => Parent.InvalidCharacterError);
+            }
+
+            WhiteSpaceToken GetNextWhiteSpaceToken(int index, int? length)
+            {
+                if(length == null)
+                    return null;
+
+                var sourcePart = SourcePart.Span(SourcePosn, length.Value);
+                Advance(length.Value);
+                return new WhiteSpaceToken(index, sourcePart);
+            }
+
+            internal Item GetNextToken()
+            {
+                try
+                {
+                    var endMarker = SourcePosn.IsEnd ? (int?) 0 : null;
+                    return CreateAndAdvance(endMarker, () => TokenFactory.EndOfText)
+                        ?? CreateAndAdvance(Number(), () => TokenFactory.Number)
+                            ?? CreateAndAdvance(Text(), () => TokenFactory.Text)
+                                ?? CreateAndAdvance(Any(), TokenFactory.TokenClass)
+                                    ?? InvalidCharacter();
+                }
+                catch(Exception exception)
+                {
+                    Func<IType> getTokenClass = () => TokenFactory.Error(exception.Error);
+                    return CreateAndAdvance(exception.Length, getTokenClass);
+                }
+            }
+
+            void Advance(int position) => Advance(SourcePosn, position);
+
+            static void Advance(SourcePosn sourcePosn, int position)
+            {
+                var wasEnd = sourcePosn.IsEnd;
+                sourcePosn.Position += position;
+                if(wasEnd)
+                    sourcePosn.IsValid = false;
+            }
+
+            ITokenFactory<TTreeItem> TokenFactory => Parent.TokenFactory;
+            ILexer Lexer => Parent.Lexer;
+            int? Number() => ExceptionGuard(Lexer.Number);
+            int? Text() => ExceptionGuard(Lexer.Text);
+            int? Any() => ExceptionGuard(Lexer.Any);
+
+            Item CreateAndAdvance(int? length, Func<IType> tokenClass)
+                => CreateAndAdvance(length, (int l) => tokenClass());
+
+            Item CreateAndAdvance(int? length, Func<string, IType> getTokenClass)
+                => CreateAndAdvance(length, l => getTokenClass(SourcePosn.SubString(0, l)));
+
+            Item CreateAndAdvance(int? length, Func<int, IType> getTokenClass)
+            {
+                if(length == null)
+                    return null;
+
+                var token = new ScannerToken(SourcePart.Span(SourcePosn, length.Value), PreceededBy);
+                var result = new Item(getTokenClass(length.Value), token);
+                Advance(length.Value);
+                return result;
+            }
+
+            TResult ExceptionGuard<TResult>(Func<SourcePosn, TResult> match)
+            {
+                try
+                {
+                    return match(SourcePosn);
+                }
+                catch(Match.Exception exception)
+                {
+                    throw new Exception
+                        (SourcePosn, exception.SourcePosn - SourcePosn, exception.Error);
+                }
+            }
+
+            static int? ExceptionGuard(Func<int?> getLength)
+            {
+                try
+                {
+                    return getLength();
+                }
+                catch(Match.Exception)
+                {
+                    return null;
+                }
+            }
         }
 
         sealed class Exception : System.Exception
@@ -133,73 +182,6 @@ namespace hw.Parser
             }
         }
 
-        static Item CreateAndAdvance
-            (
-            SourcePosn sourcePosn,
-            Func<SourcePosn, int?> getLength,
-            Func<IType> getTokenClass,
-            WhiteSpaceToken[] preceededBy)
-        {
-            return CreateAndAdvance(sourcePosn, getLength, (sp, l) => getTokenClass(), preceededBy);
-        }
-        static Item CreateAndAdvance
-            (
-            SourcePosn sourcePosn,
-            Func<SourcePosn, int?> getLength,
-            Func<string, IType> getTokenClass,
-            WhiteSpaceToken[] preceededBy)
-        {
-            return CreateAndAdvance
-                (sourcePosn, getLength, (sp, l) => getTokenClass(sp.SubString(0, l)), preceededBy);
-        }
-
-        static Item CreateAndAdvance
-            (
-            SourcePosn sourcePosn,
-            Func<SourcePosn, int?> getLength,
-            Func<SourcePosn, int, IType> getTokenClass,
-            WhiteSpaceToken[] preceededBy)
-        {
-            var length = getLength(sourcePosn);
-            if(length == null)
-                return null;
-
-            var result = new Item
-                (
-                getTokenClass(sourcePosn, length.Value),
-                new ScannerToken(SourcePart.Span(sourcePosn, length.Value), preceededBy)
-                );
-            var wasEnd = sourcePosn.IsEnd;
-            sourcePosn.Position += length.Value;
-            if(wasEnd)
-                sourcePosn.IsValid = false;
-            return result;
-        }
-
-        static int? IgnorantExceptionGuard(SourcePosn sourcePosn, Func<SourcePosn, int?> match)
-        {
-            try
-            {
-                return match(sourcePosn);
-            }
-            catch(Match.Exception)
-            {
-                return null;
-            }
-        }
-
-        static TResult ExceptionGuard<TResult>
-            (SourcePosn sourcePosn, Func<SourcePosn, TResult> match)
-        {
-            try
-            {
-                return match(sourcePosn);
-            }
-            catch(Match.Exception exception)
-            {
-                throw new Exception(sourcePosn, exception.SourcePosn - sourcePosn, exception.Error);
-            }
-        }
 
         public sealed class Item
         {
