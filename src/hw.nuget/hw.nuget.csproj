@@ -162,7 +162,6 @@
     <Compile Include="hw.Helper.Core\Helper\StringAligner.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeNameExtender.cs" />
     <Compile Include="hw.Helper.Core\Helper\File.cs" />
-    <Compile Include="hw.Helper.Core\JetBrainsAnnotations.cs" />
     <Compile Include="hw.CompilerTools\Parser\PrioTable.cs" />
     <Compile Include="hw.CompilerTools\Parser\PrioParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\IOperator.cs" />
@@ -223,6 +222,10 @@
     <None Include="sys.targets" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.10.1.4\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
