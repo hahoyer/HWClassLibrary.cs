@@ -60,7 +60,6 @@
     <Compile Include="hw.CompilerTools\Parser\Item.cs" />
     <Compile Include="hw.CompilerTools\Parser\ScannerToken.cs" />
     <Compile Include="hw.CompilerTools\Parser\SubParser.cs" />
-    <Compile Include="hw.CompilerTools\Parser\Token.cs" />
     <Compile Include="hw.CompilerTools\Parser\WhiteSpaceToken.cs" />
     <Compile Include="hw.CompilerTools\Scanner\ISourcePart.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePart.cs" />
@@ -85,6 +84,7 @@
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
+    <Compile Include="hw.Proof\Proof\LexerItem.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
     <Compile Include="Tests\CompilerTool\AdvancedParser.cs" />
     <Compile Include="Tests\CompilerTool\BracketBalance.cs" />
@@ -92,7 +92,14 @@
     <Compile Include="Tests\CompilerTool\ParserUtil.cs" />
     <Compile Include="Tests\CompilerTool\SourceTests.cs" />
     <Compile Include="Tests\CompilerTool\UnmachedBrackets.cs" />
+    <Compile Include="Tests\CompilerTool\Util\BeginOfText.cs" />
+    <Compile Include="Tests\CompilerTool\Util\EndOfText.cs" />
+    <Compile Include="Tests\CompilerTool\Util\ErrorSyntax.cs" />
     <Compile Include="Tests\CompilerTool\Util\IssueId.cs" />
+    <Compile Include="Tests\CompilerTool\Util\LeftParenthesis.cs" />
+    <Compile Include="Tests\CompilerTool\Util\LeftParenthesisSyntax.cs" />
+    <Compile Include="Tests\CompilerTool\Util\LexerError.cs" />
+    <Compile Include="Tests\CompilerTool\Util\MainToken.cs" />
     <Compile Include="Tests\CompilerTool\Util\MainTokenFactory.cs" />
     <Compile Include="hw.UnitTest\UnitTest\ITestFixture.cs" />
     <Compile Include="TestDump.cs" />
@@ -166,10 +173,22 @@
     <Compile Include="hw.CompilerTools\Parser\PrioParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\IOperator.cs" />
     <Compile Include="hw.CompilerTools\Parser\IParser.cs" />
-    <Compile Include="hw.CompilerTools\Parser\IType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IParserType.cs" />
     <Compile Include="hw.CompilerTools\Parser\OpenItem.cs" />
     <Compile Include="Tests\CompilerTool\SimpleParser.cs" />
+    <Compile Include="Tests\CompilerTool\Util\NamedToken.cs" />
+    <Compile Include="Tests\CompilerTool\Util\NamedTreeSyntax.cs" />
+    <Compile Include="Tests\CompilerTool\Util\NamelessSyntax.cs" />
+    <Compile Include="Tests\CompilerTool\Util\NestedToken.cs" />
+    <Compile Include="Tests\CompilerTool\Util\NestedTokenFactory.cs" />
+    <Compile Include="Tests\CompilerTool\Util\ParenthesisSyntax.cs" />
     <Compile Include="Tests\CompilerTool\Util\ReniLexer.cs" />
+    <Compile Include="Tests\CompilerTool\Util\RightParenthesis.cs" />
+    <Compile Include="Tests\CompilerTool\Util\RightParenthesisSyntax.cs" />
+    <Compile Include="Tests\CompilerTool\Util\SwitchToken.cs" />
+    <Compile Include="Tests\CompilerTool\Util\Syntax.cs" />
+    <Compile Include="Tests\CompilerTool\Util\TokenFactory.cs" />
+    <Compile Include="Tests\CompilerTool\Util\TreeSyntax.cs" />
     <Compile Include="Tests\Helper\Core\HelperCore.cs" />
     <Compile Include="Tests\Helper\Core\LongExtender.cs" />
     <Compile Include="Tests\Helper\Core\TestEnumEx.cs" />
@@ -222,8 +241,8 @@
     <None Include="sys.targets" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Annotations, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.10.1.4\lib\net20\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />

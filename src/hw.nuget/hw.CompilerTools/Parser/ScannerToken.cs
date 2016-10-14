@@ -2,42 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using hw.DebugFormatter;
 using hw.Scanner;
 using JetBrains.Annotations;
 
 namespace hw.Parser
 {
     [DebuggerDisplay("{NodeDump}")]
-    sealed class ScannerToken
+    public sealed class ScannerToken
     {
-        public readonly WhiteSpaceToken[] PrecededWith;
+        public static ScannerToken Create(IItem[] items)
+            => new ScannerToken(items.Take(items.Length - 1), items.Last().SourcePart);
+
+        public readonly IItem[] PrefixItems;
         public readonly SourcePart Characters;
 
-        public ScannerToken(SourcePart characters, WhiteSpaceToken[] precededWith)
+        ScannerToken(IEnumerable<IItem> prefixItems, SourcePart characters)
         {
+            PrefixItems = prefixItems?.ToArray() ?? new IItem[0];
             Characters = characters;
-            PrecededWith = precededWith ?? new WhiteSpaceToken[0];
-            AssertValid();
         }
 
-        void AssertValid()
-        {
-            for(var i = 1; i < PrecededWith.Length; i++)
-                Tracer.Assert
-                    (PrecededWith[i - 1].Characters.End.Equals(PrecededWith[i].Characters.Start));
-            var l = PrecededWith.LastOrDefault();
-            if(l == null)
-                return;
-            Tracer.Assert(l.Characters.End.Equals(Characters.Start));
-        }
-
-        public SourcePart SourcePart { get { return (Characters + PrecededWith.SourcePart()); } }
+        [UsedImplicitly]
+        public string Id => Characters.Id;
 
         [UsedImplicitly]
-        public string Id { get { return Characters.Id; } }
-
-        [UsedImplicitly]
-        public string NodeDump { get { return Id; } }
+        public string NodeDump => Id;
     }
 }

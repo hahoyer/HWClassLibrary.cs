@@ -11,15 +11,15 @@ namespace hw.Parser
         where TTreeItem : class, ISourcePart
     {
         readonly PrioTable PrioTable;
-        readonly IScanner<TTreeItem> Scanner;
-        readonly IType<TTreeItem> StartType;
+        readonly IScanner Scanner;
+        readonly IParserType<TTreeItem> StartParserType;
         public bool Trace { get; set; }
 
-        public PrioParser(PrioTable prioTable, IScanner<TTreeItem> scanner, IType<TTreeItem> startType)
+        public PrioParser(PrioTable prioTable, IScanner scanner, IParserType<TTreeItem> startParserType)
         {
             PrioTable = prioTable;
             Scanner = scanner;
-            StartType = startType;
+            StartParserType = startParserType;
         }
 
         TTreeItem IParser<TTreeItem>.Execute

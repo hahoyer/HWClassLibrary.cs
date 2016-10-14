@@ -15,7 +15,7 @@ namespace hw.Proof
         internal NumberSyntax(IToken token)
             : base(token)
         {
-            Value = BigInteger.Parse(token.Id);
+            Value = BigInteger.Parse(token.Characters.Id);
         }
 
         internal NumberSyntax(BigRational value)

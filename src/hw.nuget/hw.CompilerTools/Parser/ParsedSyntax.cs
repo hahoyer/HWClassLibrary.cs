@@ -23,14 +23,13 @@ namespace hw.Parser
             Token = token;
         }
 
-        protected override string GetNodeDump() { return SourcePart.Id; }
-        protected virtual string FilePosition() { return SourcePart.FilePosition; }
-        internal string FileErrorPosition(string errorTag)
-        {
-            return SourcePart.FileErrorPosition(errorTag);
-        }
+        protected override string GetNodeDump() => SourcePart.Id;
+        protected virtual string FilePosition() => SourcePart.FilePosition;
 
-        public SourcePart SourcePart { get { return Token.SourcePart; } }
-        SourcePart ISourcePart.All { get { return SourcePart; } }
+        internal string FileErrorPosition(string errorTag) => SourcePart.FileErrorPosition(errorTag);
+
+        public SourcePart SourcePart => Token.SourcePart();
+
+        SourcePart ISourcePart.All => SourcePart;
     }
 }

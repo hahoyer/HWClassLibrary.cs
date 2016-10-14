@@ -2,110 +2,65 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
-using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
 {
-    public sealed class Scanner<TTreeItem> : Dumpable, IScanner<TTreeItem>
-        where TTreeItem : class, ISourcePart
+    public sealed class Scanner : Dumpable, IScanner
     {
-        readonly ILexer Lexer;
-        readonly ITokenFactory<TTreeItem> TokenFactory;
+        readonly ITokenFactory TokenFactory;
+        public Scanner(ITokenFactory tokenFactory) { TokenFactory = tokenFactory; }
 
-        public Scanner(ILexer lexer, ITokenFactory<TTreeItem> tokenFactory)
-        {
-            Lexer = lexer;
-            TokenFactory = tokenFactory;
-        }
-
-        Item IScanner<TTreeItem>.NextToken(SourcePosn sourcePosn)
-            => new Worker(this, sourcePosn).GetNextToken();
-
-        IType InvalidCharacterError => TokenFactory.Error(Lexer.InvalidCharacterError);
+        IItem[] IScanner.GetNextTokenGroup(SourcePosn sourcePosn)
+            => new Worker(this, sourcePosn).GetNextTokenGroup().ToArray();
 
         sealed class Worker : DumpableObject
         {
-            readonly Scanner<TTreeItem> Parent;
+            readonly Scanner Parent;
             readonly SourcePosn SourcePosn;
-            readonly WhiteSpaceToken[] PreceededBy;
 
-            internal Worker(Scanner<TTreeItem> parent, SourcePosn sourcePosn)
+            internal Worker(Scanner parent, SourcePosn sourcePosn)
             {
                 Tracer.Assert(sourcePosn.IsValid);
                 Parent = parent;
                 SourcePosn = sourcePosn;
-                PreceededBy = GuardedGetPreceededBy();
             }
 
-            WhiteSpaceToken[] GuardedGetPreceededBy()
-                => ExceptionGuard(posn => GetPreceededBy().ToArray());
-
-            IEnumerable<WhiteSpaceToken> GetPreceededBy()
+            internal IEnumerable<IItem> GetNextTokenGroup()
             {
-                var runAgain = true;
-                while(runAgain)
+                while(true)
                 {
-                    runAgain = false;
+                    var t = GetNextToken();
+                    yield return t;
 
-                    var result = Lexer
-                        .WhiteSpace
-                        .SelectMany
-                        (
-                            (getMatch, index) =>
-                                GetNextWhiteSpaceToken
-                                    (index, ExceptionGuard(() => getMatch(SourcePosn)))
-                                    .NullableToArray()
-                        )
-                        .ToArray();
-
-                    foreach(var token in result)
-                    {
-                        yield return token;
-
-                        runAgain = true;
-                    }
+                    if(t.ScannerType is IParserTypeProvider)
+                        yield break;
                 }
             }
 
-
-            Item InvalidCharacter()
-            {
-                // this statement will throw an exception in case of error in whitespace
-                var result = Lexer
-                    .WhiteSpace
-                    .All(f => ExceptionGuard(f) == null);
-                // otherwise current character will not be any whitespace
-                Tracer.Assert(result);
-                // and is considered as invalid
-                return CreateAndAdvance(1, () => Parent.InvalidCharacterError);
-            }
-
-            WhiteSpaceToken GetNextWhiteSpaceToken(int index, int? length)
-            {
-                if(length == null)
-                    return null;
-
-                var sourcePart = SourcePart.Span(SourcePosn, length.Value);
-                Advance(length.Value);
-                return new WhiteSpaceToken(index, sourcePart);
-            }
-
-            internal Item GetNextToken()
+            IItem GetNextToken()
             {
                 try
                 {
-                    var endMarker = SourcePosn.IsEnd ? (int?) 0 : null;
-                    return CreateAndAdvance(endMarker, () => TokenFactory.EndOfText)
-                        ?? CreateAndAdvance(Number(), () => TokenFactory.Number)
-                            ?? CreateAndAdvance(Text(), () => TokenFactory.Text)
-                                ?? CreateAndAdvance(Any(), TokenFactory.TokenClass)
-                                    ?? InvalidCharacter();
+                    if(SourcePosn.IsEnd)
+                        return CreateAndAdvance(0, TokenFactory.EndOfText);
+
+                    foreach(var item in TokenFactory.Classes)
+                    {
+                        var length = item.Match(SourcePosn);
+                        if(length != null)
+                            return CreateAndAdvance(length.Value, item.ScannerType);
+                    }
+
+                    return CreateAndAdvance(1, TokenFactory.InvalidCharacterError);
                 }
                 catch(Exception exception)
                 {
-                    Func<IType> getTokenClass = () => TokenFactory.Error(exception.Error);
-                    return CreateAndAdvance(exception.Length, getTokenClass);
+                    var scannerException = exception as IException;
+                    if(scannerException == null)
+                        throw;
+
+                    return CreateAndAdvance(scannerException.Length, scannerException.SyntaxError);
                 }
             }
 
@@ -119,86 +74,35 @@ namespace hw.Parser
                     sourcePosn.IsValid = false;
             }
 
-            ITokenFactory<TTreeItem> TokenFactory => Parent.TokenFactory;
-            ILexer Lexer => Parent.Lexer;
-            int? Number() => ExceptionGuard(Lexer.Number);
-            int? Text() => ExceptionGuard(Lexer.Text);
-            int? Any() => ExceptionGuard(Lexer.Any);
+            ITokenFactory TokenFactory => Parent.TokenFactory;
 
-            Item CreateAndAdvance(int? length, Func<IType> tokenClass)
-                => CreateAndAdvance(length, (int l) => tokenClass());
-
-            Item CreateAndAdvance(int? length, Func<string, IType> getTokenClass)
-                => CreateAndAdvance(length, l => getTokenClass(SourcePosn.SubString(0, l)));
-
-            Item CreateAndAdvance(int? length, Func<int, IType> getTokenClass)
+            IItem CreateAndAdvance(int length, IScannerType type)
             {
-                if(length == null)
-                    return null;
-
-                var token = new ScannerToken(SourcePart.Span(SourcePosn, length.Value), PreceededBy);
-                var result = new Item(getTokenClass(length.Value), token);
-                Advance(length.Value);
+                var result = new Item(SourcePart.Span(SourcePosn, length), type);
+                Advance(length);
                 return result;
             }
 
-            TResult ExceptionGuard<TResult>(Func<SourcePosn, TResult> match)
+            sealed class Item : DumpableObject, IItem
             {
-                try
-                {
-                    return match(SourcePosn);
-                }
-                catch(Match.Exception exception)
-                {
-                    throw new Exception
-                        (SourcePosn, exception.SourcePosn - SourcePosn, exception.Error);
-                }
-            }
+                readonly SourcePart SourcePart;
+                readonly IScannerType Type;
 
-            static int? ExceptionGuard(Func<int?> getLength)
-            {
-                try
+                public Item(SourcePart sourcePart, IScannerType type)
                 {
-                    return getLength();
+                    SourcePart = sourcePart;
+                    Type = type;
                 }
-                catch(Match.Exception)
-                {
-                    return null;
-                }
+
+                IScannerType IItem.ScannerType => Type;
+                SourcePart IItem.SourcePart => SourcePart;
             }
         }
 
-        sealed class Exception : System.Exception
+        internal interface IException
         {
-            public readonly SourcePosn SourcePosn;
-            internal readonly int Length;
-            public readonly Match.IError Error;
-
-            public Exception(SourcePosn sourcePosn, int length, Match.IError error)
-            {
-                SourcePosn = sourcePosn;
-                Length = length;
-                Error = error;
-            }
-        }
-
-
-        public sealed class Item
-        {
-            internal readonly IType Type;
-            internal readonly ScannerToken Token;
-
-            internal Item(IType type, ScannerToken token)
-            {
-                Type = type;
-                Token = token;
-            }
-        }
-
-        public interface IType
-        {
-            ISubParser<TTreeItem> NextParser { get; }
-            IType<TTreeItem> Type { get; }
+            int Length { get; }
+            IScannerType SyntaxError { get; }
         }
     }
 }

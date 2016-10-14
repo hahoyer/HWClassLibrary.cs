@@ -45,7 +45,7 @@ namespace hw.Parser
 
         internal int Depth => Data.Length;
 
-        internal BracketContext Add(string index) => AddCache[index];
+        internal BracketContext Add(string token) => AddCache[token];
 
         internal bool? IsBracketAndLeftBracket(string token)
         {

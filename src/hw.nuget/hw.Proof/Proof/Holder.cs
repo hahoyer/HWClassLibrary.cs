@@ -11,21 +11,22 @@ namespace hw.Proof
     sealed class Holder : Dumpable
     {
         readonly string _text;
-        readonly ClauseSyntax _statement;
-        readonly Scanner<ParsedSyntax> _scanner = new Scanner<ParsedSyntax>(new ReniLexer(),Main.TokenFactory);
+        readonly Parser.Scanner _scanner
+            = new Parser.Scanner(Main.TokenFactory);
 
         public Holder(string text)
         {
             var file = "main.proof".FileHandle();
             file.String = text;
             _text = text;
-            IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>(TokenFactory.PrioTable, _scanner, null);
+            IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>
+                (TokenFactory.PrioTable, _scanner, null);
             var parsedSyntax =
                 prioParser.Execute(new Source(file) + 0, null);
-            _statement = (ClauseSyntax) parsedSyntax;
+            Statement = (ClauseSyntax) parsedSyntax;
         }
 
-        internal Set<string> Variables { get { return _statement.Variables; } }
-        internal ClauseSyntax Statement { get { return _statement; } }
+        internal Set<string> Variables => Statement.Variables;
+        internal ClauseSyntax Statement { get; }
     }
 }

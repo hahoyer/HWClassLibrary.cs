@@ -7,9 +7,28 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
+    public abstract class TokenClass
+        : DumpableObject,
+            IParserTypeProvider,
+            IScannerType
+    {
+        static int NextObjectId;
+
+        protected TokenClass()
+            : base(NextObjectId++) {}
+
+        IParserType<TTreeItem> IParserTypeProvider.GetType<TTreeItem>(string id)
+        {
+            NotImplementedMethod(id);
+            return null;
+        }
+    }
+
     public abstract class TokenClass<TTreeItem>
-        : DumpableObject, IType<TTreeItem>, IUniqueIdProvider,
-            Scanner<TTreeItem>.IType
+        : DumpableObject,
+            IParserType<TTreeItem>,
+            IUniqueIdProvider,
+            PrioParser<TTreeItem>.ISubParserProvider
         where TTreeItem : class, ISourcePart
     {
         static int _nextObjectId;
@@ -20,14 +39,12 @@ namespace hw.Parser
             StopByObjectIds(-31);
         }
 
-        string IType<TTreeItem>.PrioTableId => Id;
+        string IParserType<TTreeItem>.PrioTableId => Id;
 
-        TTreeItem IType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right)
+        TTreeItem IParserType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right)
             => Create(left, token, right);
 
-        ISubParser<TTreeItem> Scanner<TTreeItem>.IType.NextParser => Next;
-
-        IType<TTreeItem> Scanner<TTreeItem>.IType.Type => this;
+        ISubParser<TTreeItem> PrioParser<TTreeItem>.ISubParserProvider.NextParser => Next;
 
         protected virtual ISubParser<TTreeItem> Next => null;
         protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
@@ -35,6 +52,7 @@ namespace hw.Parser
         protected override string GetNodeDump() => base.GetNodeDump() + "(" + Id.Quote() + ")";
 
         public override string ToString() => base.ToString() + " Id=" + Id.Quote();
+
         string IUniqueIdProvider.Value => Id;
         public abstract string Id { get; }
     }

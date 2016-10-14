@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using hw.Scanner;
 using System.Linq;
 using hw.Parser;
+using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
     sealed class ReniLexer : ILexer
     {
-        internal sealed class Error : Match.IError
-        {
-            public readonly IssueId IssueId;
-            public Error(IssueId issueId) { IssueId = issueId; }
-            public override string ToString() { return IssueId.Tag; }
-        }
-
         readonly Match _whiteSpaces;
         readonly Match _any;
         readonly Match _text;
-        readonly Error _invalidTextEnd = new Error(IssueId.EOLInString);
-        readonly Error _invalidLineComment = new Error(IssueId.EOFInLineComment);
-        readonly Error _invalidComment = new Error(IssueId.EOFInComment);
+        readonly LexerError _invalidTextEnd = new LexerError(IssueId.EOLInString);
+        readonly LexerError _invalidLineComment = new LexerError(IssueId.EOFInLineComment);
+        readonly LexerError _invalidComment = new LexerError(IssueId.EOFInComment);
         readonly IMatch _number;
         readonly Match _comment;
 
@@ -31,7 +24,7 @@ namespace hw.Tests.CompilerTool.Util
             var textFrame = "'\"".AnyChar();
             var symbol = "°^!²§³$%&/=?\\@€*+~><|:.-".AnyChar();
 
-            var identifier = (alpha + (alpha.Else(Match.Digit)).Repeat()).Else(symbol.Repeat(1));
+            var identifier = (alpha + alpha.Else(Match.Digit).Repeat()).Else(symbol.Repeat(1));
 
             _any = symbol1.Else(identifier);
 
@@ -48,31 +41,51 @@ namespace hw.Tests.CompilerTool.Util
             _number = Match.Digit.Repeat(1);
 
             _text = textFrame.Value
-                (
-                    head =>
-                    {
-                        var textEnd = head.Else(Match.LineEnd + _invalidTextEnd);
-                        return textEnd.Find + (head + textEnd.Find).Repeat();
-                    });
+            (
+                head =>
+                {
+                    var textEnd = head.Else(Match.LineEnd + _invalidTextEnd);
+                    return textEnd.Find + (head + textEnd.Find).Repeat();
+                });
         }
 
         Func<SourcePosn, int?>[] ILexer.WhiteSpace
-        {
-            get
+            => new Func<SourcePosn, int?>[]
             {
-                return new Func<SourcePosn, int?>[]
-                {
-                    sourcePosn => sourcePosn.Match(_whiteSpaces),
-                    sourcePosn => sourcePosn.Match(_comment)
-                };
+                sourcePosn => sourcePosn.Match(_whiteSpaces),
+                sourcePosn => sourcePosn.Match(_comment)
+            };
+
+        static int? GuardedMatch(SourcePosn sourcePosn, IMatch match)
+        {
+            try
+            {
+                return sourcePosn.Match(match);
+            }
+            catch(Exception systemException)
+            {
+                var exception = systemException as MatchExtension.IException;
+                if(exception == null)
+                    throw;
+
+                throw new LexerException(sourcePosn.Span(exception.SourcePosn), ((LexerError)exception.Error).IssueId);
             }
         }
 
-        int? ILexer.Number(SourcePosn sourcePosn) { return sourcePosn.Match(_number); }
-        int? ILexer.Any(SourcePosn sourcePosn) { return sourcePosn.Match(_any); }
+        sealed class LexerException : Exception
+        {
+            readonly SourcePart Position;
+            readonly IssueId IssueId;
 
-        Match.IError ILexer.InvalidCharacterError { get; } = new Error(IssueId.UnexpectedSyntaxError);
+            public LexerException(SourcePart position, IssueId issueId)
+            {
+                Position = position;
+                IssueId = issueId;
+            }
+        }
 
-        int? ILexer.Text(SourcePosn sourcePosn) { return sourcePosn.Match(_text); }
+        int? ILexer.Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
+        int? ILexer.Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
+        int? ILexer.Text(SourcePosn sourcePosn) => sourcePosn.Match(_text);
     }
 }

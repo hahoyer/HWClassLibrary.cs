@@ -7,7 +7,7 @@ using hw.Parser;
 namespace hw.Proof.TokenClasses
 {
     abstract class TokenClass
-        : DumpableObject, Scanner<ParsedSyntax>.IType, IUniqueIdProvider, IType<ParsedSyntax>
+        : DumpableObject, IScannerType, IUniqueIdProvider, IParserType<ParsedSyntax>
     {
         protected virtual ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
@@ -25,25 +25,34 @@ namespace hw.Proof.TokenClasses
                 result += parsedSyntax.SmartDump(@operator);
                 isFirst = false;
             }
+
             return "(" + result + ")";
         }
 
-        ParsedSyntax IType<ParsedSyntax>.Create(ParsedSyntax left, IToken token, ParsedSyntax right)
+        ParsedSyntax IParserType<ParsedSyntax>.Create
+            (ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             return Syntax(left, token, right);
         }
 
-        string IType<ParsedSyntax>.PrioTableId { get { return Value; } }
+        string IParserType<ParsedSyntax>.PrioTableId => Value;
 
-        protected virtual IType<ParsedSyntax> Match => null;
+        protected virtual IParserType<ParsedSyntax> Match => null;
 
 
-        ISubParser<ParsedSyntax> Scanner<ParsedSyntax>.IType.NextParser { get { return Next; } }
+        ISubParser<ParsedSyntax> NextParser
+        {
+            get { return Next; }
+        }
 
-        IType<ParsedSyntax> Scanner<ParsedSyntax>.IType.Type { get { return this; } }
+        IParserType<ParsedSyntax> ParserType
+        {
+            get { return this; }
+        }
 
 
         protected virtual ISubParser<ParsedSyntax> Next { get { return null; } }
         public abstract string Value { get; }
+        bool IScannerType.IsGroupToken => true;
     }
 }

@@ -23,11 +23,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using hw.Helper;
+using hw.Scanner;
 
 namespace hw.Proof
 {
-    sealed class IssueId : EnumEx
+    sealed class IssueId : EnumEx, MatchExtension.IError
     {
         public static readonly IssueId EOFInComment = new IssueId();
         public static readonly IssueId EOFInLineComment = new IssueId();

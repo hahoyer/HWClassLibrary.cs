@@ -164,7 +164,7 @@ namespace hw.Parser
 
         internal Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
         {
-            var delta = newItem.LeftDepth() - recentItem.RightDepth();
+            var delta = newItem.GetLeftDepth() - recentItem.GetRightDepth();
 
             switch(delta)
             {

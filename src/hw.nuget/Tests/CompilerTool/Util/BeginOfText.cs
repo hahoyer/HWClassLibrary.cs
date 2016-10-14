@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using hw.Parser;
+
+namespace hw.Tests.CompilerTool.Util
+{
+    sealed class BeginOfText : TokenClass<Syntax>
+    {
+        public override string Id => PrioTable.BeginOfText;
+
+        protected override Syntax Create(Syntax left, IToken token, Syntax right)
+            => new LeftParenthesisSyntax(left, token, right);
+    }
+}

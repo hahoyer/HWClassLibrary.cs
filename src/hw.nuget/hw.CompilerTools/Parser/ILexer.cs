@@ -11,6 +11,5 @@ namespace hw.Parser
         int? Number(SourcePosn sourcePosn);
         int? Text(SourcePosn sourcePosn);
         int? Any(SourcePosn sourcePosn);
-        Match.IError InvalidCharacterError { get; }
     }
 }

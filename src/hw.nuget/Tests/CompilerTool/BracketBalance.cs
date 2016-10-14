@@ -26,7 +26,7 @@ namespace hw.Tests.CompilerTool
                 (
                     depth == 0,
                     () =>
-                        items.Select(item => item.Id + ":" + item.BracketBalance())
+                        items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
 
@@ -44,7 +44,7 @@ namespace hw.Tests.CompilerTool
                 (
                     depth == 0,
                     () =>
-                        items.Select(item => item.Id + ":" + item.BracketBalance())
+                        items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
 
@@ -62,7 +62,7 @@ namespace hw.Tests.CompilerTool
                 (
                     depth == 0,
                     () =>
-                        items.Select(item => item.Id + ":" + item.BracketBalance())
+                        items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
 
@@ -80,7 +80,7 @@ namespace hw.Tests.CompilerTool
                 (
                     depth == 0,
                     () =>
-                        items.Select(item => item.Id + ":" + item.BracketBalance())
+                        items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
 
@@ -98,7 +98,7 @@ namespace hw.Tests.CompilerTool
                 (
                     depth == 0,
                     () =>
-                        items.Select(item => item.Id + ":" + item.BracketBalance())
+                        items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
 
@@ -116,7 +116,7 @@ namespace hw.Tests.CompilerTool
                 (
                     depth == 0,
                     () =>
-                        items.Select(item => item.Id + ":" + item.BracketBalance())
+                        items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
 
@@ -134,7 +134,7 @@ namespace hw.Tests.CompilerTool
                 (
                     depth == 0,
                     () =>
-                        items.Select(item => item.Id + ":" + item.BracketBalance())
+                        items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
     }

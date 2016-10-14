@@ -9,14 +9,16 @@ namespace hw.Parser
     public interface IToken
     {
         [DisableDump]
-        SourcePart SourcePart { get; }
-        [DisableDump]
-        string Id { get; }
-        [DisableDump]
-        WhiteSpaceToken[] PrecededWith { get; }
+        IEnumerable<IItem> PrecededWith { get; }
         [DisableDump]
         SourcePart Characters { get; }
         [DisableDump]
-        bool? IsBracketAndLeftBracket{ get; }
+        bool? IsBracketAndLeftBracket { get; }
+    }
+
+    static class TokenExtension
+    {
+        internal static SourcePart SourcePart(this IToken token)
+            => token.PrecededWith.SourcePart() + token.Characters;
     }
 }

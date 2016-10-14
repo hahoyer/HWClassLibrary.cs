@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
+using hw.Parser;
+using hw.Tests.CompilerTool.Util;
 
 namespace hw.Scanner
 {
@@ -44,8 +46,8 @@ namespace hw.Scanner
         public static Match operator +(string x, Match y) => x.Box() + y;
         public static Match operator +(Match x, string y) => x + y.Box();
 
-        public static Match operator +(IError x, Match y) => x.Box() + y;
-        public static Match operator +(Match x, IError y) => x + y.Box();
+        public static Match operator +(MatchExtension.IError x, Match y) => x.Box() + y;
+        public static Match operator +(Match x, MatchExtension.IError y) => x + y.Box();
 
         public static Match operator +(Match x, Match y) => new Match(new Sequence(x.UnBox(), y.UnBox()));
 
@@ -157,21 +159,6 @@ namespace hw.Scanner
             {
                 Tracer.TraceBreak();
                 return 0;
-            }
-        }
-
-        public interface IError
-        {}
-
-        public sealed class Exception : System.Exception
-        {
-            public readonly SourcePosn SourcePosn;
-            public readonly IError Error;
-
-            internal Exception(SourcePosn sourcePosn, IError error)
-            {
-                SourcePosn = sourcePosn;
-                Error = error;
             }
         }
     }

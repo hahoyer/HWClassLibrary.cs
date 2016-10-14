@@ -14,7 +14,7 @@ namespace hw.Scanner
         }
 
         public static Match AnyChar(this string data) => new Match(new AnyCharMatch(data));
-        public static Match Box(this Match.IError error) => new Match(new ErrorMatch(error));
+        public static Match Box(this IError error) => new Match(new ErrorMatch(error));
         public static Match Box(this string data) => new Match(new CharMatch(data));
         public static Match Box(this IMatch data) => data as Match ?? new Match(data);
 
@@ -23,20 +23,48 @@ namespace hw.Scanner
 
         public static Match Else(this string data, IMatch other) => data.Box().Else(other);
         public static Match Else(this IMatch data, string other) => data.Else(other.Box());
-        public static Match Else(this Match.IError data, IMatch other) => data.Box().Else(other);
-        public static Match Else(this IMatch data, Match.IError other) => data.Else(other.Box());
+        public static Match Else(this IError data, IMatch other) => data.Box().Else(other);
+        public static Match Else(this IMatch data, IError other) => data.Else(other.Box());
 
         public static Match Else(this IMatch data, IMatch other)
             => new Match(new ElseMatch(data.UnBox(), other.UnBox()));
 
+        public interface IError {}
+
+        public interface IException
+        {
+            SourcePosn SourcePosn { get; }
+            IError Error { get; }
+
+        }
+
         sealed class ErrorMatch : Dumpable, IMatch
         {
-            readonly Match.IError _error;
-            public ErrorMatch(Match.IError error) { _error = error; }
+            readonly IError _error;
+            public ErrorMatch(IError error) { _error = error; }
 
             int? IMatch.Match(SourcePosn sourcePosn)
             {
-                throw new Match.Exception(sourcePosn, _error);
+                var positionFactory = _error as IPositionExceptionFactory;
+                if(positionFactory != null)
+                    throw positionFactory.Create(sourcePosn);
+
+                throw new MatchException(sourcePosn, _error);
+            }
+
+            sealed class MatchException : Exception, IException
+            {
+                readonly SourcePosn SourcePosn;
+                readonly IError Error;
+
+                public MatchException(SourcePosn sourcePosn, IError error)
+                {
+                    SourcePosn = sourcePosn;
+                    Error = error;
+                }
+
+                SourcePosn IException.SourcePosn => SourcePosn;
+                IError IException.Error => Error;
             }
         }
 
@@ -119,6 +147,11 @@ namespace hw.Scanner
                     count++;
                 }
             }
+        }
+
+        internal interface IPositionExceptionFactory
+        {
+            Exception Create(SourcePosn sourcePosn);
         }
     }
 }

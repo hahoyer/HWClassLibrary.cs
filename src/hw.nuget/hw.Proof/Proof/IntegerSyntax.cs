@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
-using hw.Scanner;
 
 namespace hw.Proof
 {
@@ -13,9 +12,9 @@ namespace hw.Proof
             : base(token) { }
 
         [DisableDump]
-        internal override Set<string> Variables { get { return new Set<string>(); } }
+        internal override Set<string> Variables => new Set<string>();
 
-        internal override string SmartDump(ISmartDumpToken @operator) { return Token.Id; }
-        public int CompareToEx(IntegerSyntax other) { return 0; }
+        internal override string SmartDump(ISmartDumpToken @operator) => Token.Characters.Id;
+        public int CompareToEx(IntegerSyntax other) => 0;
     }
 }

@@ -10,20 +10,20 @@ namespace hw.Parser
     public sealed class OpenItem<TTreeItem> : DumpableObject
         where TTreeItem : class, ISourcePart
     {
-        internal readonly Token Token;
+        internal readonly IToken Token;
         internal readonly TTreeItem Left;
-        internal readonly IType<TTreeItem> Type;
+        internal readonly IParserType<TTreeItem> Type;
         internal readonly PrioTable.ITargetItem BracketItem;
 
         internal OpenItem(TTreeItem left, Item<TTreeItem> current)
         {
             Left = left;
             Type = current.Type;
-            Token = current.Token;
+            Token = current;
             BracketItem = current;
         }
 
-        internal int NextDepth => BracketItem.RightDepth();
+        internal int NextDepth => BracketItem.GetRightDepth();
 
         internal TTreeItem Create(TTreeItem right)
         {
