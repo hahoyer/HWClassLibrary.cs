@@ -15,86 +15,88 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <language>en-US</language>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2015</copyright>
+        <copyright>Copyright Harald Hoyer 2016</copyright>
 
-        <version>16.9.1</version>
+        <version>16.10</version>
         <releaseNotes>
-            Change: SourcePart: FileErrorPosition provides quoted text
-            Refactor: Reformat
-            16.9
-            Change: Scanner: treat invalid character
-            Refactor: C# 6.0 features used
-            16.8.1
-            Change: Source: Identifier made public
-            16.8
-            User interface dependencies removed
-            16.7.1
-            Change: Match: Solving debugging problems
-            16.7
-            Change: Source: Identifier implemented to be used to identify source in FilePosn function
-            Change: FilePosn can get a position range
-            Refactor: C# 6.0 features used
-            16.6
-            Bug: Parser: Token in case of bracket match overlaps
-            16.5.1
-            Change: Match: Accept "\n" as well as "\r\n" as line end
-            Refactor: C# 6.0 features used
-            Bug: PrioTabe.FromText: Empty lines not accepted
-            16.5
-            Change: Providing bracket-balance information on tokens
-            16.4.2
-            Bug: Incorrect current position case of mismatch
-            Trace: Relation did not show anything
-            16.4.1
-            Refactor: Bracket match or mismatch
-            16.4
-            Change: Treat unbalanced brackets better
-            16.3
-            Bug: Token for bracket match should not overlap with other token
-            Bug: Exception when using trace for a parser without title
-            Change: Treat unbalanced brackets
-            16.2
-            Change: Bracket match definition
-            16.1
-            Change: depth-controlled Prioparser
-            Change: Removing match processing
-            16.0
-            Change: Then-Else-level removed
-            15.8.1
-            Use Breaking changes of hw.Helper.Core
-            15.7.8
-            New: Source: additional function
-            15.7.7
-            Change: SourcePart.Intersect: will return null when there is no intersection
-            15.7.6
-            New: Source/SourcePart: additional functions
-            15.7.5
-            New: Helper function for Whitespace array
-            New: Source: additional functions
-            15.7.4
-            Refactor
-            15.7.3
-            Change: Source handling: Functions to convert position from and to line and column index
-            Change: Members made public
-            15.7.2
-            Bug: Whitespace errors occupy all preceeding whitespaces
-            15.7.1
-            Bug: Extra lines are written to output during parse
-            15.7
-            Change: Trace dump improved
-            15.6.30-alpha
-            Change: separate input and output parameter types for IOperation
-            Bug: preceeding whitespaces are ignored in case of scanner errors
-            Change: Splitting IType into scanner and and parser relevant parts
-            Change: IToken Otherparts removed
-            Refactor: Reformats
-            New: SourcePart safe combine
-            Change: SourcePart: New functions
-            Refactor: Setter for Name removed
-            Refactor: Use ScannerItem when possible
-            Change: Token with preceding whitespaces must not contain gaps
-            Change: Customized debugger display for Token and WhiteSpaceToken
-            Change: Introducing white space fine structure
+          Functional refactor: disrupt scanner and parser
+          16.9.1
+          Change: SourcePart: FileErrorPosition provides quoted text
+          Refactor: Reformat
+          16.9
+          Change: Scanner: treat invalid character
+          Refactor: C# 6.0 features used
+          16.8.1
+          Change: Source: Identifier made public
+          16.8
+          User interface dependencies removed
+          16.7.1
+          Change: Match: Solving debugging problems
+          16.7
+          Change: Source: Identifier implemented to be used to identify source in FilePosn function
+          Change: FilePosn can get a position range
+          Refactor: C# 6.0 features used
+          16.6
+          Bug: Parser: Token in case of bracket match overlaps
+          16.5.1
+          Change: Match: Accept "\n" as well as "\r\n" as line end
+          Refactor: C# 6.0 features used
+          Bug: PrioTabe.FromText: Empty lines not accepted
+          16.5
+          Change: Providing bracket-balance information on tokens
+          16.4.2
+          Bug: Incorrect current position case of mismatch
+          Trace: Relation did not show anything
+          16.4.1
+          Refactor: Bracket match or mismatch
+          16.4
+          Change: Treat unbalanced brackets better
+          16.3
+          Bug: Token for bracket match should not overlap with other token
+          Bug: Exception when using trace for a parser without title
+          Change: Treat unbalanced brackets
+          16.2
+          Change: Bracket match definition
+          16.1
+          Change: depth-controlled Prioparser
+          Change: Removing match processing
+          16.0
+          Change: Then-Else-level removed
+          15.8.1
+          Use Breaking changes of hw.Helper.Core
+          15.7.8
+          New: Source: additional function
+          15.7.7
+          Change: SourcePart.Intersect: will return null when there is no intersection
+          15.7.6
+          New: Source/SourcePart: additional functions
+          15.7.5
+          New: Helper function for Whitespace array
+          New: Source: additional functions
+          15.7.4
+          Refactor
+          15.7.3
+          Change: Source handling: Functions to convert position from and to line and column index
+          Change: Members made public
+          15.7.2
+          Bug: Whitespace errors occupy all preceeding whitespaces
+          15.7.1
+          Bug: Extra lines are written to output during parse
+          15.7
+          Change: Trace dump improved
+          15.6.30-alpha
+          Change: separate input and output parameter types for IOperation
+          Bug: preceeding whitespaces are ignored in case of scanner errors
+          Change: Splitting IType into scanner and and parser relevant parts
+          Change: IToken Otherparts removed
+          Refactor: Reformats
+          New: SourcePart safe combine
+          Change: SourcePart: New functions
+          Refactor: Setter for Name removed
+          Refactor: Use ScannerItem when possible
+          Change: Token with preceding whitespaces must not contain gaps
+          Change: Customized debugger display for Token and WhiteSpaceToken
+          Change: Introducing white space fine structure
         </releaseNotes>
         <dependencies>
             <dependency id="hw.Helper.Core" version="16.0" />
