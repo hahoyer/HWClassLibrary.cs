@@ -17,9 +17,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2016</copyright>
 
-        <version>16.10.1</version>
+        <version>16.10.2</version>
         <releaseNotes>
-          Change: Ability to provid your own source types 
+          Change: Nested interfaces IError and IException moved back to Match
+          16.10.1
+          Change: Ability to provid your own source types
           16.10
           Functional refactor: disrupt scanner and parser
           16.9.1

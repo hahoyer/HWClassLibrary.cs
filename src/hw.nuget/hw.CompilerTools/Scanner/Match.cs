@@ -33,11 +33,11 @@ namespace hw.Scanner
         [DisableDump]
         public Match Find => new Match(new FindMatch(_data));
 
-        public static Match WhiteSpace => Box(char.IsWhiteSpace);
+        public static Match WhiteSpace => Box(Char.IsWhiteSpace);
         public static Match LineEnd => "\n".Box().Else("\r\n").Else(End);
         public static Match End => new Match(new EndMatch());
-        public static Match Digit => Box(char.IsDigit);
-        public static Match Letter => Box(char.IsLetter);
+        public static Match Digit => Box(Char.IsDigit);
+        public static Match Letter => Box(Char.IsLetter);
         [DisableDump]
         public Match Not => new Match(new NotMatch(this));
 
@@ -46,8 +46,8 @@ namespace hw.Scanner
         public static Match operator +(string x, Match y) => x.Box() + y;
         public static Match operator +(Match x, string y) => x + y.Box();
 
-        public static Match operator +(MatchExtension.IError x, Match y) => x.Box() + y;
-        public static Match operator +(Match x, MatchExtension.IError y) => x + y.Box();
+        public static Match operator +(Match.IError x, Match y) => MatchExtension.Box(x) + y;
+        public static Match operator +(Match x, Match.IError y) => x + MatchExtension.Box(y);
 
         public static Match operator +(Match x, Match y) => new Match(new Sequence(x.UnBox(), y.UnBox()));
 
@@ -160,6 +160,15 @@ namespace hw.Scanner
                 Tracer.TraceBreak();
                 return 0;
             }
+        }
+
+        public interface IError {}
+
+        public interface IException
+        {
+            SourcePosn SourcePosn { get; }
+            Match.IError Error { get; }
+
         }
     }
 }

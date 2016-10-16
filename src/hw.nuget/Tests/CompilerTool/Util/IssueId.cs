@@ -6,7 +6,7 @@ using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class IssueId : EnumEx, MatchExtension.IError
+    sealed class IssueId : EnumEx, Match.IError
     {
         public static readonly IssueId EOFInComment = new IssueId();
         public static readonly IssueId EOFInLineComment = new IssueId();

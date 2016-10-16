@@ -58,7 +58,7 @@ namespace hw.Tests.CompilerTool.Util
             }
             catch(Exception systemException)
             {
-                var exception = systemException as MatchExtension.IException;
+                var exception = systemException as Match.IException;
                 if(exception == null)
                     throw;
 

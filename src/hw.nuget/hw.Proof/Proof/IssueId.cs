@@ -29,7 +29,7 @@ using hw.Scanner;
 
 namespace hw.Proof
 {
-    sealed class IssueId : EnumEx, MatchExtension.IError
+    sealed class IssueId : EnumEx, Scanner.Match.IError
     {
         public static readonly IssueId EOFInComment = new IssueId();
         public static readonly IssueId EOFInLineComment = new IssueId();

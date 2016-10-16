@@ -60,7 +60,6 @@
     <Compile Include="hw.CompilerTools\Parser\BracketContext.cs" />
     <Compile Include="hw.CompilerTools\Parser\Extension.cs" />
     <Compile Include="hw.CompilerTools\Parser\IBinaryTreeItem.cs" />
-    <Compile Include="hw.CompilerTools\Parser\ILexer.cs" />
     <Compile Include="hw.CompilerTools\Parser\IToken.cs" />
     <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParsedSyntax.cs" />
