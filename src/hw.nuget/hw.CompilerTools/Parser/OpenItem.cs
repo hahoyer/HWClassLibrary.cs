@@ -12,7 +12,7 @@ namespace hw.Parser
     {
         internal readonly IToken Token;
         internal readonly TTreeItem Left;
-        internal readonly IParserType<TTreeItem> Type;
+        internal readonly IParserTokenType<TTreeItem> Type;
         internal readonly PrioTable.ITargetItem BracketItem;
 
         internal OpenItem(TTreeItem left, Item<TTreeItem> current)

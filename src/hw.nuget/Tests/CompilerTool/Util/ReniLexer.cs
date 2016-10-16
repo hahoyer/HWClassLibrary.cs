@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using hw.DebugFormatter;
 using hw.Parser;
 using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class ReniLexer : ILexer
+    sealed class ReniLexer:DumpableObject 
     {
         readonly Match _whiteSpaces;
         readonly Match _any;
         readonly Match _text;
-        readonly LexerError _invalidTextEnd = new LexerError(IssueId.EOLInString);
-        readonly LexerError _invalidLineComment = new LexerError(IssueId.EOFInLineComment);
-        readonly LexerError _invalidComment = new LexerError(IssueId.EOFInComment);
+        readonly IssueId _invalidTextEnd = IssueId.EOLInString;
+        readonly IssueId _invalidLineComment = IssueId.EOFInLineComment;
+        readonly IssueId _invalidComment = IssueId.EOFInComment;
         readonly IMatch _number;
         readonly Match _comment;
 
@@ -68,24 +69,14 @@ namespace hw.Tests.CompilerTool.Util
                 if(exception == null)
                     throw;
 
-                throw new LexerException(sourcePosn.Span(exception.SourcePosn), ((LexerError)exception.Error).IssueId);
+                IssueId issueId = (IssueId) exception.Error;
+                throw new LexerException
+                    (exception.SourcePosn, new TokenFactory.SyntaxError(issueId));
             }
         }
 
-        sealed class LexerException : Exception
-        {
-            readonly SourcePart Position;
-            readonly IssueId IssueId;
-
-            public LexerException(SourcePart position, IssueId issueId)
-            {
-                Position = position;
-                IssueId = issueId;
-            }
-        }
-
-        int? ILexer.Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
-        int? ILexer.Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
-        int? ILexer.Text(SourcePosn sourcePosn) => sourcePosn.Match(_text);
+        int? Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
+        int? Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
+        int? Text(SourcePosn sourcePosn) => sourcePosn.Match(_text);
     }
 }

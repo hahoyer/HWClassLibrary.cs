@@ -5,20 +5,20 @@ using hw.DebugFormatter;
 
 namespace hw.Proof.TokenClasses
 {
-    abstract class PairToken : TokenClass, IPair, ISmartDumpToken
+    abstract class PairToken : ParserTokenType, IPair, ISmartDumpToken
     {
         [DisableDump]
-        bool IPair.IsVariablesProvider { get { return true; } }
+        bool IPair.IsVariablesProvider => true;
 
-        string IPair.SmartDump(ParsedSyntax left, ParsedSyntax right) { return SmartDump(left, right); }
+        string IPair.SmartDump(ParsedSyntax left, ParsedSyntax right) => SmartDump(left, right);
+
         ParsedSyntax IPair.IsolateClause(string variable, ParsedSyntax left, ParsedSyntax right)
-        {
-            return IsolateClause(variable, left, right);
-        }
-        ParsedSyntax IPair.Pair(ParsedSyntax left, ParsedSyntax right) { return Syntax(left, null, right); }
+            => IsolateClause(variable, left, right);
+
+        ParsedSyntax IPair.Pair(ParsedSyntax left, ParsedSyntax right) => Syntax(left, null, right);
 
         [DisableDump]
-        bool ISmartDumpToken.IsIgnoreSignSituation { get { return false; } }
+        bool ISmartDumpToken.IsIgnoreSignSituation => false;
 
         string ISmartDumpToken.SmartDumpListDelim(ParsedSyntax parsedSyntax, bool isFirst)
         {
@@ -26,11 +26,10 @@ namespace hw.Proof.TokenClasses
             return null;
         }
 
-        protected virtual ParsedSyntax IsolateClause(string variable, ParsedSyntax left, ParsedSyntax right) { return null; }
+        protected virtual ParsedSyntax IsolateClause
+            (string variable, ParsedSyntax left, ParsedSyntax right) => null;
 
         string SmartDump(ParsedSyntax left, ParsedSyntax right)
-        {
-            return "(" + left.SmartDump(this) + " " + Value + " " + right.SmartDump(this) + ")";
-        }
+            => "(" + left.SmartDump(this) + " " + Id + " " + right.SmartDump(this) + ")";
     }
 }

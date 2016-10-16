@@ -12,7 +12,7 @@ namespace hw.Parser
         internal static Item<TTreeItem> Create
             (
                 IEnumerable<IItem> prefixItems,
-                IParserType<TTreeItem> parserType,
+                IParserTokenType<TTreeItem> parserType,
                 SourcePart characters,
                 BracketContext context,
                 bool? isBracketAndLeftBracket)
@@ -31,8 +31,10 @@ namespace hw.Parser
             var mainItem = items.Last();
             var isBracketAndLeftBracket = context.IsBracketAndLeftBracket(mainItem.SourcePart.Id);
 
-            var parserType = ((IParserTypeProvider) mainItem.ScannerType)
-                .GetType<TTreeItem>(mainItem.SourcePart.Id);
+            var parserType = mainItem
+                .ScannerType
+                .ParserTokenFactory
+                .GetTokenType<TTreeItem>(mainItem.SourcePart.Id);
 
             return new Item<TTreeItem>
             (
@@ -47,7 +49,7 @@ namespace hw.Parser
             (
                 Source source,
                 PrioTable prioTable,
-                IParserType<TTreeItem> startParserType)
+                IParserTokenType<TTreeItem> startParserType)
             =>
             new Item<TTreeItem>
             (
@@ -60,14 +62,14 @@ namespace hw.Parser
         [EnableDump]
         internal readonly BracketContext Context;
         internal readonly IEnumerable<IItem> PrefixItems;
-        internal readonly IParserType<TTreeItem> Type;
+        internal readonly IParserTokenType<TTreeItem> Type;
         internal readonly SourcePart Characters;
         internal readonly bool? IsBracketAndLeftBracket;
 
         Item
         (
             IEnumerable<IItem> prefixItems,
-            IParserType<TTreeItem> type,
+            IParserTokenType<TTreeItem> type,
             SourcePart characters,
             BracketContext context,
             bool? isBracketAndLeftBracket)
@@ -85,7 +87,7 @@ namespace hw.Parser
         internal Item<TTreeItem> RecreateWith
             (
                 IEnumerable<IItem> newPrefixItems = null,
-                IParserType<TTreeItem> newType = null,
+                IParserTokenType<TTreeItem> newType = null,
                 BracketContext newContext = null)
             => new Item<TTreeItem>
             (

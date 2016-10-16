@@ -7,12 +7,13 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Equal : PairToken
     {
-        public override string Value { get { return "="; } }
+        protected override string Id => "=";
 
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);
+
             return left.Equal(token, right);
         }
 
@@ -23,6 +24,7 @@ namespace hw.Proof.TokenClasses
             {
                 if(right.Variables.Contains(variable))
                     return IsolateClause(variable, right, left);
+
                 return null;
             }
 

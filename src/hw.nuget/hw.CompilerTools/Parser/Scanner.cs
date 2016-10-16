@@ -33,7 +33,7 @@ namespace hw.Parser
                     var t = GetNextToken();
                     yield return t;
 
-                    if(t.ScannerType is IParserTypeProvider)
+                    if(t.ScannerType.ParserTokenFactory != null)
                         yield break;
                 }
             }
@@ -60,7 +60,7 @@ namespace hw.Parser
                     if(scannerException == null)
                         throw;
 
-                    return CreateAndAdvance(scannerException.Length, scannerException.SyntaxError);
+                    return CreateAndAdvance(scannerException.SourcePosn - SourcePosn, scannerException.SyntaxError);
                 }
             }
 
@@ -101,7 +101,7 @@ namespace hw.Parser
 
         internal interface IException
         {
-            int Length { get; }
+            SourcePosn SourcePosn { get; }
             IScannerType SyntaxError { get; }
         }
     }

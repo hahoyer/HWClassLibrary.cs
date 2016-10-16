@@ -15,6 +15,6 @@ namespace hw.Parser
     public interface ISubParser<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
-        IParserType<TTreeItem> Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack = null);
+        IParserTokenType<TTreeItem> Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack = null);
     }
 }

@@ -20,7 +20,7 @@ namespace hw.Tests.CompilerTool.Util
         protected override ISubParser<Syntax> Next => NestedTokenFactory.Instance.Convert(Converter)
             ;
 
-        static IParserType<Syntax> Converter(Syntax arg) => new SyntaxBoxToken(arg);
+        static IParserTokenType<Syntax> Converter(Syntax arg) => new SyntaxBoxToken(arg);
 
         sealed class SyntaxBoxToken : TokenClass<Syntax>
         {

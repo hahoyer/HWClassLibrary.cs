@@ -7,7 +7,7 @@ using hw.Scanner;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class RightParenthesis : TokenClass
+    sealed class RightParenthesis : CommonTokenType, IBracketMatch<ParsedSyntax>
     {
         readonly int _level;
         public RightParenthesis(int level) { _level = level; }
@@ -21,6 +21,17 @@ namespace hw.Proof.TokenClasses
             Tracer.Assert(leftParenthesisSyntax.Level == _level);
             return leftParenthesisSyntax.Right;
         }
-        public override string Value { get { return TokenFactory.RightBrackets[_level]; } }
+
+        protected override string Id => Definitions.RightBrackets[_level];
+        IParserTokenType<ParsedSyntax> IBracketMatch<ParsedSyntax>.Value { get; } = new Matched();
+
+        sealed class Matched : TokenClass<ParsedSyntax>
+        {
+            protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
+                => right == null ? left : null;
+
+            public override string Id => "()";
+        }
+
     }
 }

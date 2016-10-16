@@ -49,6 +49,6 @@ c - a = y
             Tracer.FlaggedLine("Statement: " + statement.SmartDump(), FilePositionTag.Test);
         }
 
-        internal static readonly TokenFactory TokenFactory = TokenFactory.Instance;
+        internal static readonly Definitions Definitions = Definitions.Instance;
     }
 }

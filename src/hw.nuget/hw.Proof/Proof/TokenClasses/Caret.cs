@@ -12,9 +12,11 @@ namespace hw.Proof.TokenClasses
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);
+
             return new PowerSyntax(this, left, token, right);
         }
-        public override string Value { get { return "^"; } }
+
+        protected override string Id => "^";
     }
 
     sealed class PowerSyntax : PairSyntax
@@ -29,17 +31,16 @@ namespace hw.Proof.TokenClasses
         }
 
         internal override ParsedSyntax CombineForPlus(ParsedSyntax other, BigRational otherValue)
-        {
-            return other.CombineForPlus(this, otherValue);
-        }
+            => other.CombineForPlus(this, otherValue);
+
         internal override ParsedSyntax CombineForPlus(ParsedSyntax other)
-        {
-            return other.CombineForPlus(this);
-        }
+            => other.CombineForPlus(this);
+
         internal override ParsedSyntax CombineForPlus(PowerSyntax other, BigRational thisValue)
         {
             if(Left.CompareTo(other.Left) == 0 && Right.CompareTo(other.Right) == 0)
                 return Times(thisValue + 1);
+
             return null;
         }
     }

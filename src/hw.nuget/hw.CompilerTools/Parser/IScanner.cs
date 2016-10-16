@@ -18,6 +18,13 @@ namespace hw.Parser
 
     public interface IScannerType
     {
+        IParserTokenFactory ParserTokenFactory { get; }
+    }
+
+    public interface IParserTokenFactory
+    {
+        IParserTokenType<TTreeItem> GetTokenType<TTreeItem>(string id)
+            where TTreeItem : class, ISourcePart;
     }
 
     public interface ILexerItem

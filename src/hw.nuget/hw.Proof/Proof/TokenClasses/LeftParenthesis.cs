@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
-using hw.Scanner;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class LeftParenthesis : TokenClass
+    sealed class LeftParenthesis : ParserTokenType
     {
         readonly int _level;
         public LeftParenthesis(int level) { _level = level; }
@@ -17,6 +16,7 @@ namespace hw.Proof.TokenClasses
             Tracer.Assert(left == null);
             return new LeftParenthesisSyntax(_level, token, right);
         }
-        public override string Value { get { return TokenFactory.LeftBrackets[_level]; } }
+
+        protected override string Id => Definitions.LeftBrackets[_level];
     }
 }

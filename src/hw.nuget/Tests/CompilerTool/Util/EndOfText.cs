@@ -39,6 +39,6 @@ namespace hw.Tests.CompilerTool.Util
             public override string Id => "<source>";
         }
 
-        IParserType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
+        IParserTokenType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
     }
 }

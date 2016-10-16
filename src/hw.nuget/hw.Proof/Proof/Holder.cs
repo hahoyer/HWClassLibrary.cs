@@ -12,7 +12,7 @@ namespace hw.Proof
     {
         readonly string _text;
         readonly Parser.Scanner _scanner
-            = new Parser.Scanner(Main.TokenFactory);
+            = new Parser.Scanner(Main.Definitions.ScannerTokenFactory);
 
         public Holder(string text)
         {
@@ -20,7 +20,7 @@ namespace hw.Proof
             file.String = text;
             _text = text;
             IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>
-                (TokenFactory.PrioTable, _scanner, null);
+                (Definitions.PrioTable, _scanner, null);
             var parsedSyntax =
                 prioParser.Execute(new Source(file) + 0, null);
             Statement = (ClauseSyntax) parsedSyntax;

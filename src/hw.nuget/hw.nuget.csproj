@@ -37,6 +37,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
+    <Compile Include="hw.CompilerTools\Parser\PredefinedTokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\IGraphTarget.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Circle.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Content.cs" />
@@ -63,8 +65,8 @@
     <Compile Include="hw.CompilerTools\Parser\WhiteSpaceToken.cs" />
     <Compile Include="hw.CompilerTools\Scanner\ISourcePart.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePart.cs" />
-    <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
-    <Compile Include="hw.CompilerTools\Parser\TokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\ScannerTokenType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\CachingTokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\IScanner.cs" />
     <Compile Include="hw.CompilerTools\Scanner\Match.cs" />
     <Compile Include="hw.CompilerTools\Scanner\MatchExtension.cs" />
@@ -84,7 +86,10 @@
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
+    <Compile Include="hw.Proof\Proof\Any.cs" />
     <Compile Include="hw.Proof\Proof\LexerItem.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\CommonTokenType.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\ParserTokenType.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
     <Compile Include="Tests\CompilerTool\AdvancedParser.cs" />
     <Compile Include="Tests\CompilerTool\BracketBalance.cs" />
@@ -98,7 +103,7 @@
     <Compile Include="Tests\CompilerTool\Util\IssueId.cs" />
     <Compile Include="Tests\CompilerTool\Util\LeftParenthesis.cs" />
     <Compile Include="Tests\CompilerTool\Util\LeftParenthesisSyntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\LexerError.cs" />
+    <Compile Include="Tests\CompilerTool\Util\LexerException.cs" />
     <Compile Include="Tests\CompilerTool\Util\MainToken.cs" />
     <Compile Include="Tests\CompilerTool\Util\MainTokenFactory.cs" />
     <Compile Include="hw.UnitTest\UnitTest\ITestFixture.cs" />
@@ -139,9 +144,8 @@
     <Compile Include="hw.Proof\Proof\TokenClasses\PairToken.cs" />
     <Compile Include="hw.Proof\Proof\TokenClasses\Plus.cs" />
     <Compile Include="hw.Proof\Proof\TokenClasses\RightParenthesis.cs" />
-    <Compile Include="hw.Proof\Proof\TokenClasses\TokenClass.cs" />
     <Compile Include="hw.Proof\Proof\TokenClasses\UserSymbol.cs" />
-    <Compile Include="hw.Proof\Proof\TokenFactory.cs" />
+    <Compile Include="hw.Proof\Proof\Definitions.cs" />
     <Compile Include="hw.Proof\Proof\TrueSyntax.cs" />
     <Compile Include="hw.Proof\Proof\VariableSyntax.cs" />
     <Compile Include="hw.Helper.Core\DebugFormatter\DisableDumpAttribute.cs" />
@@ -173,7 +177,7 @@
     <Compile Include="hw.CompilerTools\Parser\PrioParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\IOperator.cs" />
     <Compile Include="hw.CompilerTools\Parser\IParser.cs" />
-    <Compile Include="hw.CompilerTools\Parser\IParserType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IParserTokenType.cs" />
     <Compile Include="hw.CompilerTools\Parser\OpenItem.cs" />
     <Compile Include="Tests\CompilerTool\SimpleParser.cs" />
     <Compile Include="Tests\CompilerTool\Util\NamedToken.cs" />

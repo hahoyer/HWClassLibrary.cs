@@ -7,12 +7,13 @@ namespace hw.Proof.TokenClasses
 {
     sealed class GreatesCommonDenominator : PairToken
     {
-        public override string Value { get { return "gcd"; } }
+        protected override string Id => "gcd";
 
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);
+
             return new GreatesCommonDenominatorSyntax(this, left, token, right);
         }
     }
@@ -21,7 +22,7 @@ namespace hw.Proof.TokenClasses
     {
         public GreatesCommonDenominatorSyntax
             (IPair @operator, ParsedSyntax left, IToken token, ParsedSyntax right)
-            : base(@operator, left, token, right) {}
+            : base(@operator, left, token, right) { }
 
         internal int CompareTo(GreatesCommonDenominatorSyntax other)
         {

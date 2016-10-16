@@ -7,12 +7,13 @@ namespace hw.Proof.TokenClasses
 {
     sealed class Minus : PairToken
     {
-        public override string Value { get { return "-"; } }
+        protected override string Id => "-";
 
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null || right == null)
                 return base.Syntax(left, token, right);
+
             return left.Minus(token, right);
         }
     }

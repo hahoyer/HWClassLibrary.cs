@@ -117,7 +117,7 @@ namespace hw.Proof
 
         internal ParsedSyntax Plus(IToken token, ParsedSyntax otherSite)
         {
-            return Associative(Main.TokenFactory.Plus, token, otherSite);
+            return Associative(Definitions.Plus, token, otherSite);
         }
 
         int? GenericCompareTo<T>(ParsedSyntax other) where T : ParsedSyntax, IComparableEx<T>

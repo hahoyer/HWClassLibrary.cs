@@ -1,34 +1,35 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.DebugFormatter;
+using hw.Helper;
 using hw.Parser;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class List : TokenClass, IAssociative, ISmartDumpToken
+    sealed class List : ParserTokenType,
+        IAssociative,
+        ISmartDumpToken
     {
-        readonly string _value;
+        public List(string id) { Id = id; }
 
-        public List(string value) { _value = value; }
-        
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             if(left == null)
                 return right ?? TrueSyntax.Instance;
             if(right == null)
                 return left;
+
             return left.Associative(this, token, right);
         }
-        
-        public override string Value { get { return _value; } }
+
+        protected override string Id { get; }
 
         [DisableDump]
-        bool IAssociative.IsVariablesProvider { get { return true; } }
+        bool IAssociative.IsVariablesProvider => true;
 
         [DisableDump]
-        ParsedSyntax IAssociative.Empty { get { return TrueSyntax.Instance; } }
+        ParsedSyntax IAssociative.Empty => TrueSyntax.Instance;
 
         string IAssociative.SmartDump(Set<ParsedSyntax> set)
         {
@@ -39,11 +40,10 @@ namespace hw.Proof.TokenClasses
         }
 
         AssociativeSyntax IAssociative.Syntax(IToken token, Set<ParsedSyntax> set)
-        {
-            return new ClauseSyntax(this, token, set);
-        }
-        ParsedSyntax IAssociative.Combine(ParsedSyntax left, ParsedSyntax right) { return null; }
-        bool IAssociative.IsEmpty(ParsedSyntax parsedSyntax) { return parsedSyntax is TrueSyntax; }
+            => new ClauseSyntax(this, token, set);
+
+        ParsedSyntax IAssociative.Combine(ParsedSyntax left, ParsedSyntax right) => null;
+        bool IAssociative.IsEmpty(ParsedSyntax parsedSyntax) => parsedSyntax is TrueSyntax;
 
         string ISmartDumpToken.SmartDumpListDelim(ParsedSyntax parsedSyntax, bool isFirst)
         {
@@ -52,7 +52,7 @@ namespace hw.Proof.TokenClasses
         }
 
         [DisableDump]
-        bool ISmartDumpToken.IsIgnoreSignSituation { get { return false; } }
+        bool ISmartDumpToken.IsIgnoreSignSituation => false;
 
         string SmartDump(ParsedSyntax x, bool isWatched)
         {

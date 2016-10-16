@@ -6,25 +6,23 @@ using hw.Helper;
 
 namespace hw.Parser
 {
-    abstract class TokenFactory : Dumpable, ITokenFactory
+    sealed class CachingTokenFactory : Dumpable, ITokenFactory
     {
+        readonly ITokenFactory Target;
         readonly ValueCache<IScannerType> EndOfTextCache;
         readonly ValueCache<IScannerType> InvalidCharacterErrorCache;
         readonly ValueCache<ILexerItem[]> ClassesCache;
 
-        internal TokenFactory()
+        internal CachingTokenFactory(ITokenFactory target)
         {
-            EndOfTextCache = new ValueCache<IScannerType>(GetEndOfText);
-            InvalidCharacterErrorCache = new ValueCache<IScannerType>(GetInvalidCharacterError);
-            ClassesCache = new ValueCache<ILexerItem[]>(GetClasses);
+            Target = target;
+            EndOfTextCache = new ValueCache<IScannerType>(() => Target.EndOfText);
+            InvalidCharacterErrorCache = new ValueCache<IScannerType>(() => Target.InvalidCharacterError);
+            ClassesCache = new ValueCache<ILexerItem[]>(() => Target.Classes);
         }
 
         IScannerType ITokenFactory.EndOfText => EndOfTextCache.Value;
         IScannerType ITokenFactory.InvalidCharacterError => InvalidCharacterErrorCache.Value;
         ILexerItem[] ITokenFactory.Classes => ClassesCache.Value;
-
-        protected abstract IScannerType GetInvalidCharacterError();
-        protected abstract IScannerType GetEndOfText();
-        protected abstract ILexerItem[] GetClasses();
     }
 }

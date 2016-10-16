@@ -21,7 +21,7 @@ namespace hw.Parser
         }
 
         public static ISubParser<TTreeItem> Convert<TTreeItem>
-            (this IParser<TTreeItem> parser, Func<TTreeItem, IParserType<TTreeItem>> converter)
+            (this IParser<TTreeItem> parser, Func<TTreeItem, IParserTokenType<TTreeItem>> converter)
             where TTreeItem : class, ISourcePart
         {
             return new SubParser<TTreeItem>(parser, converter);

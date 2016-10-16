@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
-using hw.Scanner;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class And : TokenClass, IAssociative, ISmartDumpToken
+    sealed class And : ParserTokenType, IAssociative, ISmartDumpToken
     {
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
@@ -16,28 +15,26 @@ namespace hw.Proof.TokenClasses
 
             return left.Associative(this, token, right);
         }
-        public override string Value { get { return "&"; } }
+
+        protected override string Id => "&";
 
         [DisableDump]
-        bool IAssociative.IsVariablesProvider { get { return true; } }
+        bool IAssociative.IsVariablesProvider => true;
 
         [DisableDump]
-        ParsedSyntax IAssociative.Empty { get { return TrueSyntax.Instance; } }
+        ParsedSyntax IAssociative.Empty => TrueSyntax.Instance;
 
         AssociativeSyntax IAssociative.Syntax(IToken token, Set<ParsedSyntax> x)
-        {
-            return new AndSyntax(this, token, x);
-        }
-        ParsedSyntax IAssociative.Combine(ParsedSyntax left, ParsedSyntax right) { return null; }
-        bool IAssociative.IsEmpty(ParsedSyntax parsedSyntax) { return parsedSyntax is TrueSyntax; }
-        string IAssociative.SmartDump(Set<ParsedSyntax> set) { return SmartDump(this, set); }
+            => new AndSyntax(this, token, x);
+
+        ParsedSyntax IAssociative.Combine(ParsedSyntax left, ParsedSyntax right) => null;
+        bool IAssociative.IsEmpty(ParsedSyntax parsedSyntax) => parsedSyntax is TrueSyntax;
+        string IAssociative.SmartDump(Set<ParsedSyntax> set) => SmartDump(this, set);
 
         string ISmartDumpToken.SmartDumpListDelim(ParsedSyntax parsedSyntax, bool isFirst)
-        {
-            return isFirst ? "" : " & ";
-        }
+            => isFirst ? "" : " & ";
 
         [DisableDump]
-        bool ISmartDumpToken.IsIgnoreSignSituation { get { return false; } }
+        bool ISmartDumpToken.IsIgnoreSignSituation => false;
     }
 }

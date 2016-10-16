@@ -18,7 +18,7 @@ namespace hw.Tests.CompilerTool.Util
             public override string Id => "()";
         }
 
-        IParserType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
+        IParserTokenType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
