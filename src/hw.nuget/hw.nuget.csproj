@@ -43,6 +43,9 @@
     <Compile Include="hw.CompilerTools\Parser\PredefinedTokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
     <Compile Include="hw.CompilerTools\Parser\WhiteSpaceTokeType.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\FileSourceProvider.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\ISourceProvider.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\StringSourceProvider.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\IGraphTarget.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Circle.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Content.cs" />

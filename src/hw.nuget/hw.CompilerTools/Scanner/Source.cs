@@ -9,46 +9,40 @@ namespace hw.Scanner
     public sealed class Source : Dumpable
     {
         public readonly string Identifier;
-        readonly File File;
+        readonly ISourceProvider SourceProvider;
         public const int NodeDumpWidth = 10;
         public const int DumpWidth = 20;
 
-        public Source(File file, string identifier = null)
+        public Source(ISourceProvider sourceProvider, string identifier = null)
         {
-            File = file;
-            Identifier = identifier ?? File.FullName;
-            Data = File.String;
+            SourceProvider = sourceProvider;
+            Identifier = identifier;
         }
 
-        public string Data { get; }
+        public Source(File file, string identifier = null)
+            : this(new FileSourceProvider(file), identifier ?? file.FullName) { }
 
         public Source(string data, string identifier = null)
-        {
-            Identifier = identifier;
-            Data = data;
-        }
+            : this(new StringSourceProvider(data), identifier ?? "????") { }
+
+        public string Data => SourceProvider.Data;
 
         public char this[int index] => IsEnd(index) ? '\0' : Data[index];
         public bool IsEnd(int posn) => Length <= posn;
         public int Length => Data.Length;
-        public bool IsPersistent => File != null;
+        public bool IsPersistent => SourceProvider.IsPersistent;
         public string SubString(int start, int length) => Data.Substring(start, length);
         public SourcePart All => (this + 0).Span(Length);
 
         public string FilePosn(int position, int positionEnd, string flagText, string tag = null)
-        {
-            if(Identifier == null)
-                return "????";
-
-            return Tracer.FilePosn
-                (
-                    Identifier,
-                    LineIndex(position),
-                    ColumnIndex(position) + 1,
-                    LineIndex(positionEnd),
-                    ColumnIndex(positionEnd) + 1,
-                    tag ?? FilePositionTag.Debug.ToString()) + flagText;
-        }
+            => Tracer.FilePosn
+            (
+                Identifier,
+                LineIndex(position),
+                ColumnIndex(position) + 1,
+                LineIndex(positionEnd),
+                ColumnIndex(positionEnd) + 1,
+                tag ?? FilePositionTag.Debug.ToString()) + flagText;
 
         public int LineIndex(int position) { return Data.Take(position).Count(c => c == '\n'); }
 
@@ -78,10 +72,11 @@ namespace hw.Scanner
 
             if(columnIndex != null && l.Value + columnIndex.Value < Length)
                 return l.Value + columnIndex.Value;
+
             return Length;
         }
 
-        protected override string Dump(bool isRecursion) => FilePosn(0,Length, "see there");
+        protected override string Dump(bool isRecursion) => FilePosn(0, Length, "see there");
 
         public static SourcePosn operator +(Source x, int y) => new SourcePosn(x, y);
 

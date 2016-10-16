@@ -17,8 +17,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2016</copyright>
 
-        <version>16.10</version>
+        <version>16.10.1</version>
         <releaseNotes>
+          Change: Ability to provid your own source types 
+          16.10
           Functional refactor: disrupt scanner and parser
           16.9.1
           Change: SourcePart: FileErrorPosition provides quoted text
