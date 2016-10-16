@@ -10,13 +10,13 @@ namespace hw.Parser
     abstract class PredefinedTokenFactory<TTreeItem> : ScannerTokenType<TTreeItem>
         where TTreeItem : class, ISourcePart
     {
-        readonly ValueCache<IDictionary<string, IParserTokenType<TTreeItem>>>
+        readonly ValueCache<FunctionCache<string, IParserTokenType<TTreeItem>>>
             PredefinedTokenClassesCache;
 
         protected PredefinedTokenFactory()
         {
             PredefinedTokenClassesCache =
-                new ValueCache<IDictionary<string, IParserTokenType<TTreeItem>>>(GetDictionary);
+                new ValueCache<FunctionCache<string, IParserTokenType<TTreeItem>>>(GetDictionary);
         }
 
 
