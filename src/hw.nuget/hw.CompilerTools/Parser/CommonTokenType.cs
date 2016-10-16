@@ -19,7 +19,7 @@ namespace hw.Parser
 
         string IUniqueIdProvider.Value => Id;
 
-        protected abstract string Id { get; }
+        public abstract string Id { get; }
 
         protected override IParserTokenType<TTreeItem> GetParserTokenType(string id) => this;
     }

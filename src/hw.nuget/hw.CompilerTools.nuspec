@@ -17,8 +17,13 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2016</copyright>
 
-        <version>16.10.2</version>
+        <version>16.10.3-alpha</version>
         <releaseNotes>
+          Change: CommonTokenType.Id should be better public, it is required too often
+          Change: Extra using statements removed
+          Refactor: Better naming
+          Refactor: Extra classes removed
+          16.10.2
           Change: Nested interfaces IError and IException moved back to Match
           16.10.1
           Change: Ability to provid your own source types

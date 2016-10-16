@@ -5,7 +5,7 @@ using hw.DebugFormatter;
 
 namespace hw.Parser
 {
-    public sealed class WhiteSpaceTokeType : DumpableObject, IScannerType
+    public sealed class WhiteSpaceTokenType : DumpableObject, IScannerTokenType
     {
         public IParserTokenFactory ParserTokenFactory { get; } = null;
     }

@@ -6,8 +6,8 @@ namespace hw.Parser
 {
     public interface ITokenFactory
     {
-        IScannerType EndOfText { get; }
-        IScannerType InvalidCharacterError { get; }
+        IScannerTokenType EndOfText { get; }
+        IScannerTokenType InvalidCharacterError { get; }
         LexerItem[] Classes { get; }
     }
 }

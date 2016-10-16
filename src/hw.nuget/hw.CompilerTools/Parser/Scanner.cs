@@ -33,7 +33,7 @@ namespace hw.Parser
                     var t = GetNextToken();
                     yield return t;
 
-                    if(t.ScannerType.ParserTokenFactory != null)
+                    if(t.ScannerTokenType.ParserTokenFactory != null)
                         yield break;
                 }
             }
@@ -49,7 +49,7 @@ namespace hw.Parser
                     {
                         var length = item.Match(SourcePosn);
                         if(length != null)
-                            return CreateAndAdvance(length.Value, item.ScannerType);
+                            return CreateAndAdvance(length.Value, item.ScannerTokenType);
                     }
 
                     return CreateAndAdvance(1, TokenFactory.InvalidCharacterError);
@@ -76,7 +76,7 @@ namespace hw.Parser
 
             ITokenFactory TokenFactory => Parent.TokenFactory;
 
-            IItem CreateAndAdvance(int length, IScannerType type)
+            IItem CreateAndAdvance(int length, IScannerTokenType type)
             {
                 var result = new Item(SourcePart.Span(SourcePosn, length), type);
                 Advance(length);
@@ -86,15 +86,15 @@ namespace hw.Parser
             sealed class Item : DumpableObject, IItem
             {
                 readonly SourcePart SourcePart;
-                readonly IScannerType Type;
+                readonly IScannerTokenType Type;
 
-                public Item(SourcePart sourcePart, IScannerType type)
+                public Item(SourcePart sourcePart, IScannerTokenType type)
                 {
                     SourcePart = sourcePart;
                     Type = type;
                 }
 
-                IScannerType IItem.ScannerType => Type;
+                IScannerTokenType IItem.ScannerTokenType => Type;
                 SourcePart IItem.SourcePart => SourcePart;
             }
         }
@@ -102,7 +102,7 @@ namespace hw.Parser
         internal interface IException
         {
             SourcePosn SourcePosn { get; }
-            IScannerType SyntaxError { get; }
+            IScannerTokenType SyntaxError { get; }
         }
     }
 }

@@ -27,13 +27,13 @@ namespace hw.Tests.CompilerTool.Util
         }
 
         internal override IEnumerable<IParserTokenType<Syntax>> PredefinedTokenClasses
-            => new TokenClass<Syntax>[]
+            => new ParserTokenType<Syntax>[]
             {
                 SwitchToken.Instance,
                 new LeftParenthesis("("),
                 new RightParenthesis(")")
             };
 
-        internal override TokenClass<Syntax> GetTokenClass(string name) => new NestedToken(name);
+        internal override ParserTokenType<Syntax> GetTokenClass(string name) => new NestedToken(name);
     }
 }

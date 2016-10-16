@@ -5,7 +5,7 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class BeginOfText : TokenClass<Syntax>
+    sealed class BeginOfText : ParserTokenType<Syntax>
     {
         public override string Id => PrioTable.BeginOfText;
 

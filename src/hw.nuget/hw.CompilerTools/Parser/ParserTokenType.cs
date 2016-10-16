@@ -7,7 +7,7 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public abstract class TokenClass<TTreeItem>
+    public abstract class ParserTokenType<TTreeItem>
         : DumpableObject,
             IParserTokenType<TTreeItem>,
             IUniqueIdProvider
@@ -15,7 +15,7 @@ namespace hw.Parser
     {
         static int _nextObjectId;
 
-        protected TokenClass()
+        protected ParserTokenType()
             : base(_nextObjectId++) { StopByObjectIds(-31); }
 
         string IParserTokenType<TTreeItem>.PrioTableId => Id;

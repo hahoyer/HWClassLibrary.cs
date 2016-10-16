@@ -11,7 +11,7 @@ namespace hw.Tests.CompilerTool.Util
         [EnableDump]
         readonly IssueId IssueId;
         public SyntaxError(IssueId issueId) { IssueId = issueId; }
-        protected override string Id => PrioTable.Error;
+        public override string Id => PrioTable.Error;
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
             => new ErrorSyntax(left, token, right, IssueId);

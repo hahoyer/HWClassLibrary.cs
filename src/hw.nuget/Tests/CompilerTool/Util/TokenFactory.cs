@@ -13,20 +13,20 @@ namespace hw.Tests.CompilerTool.Util
 
         readonly Lexer Lexer = new Lexer();
 
-        IScannerType ITokenFactory.EndOfText => new EndOfText();
+        IScannerTokenType ITokenFactory.EndOfText => new EndOfText();
         LexerItem[] ITokenFactory.Classes => Classes;
 
-        IScannerType ITokenFactory.InvalidCharacterError
+        IScannerTokenType ITokenFactory.InvalidCharacterError
             => new SyntaxError(IssueId.UnexpectedSyntaxError);
 
         protected LexerItem[] Classes => new[]
         {
-            new LexerItem(new WhiteSpaceTokeType(), Lexer.WhiteSpace),
-            new LexerItem(new WhiteSpaceTokeType(), Lexer.Comment),
+            new LexerItem(new WhiteSpaceTokenType(), Lexer.WhiteSpace),
+            new LexerItem(new WhiteSpaceTokenType(), Lexer.Comment),
             new LexerItem(new Any(this), Lexer.Any)
         };
 
-        internal abstract TokenClass<Syntax> GetTokenClass(string name);
+        internal abstract ParserTokenType<Syntax> GetTokenClass(string name);
         internal abstract IEnumerable<IParserTokenType<Syntax>> PredefinedTokenClasses { get; }
 
         internal PrioParser<Syntax> ParserInstance

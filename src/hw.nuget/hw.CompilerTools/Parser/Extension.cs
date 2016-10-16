@@ -11,21 +11,15 @@ namespace hw.Parser
     {
         public static TOut Operation<TIn, TOut>
             (this IOperator<TIn, TOut> @operator, TIn left, IToken token, TIn right)
-            where TIn : class
-        {
-            return left == null
-                ? (right == null ? @operator.Terminal(token) : @operator.Prefix(token, right))
-                : (right == null
-                    ? @operator.Suffix(left, token)
-                    : @operator.Infix(left, token, right));
-        }
+            where TIn : class => left == null
+            ? (right == null ? @operator.Terminal(token) : @operator.Prefix(token, right))
+            : (right == null
+                ? @operator.Suffix(left, token)
+                : @operator.Infix(left, token, right));
 
         public static ISubParser<TTreeItem> Convert<TTreeItem>
             (this IParser<TTreeItem> parser, Func<TTreeItem, IParserTokenType<TTreeItem>> converter)
-            where TTreeItem : class, ISourcePart
-        {
-            return new SubParser<TTreeItem>(parser, converter);
-        }
+            where TTreeItem : class, ISourcePart => new SubParser<TTreeItem>(parser, converter);
 
         internal static string TreeDump<TTreeItem>(TTreeItem value) where TTreeItem : class
         {
@@ -48,15 +42,8 @@ namespace hw.Parser
             return result;
         }
 
-        public static SourcePart SourcePart(this IEnumerable<WhiteSpaceToken> whiteSpaceTokens)
-        {
-            return whiteSpaceTokens.Select(item => item.Characters).Aggregate();
-        }
-
         public static SourcePart SourcePart(this IEnumerable<IItem> items)
-        {
-            return items.Select(item => item.SourcePart).Aggregate();
-        }
+            => items.Select(item => item.SourcePart).Aggregate();
 
         public static int BracketBalance(this IToken token)
         {

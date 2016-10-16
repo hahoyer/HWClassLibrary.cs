@@ -69,13 +69,13 @@ namespace hw.Proof
 
         sealed class TokenFactory : DumpableObject, ITokenFactory
         {
-            IScannerType ITokenFactory.EndOfText => new RightParenthesis(0);
-            IScannerType ITokenFactory.InvalidCharacterError
+            IScannerTokenType ITokenFactory.EndOfText => new RightParenthesis(0);
+            IScannerTokenType ITokenFactory.InvalidCharacterError
                 => new SyntaxError(IssueId.UnexpectedSyntaxError);
             LexerItem[] ITokenFactory.Classes
                 => new[]
                 {
-                    new LexerItem(new WhiteSpaceTokeType(), Lexer.WhiteSpace),
+                    new LexerItem(new WhiteSpaceTokenType(), Lexer.WhiteSpace),
                     new LexerItem(new Number(), Lexer.Number),
                     new LexerItem(new Any(), Lexer.Any)
                 };

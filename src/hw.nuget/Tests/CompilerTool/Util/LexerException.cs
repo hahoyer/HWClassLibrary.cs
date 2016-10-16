@@ -18,6 +18,6 @@ namespace hw.Tests.CompilerTool.Util
         }
 
         SourcePosn Parser.Scanner.IException.SourcePosn => SourcePosn;
-        IScannerType Parser.Scanner.IException.SyntaxError => SyntaxError;
+        IScannerTokenType Parser.Scanner.IException.SyntaxError => SyntaxError;
     }
 }

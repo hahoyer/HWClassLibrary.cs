@@ -32,7 +32,7 @@ namespace hw.Parser
             var isBracketAndLeftBracket = context.IsBracketAndLeftBracket(mainItem.SourcePart.Id);
 
             var parserType = mainItem
-                .ScannerType
+                .ScannerTokenType
                 .ParserTokenFactory
                 .GetTokenType<TTreeItem>(mainItem.SourcePart.Id);
 

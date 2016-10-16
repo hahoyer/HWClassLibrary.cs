@@ -5,7 +5,7 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class LeftParenthesis : TokenClass<Syntax>
+    sealed class LeftParenthesis : ParserTokenType<Syntax>
     {
         public LeftParenthesis(string id) { Id = id; }
         public override string Id { get; }

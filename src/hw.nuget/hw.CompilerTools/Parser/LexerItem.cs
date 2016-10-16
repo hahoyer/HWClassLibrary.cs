@@ -8,12 +8,12 @@ namespace hw.Parser
 {
     public sealed class LexerItem : DumpableObject
     {
-        public readonly IScannerType ScannerType;
+        public readonly IScannerTokenType ScannerTokenType;
         public readonly Func<SourcePosn, int?> Match;
 
-        public LexerItem(IScannerType scannerType, Func<SourcePosn, int?> match)
+        public LexerItem(IScannerTokenType scannerTokenType, Func<SourcePosn, int?> match)
         {
-            ScannerType = scannerType;
+            ScannerTokenType = scannerTokenType;
             Match = match;
         }
     }

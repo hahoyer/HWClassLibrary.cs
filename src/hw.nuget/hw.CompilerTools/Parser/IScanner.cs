@@ -12,11 +12,11 @@ namespace hw.Parser
 
     public interface IItem
     {
-        IScannerType ScannerType { get; }
+        IScannerTokenType ScannerTokenType { get; }
         SourcePart SourcePart { get; }
     }
 
-    public interface IScannerType
+    public interface IScannerTokenType
     {
         IParserTokenFactory ParserTokenFactory { get; }
     }

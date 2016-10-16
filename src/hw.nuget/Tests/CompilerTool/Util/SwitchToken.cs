@@ -19,7 +19,7 @@ namespace hw.Tests.CompilerTool.Util
 
         static IParserTokenType<Syntax> Converter(Syntax arg) => new SyntaxBoxToken(arg);
 
-        sealed class SyntaxBoxToken : TokenClass<Syntax>
+        sealed class SyntaxBoxToken : ParserTokenType<Syntax>
         {
             [EnableDump]
             readonly Syntax _content;

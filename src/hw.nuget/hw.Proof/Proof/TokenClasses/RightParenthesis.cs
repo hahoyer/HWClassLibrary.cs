@@ -22,10 +22,10 @@ namespace hw.Proof.TokenClasses
             return leftParenthesisSyntax.Right;
         }
 
-        protected override string Id => Definitions.RightBrackets[_level];
+        public override string Id => Definitions.RightBrackets[_level];
         IParserTokenType<ParsedSyntax> IBracketMatch<ParsedSyntax>.Value { get; } = new Matched();
 
-        sealed class Matched : TokenClass<ParsedSyntax>
+        sealed class Matched : ParserTokenType<ParsedSyntax>
         {
             protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
                 => right == null ? left : null;

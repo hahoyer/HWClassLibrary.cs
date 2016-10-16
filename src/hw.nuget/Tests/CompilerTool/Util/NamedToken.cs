@@ -5,7 +5,7 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    abstract class NamedToken : TokenClass<Syntax>
+    abstract class NamedToken : ParserTokenType<Syntax>
     {
         internal readonly string Name;
         protected NamedToken(string name) { Name = name; }

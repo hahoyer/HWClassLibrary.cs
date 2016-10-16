@@ -18,6 +18,6 @@ namespace hw.Proof
             return null;
         }
 
-        protected override string Id => PrioTable.Error;
+        public override string Id => PrioTable.Error;
     }
 }

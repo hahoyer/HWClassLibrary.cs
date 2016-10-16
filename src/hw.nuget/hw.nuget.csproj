@@ -41,7 +41,7 @@
     <Compile Include="hw.CompilerTools\Parser\IUniqueIdProvider.cs" />
     <Compile Include="hw.CompilerTools\Parser\LexerItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\PredefinedTokenFactory.cs" />
-    <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
+    <Compile Include="hw.CompilerTools\Parser\ParserTokenType.cs" />
     <Compile Include="hw.CompilerTools\Parser\WhiteSpaceTokeType.cs" />
     <Compile Include="hw.CompilerTools\Scanner\FileSourceProvider.cs" />
     <Compile Include="hw.CompilerTools\Scanner\ISourceProvider.cs" />
@@ -68,7 +68,6 @@
     <Compile Include="hw.CompilerTools\Parser\Item.cs" />
     <Compile Include="hw.CompilerTools\Parser\ScannerToken.cs" />
     <Compile Include="hw.CompilerTools\Parser\SubParser.cs" />
-    <Compile Include="hw.CompilerTools\Parser\WhiteSpaceToken.cs" />
     <Compile Include="hw.CompilerTools\Scanner\ISourcePart.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePart.cs" />
     <Compile Include="hw.CompilerTools\Parser\ScannerTokenType.cs" />

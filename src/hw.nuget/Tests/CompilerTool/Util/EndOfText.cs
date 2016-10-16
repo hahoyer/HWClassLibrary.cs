@@ -7,7 +7,7 @@ namespace hw.Tests.CompilerTool.Util
 {
     sealed class EndOfText : CommonTokenType<Syntax>, IBracketMatch<Syntax>
     {
-        protected override string Id => PrioTable.EndOfText;
+        public override string Id => PrioTable.EndOfText;
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {
@@ -18,7 +18,7 @@ namespace hw.Tests.CompilerTool.Util
             return null;
         }
 
-        sealed class Matched : TokenClass<Syntax>
+        sealed class Matched : ParserTokenType<Syntax>
         {
             protected override Syntax Create(Syntax left, IToken token, Syntax right)
             {

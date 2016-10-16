@@ -5,12 +5,12 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class RightParenthesis : TokenClass<Syntax>, IBracketMatch<Syntax>
+    sealed class RightParenthesis : ParserTokenType<Syntax>, IBracketMatch<Syntax>
     {
         public RightParenthesis(string id) { Id = id; }
         public override string Id { get; }
 
-        sealed class Matched : TokenClass<Syntax>
+        sealed class Matched : ParserTokenType<Syntax>
         {
             protected override Syntax Create(Syntax left, IToken token, Syntax right)
                 => right == null ? left : new NamelessSyntax(left, token, right);

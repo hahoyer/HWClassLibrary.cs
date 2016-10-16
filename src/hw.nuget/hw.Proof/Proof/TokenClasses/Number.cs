@@ -16,6 +16,6 @@ namespace hw.Proof.TokenClasses
             return null;
         }
 
-        protected override string Id => "";
+        public override string Id => "";
     }
 }

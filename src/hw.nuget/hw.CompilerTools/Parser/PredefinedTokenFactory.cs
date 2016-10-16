@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.Helper;
-using hw.Proof.TokenClasses;
 using hw.Scanner;
 
 namespace hw.Parser

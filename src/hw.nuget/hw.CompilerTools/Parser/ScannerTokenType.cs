@@ -6,7 +6,7 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public abstract class ScannerTokenType : DumpableObject, IScannerType, IParserTokenFactory
+    public abstract class ScannerTokenType : DumpableObject, IScannerTokenType, IParserTokenFactory
     {
         public IParserTokenFactory ParserTokenFactory => this;
 
