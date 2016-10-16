@@ -6,19 +6,16 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class SwitchToken : NamedToken
+    sealed class SwitchToken : NamedToken, PrioParser<Syntax>.ISubParserProvider
     {
         public static readonly SwitchToken Instance = new SwitchToken();
 
         public SwitchToken()
-            : base("-->") { }
+            : base("-->") {}
 
         public override bool IsMain => true;
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right) => null;
-
-        protected override ISubParser<Syntax> Next => NestedTokenFactory.Instance.Convert(Converter)
-            ;
 
         static IParserTokenType<Syntax> Converter(Syntax arg) => new SyntaxBoxToken(arg);
 
@@ -36,5 +33,8 @@ namespace hw.Tests.CompilerTool.Util
                 return _content;
             }
         }
+
+        ISubParser<Syntax> PrioParser<Syntax>.ISubParserProvider.NextParser
+            => NestedTokenFactory.Parser.Convert(Converter);
     }
 }

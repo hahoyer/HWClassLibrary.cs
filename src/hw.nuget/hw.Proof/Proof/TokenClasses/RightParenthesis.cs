@@ -7,12 +7,12 @@ using hw.Scanner;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class RightParenthesis : CommonTokenType, IBracketMatch<ParsedSyntax>
+    sealed class RightParenthesis : CommonTokenType<ParsedSyntax>, IBracketMatch<ParsedSyntax>
     {
         readonly int _level;
         public RightParenthesis(int level) { _level = level; }
 
-        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
+        protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             Tracer.Assert(right == null);
             var leftParenthesisSyntax = left as LeftParenthesisSyntax;

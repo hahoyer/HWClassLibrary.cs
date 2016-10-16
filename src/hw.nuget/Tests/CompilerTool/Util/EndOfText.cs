@@ -5,9 +5,9 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class EndOfText : TokenClass<Syntax>, IBracketMatch<Syntax>
+    sealed class EndOfText : CommonTokenType<Syntax>, IBracketMatch<Syntax>
     {
-        public override string Id => PrioTable.EndOfText;
+        protected override string Id => PrioTable.EndOfText;
 
         protected override Syntax Create(Syntax left, IToken token, Syntax right)
         {

@@ -5,14 +5,15 @@ using hw.Parser;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class Number : CommonTokenType
+    sealed class Number : CommonTokenType<ParsedSyntax>
     {
-        protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
+        protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
-            if(left != null || right != null)
-                return base.Syntax(left, token, right);
+            if(left == null && right == null)
+                return new NumberSyntax(token);
 
-            return new NumberSyntax(token);
+            NotImplementedMethod(left, token, right);
+            return null;
         }
 
         protected override string Id => "";

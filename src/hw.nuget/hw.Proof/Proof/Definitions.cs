@@ -11,7 +11,7 @@ namespace hw.Proof
     {
         internal static Definitions Instance => new Definitions();
 
-        static readonly ReniLexer Lexer = new ReniLexer();
+        static readonly Lexer Lexer = new Lexer();
         internal static readonly string[] LeftBrackets = {"(", "[", "{", PrioTable.BeginOfText};
         internal static readonly string[] RightBrackets = {")", "]", "}", PrioTable.EndOfText};
         internal static readonly Equal Equal = new Equal();
@@ -72,12 +72,13 @@ namespace hw.Proof
             IScannerType ITokenFactory.EndOfText => new RightParenthesis(0);
             IScannerType ITokenFactory.InvalidCharacterError
                 => new SyntaxError(IssueId.UnexpectedSyntaxError);
-            ILexerItem[] ITokenFactory.Classes => new ILexerItem[]
-            {
-                new LexerItem(new WhiteSpaceTokeType(), Lexer.WhiteSpace),
-                new LexerItem(new Number(), Lexer.Number),
-                new LexerItem(new Any(), Lexer.Any)
-            };
+            LexerItem[] ITokenFactory.Classes
+                => new[]
+                {
+                    new LexerItem(new WhiteSpaceTokeType(), Lexer.WhiteSpace),
+                    new LexerItem(new Number(), Lexer.Number),
+                    new LexerItem(new Any(), Lexer.Any)
+                };
         }
 
         internal readonly ITokenFactory ScannerTokenFactory

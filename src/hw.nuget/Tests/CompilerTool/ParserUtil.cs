@@ -27,11 +27,11 @@ namespace hw.Tests.CompilerTool
         internal static Syntax Parse(string text, bool trace)
         {
             var source = new Source(text);
-            MainTokenFactory.ParserInstance.Trace = trace;
-            NestedTokenFactory.Instance.Trace = trace;
-            var result = MainTokenFactory.ParserInstance.Execute(source + 0);
-            MainTokenFactory.ParserInstance.Trace = false;
-            NestedTokenFactory.Instance.Trace = false;
+            MainTokenFactory.Parser.Trace = trace;
+            NestedTokenFactory.Parser.Trace = trace;
+            var result = MainTokenFactory.Parser.Execute(source + 0);
+            MainTokenFactory.Parser.Trace = false;
+            NestedTokenFactory.Parser.Trace = false;
             return result;
         }
     }

@@ -7,7 +7,7 @@ using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class ReniLexer:DumpableObject 
+    sealed class Lexer : DumpableObject
     {
         readonly Match _whiteSpaces;
         readonly Match _any;
@@ -18,7 +18,7 @@ namespace hw.Tests.CompilerTool.Util
         readonly IMatch _number;
         readonly Match _comment;
 
-        public ReniLexer()
+        public Lexer()
         {
             var alpha = Match.Letter.Else("_");
             var symbol1 = "({[)}];,".AnyChar();
@@ -50,13 +50,6 @@ namespace hw.Tests.CompilerTool.Util
                 });
         }
 
-        Func<SourcePosn, int?>[] ILexer.WhiteSpace
-            => new Func<SourcePosn, int?>[]
-            {
-                sourcePosn => sourcePosn.Match(_whiteSpaces),
-                sourcePosn => sourcePosn.Match(_comment)
-            };
-
         static int? GuardedMatch(SourcePosn sourcePosn, IMatch match)
         {
             try
@@ -69,14 +62,16 @@ namespace hw.Tests.CompilerTool.Util
                 if(exception == null)
                     throw;
 
-                IssueId issueId = (IssueId) exception.Error;
+                var issueId = (IssueId) exception.Error;
                 throw new LexerException
-                    (exception.SourcePosn, new TokenFactory.SyntaxError(issueId));
+                    (exception.SourcePosn, new SyntaxError(issueId));
             }
         }
 
-        int? Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
-        int? Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
-        int? Text(SourcePosn sourcePosn) => sourcePosn.Match(_text);
+        internal int? WhiteSpace(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _whiteSpaces);
+        internal int? Comment(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _comment);
+        internal int? Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
+        internal int? Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
+        internal int? Text(SourcePosn sourcePosn) => sourcePosn.Match(_text);
     }
 }

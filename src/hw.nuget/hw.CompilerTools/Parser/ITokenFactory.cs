@@ -8,6 +8,6 @@ namespace hw.Parser
     {
         IScannerType EndOfText { get; }
         IScannerType InvalidCharacterError { get; }
-        ILexerItem[] Classes { get; }
+        LexerItem[] Classes { get; }
     }
 }

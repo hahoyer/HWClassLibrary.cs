@@ -8,25 +8,25 @@ namespace hw.Tests.CompilerTool.Util
 {
     sealed class NestedTokenFactory : TokenFactory
     {
-        public static readonly IParser<Syntax> Instance = new PrioParser<Syntax>
-            (PrioTable, Scanner(new NestedTokenFactory()), new BeginOfText());
+        public static readonly IParser<Syntax> Parser =
+            new NestedTokenFactory().ParserInstance;
 
         NestedTokenFactory() { }
 
-        static PrioTable PrioTable
+        protected override PrioTable PrioTable
         {
             get
             {
                 var x = PrioTable.Left(PrioTable.Any);
                 x += PrioTable.BracketParallels
-                    (MainTokenFactory.LeftBrackets, MainTokenFactory.RightBrackets);
+                    (LeftBrackets, RightBrackets);
                 Tracer.FlaggedLine("\n" + x.Dump() + "\n");
                 x.Title = Tracer.MethodHeader();
                 return x;
             }
         }
 
-        protected IEnumerable<TokenClass<Syntax>> GetPredefinedTokenClasses()
+        internal override IEnumerable<IParserTokenType<Syntax>> PredefinedTokenClasses
             => new TokenClass<Syntax>[]
             {
                 SwitchToken.Instance,
@@ -34,10 +34,6 @@ namespace hw.Tests.CompilerTool.Util
                 new RightParenthesis(")")
             };
 
-        protected TokenClass<Syntax> GetTokenClass(string name) => new NestedToken(name);
-
-        protected TokenClass<Syntax> GetNumber() { throw new NotImplementedException(); }
-        protected TokenClass<Syntax> GetText() { throw new NotImplementedException(); }
-        protected override ILexerItem[] GetClasses() { throw new NotImplementedException(); }
+        internal override TokenClass<Syntax> GetTokenClass(string name) => new NestedToken(name);
     }
 }

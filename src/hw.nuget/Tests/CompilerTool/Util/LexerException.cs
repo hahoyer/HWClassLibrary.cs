@@ -9,9 +9,9 @@ namespace hw.Tests.CompilerTool.Util
     sealed class LexerException : Exception, Parser.Scanner.IException
     {
         readonly SourcePosn SourcePosn;
-        readonly TokenFactory.SyntaxError SyntaxError;
+        readonly SyntaxError SyntaxError;
 
-        public LexerException(SourcePosn sourcePosn, TokenFactory.SyntaxError syntaxError)
+        public LexerException(SourcePosn sourcePosn, SyntaxError syntaxError)
         {
             SourcePosn = sourcePosn;
             SyntaxError = syntaxError;

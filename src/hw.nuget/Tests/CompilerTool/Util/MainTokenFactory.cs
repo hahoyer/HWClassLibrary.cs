@@ -8,16 +8,12 @@ namespace hw.Tests.CompilerTool.Util
 {
     sealed class MainTokenFactory : TokenFactory
     {
-        public static readonly MainTokenFactory Instance = new MainTokenFactory();
-        public static readonly IParser<Syntax> ParserInstance = new PrioParser<Syntax>
-            (PrioTable, Scanner(Instance), new BeginOfText());
+        public static readonly IParser<Syntax> Parser
+            = new MainTokenFactory().ParserInstance;
 
         MainTokenFactory() { }
 
-        internal static string[] RightBrackets => new[] {")", "}", PrioTable.EndOfText};
-        internal static string[] LeftBrackets => new[] {"(", "{", PrioTable.BeginOfText};
-
-        static PrioTable PrioTable
+        protected override PrioTable PrioTable
         {
             get
             {
@@ -32,7 +28,7 @@ namespace hw.Tests.CompilerTool.Util
             }
         }
 
-        protected IEnumerable<TokenClass<Syntax>> GetPredefinedTokenClasses()
+        internal override IEnumerable<IParserTokenType<Syntax>> PredefinedTokenClasses
             => new TokenClass<Syntax>[]
             {
                 new SwitchToken(),
@@ -42,12 +38,6 @@ namespace hw.Tests.CompilerTool.Util
                 new RightParenthesis("}")
             };
 
-        protected TokenClass<Syntax> GetTokenClass(string name) => new MainToken(name);
-
-        protected TokenClass<Syntax> GetNumber() { throw new NotImplementedException(); }
-        protected TokenClass<Syntax> GetText() { throw new NotImplementedException(); }
-
-        internal TokenClass<Syntax> CreateSyntaxError(IssueId issue) => new SyntaxError(issue);
-        protected override ILexerItem[] GetClasses() { throw new NotImplementedException(); }
+        internal override TokenClass<Syntax> GetTokenClass(string name) => new MainToken(name);
     }
 }

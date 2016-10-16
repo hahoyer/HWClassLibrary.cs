@@ -37,8 +37,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
+    <Compile Include="hw.CompilerTools\Parser\CommonTokenType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IUniqueIdProvider.cs" />
+    <Compile Include="hw.CompilerTools\Parser\LexerItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\PredefinedTokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\TokenClass.cs" />
+    <Compile Include="hw.CompilerTools\Parser\WhiteSpaceTokeType.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\IGraphTarget.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Circle.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Content.cs" />
@@ -87,8 +91,6 @@
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
     <Compile Include="hw.Proof\Proof\Any.cs" />
-    <Compile Include="hw.Proof\Proof\LexerItem.cs" />
-    <Compile Include="hw.Proof\Proof\TokenClasses\CommonTokenType.cs" />
     <Compile Include="hw.Proof\Proof\TokenClasses\ParserTokenType.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
     <Compile Include="Tests\CompilerTool\AdvancedParser.cs" />
@@ -129,7 +131,7 @@
     <Compile Include="hw.Proof\Proof\ParsedSyntax.cs" />
     <Compile Include="hw.Proof\Proof\ParsedSyntaxExtender.cs" />
     <Compile Include="hw.Proof\Proof\PlusSyntax.cs" />
-    <Compile Include="hw.Proof\Proof\ReniLexer.cs" />
+    <Compile Include="hw.Proof\Proof\Lexer.cs" />
     <Compile Include="hw.Proof\Proof\SyntaxError.cs" />
     <Compile Include="hw.Proof\Proof\TokenClasses\And.cs" />
     <Compile Include="hw.Proof\Proof\TokenClasses\Caret.cs" />
@@ -191,6 +193,7 @@
     <Compile Include="Tests\CompilerTool\Util\RightParenthesisSyntax.cs" />
     <Compile Include="Tests\CompilerTool\Util\SwitchToken.cs" />
     <Compile Include="Tests\CompilerTool\Util\Syntax.cs" />
+    <Compile Include="Tests\CompilerTool\Util\SyntaxError.cs" />
     <Compile Include="Tests\CompilerTool\Util\TokenFactory.cs" />
     <Compile Include="Tests\CompilerTool\Util\TreeSyntax.cs" />
     <Compile Include="Tests\Helper\Core\HelperCore.cs" />

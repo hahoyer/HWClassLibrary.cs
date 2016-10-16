@@ -26,10 +26,4 @@ namespace hw.Parser
         IParserTokenType<TTreeItem> GetTokenType<TTreeItem>(string id)
             where TTreeItem : class, ISourcePart;
     }
-
-    public interface ILexerItem
-    {
-        int? Match(SourcePosn sourcePosn);
-        IScannerType ScannerType { get; }
-    }
 }

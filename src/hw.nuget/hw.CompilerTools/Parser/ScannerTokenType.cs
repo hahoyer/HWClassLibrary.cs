@@ -29,14 +29,4 @@ namespace hw.Parser
 
         protected abstract IParserTokenType<TTreeItem> GetParserTokenType(string id);
     }
-
-    public sealed class WhiteSpaceTokeType : DumpableObject, IScannerType
-    {
-        public IParserTokenFactory ParserTokenFactory { get; } = null;
-    }
-
-    public interface IUniqueIdProvider
-    {
-        string Value { get; }
-    }
 }
