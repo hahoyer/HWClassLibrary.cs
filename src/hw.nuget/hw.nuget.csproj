@@ -42,7 +42,7 @@
     <Compile Include="hw.CompilerTools\Parser\LexerItem.cs" />
     <Compile Include="hw.CompilerTools\Parser\PredefinedTokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParserTokenType.cs" />
-    <Compile Include="hw.CompilerTools\Parser\WhiteSpaceTokeType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\WhiteSpaceTokenType.cs" />
     <Compile Include="hw.CompilerTools\Scanner\FileSourceProvider.cs" />
     <Compile Include="hw.CompilerTools\Scanner\ISourceProvider.cs" />
     <Compile Include="hw.CompilerTools\Scanner\StringSourceProvider.cs" />

@@ -17,8 +17,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2016</copyright>
 
-        <version>16.10.3-alpha</version>
+        <version>16.10.4-alpha</version>
         <releaseNotes>
+          Refactor: Better file naming
+          16.10.3-alpha
           Change: CommonTokenType.Id should be better public, it is required too often
           Change: Extra using statements removed
           Refactor: Better naming
