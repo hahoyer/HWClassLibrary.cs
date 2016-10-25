@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Scanner;

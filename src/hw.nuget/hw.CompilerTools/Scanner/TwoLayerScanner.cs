@@ -2,24 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
-using hw.Scanner;
 
-namespace hw.Parser
+namespace hw.Scanner
 {
-    public sealed class Scanner : Dumpable, IScanner
+    public sealed class TwoLayerScanner : Dumpable, IScanner
     {
         readonly ITokenFactory TokenFactory;
-        public Scanner(ITokenFactory tokenFactory) { TokenFactory = tokenFactory; }
+        public TwoLayerScanner(ITokenFactory tokenFactory) { TokenFactory = tokenFactory; }
 
         IItem[] IScanner.GetNextTokenGroup(SourcePosn sourcePosn)
             => new Worker(this, sourcePosn).GetNextTokenGroup().ToArray();
 
         sealed class Worker : DumpableObject
         {
-            readonly Scanner Parent;
+            readonly TwoLayerScanner Parent;
             readonly SourcePosn SourcePosn;
 
-            internal Worker(Scanner parent, SourcePosn sourcePosn)
+            internal Worker(TwoLayerScanner parent, SourcePosn sourcePosn)
             {
                 Tracer.Assert(sourcePosn.IsValid);
                 Parent = parent;
@@ -54,13 +53,10 @@ namespace hw.Parser
 
                     return CreateAndAdvance(1, TokenFactory.InvalidCharacterError);
                 }
-                catch(Exception exception)
+                catch(Exception scannerException)
                 {
-                    var scannerException = exception as IException;
-                    if(scannerException == null)
-                        throw;
-
-                    return CreateAndAdvance(scannerException.SourcePosn - SourcePosn, scannerException.SyntaxError);
+                    return CreateAndAdvance
+                        (scannerException.SourcePosn - SourcePosn, scannerException.SyntaxError);
                 }
             }
 
@@ -99,10 +95,16 @@ namespace hw.Parser
             }
         }
 
-        internal interface IException
+        public sealed class Exception : System.Exception
         {
-            SourcePosn SourcePosn { get; }
-            IScannerTokenType SyntaxError { get; }
+            public readonly SourcePosn SourcePosn;
+            public readonly IScannerTokenType SyntaxError;
+
+            public Exception(SourcePosn sourcePosn, IScannerTokenType syntaxError)
+            {
+                SourcePosn = sourcePosn;
+                SyntaxError = syntaxError;
+            }
         }
     }
 }

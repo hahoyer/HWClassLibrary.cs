@@ -4,6 +4,7 @@ using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
 using hw.Proof.TokenClasses;
+using hw.Scanner;
 
 namespace hw.Proof
 {

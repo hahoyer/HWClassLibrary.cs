@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using hw.DebugFormatter;
-using hw.Parser;
 using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class Lexer : DumpableObject
+    sealed class Lexer : Match2TwoLayerScannerGuard
     {
         readonly Match _whiteSpaces;
         readonly Match _any;
@@ -19,6 +17,7 @@ namespace hw.Tests.CompilerTool.Util
         readonly Match _comment;
 
         public Lexer()
+            : base(error => new SyntaxError((IssueId) error))
         {
             var alpha = Match.Letter.Else("_");
             var symbol1 = "({[)}];,".AnyChar();
@@ -50,28 +49,10 @@ namespace hw.Tests.CompilerTool.Util
                 });
         }
 
-        static int? GuardedMatch(SourcePosn sourcePosn, IMatch match)
-        {
-            try
-            {
-                return sourcePosn.Match(match);
-            }
-            catch(Exception systemException)
-            {
-                var exception = systemException as Match.IException;
-                if(exception == null)
-                    throw;
-
-                var issueId = (IssueId) exception.Error;
-                throw new LexerException
-                    (exception.SourcePosn, new SyntaxError(issueId));
-            }
-        }
-
         internal int? WhiteSpace(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _whiteSpaces);
         internal int? Comment(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _comment);
         internal int? Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
-        internal int? Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
-        internal int? Text(SourcePosn sourcePosn) => sourcePosn.Match(_text);
+        internal int? Any(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _any);
+        internal int? Text(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _text);
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 
-namespace hw.Parser
+namespace hw.Scanner
 {
     sealed class CachingTokenFactory : Dumpable, ITokenFactory
     {

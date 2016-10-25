@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
-using hw.Scanner;
 
-namespace hw.Parser
+namespace hw.Scanner
 {
     public sealed class LexerItem : DumpableObject
     {

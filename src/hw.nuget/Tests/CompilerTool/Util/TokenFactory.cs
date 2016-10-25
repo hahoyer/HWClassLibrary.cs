@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
+using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
@@ -33,7 +34,7 @@ namespace hw.Tests.CompilerTool.Util
             => new PrioParser<Syntax>
             (
                 PrioTable,
-                new Parser.Scanner(new CachingTokenFactory(this)),
+                new TwoLayerScanner(new CachingTokenFactory(this)),
                 new BeginOfText()
             );
 

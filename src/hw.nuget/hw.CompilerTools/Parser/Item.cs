@@ -61,7 +61,7 @@ namespace hw.Parser
 
         [EnableDump]
         internal readonly BracketContext Context;
-        internal readonly IEnumerable<IItem> PrefixItems;
+        internal readonly IItem[] PrefixItems;
         internal readonly IParserTokenType<TTreeItem> Type;
         internal readonly SourcePart Characters;
         internal readonly bool? IsBracketAndLeftBracket;
@@ -74,7 +74,7 @@ namespace hw.Parser
             BracketContext context,
             bool? isBracketAndLeftBracket)
         {
-            PrefixItems = prefixItems;
+            PrefixItems = prefixItems.ToArray();
             Type = type;
             Characters = characters;
             Context = context;

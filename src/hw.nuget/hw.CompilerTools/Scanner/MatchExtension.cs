@@ -40,22 +40,7 @@ namespace hw.Scanner
                 if(positionFactory != null)
                     throw positionFactory.Create(sourcePosn);
 
-                throw new MatchException(sourcePosn, _error);
-            }
-
-            sealed class MatchException : Exception, Match.IException
-            {
-                readonly SourcePosn SourcePosn;
-                readonly Match.IError Error;
-
-                public MatchException(SourcePosn sourcePosn, Match.IError error)
-                {
-                    SourcePosn = sourcePosn;
-                    Error = error;
-                }
-
-                SourcePosn Match.IException.SourcePosn => SourcePosn;
-                Match.IError Match.IException.Error => Error;
+                throw new Match.Exception(sourcePosn, _error);
             }
         }
 

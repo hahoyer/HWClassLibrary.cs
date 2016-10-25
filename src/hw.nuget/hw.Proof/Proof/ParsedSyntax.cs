@@ -10,10 +10,11 @@ using JetBrains.Annotations;
 
 namespace hw.Proof
 {
-    abstract class ParsedSyntax : Parser.ParsedSyntax, IComparable<ParsedSyntax>
+    abstract class ParsedSyntax : DumpableObject, IComparable<ParsedSyntax>, ISourcePart
     {
-        protected ParsedSyntax(IToken token)
-            : base(token) {}
+        protected readonly IToken Token;
+
+        protected ParsedSyntax(IToken token) { Token = token; }
 
         [DisableDump]
         internal virtual Set<string> Variables
@@ -24,6 +25,8 @@ namespace hw.Proof
                 return null;
             }
         }
+
+        SourcePart ISourcePart.All => Token.SourcePart();
 
         [DisableDump]
         internal bool IsSimpleVariable { get { return this is VariableSyntax; } }

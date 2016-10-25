@@ -173,10 +173,16 @@ namespace hw.Scanner
 
         public interface IError {}
 
-        public interface IException
+        public sealed class Exception : System.Exception
         {
-            SourcePosn SourcePosn { get; }
-            IError Error { get; }
+            public readonly SourcePosn SourcePosn;
+            public readonly IError Error;
+
+            public Exception(SourcePosn sourcePosn, IError error)
+            {
+                SourcePosn = sourcePosn;
+                Error = error;
+            }
         }
     }
 }

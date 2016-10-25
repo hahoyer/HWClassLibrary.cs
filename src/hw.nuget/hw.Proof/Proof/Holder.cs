@@ -11,8 +11,8 @@ namespace hw.Proof
     sealed class Holder : Dumpable
     {
         readonly string _text;
-        readonly Parser.Scanner _scanner
-            = new Parser.Scanner(Main.Definitions.ScannerTokenFactory);
+        readonly TwoLayerScanner _scanner
+            = new TwoLayerScanner(Main.Definitions.ScannerTokenFactory);
 
         public Holder(string text)
         {
