@@ -17,9 +17,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>16.10.6-alpha</version>
+    <version>16.10.7-alpha</version>
     <releaseNotes>
+      16.10.6-alpha
       New: Generic token factory
+      New: Component based compiler
       16.10.5-alpha
       New: IUniqueIdProvider moved from compiler to core
       Refactor: Unused "using" statements removed
