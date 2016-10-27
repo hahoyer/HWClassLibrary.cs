@@ -13,7 +13,9 @@ namespace hw.Tests.CompilerTool.Util
         internal static string[] LeftBrackets => new[] {"(", "{", PrioTable.BeginOfText};
 
         readonly Lexer Lexer = new Lexer();
+        readonly BeginOfText StartParserType = new BeginOfText();
 
+        object ITokenFactory.BeginOfText => StartParserType;
         IScannerTokenType ITokenFactory.EndOfText => new EndOfText();
         LexerItem[] ITokenFactory.Classes => Classes;
 
@@ -35,7 +37,7 @@ namespace hw.Tests.CompilerTool.Util
             (
                 PrioTable,
                 new TwoLayerScanner(new CachingTokenFactory(this)),
-                new BeginOfText()
+                StartParserType
             );
 
         protected abstract PrioTable PrioTable { get; }

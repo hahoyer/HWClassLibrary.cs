@@ -70,6 +70,7 @@ namespace hw.Proof
 
         sealed class TokenFactory : DumpableObject, ITokenFactory
         {
+            object ITokenFactory.BeginOfText => new LeftParenthesis(0);
             IScannerTokenType ITokenFactory.EndOfText => new RightParenthesis(0);
             IScannerTokenType ITokenFactory.InvalidCharacterError
                 => new SyntaxError(IssueId.UnexpectedSyntaxError);

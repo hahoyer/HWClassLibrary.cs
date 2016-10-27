@@ -17,8 +17,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>16.10.5-alpha</version>
+    <version>16.10.6-alpha</version>
     <releaseNotes>
+      New: Generic token factory
+      16.10.5-alpha
       New: IUniqueIdProvider moved from compiler to core
       Refactor: Unused "using" statements removed
       Refactor: Better file location

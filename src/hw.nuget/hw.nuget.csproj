@@ -37,7 +37,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
+    <Compile Include="hw.CompilerTools\Parser\BelongsToAttribute.cs" />
     <Compile Include="hw.CompilerTools\Parser\CommonTokenType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Compiler.cs" />
+    <Compile Include="hw.CompilerTools\Parser\GenericTokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\VariantAttribute.cs" />
     <Compile Include="hw.CompilerTools\Scanner\Match2TwoLayerScannerGuard.cs" />
     <Compile Include="hw.Helper.Core\Helper\IUniqueIdProvider.cs" />
     <Compile Include="hw.CompilerTools\Scanner\LexerItem.cs" />
