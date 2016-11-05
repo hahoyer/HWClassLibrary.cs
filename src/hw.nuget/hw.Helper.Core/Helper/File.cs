@@ -18,15 +18,15 @@ namespace hw.Helper
 
         Uri _uriCache;
 
-        public Uri Uri { get { return _uriCache ?? (_uriCache = new Uri(_name)); } }
+        public Uri Uri => _uriCache ?? (_uriCache = new Uri(_name));
 
-        public bool IsFTP { get { return Uri.Scheme == Uri.UriSchemeFtp; } }
+        public bool IsFTP => Uri.Scheme == Uri.UriSchemeFtp;
 
         /// <summary>
         ///     constructs a FileInfo
         /// </summary>
         /// <param name="name"> the filename </param>
-        internal static File Create(string name) { return new File(name); }
+        internal static File Create(string name) => new File(name);
 
         File(string name) { _name = name; }
 
@@ -41,12 +41,8 @@ namespace hw.Helper
             get
             {
                 if(System.IO.File.Exists(_name))
-                {
-                    var f = System.IO.File.OpenText(_name);
-                    var result = f.ReadToEnd();
-                    f.Close();
-                    return result;
-                }
+                    using(var f = System.IO.File.OpenText(_name))
+                        return f.ReadToEnd();
 
                 try
                 {
@@ -54,23 +50,34 @@ namespace hw.Helper
                         return StringFromHTTP;
                 }
                 catch
-                {}
+                {
+                    // ignored
+                }
+
                 return null;
             }
             set
             {
-                var f = System.IO.File.CreateText(_name);
-                f.Write(value);
-                f.Close();
+                using(var f = System.IO.File.CreateText(_name))
+                    f.Write(value);
             }
         }
 
-        public void AssumeDirectoryOfFileExists()
+        public void EnsureDirectoryOfFileExists()
+            => DirectoryName?.FileHandle().EnsureIsExistentDirectory();
+
+        [Obsolete("(Renamed) Use EnsureDirectoryOfFileExists instead")]
+        public void AssumeDirectoryOfFileExists() => EnsureDirectoryOfFileExists();
+
+        public void EnsureIsExistentDirectory()
         {
-            var dn = DirectoryName;
-            if(dn == null || dn.FileHandle().Exists)
-                return;
-            Directory.CreateDirectory(dn);
+            if(Exists)
+                Tracer.Assert(IsDirectory);
+            else
+            {
+                EnsureDirectoryOfFileExists();
+                Directory.CreateDirectory(FullName);
+            }
         }
 
         string StringFromHTTP
@@ -87,7 +94,7 @@ namespace hw.Helper
             }
         }
 
-        public override string ToString() { return FullName; }
+        public override string ToString() => FullName;
 
         /// <summary>
         ///     considers the file as a byte array
@@ -110,29 +117,30 @@ namespace hw.Helper
             }
         }
 
-        public FileStream Reader { get { return System.IO.File.OpenRead(_name); } }
+        public FileStream Reader => System.IO.File.OpenRead(_name);
 
         /// <summary>
         ///     Size of file in bytes
         /// </summary>
-        public long Size { get { return ((FileInfo) FileSystemInfo).Length; } }
+        public long Size => ((FileInfo) FileSystemInfo).Length;
 
         /// <summary>
         ///     Gets the full path of the directory or file.
         /// </summary>
-        public string FullName { get { return FileSystemInfo.FullName; } }
-        public string DirectoryName { get { return Path.GetDirectoryName(FullName); } }
-        public string Extension { get { return Path.GetExtension(FullName); } }
+        public string FullName => FileSystemInfo.FullName;
+
+        public string DirectoryName => Path.GetDirectoryName(FullName);
+        public string Extension => Path.GetExtension(FullName);
 
         /// <summary>
         ///     Gets the name of the directory or file without path.
         /// </summary>
-        public string Name { get { return FileSystemInfo.Name; } }
+        public string Name => FileSystemInfo.Name;
 
         /// <summary>
         ///     Gets a value indicating whether a file exists.
         /// </summary>
-        public bool Exists { get { return FileSystemInfo.Exists; } }
+        public bool Exists => FileSystemInfo.Exists;
 
         /// <summary>
         ///     Gets a value indicating whether a file exists.
@@ -145,6 +153,7 @@ namespace hw.Helper
                     return false;
                 if((FileSystemInfo.Attributes & FileAttributes.ReparsePoint) == 0)
                     return false;
+
                 try
                 {
                     ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos("dummy");
@@ -167,6 +176,7 @@ namespace hw.Helper
             else
                 System.IO.File.Delete(_name);
         }
+
         /// <summary>
         ///     Move the file
         /// </summary>
@@ -181,7 +191,7 @@ namespace hw.Helper
         /// <summary>
         ///     returns true if it is a directory
         /// </summary>
-        public bool IsDirectory { get { return Directory.Exists(_name); } }
+        public bool IsDirectory => Directory.Exists(_name);
 
         FileSystemInfo _fileInfoCache;
 
@@ -201,7 +211,7 @@ namespace hw.Helper
         /// <summary>
         ///     Content of directory, one line for each file
         /// </summary>
-        public string DirectoryString { get { return GetDirectoryString(); } }
+        public string DirectoryString => GetDirectoryString();
 
         string GetDirectoryString()
         {
@@ -211,10 +221,13 @@ namespace hw.Helper
                 result += fi.Name;
                 result += "\n";
             }
+
             return result;
         }
 
-        FileSystemInfo[] GetItems() { return ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray(); }
+        FileSystemInfo[] GetItems()
+            => ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray();
+
         public File[] Items { get { return GetItems().Select(f => Create(f.FullName)).ToArray(); } }
 
         /// <summary>
@@ -222,7 +235,8 @@ namespace hw.Helper
         /// </summary>
         /// <param name="depth"> The depth. </param>
         /// <returns> </returns>
-        public static string SourcePath(int depth) { return new FileInfo(SourceFileName(depth + 1)).DirectoryName; }
+        public static string SourcePath(int depth)
+            => new FileInfo(SourceFileName(depth + 1)).DirectoryName;
 
         /// <summary>
         ///     Gets the name of the source file that called this function
@@ -234,6 +248,7 @@ namespace hw.Helper
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return sf.GetFileName();
         }
+
         /// <summary>
         ///     Gets list of files that match given path and pattern
         /// </summary>
@@ -243,7 +258,8 @@ namespace hw.Helper
         {
             var namePattern = filePattern.Split('\\').Last();
             return Directory
-                .GetFiles(filePattern.Substring(0, filePattern.Length - namePattern.Length - 1), namePattern);
+                .GetFiles
+                (filePattern.Substring(0, filePattern.Length - namePattern.Length - 1), namePattern);
         }
 
         public bool IsLocked
@@ -261,6 +277,68 @@ namespace hw.Helper
                 }
 
                 //file is not locked
+            }
+        }
+
+        public DateTime ModifiedDate => FileSystemInfo.LastWriteTime;
+
+        public void CopyTo(string destinationPath)
+        {
+            if(IsDirectory)
+            {
+                destinationPath.FileHandle().EnsureIsExistentDirectory();
+                foreach(var sourceSubFile in Items)
+                {
+                    var destinationSubPath = destinationPath.PathCombine(sourceSubFile.Name);
+                    sourceSubFile.CopyTo(destinationSubPath);
+                }
+            }
+            else
+                System.IO.File.Copy(FullName, destinationPath);
+        }
+
+        public File[] GuardedItems()
+        {
+            try
+            {
+                if(IsDirectory)
+                    return Items;
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return new File[0];
+        }
+
+        public IEnumerable<File> RecursiveItems()
+        {
+            if(!IsDirectory)
+            {
+                yield return this;
+
+                yield break;
+            }
+
+            Tracer.Line(FullName);
+            IEnumerable<string> filePaths = new[] {FullName};
+            while(true)
+            {
+                var newList = new List<string>();
+                var items = filePaths.SelectMany(s => s.FileHandle().GuardedItems()).ToArray();
+                foreach(var item in items)
+                {
+                    yield return item;
+
+                    if(item.IsDirectory)
+                        newList.Add(item.FullName);
+                }
+
+                if(!newList.Any())
+                    yield break;
+
+                filePaths = newList;
             }
         }
     }

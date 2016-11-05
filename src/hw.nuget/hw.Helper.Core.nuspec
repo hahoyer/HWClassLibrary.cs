@@ -15,8 +15,10 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>16.0.4</version>
+        <version>16.0.5</version>
         <releaseNotes>
+          New: File: some more functions
+          16.0.4
           New: IUniqueIdProvider moved from compiler to core
           16.0.3
           Change: TypeNameExtender: Loist of types is public now
