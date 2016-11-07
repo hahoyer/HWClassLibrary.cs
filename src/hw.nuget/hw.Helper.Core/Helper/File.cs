@@ -314,12 +314,9 @@ namespace hw.Helper
 
         public IEnumerable<File> RecursiveItems()
         {
-            if(!IsDirectory)
-            {
-                yield return this;
-
+            yield return this;
+            if (!IsDirectory)
                 yield break;
-            }
 
             Tracer.Line(FullName);
             IEnumerable<string> filePaths = new[] {FullName};
