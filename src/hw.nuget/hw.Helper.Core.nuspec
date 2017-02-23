@@ -15,8 +15,10 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>16.0.6</version>
+        <version>17.0</version>
         <releaseNotes>
+          Change: License
+          16.0.6
           Bug: File.RecursiveItem does not return itself
           16.0.5 
           New: File: some more functions
