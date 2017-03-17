@@ -109,18 +109,22 @@ namespace hw.Helper
             var proc = new Process {StartInfo = procStartInfo};
             proc.Start();
             return proc.StandardOutput.ReadToEnd();
+
         }
 
-        public static File FileHandle(this string name) { return File.Create(name); }
-        public static string PathCombine(this string head, params string[] tail) { return Path.Combine(head, Path.Combine(tail)); }
+        public static hw.Helper.File FileHandle(this string name) => hw.Helper.File.Create(name);
+        public static SmbFile ToSmbFile(this string name, bool autoCreateDirectories = true) => SmbFile.Create(name, autoCreateDirectories);
+        public static string PathCombine(this string head, params string[] tail) => Path.Combine(head, Path.Combine(tail));
 
-        public static string UnderScoreToCamelCase(this string name) { return name.Split('_').Select(ToLowerFirstUpper).Stringify(""); }
+        public static string UnderScoreToCamelCase(this string name) => name.Split('_').Select(ToLowerFirstUpper).Stringify("");
 
-        public static string ToLowerFirstUpper(this string text) { return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant(); }
-        public static string TableNameToClassName(this string name) { return name.UnderScoreToCamelCase().ToSingular(); }
+        public static string ToLowerFirstUpper(this string text) => text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant();
+        public static string TableNameToClassName(this string name) => name.UnderScoreToCamelCase().ToSingular();
+
         [StringFormatMethod("pattern")]
-        public static string ReplaceArgs(this string pattern, params object[] args) { return String.Format(pattern, args); }
-        public static bool Matches(this string input, string pattern) { return new Regex(pattern).IsMatch(input); }
+        public static string ReplaceArgs(this string pattern, params object[] args) => String.Format(pattern, args);
+
+        public static bool Matches(this string input, string pattern) => new Regex(pattern).IsMatch(input);
 
         public static IEnumerable<string> Split(this string target, params int[] sizes)
         {
@@ -133,7 +137,7 @@ namespace hw.Helper
             yield return target.Substring(start);
         }
 
-        public static string Format(this string x, StringAligner aligner) { return aligner.Format(x); }
+        public static string Format(this string x, StringAligner aligner) => aligner.Format(x);
 
         internal static int BeginMatch(string a, string b)
         {

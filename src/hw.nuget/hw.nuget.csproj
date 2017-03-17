@@ -92,6 +92,7 @@
     <Compile Include="hw.Helper.Core\DebugFormatter\Dumper.cs" />
     <Compile Include="hw.Helper.Core\DebugFormatter\TextWriters.cs" />
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
+    <Compile Include="hw.Helper.Core\Helper\SmbFile.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
     <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
     <Compile Include="hw.Proof\Proof\Any.cs" />

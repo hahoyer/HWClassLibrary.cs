@@ -14,9 +14,11 @@
         <language>en-US</language>
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2015</copyright>
-        <version>17.0</version>
+        <copyright>Copyright Harald H. Hoyer 2017</copyright>
+        <version>17.0.2</version>
         <releaseNotes>
+          New: SmfbFile like hw.Helper.File, but with the option to automatic create necessarry directories on write oprations.
+          17.0.1
           Change: License
           16.0.6
           Bug: File.RecursiveItem does not return itself
