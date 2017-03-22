@@ -16,8 +16,10 @@
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald H. Hoyer 2017</copyright>
-    <version>17.0.3</version>
+    <version>17.0.4</version>
     <releaseNotes>
+      Bug: EnsureDirectoryOfFileExists still uses FileHandle
+      17.0.3
       Admin: Dependency to JetBrains.Annotations added
       17.0.2
       New: SmfbFile like hw.Helper.File, but with the option to automatic create necessarry directories on write oprations.

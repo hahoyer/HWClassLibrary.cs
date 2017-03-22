@@ -68,7 +68,7 @@ namespace hw.Helper
         }
 
         public void EnsureDirectoryOfFileExists()
-            => DirectoryName?.FileHandle().EnsureIsExistentDirectory();
+            => DirectoryName?.ToSmbFile(false).EnsureIsExistentDirectory();
 
         public void EnsureIsExistentDirectory()
         {
