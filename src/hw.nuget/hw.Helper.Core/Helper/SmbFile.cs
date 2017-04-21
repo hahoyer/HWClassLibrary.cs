@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using hw.DebugFormatter;
 
 namespace hw.Helper
 {
-    /// <summary>
-    ///     Summary description for File.
-    /// </summary>
     [Serializable]
     public sealed class SmbFile
     {
@@ -18,7 +16,7 @@ namespace hw.Helper
 
         /// <summary>
         ///     Ensure, that all directories are existent when writing to file.
-        ///     Can be modifierd at any time.
+        ///     Can be modified at any time.
         /// </summary>
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         public bool AutoCreateDirectories;
@@ -56,8 +54,22 @@ namespace hw.Helper
             set
             {
                 CheckedEnsureDirectoryOfFileExists();
-                using (var f = System.IO.File.CreateText(_name))
+                using(var f = System.IO.File.CreateText(_name))
                     f.Write(value);
+            }
+        }
+
+        public string SubString(long start, int size)
+        {
+            if(!System.IO.File.Exists(_name))
+                return null;
+
+            using(var f = Reader)
+            {
+                f.Position = start;
+                var buffer = new byte[size];
+                f.Read(buffer, 0, size);
+                return Encoding.UTF8.GetString(buffer);
             }
         }
 
@@ -104,7 +116,8 @@ namespace hw.Helper
             }
         }
 
-        public FileStream Reader => System.IO.File.OpenRead(_name);
+        public FileStream Reader
+            => new FileStream(_name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
         /// <summary>
         ///     Size of file in bytes
@@ -250,9 +263,8 @@ namespace hw.Helper
         public static string[] Select(string filePattern)
         {
             var namePattern = filePattern.Split('\\').Last();
-            return Directory
-                .GetFiles
-                (filePattern.Substring(0, filePattern.Length - namePattern.Length - 1), namePattern);
+            var path = filePattern.Substring(0, filePattern.Length - namePattern.Length - 1);
+            return Directory.GetFiles(path, namePattern);
         }
 
         public bool IsLocked

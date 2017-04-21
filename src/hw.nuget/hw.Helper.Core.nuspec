@@ -18,6 +18,9 @@
     <copyright>Copyright Harald H. Hoyer 2017</copyright>
     <version>17.0.4</version>
     <releaseNotes>
+      Change: New function "Substring"
+      Bug: Cannot read files that have write lock
+      17.0.4
       Bug: EnsureDirectoryOfFileExists still uses FileHandle
       17.0.3
       Admin: Dependency to JetBrains.Annotations added
