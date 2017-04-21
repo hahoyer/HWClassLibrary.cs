@@ -16,7 +16,7 @@
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald H. Hoyer 2017</copyright>
-    <version>17.0.4</version>
+    <version>17.0.5</version>
     <releaseNotes>
       Change: New function "Substring"
       Bug: Cannot read files that have write lock
