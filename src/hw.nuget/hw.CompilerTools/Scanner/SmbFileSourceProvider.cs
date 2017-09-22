@@ -5,12 +5,12 @@ using hw.Helper;
 
 namespace hw.Scanner
 {
-    public sealed class FileSourceProvider : ISourceProvider
+    public sealed class SmbFileSourceProvider : ISourceProvider
     {
         readonly ValueCache<string> DataCache;
-        readonly File File;
+        readonly SmbFile File;
 
-        public FileSourceProvider(File file, bool useCache = true)
+        public SmbFileSourceProvider(SmbFile file, bool useCache = true)
         {
             File = file;
             if(useCache)

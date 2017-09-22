@@ -17,8 +17,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>16.10.7-alpha</version>
+    <version>17.1</version>
     <releaseNotes>
+      Upgrade: File to SmbFile
+      16.10.7-alpha
       16.10.6-alpha
       New: Generic token factory
       New: Component based compiler
