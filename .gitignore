@@ -7,3 +7,4 @@ _ReSharper.*
 *.user
 obj/
 /src/*/bin
+/src/.vs/HWClassLibrary/v15/sqlite3
