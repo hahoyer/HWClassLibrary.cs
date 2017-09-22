@@ -23,13 +23,15 @@
       <frameworkAssembly assemblyName="System.Drawing" />
     </frameworkAssemblies>
 
-    <version>16.0</version>
+    <version>17.1</version>
     <releaseNotes>
-        Automatic dependeny to core removed
-        15.1
-        Use Breaking changes of hw.Helper.Core
-        15.0.0.0
-        Bugfix: PositionConfig: Catch position when it moved completetly out of sight
+      Upgrade: File to SmbFile
+      16.0
+      Automatic dependeny to core removed
+      15.1
+      Use Breaking changes of hw.Helper.Core
+      15.0.0.0
+      Bugfix: PositionConfig: Catch position when it moved completetly out of sight
     </releaseNotes>
     <dependencies />
 

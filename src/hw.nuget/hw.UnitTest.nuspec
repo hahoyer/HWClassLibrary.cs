@@ -17,8 +17,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2014</copyright>
 
-    <version>15.1</version>
+    <version>17.1</version>
     <releaseNotes>
+      Upgrade: File to SmbFile
+      15.1
       Use Breaking changes of hw.Helper.Core
       15.0.2
       New: Ability to register other test frameworks

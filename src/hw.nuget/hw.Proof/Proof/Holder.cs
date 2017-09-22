@@ -16,7 +16,7 @@ namespace hw.Proof
 
         public Holder(string text)
         {
-            var file = "main.proof".FileHandle();
+            var file = "main.proof".ToSmbFile();
             file.String = text;
             _text = text;
             IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>

@@ -48,7 +48,7 @@
     <Compile Include="hw.CompilerTools\Parser\PredefinedTokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\ParserTokenType.cs" />
     <Compile Include="hw.CompilerTools\Scanner\WhiteSpaceTokenType.cs" />
-    <Compile Include="hw.CompilerTools\Scanner\FileSourceProvider.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\SmbFileSourceProvider.cs" />
     <Compile Include="hw.CompilerTools\Scanner\ISourceProvider.cs" />
     <Compile Include="hw.CompilerTools\Scanner\StringSourceProvider.cs" />
     <Compile Include="hw.GraphicCompilerTools\Graphics\IGraphTarget.cs" />

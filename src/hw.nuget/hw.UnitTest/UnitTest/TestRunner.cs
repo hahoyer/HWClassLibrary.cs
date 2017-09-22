@@ -11,7 +11,7 @@ namespace hw.UnitTest
     {
         readonly TestType[] _testTypes;
         public static bool IsModeErrorFocus;
-        readonly File _configFile = "Test.HWconfig".FileHandle();
+        readonly SmbFile _configFile = "Test.HWconfig".ToSmbFile();
         string _status = "Start";
         int _complete;
         string _currentMethodName = "";

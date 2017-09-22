@@ -118,12 +118,12 @@ namespace hw.Forms
             }
         }
 
-        File FileHandle
+        SmbFile FileHandle
         {
             get
             {
                 var fileName = FileName;
-                return fileName == null ? null : fileName.FileHandle();
+                return fileName == null ? null : fileName.ToSmbFile();
             }
         }
 
