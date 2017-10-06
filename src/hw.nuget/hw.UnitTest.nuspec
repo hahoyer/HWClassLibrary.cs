@@ -30,7 +30,7 @@
       Breaking Change: Attributes TestFixture and Test renamed to UnitTest
     </releaseNotes>
     <dependencies>
-      <dependency id="hw.Helper.Core" version="15.2" />
+      <dependency id="hw.Helper.Core" version="17.0" />
     </dependencies>
 
   </metadata>

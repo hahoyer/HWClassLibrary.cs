@@ -121,7 +121,7 @@
       Change: Introducing white space fine structure
     </releaseNotes>
     <dependencies>
-      <dependency id="hw.Helper.Core" version="16.0" />
+      <dependency id="hw.Helper.Core" version="17.0" />
     </dependencies>
 
   </metadata>
