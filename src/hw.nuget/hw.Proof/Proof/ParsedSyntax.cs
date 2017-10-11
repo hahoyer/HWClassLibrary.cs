@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 
 namespace hw.Proof
 {
-    abstract class ParsedSyntax : DumpableObject, IComparable<ParsedSyntax>, ISourcePart
+    abstract class ParsedSyntax : DumpableObject, IComparable<ParsedSyntax>, ISourcePartProxy
     {
         protected readonly IToken Token;
 
@@ -26,7 +26,7 @@ namespace hw.Proof
             }
         }
 
-        SourcePart ISourcePart.All => Token.SourcePart();
+        SourcePart ISourcePartProxy.All => Token.SourcePart();
 
         [DisableDump]
         internal bool IsSimpleVariable { get { return this is VariableSyntax; } }

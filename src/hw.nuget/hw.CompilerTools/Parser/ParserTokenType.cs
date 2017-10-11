@@ -11,7 +11,7 @@ namespace hw.Parser
         : DumpableObject,
             IParserTokenType<TTreeItem>,
             IUniqueIdProvider
-        where TTreeItem : class, ISourcePart
+        where TTreeItem : class, ISourcePartProxy
     {
         static int _nextObjectId;
 

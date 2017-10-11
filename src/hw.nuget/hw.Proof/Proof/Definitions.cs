@@ -68,9 +68,10 @@ namespace hw.Proof
             }
         }
 
-        sealed class TokenFactory : DumpableObject, ITokenFactory
+
+        sealed class TokenFactory : DumpableObject, ITokenFactory<ParsedSyntax>
         {
-            object ITokenFactory.BeginOfText => new LeftParenthesis(0);
+            IParserTokenType<ParsedSyntax> ITokenFactory<ParsedSyntax>.BeginOfText => new LeftParenthesis(0);
             IScannerTokenType ITokenFactory.EndOfText => new RightParenthesis(0);
             IScannerTokenType ITokenFactory.InvalidCharacterError
                 => new SyntaxError(IssueId.UnexpectedSyntaxError);
@@ -83,8 +84,8 @@ namespace hw.Proof
                 };
         }
 
-        internal readonly ITokenFactory ScannerTokenFactory
-            = new CachingTokenFactory(new TokenFactory());
+        internal readonly ITokenFactory<ParsedSyntax> ScannerTokenFactory
+            = new CachingTokenFactory<ParsedSyntax>(new TokenFactory());
 
         Definitions() { }
     }

@@ -6,11 +6,10 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    abstract class GenericTokenFactory<TTreeItem> : PredefinedTokenFactory<TTreeItem>
-        where TTreeItem : class, ISourcePart
+    abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<TSourcePart>
+        where TSourcePart : class, ISourcePartProxy
     {
-        protected override IEnumerable<IParserTokenType<TTreeItem>> GetPredefinedTokenClasses()
-            => PredefinedTokenClasses;
+        public readonly IEnumerable<IParserTokenType<TSourcePart>> PredefinedTokenClasses;
 
         protected GenericTokenFactory()
         {
@@ -21,29 +20,30 @@ namespace hw.Parser
                 .SelectMany(CreateInstance);
         }
 
-        public readonly IEnumerable<IParserTokenType<TTreeItem>> PredefinedTokenClasses;
+        protected override IEnumerable<IParserTokenType<TSourcePart>> GetPredefinedTokenClasses()
+            => PredefinedTokenClasses;
 
-        IEnumerable<IParserTokenType<TTreeItem>> CreateInstance(System.Type type)
+        IEnumerable<IParserTokenType<TSourcePart>> CreateInstance(Type type)
         {
-            var variants = type.GetAttributes<VariantAttribute>(true).ToArray();
-            if (variants.Any())
+            var variants = type.GetAttributes<VariantAttribute>(inherit: true).ToArray();
+            if(variants.Any())
                 return variants
-                    .Select(variant => variant.CreateInstance<TTreeItem>(type));
+                    .Select(variant => variant.CreateInstance<TSourcePart>(type));
 
-            return new[] { SpecialTokenClass(type) };
+            return new[] {SpecialTokenClass(type)};
         }
 
-        protected virtual IParserTokenType<TTreeItem> SpecialTokenClass(System.Type type)
-            => (IParserTokenType<TTreeItem>)Activator.CreateInstance(type);
+        protected virtual IParserTokenType<TSourcePart> SpecialTokenClass(Type type)
+            => (IParserTokenType<TSourcePart>) Activator.CreateInstance(type);
 
-        bool BelongsToFactory(System.Type type)
+        bool BelongsToFactory(Type type)
         {
             var thisType = GetType();
-            return type.Is<ScannerTokenType>()
-                && !type.IsAbstract
-                && type
-                    .GetAttributes<BelongsToAttribute>(true)
-                    .Any(attr => thisType.Is(attr.TokenFactory));
+            return type.Is<ScannerTokenType>() &&
+                   !type.IsAbstract &&
+                   type
+                       .GetAttributes<BelongsToAttribute>(inherit: true)
+                       .Any(attr => thisType.Is(attr.TokenFactory));
         }
     }
 }

@@ -10,23 +10,23 @@ namespace hw.Parser
     {
         public IParserTokenFactory ParserTokenFactory => this;
 
-        IParserTokenType<TTreeItem> IParserTokenFactory.GetTokenType<TTreeItem>(string id)
-            => GetParserTokenType<TTreeItem>(id);
+        IParserTokenType<TSourcePart> IParserTokenFactory.GetTokenType<TSourcePart>(string id)
+            => GetParserTokenType<TSourcePart>(id);
 
-        protected abstract IParserTokenType<TTreeItem> GetParserTokenType<TTreeItem>(string id)
-            where TTreeItem : class, ISourcePart;
+        protected abstract IParserTokenType<TSourcePart> GetParserTokenType<TSourcePart>(string id)
+            where TSourcePart : class, ISourcePartProxy;
     }
 
-    public abstract class ScannerTokenType<TTreeItem> : ScannerTokenType
-        where TTreeItem : class, ISourcePart
+    public abstract class ScannerTokenType<TSourcePart> : ScannerTokenType
+        where TSourcePart : class, ISourcePartProxy
     {
-        protected sealed override IParserTokenType<TTreeItem1> GetParserTokenType<TTreeItem1>
+        protected sealed override IParserTokenType<TSourcePart1> GetParserTokenType<TSourcePart1>
             (string id)
         {
-            Tracer.Assert(typeof(TTreeItem) == typeof(TTreeItem1));
-            return (IParserTokenType<TTreeItem1>) GetParserTokenType(id);
+            Tracer.Assert(typeof(TSourcePart) == typeof(TSourcePart1));
+            return (IParserTokenType<TSourcePart1>) GetParserTokenType(id);
         }
 
-        protected abstract IParserTokenType<TTreeItem> GetParserTokenType(string id);
+        protected abstract IParserTokenType<TSourcePart> GetParserTokenType(string id);
     }
 }

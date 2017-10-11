@@ -7,21 +7,21 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public sealed partial class PrioParser<TTreeItem>
+    public sealed partial class PrioParser<TSourcePart>
     {
         sealed class PrioParserWorker : DumpableObject
         {
-            readonly Stack<OpenItem<TTreeItem>> Stack;
+            readonly Stack<OpenItem<TSourcePart>> Stack;
             readonly int StartLevel;
-            readonly PrioParser<TTreeItem> Parent;
+            readonly PrioParser<TSourcePart> Parent;
 
-            TTreeItem Left;
-            Item<TTreeItem> Current;
+            TSourcePart Left;
+            Item<TSourcePart> Current;
 
-            public PrioParserWorker(PrioParser<TTreeItem> parent, Stack<OpenItem<TTreeItem>> stack)
+            public PrioParserWorker(PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack)
             {
                 Parent = parent;
-                Stack = stack ?? new Stack<OpenItem<TTreeItem>>();
+                Stack = stack ?? new Stack<OpenItem<TSourcePart>>();
                 StartLevel = Stack.Count;
                 if(Trace)
                     Tracer.Line(Parent.PrioTable.Title ?? "");
@@ -29,7 +29,7 @@ namespace hw.Parser
 
             bool Trace => Parent.Trace;
 
-            public TTreeItem Execute(SourcePosn sourcePosn)
+            public TSourcePart Execute(SourcePosn sourcePosn)
             {
                 Current = CreateStartItem(sourcePosn, Parent.PrioTable);
                 TraceNewItem(sourcePosn);
@@ -64,17 +64,17 @@ namespace hw.Parser
                 return Current.Create(Left);
             }
 
-            Item<TTreeItem> CreateStartItem(SourcePosn sourcePosn, PrioTable prioTable)
+            Item<TSourcePart> CreateStartItem(SourcePosn sourcePosn, PrioTable prioTable)
                 =>
                 sourcePosn.Position == 0
-                    ? Item<TTreeItem>.CreateStart
+                    ? Item<TSourcePart>.CreateStart
                         (sourcePosn.Source, prioTable, Parent.StartParserType)
                     : ReadNextToken(sourcePosn, prioTable.BracketContext);
 
-            Item<TTreeItem> ReadNextToken(SourcePosn sourcePosn, BracketContext context)
+            Item<TSourcePart> ReadNextToken(SourcePosn sourcePosn, BracketContext context)
             {
                 TraceNextToken(sourcePosn);
-                var result = Item<TTreeItem>.Create
+                var result = Item<TSourcePart>.Create
                     (Parent.Scanner.GetNextTokenGroup(sourcePosn), context);
 
                 var nextParser = (result.Type as ISubParserProvider)?.NextParser;
@@ -104,7 +104,7 @@ namespace hw.Parser
                     Left = Stack.Pop().Create(Left);
                 if(relation.IsPush)
                 {
-                    Stack.Push(new OpenItem<TTreeItem>(Left, Current));
+                    Stack.Push(new OpenItem<TSourcePart>(Left, Current));
                     Left = null;
                 }
 
@@ -116,10 +116,10 @@ namespace hw.Parser
                 Tracer.Assert(other != null);
 
                 if(relation.IsMatch)
-                    Current = Item<TTreeItem>.Create
+                    Current = Item<TSourcePart>.Create
                     (
                         new IItem[0],
-                        ((IBracketMatch<TTreeItem>) Current.Type).Value,
+                        ((IBracketMatch<TSourcePart>) Current.Type).Value,
                         Current.Characters.End.Span(0),
                         other.BracketItem.LeftContext,
                         Current.GetRightContext().IsBracketAndLeftBracket("")
@@ -209,7 +209,7 @@ namespace hw.Parser
                 Tracer.IndentEnd();
             }
 
-            void TraceSubParserStart(Item<TTreeItem> item)
+            void TraceSubParserStart(Item<TSourcePart> item)
             {
                 if(!Trace)
                     return;
@@ -221,7 +221,7 @@ namespace hw.Parser
                 Tracer.IndentStart();
             }
 
-            void TraceSubParserEnd(Item<TTreeItem> item)
+            void TraceSubParserEnd(Item<TSourcePart> item)
             {
                 if(!Trace)
                     return;
@@ -233,7 +233,7 @@ namespace hw.Parser
                 Tracer.Line("======================>");
             }
 
-            static string FormatStackForTrace(Stack<OpenItem<TTreeItem>> stack)
+            static string FormatStackForTrace(Stack<OpenItem<TSourcePart>> stack)
             {
                 var count = stack.Count;
                 if(count == 0)
@@ -251,7 +251,7 @@ namespace hw.Parser
                 return "stack: " + stack.Count + " items" + ("\n" + result).Indent();
             }
 
-            void TraceItemLine(string title, Item<TTreeItem> item)
+            void TraceItemLine(string title, Item<TSourcePart> item)
             {
                 if(!Trace)
                     return;
@@ -270,7 +270,7 @@ namespace hw.Parser
                 Tracer.Line(title + " = " + typeDump + " Depth=" + item.Context.Depth);
             }
 
-            static string TreeDump(OpenItem<TTreeItem> value)
+            static string TreeDump(OpenItem<TSourcePart> value)
                 => Extension.TreeDump(value.Left) + " "
                 + (value.Type == null
                     ? "null"
@@ -279,7 +279,7 @@ namespace hw.Parser
 
         internal interface ISubParserProvider
         {
-            ISubParser<TTreeItem> NextParser { get; }
+            ISubParser<TSourcePart> NextParser { get; }
         }
     }
 }

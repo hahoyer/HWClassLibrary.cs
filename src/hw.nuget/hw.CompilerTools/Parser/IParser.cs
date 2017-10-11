@@ -5,16 +5,16 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public interface IParser<TTreeItem>
-        where TTreeItem : class, ISourcePart
+    public interface IParser<TSourcePart>
+        where TSourcePart : class, ISourcePartProxy
     {
-        TTreeItem Execute(SourcePosn start, Stack<OpenItem<TTreeItem>> stack = null);
+        TSourcePart Execute(SourcePosn start, Stack<OpenItem<TSourcePart>> stack = null);
         bool Trace { get; set; }
     }
 
-    public interface ISubParser<TTreeItem>
-        where TTreeItem : class, ISourcePart
+    public interface ISubParser<TSourcePart>
+        where TSourcePart : class, ISourcePartProxy
     {
-        IParserTokenType<TTreeItem> Execute(SourcePosn sourcePosn, Stack<OpenItem<TTreeItem>> stack = null);
+        IParserTokenType<TSourcePart> Execute(SourcePosn sourcePosn, Stack<OpenItem<TSourcePart>> stack = null);
     }
 }

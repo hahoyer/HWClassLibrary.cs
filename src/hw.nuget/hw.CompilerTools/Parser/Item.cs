@@ -7,7 +7,7 @@ using hw.Scanner;
 namespace hw.Parser
 {
     public sealed class Item<TTreeItem> : DumpableObject, PrioTable.ITargetItem, IToken
-        where TTreeItem : class, ISourcePart
+        where TTreeItem : class, ISourcePartProxy
     {
         internal static Item<TTreeItem> Create
             (

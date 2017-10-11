@@ -17,8 +17,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>17.1</version>
+    <version>17.2.0-alpha</version>
     <releaseNotes>
+      Some Docu
+      Bugfix: Component problem
+      Change: Better type for ITokenFactory.BeginOfText
+      17.1
       Upgrade: File to SmbFile
       16.10.7-alpha
       16.10.6-alpha

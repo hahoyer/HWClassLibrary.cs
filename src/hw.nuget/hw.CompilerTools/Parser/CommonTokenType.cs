@@ -9,7 +9,7 @@ namespace hw.Parser
     public abstract class CommonTokenType<TTreeItem> : ScannerTokenType<TTreeItem>,
             IUniqueIdProvider,
             IParserTokenType<TTreeItem>
-        where TTreeItem : class, ISourcePart
+        where TTreeItem : class, ISourcePartProxy
     {
         protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
 

@@ -6,30 +6,30 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    abstract class PredefinedTokenFactory<TTreeItem> : ScannerTokenType<TTreeItem>
-        where TTreeItem : class, ISourcePart
+    abstract class PredefinedTokenFactory<TSourcePart> : ScannerTokenType<TSourcePart>
+        where TSourcePart : class, ISourcePartProxy
     {
-        readonly ValueCache<FunctionCache<string, IParserTokenType<TTreeItem>>>
+        readonly ValueCache<FunctionCache<string, IParserTokenType<TSourcePart>>>
             PredefinedTokenClassesCache;
 
         protected PredefinedTokenFactory()
         {
             PredefinedTokenClassesCache =
-                new ValueCache<FunctionCache<string, IParserTokenType<TTreeItem>>>(GetDictionary);
+                new ValueCache<FunctionCache<string, IParserTokenType<TSourcePart>>>(GetDictionary);
         }
 
 
-        FunctionCache<string, IParserTokenType<TTreeItem>> GetDictionary()
-            => new FunctionCache<string, IParserTokenType<TTreeItem>>
+        FunctionCache<string, IParserTokenType<TSourcePart>> GetDictionary()
+            => new FunctionCache<string, IParserTokenType<TSourcePart>>
             (
                 GetPredefinedTokenClasses().ToDictionary(item => item.PrioTableId),
                 GetTokenClass
             );
 
-        protected sealed override IParserTokenType<TTreeItem> GetParserTokenType(string id)
+        protected sealed override IParserTokenType<TSourcePart> GetParserTokenType(string id)
             => PredefinedTokenClassesCache.Value[id];
 
-        protected abstract IEnumerable<IParserTokenType<TTreeItem>> GetPredefinedTokenClasses();
-        protected abstract IParserTokenType<TTreeItem> GetTokenClass(string name);
+        protected abstract IEnumerable<IParserTokenType<TSourcePart>> GetPredefinedTokenClasses();
+        protected abstract IParserTokenType<TSourcePart> GetTokenClass(string name);
     }
 }

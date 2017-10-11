@@ -41,6 +41,7 @@
     <Compile Include="hw.CompilerTools\Parser\CommonTokenType.cs" />
     <Compile Include="hw.CompilerTools\Parser\Compiler.cs" />
     <Compile Include="hw.CompilerTools\Parser\GenericTokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Parser\VariantAttribute.cs" />
     <Compile Include="hw.CompilerTools\Scanner\Match2TwoLayerScannerGuard.cs" />
     <Compile Include="hw.Helper.Core\Helper\IUniqueIdProvider.cs" />
@@ -71,10 +72,10 @@
     <Compile Include="hw.CompilerTools\Scanner\TwoLayerScanner.cs" />
     <Compile Include="hw.CompilerTools\Parser\Item.cs" />
     <Compile Include="hw.CompilerTools\Parser\SubParser.cs" />
-    <Compile Include="hw.CompilerTools\Scanner\ISourcePart.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\ISourcePartProxy.cs" />
     <Compile Include="hw.CompilerTools\Scanner\SourcePart.cs" />
     <Compile Include="hw.CompilerTools\Parser\ScannerTokenType.cs" />
-    <Compile Include="hw.CompilerTools\Scanner\CachingTokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\CachingTokenFactory.cs" />
     <Compile Include="hw.CompilerTools\Scanner\IScanner.cs" />
     <Compile Include="hw.CompilerTools\Scanner\Match.cs" />
     <Compile Include="hw.CompilerTools\Scanner\MatchExtension.cs" />
@@ -207,28 +208,20 @@
     <Compile Include="Tests\Helper\Core\ValueCache.cs" />
     <Compile Include="Tests\ReplaceVariables\Example.cs" />
     <None Include="hw.GraphicCompilerTools.snippet.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.ReplaceVariables.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.CompilerTools.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.Helper.Core.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.Helper.Data.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.T4Helper.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.Forms.snippet.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.UnitTest.nuspec">
-      <SubType>Designer</SubType>
     </None>
     <None Include="hw.T4Helper\Helper\T4Extender.cs" />
     <None Include="hw.T4Helper\Helper\T4Context.cs" />

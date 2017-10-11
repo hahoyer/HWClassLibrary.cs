@@ -7,7 +7,7 @@ using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    abstract class TokenFactory : DumpableObject, ITokenFactory
+    abstract class TokenFactory : DumpableObject, ITokenFactory<Syntax>
     {
         internal static string[] RightBrackets => new[] {")", "}", PrioTable.EndOfText};
         internal static string[] LeftBrackets => new[] {"(", "{", PrioTable.BeginOfText};
@@ -15,7 +15,7 @@ namespace hw.Tests.CompilerTool.Util
         readonly Lexer Lexer = new Lexer();
         readonly BeginOfText StartParserType = new BeginOfText();
 
-        object ITokenFactory.BeginOfText => StartParserType;
+        IParserTokenType<Syntax> ITokenFactory<Syntax>.BeginOfText => StartParserType;
         IScannerTokenType ITokenFactory.EndOfText => new EndOfText();
         LexerItem[] ITokenFactory.Classes => Classes;
 
@@ -36,7 +36,7 @@ namespace hw.Tests.CompilerTool.Util
             => new PrioParser<Syntax>
             (
                 PrioTable,
-                new TwoLayerScanner(new CachingTokenFactory(this)),
+                new TwoLayerScanner(new CachingTokenFactory<Syntax>(this)),
                 StartParserType
             );
 
