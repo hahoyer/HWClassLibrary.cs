@@ -17,8 +17,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>17.2.0-alpha</version>
+    <version>17.2.1-alpha</version>
     <releaseNotes>
+      Bugfix: Compiler uses wrong tokenclassfactory
+      17.2.0-alpha
       Some Docu
       Bugfix: Component problem
       Change: Better type for ITokenFactory.BeginOfText

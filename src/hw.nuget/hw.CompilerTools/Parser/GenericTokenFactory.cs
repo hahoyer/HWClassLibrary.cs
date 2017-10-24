@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using hw.DebugFormatter;
 using hw.Helper;
 using hw.Scanner;
 
@@ -9,10 +10,13 @@ namespace hw.Parser
     abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<TSourcePart>
         where TSourcePart : class, ISourcePartProxy
     {
+        [EnableDump]
+        readonly string Title;
         public readonly IEnumerable<IParserTokenType<TSourcePart>> PredefinedTokenClasses;
 
-        protected GenericTokenFactory()
+        protected GenericTokenFactory(string title=null)
         {
+            Title = title;
             PredefinedTokenClasses = GetType()
                 .Assembly
                 .GetTypes()

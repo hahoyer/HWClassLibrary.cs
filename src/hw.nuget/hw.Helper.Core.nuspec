@@ -18,6 +18,8 @@
     <copyright>Copyright Harald H. Hoyer 2017</copyright>
     <version>17.0.5</version>
     <releaseNotes>
+      Change: New trace function 
+      17.0.5
       Change: New function "Substring"
       Bug: Cannot read files that have write lock
       17.0.4

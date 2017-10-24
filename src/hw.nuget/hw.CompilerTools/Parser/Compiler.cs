@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using hw.Scanner;
@@ -11,6 +12,8 @@ namespace hw.Parser
     {
         sealed class ComponentData : DumpableObject
         {
+            static ComponentData() => Tracer.Dumper.Configuration.Handlers.Add(typeof(Delegate), (type, o) => "?");
+
             readonly IDictionary<Type, object> Components =
                 new Dictionary<Type, object>();
 
@@ -31,6 +34,11 @@ namespace hw.Parser
                 SubParserCache = new ValueCache<ISubParser<TSourcePart>>(CreateSubParser);
             }
 
+            public string PrettyDump
+                => Components
+                    .Select(p => PrettyDumpPair(p.Key, p.Value))
+                    .Stringify(separator: "\n");
+
             Func<TSourcePart, IParserTokenType<TSourcePart>> Converter =>
                 Get<Func<TSourcePart, IParserTokenType<TSourcePart>>>();
 
@@ -39,6 +47,14 @@ namespace hw.Parser
 
             internal IParser<TSourcePart> Parser => ParserCache.Value;
             internal ISubParser<TSourcePart> SubParser => SubParserCache.Value;
+
+            string PrettyDumpPair(Type key, object value)
+                => key.PrettyName() + "=" + ("\n" + PrettyDumpValue(value)).Indent();
+
+            static string PrettyDumpValue(object value)
+            {
+                return Tracer.Dump(value);
+            }
 
             ISubParser<TSourcePart> CreateSubParser() => new SubParser<TSourcePart>(Parser, Converter);
 
@@ -77,8 +93,7 @@ namespace hw.Parser
             {
                 Components.Add(typeof(T), value);
 
-                var component = value as IComponent;
-                if(component != null)
+                if(value is IComponent component)
                     component.Current = parent;
             }
         }
@@ -99,16 +114,16 @@ namespace hw.Parser
                 Tag = tag;
             }
 
-            public PrioTable PrioTable { set { Parent.Define(value, tokenFactory: null, converter: null, tag: Tag); } }
+            public PrioTable PrioTable { set => Parent.Define(value, null, null, Tag); }
 
             public ITokenFactory<TSourcePart> TokenFactory
             {
-                set { Parent.Define(prioTable: null, tokenFactory: value, converter: null, tag: Tag); }
+                set => Parent.Define(null, value, null, Tag);
             }
 
             public Func<TSourcePart, IParserTokenType<TSourcePart>> BoxFunction
             {
-                set { Parent.Define(prioTable: null, tokenFactory: null, converter: value, tag: Tag); }
+                set => Parent.Define(null, null, value, Tag);
             }
 
             public IParser<TSourcePart> Parser => Parent.Dictionary[Tag].Parser;
@@ -120,18 +135,12 @@ namespace hw.Parser
         readonly IDictionary<object, ComponentData> Dictionary =
             new Dictionary<object, ComponentData>();
 
-        readonly object EmptyTag = new object();
-
         public Component this[object tag] => new Component(this, tag);
 
-        public PrioTable PrioTable { set { Define(value, tokenFactory: null, converter: null, tag: EmptyTag); } }
-
-        public IParser<TSourcePart> Parser => Dictionary[EmptyTag].Parser;
-
-        public ITokenFactory<TSourcePart> TokenFactory
-        {
-            set { Define(prioTable: null, tokenFactory: value, converter: null, tag: EmptyTag); }
-        }
+        public string PrettyDump
+            => Dictionary
+                .Select(p => PrettyDumpPair(p.Key, p.Value))
+                .Stringify(separator: "\n");
 
         void Define
         (
@@ -140,15 +149,11 @@ namespace hw.Parser
             Func<TSourcePart, IParserTokenType<TSourcePart>> converter,
             object tag
         )
-        {
-            ComponentData componentData;
-            Dictionary[tag] =
-                Dictionary.TryGetValue(tag, out componentData)
-                    ? componentData.ReCreate(prioTable, tokenFactory, converter, this[EmptyTag])
-                    : new ComponentData(prioTable, tokenFactory, converter, this[EmptyTag]);
-        }
+            => Dictionary[tag] =
+                Dictionary.TryGetValue(tag, out var componentData)
+                    ? componentData.ReCreate(prioTable, tokenFactory, converter, this[tag])
+                    : new ComponentData(prioTable, tokenFactory, converter, this[tag]);
 
-        public T Get<T>() => Dictionary[EmptyTag].Get<T>();
-        public void Add<T>(T value) => Dictionary[EmptyTag].Add(value, this[EmptyTag]);
+        string PrettyDumpPair(object key, ComponentData value) => key + "=" + ("\n" + value.PrettyDump).Indent();
     }
 }

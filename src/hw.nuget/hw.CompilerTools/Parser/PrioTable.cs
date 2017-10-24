@@ -158,6 +158,7 @@ namespace hw.Parser
         public static bool operator ==(PrioTable x, PrioTable y)
             => ReferenceEquals(x, null) ? ReferenceEquals(y, null) : x.Equals(y);
 
+        [DisableDump]
         internal BracketContext BracketContext
             => BracketContextValue
                 ?? (BracketContextValue = BracketContext.Instance(Brackets));

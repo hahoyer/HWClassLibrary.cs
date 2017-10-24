@@ -230,6 +230,16 @@ namespace hw.DebugFormatter
         }
 
         /// <summary>
+        ///     Generic dump function by use of reflection. 
+        /// </summary>
+        /// <param name="name">Identifies the the value in result. Recomended use is nameof($value$), but any string is possible.</param>
+        /// <param name="value">The object, that will be dumped, by use of <see cref="DumpData(object)"/>.</param>
+        /// <returns>A string according to pattern $name$ = $value$</returns>
+        [DebuggerHidden]
+        public static string DumpValue(this string name, object value) 
+            => DumpData("", new[] { name, value }, 1);
+
+        /// <summary>
         ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
         /// </summary>
         /// <param name="parameter"> parameter objects list for the frame </param>
