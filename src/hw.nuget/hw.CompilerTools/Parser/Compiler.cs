@@ -48,7 +48,7 @@ namespace hw.Parser
             internal IParser<TSourcePart> Parser => ParserCache.Value;
             internal ISubParser<TSourcePart> SubParser => SubParserCache.Value;
 
-            string PrettyDumpPair(Type key, object value)
+            static string PrettyDumpPair(Type key, object value)
                 => key.PrettyName() + "=" + ("\n" + PrettyDumpValue(value)).Indent();
 
             static string PrettyDumpValue(object value)
@@ -154,6 +154,6 @@ namespace hw.Parser
                     ? componentData.ReCreate(prioTable, tokenFactory, converter, this[tag])
                     : new ComponentData(prioTable, tokenFactory, converter, this[tag]);
 
-        string PrettyDumpPair(object key, ComponentData value) => key + "=" + ("\n" + value.PrettyDump).Indent();
+        static string PrettyDumpPair(object key, ComponentData value) => key + "=" + ("\n" + value.PrettyDump).Indent();
     }
 }

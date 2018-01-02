@@ -212,6 +212,7 @@
     <None Include="hw.ReplaceVariables.nuspec">
     </None>
     <None Include="hw.CompilerTools.nuspec">
+      <SubType>Designer</SubType>
     </None>
     <None Include="hw.Helper.Core.nuspec">
     </None>

@@ -37,6 +37,9 @@ namespace hw.Scanner
 
                 IScannerTokenType IItem.ScannerTokenType => Type;
                 SourcePart IItem.SourcePart => SourcePart;
+
+                protected override string GetNodeDump() {return base.GetNodeDump()+"("+Type.Id+")";}
+
             }
 
             readonly TwoLayerScanner Parent;

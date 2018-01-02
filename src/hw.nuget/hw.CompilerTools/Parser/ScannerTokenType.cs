@@ -1,17 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
+using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
 {
     public abstract class ScannerTokenType : DumpableObject, IScannerTokenType, IParserTokenFactory
     {
-        public IParserTokenFactory ParserTokenFactory => this;
-
         IParserTokenType<TSourcePart> IParserTokenFactory.GetTokenType<TSourcePart>(string id)
             => GetParserTokenType<TSourcePart>(id);
+
+        public IParserTokenFactory ParserTokenFactory => this;
+        string IScannerTokenType.Id => GetType().PrettyName();
 
         protected abstract IParserTokenType<TSourcePart> GetParserTokenType<TSourcePart>(string id)
             where TSourcePart : class, ISourcePartProxy;

@@ -27,6 +27,7 @@ namespace hw.Scanner
     public interface IScannerTokenType
     {
         IParserTokenFactory ParserTokenFactory { get; }
+        string Id {get;}
     }
 
     public interface IParserTokenFactory
