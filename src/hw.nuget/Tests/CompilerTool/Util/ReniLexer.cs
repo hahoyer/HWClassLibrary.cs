@@ -49,7 +49,7 @@ namespace hw.Tests.CompilerTool.Util
                 });
         }
 
-        internal int? WhiteSpace(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _whiteSpaces);
+        internal int? Space(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _whiteSpaces);
         internal int? Comment(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _comment);
         internal int? Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
         internal int? Any(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _any);

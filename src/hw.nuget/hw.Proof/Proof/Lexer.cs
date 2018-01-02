@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 using hw.Scanner;
 
@@ -8,9 +5,9 @@ namespace hw.Proof
 {
     sealed class Lexer : DumpableObject
     {
-        readonly Match _whiteSpaces;
         readonly Match _any;
         readonly IMatch _number;
+        readonly Match _whiteSpaces;
 
         public Lexer()
         {
@@ -23,7 +20,7 @@ namespace hw.Proof
             _number = Match.Digit.Repeat(1);
         }
 
-        internal int? WhiteSpace(SourcePosn sourcePosn) => sourcePosn.Match(_whiteSpaces);
+        internal int? Space(SourcePosn sourcePosn) => sourcePosn.Match(_whiteSpaces);
         internal int? Number(SourcePosn sourcePosn) => sourcePosn.Match(_number);
         internal int? Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
     }

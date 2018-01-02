@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using hw.DebugFormatter;
 using hw.Parser;
 using hw.Scanner;
@@ -24,13 +22,12 @@ namespace hw.Tests.CompilerTool.Util
 
         protected LexerItem[] Classes => new[]
         {
-            new LexerItem(new WhiteSpaceTokenType(), Lexer.WhiteSpace),
-            new LexerItem(new WhiteSpaceTokenType(), Lexer.Comment),
+            new LexerItem(new WhiteSpaceTokenType("Space"), Lexer.Space),
+            new LexerItem(new WhiteSpaceTokenType("Comment"), Lexer.Comment),
             new LexerItem(new Any(this), Lexer.Any)
         };
 
-        internal abstract ParserTokenType<Syntax> GetTokenClass(string name);
-        internal abstract IEnumerable<IParserTokenType<Syntax>> PredefinedTokenClasses { get; }
+        internal abstract IEnumerable<IParserTokenType<Syntax>> PredefinedTokenClasses {get;}
 
         internal PrioParser<Syntax> ParserInstance
             => new PrioParser<Syntax>
@@ -40,13 +37,15 @@ namespace hw.Tests.CompilerTool.Util
                 StartParserType
             );
 
-        protected abstract PrioTable PrioTable { get; }
+        protected abstract PrioTable PrioTable {get;}
+
+        internal abstract ParserTokenType<Syntax> GetTokenClass(string name);
     }
 
     sealed class Any : PredefinedTokenFactory<Syntax>
     {
         readonly TokenFactory Parent;
-        public Any(TokenFactory parent) { Parent = parent; }
+        public Any(TokenFactory parent) => Parent = parent;
 
         protected override IParserTokenType<Syntax> GetTokenClass(string name)
             => Parent.GetTokenClass(name);

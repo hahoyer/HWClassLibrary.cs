@@ -78,7 +78,7 @@ namespace hw.Proof
             LexerItem[] ITokenFactory.Classes
                 => new[]
                 {
-                    new LexerItem(new WhiteSpaceTokenType(), Lexer.WhiteSpace),
+                    new LexerItem(new WhiteSpaceTokenType("Space"), Lexer.Space),
                     new LexerItem(new Number(), Lexer.Number),
                     new LexerItem(new Any(), Lexer.Any)
                 };
