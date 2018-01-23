@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.Helper;
+﻿using hw.Helper;
 
 namespace hw.Scanner
 {
-    public sealed class SmbFileSourceProvider : ISourceProvider
+    public sealed class FileSourceProvider : ISourceProvider
     {
         readonly ValueCache<string> DataCache;
         readonly SmbFile File;
 
-        public SmbFileSourceProvider(SmbFile file, bool useCache = true)
+        public FileSourceProvider(SmbFile file, bool useCache = true)
         {
             File = file;
             if(useCache)

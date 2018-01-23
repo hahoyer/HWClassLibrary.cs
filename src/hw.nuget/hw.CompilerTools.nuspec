@@ -17,8 +17,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>17.2.1</version>
-    <releaseNotes> 
+    <version>18.0</version>
+    <releaseNotes>
+      Change: SmbFileSourceProvider remaned to FileSourceProvider 
+      17.2.1 
       Change: Debugability improved
       17.2.1-alpha
       Bugfix: Compiler uses wrong tokenclassfactory

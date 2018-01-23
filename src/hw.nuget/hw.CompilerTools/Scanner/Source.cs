@@ -20,7 +20,7 @@ namespace hw.Scanner
         }
 
         public Source(SmbFile file, string identifier = null)
-            : this(new SmbFileSourceProvider(file), identifier ?? file.FullName) { }
+            : this(new FileSourceProvider(file), identifier ?? file.FullName) { }
 
         public Source(string data, string identifier = null)
             : this(new StringSourceProvider(data), identifier ?? "????") { }
