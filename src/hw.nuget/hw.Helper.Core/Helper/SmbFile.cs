@@ -291,7 +291,7 @@ namespace hw.Helper
         {
             if(IsDirectory)
             {
-                destinationPath.FileHandle().EnsureIsExistentDirectory();
+                destinationPath.ToSmbFile().EnsureIsExistentDirectory();
                 foreach(var sourceSubFile in Items)
                 {
                     var destinationSubPath = destinationPath.PathCombine(sourceSubFile.Name);

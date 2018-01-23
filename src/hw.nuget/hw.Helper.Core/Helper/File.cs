@@ -12,6 +12,7 @@ namespace hw.Helper
     ///     Summary description for File.
     /// </summary>
     [Serializable]
+    [Obsolete("Use SmbFile instead")]
     public sealed class File
     {
         readonly string _name;
