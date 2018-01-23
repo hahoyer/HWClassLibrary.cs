@@ -56,8 +56,9 @@
         <!-- Commands -->
         <RestoreCommand>$(NuGetCommand) install "$(PackagesConfig)" -source "$(PackageSources)"  $(NonInteractiveSwitch) $(RequireConsentSwitch) -solutionDir $(PaddedSolutionDir)</RestoreCommand>
         <BuildCommand>$(NuGetCommand) pack "$(ProjectPath)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" $(NonInteractiveSwitch) -OutputDirectory "$(PackageOutputDir)" -symbols</BuildCommand>
-
-        <!-- We need to ensure packages are restored prior to assembly resolve -->
+      <UpdateCommand>$(NuGetCommand) update -self </UpdateCommand>
+                                                                                          
+      <!-- We need to ensure packages are restored prior to assembly resolve -->
         <BuildDependsOn Condition="$(RestorePackages) == 'true'">
             RestorePackages;
             $(BuildDependsOn);
@@ -79,6 +80,9 @@
         parallel builds will have to wait for it to complete.
         -->
         <MsBuild Targets="_DownloadNuGet" Projects="$(MSBuildThisFileFullPath)" Properties="Configuration=NOT_IMPORTANT;DownloadNuGetExe=$(DownloadNuGetExe)" />
+
+      <Exec Command="$(UpdateCommand)" />
+
     </Target>
 
     <Target Name="_DownloadNuGet">

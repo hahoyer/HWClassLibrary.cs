@@ -83,7 +83,7 @@
         
         <Exec  
             Condition="'$(Configuration)' == 'Release'"
-            Command="$(NuGetCommand) push &quot;%(PackageFiles.Identity)&quot;"
+            Command="$(NuGetCommand) push &quot;%(PackageFiles.Identity)&quot; -Source &quot;https://nuget.org&quot;"
             IgnoreExitCode="true"
             ConsoleToMSBuild="true"
             >
