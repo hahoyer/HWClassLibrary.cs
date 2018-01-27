@@ -16,8 +16,10 @@
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald H. Hoyer 2017</copyright>
-    <version>18.1</version>
+    <version>18.1.1</version>
     <releaseNotes>
+      Refactor: remove old olsolete things
+      18.1
       Change: hw.Helper.File is obsolete now
       18.0
       Change: New trace function 

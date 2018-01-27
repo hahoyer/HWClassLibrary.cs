@@ -17,8 +17,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>18.1</version>
+    <version>18.1.1</version>
     <releaseNotes>
+      Admin: Requires hw.Core 18.1.1
+      18.1
       Change: Case insensitive checks
       Change: Providing a way to define tokenfactories, that do not requrie exact sting match. For instance when tokens are not case sensitive
       Refactor: remove old olsolete things
@@ -136,7 +138,7 @@
       Change: Introducing white space fine structure
     </releaseNotes>
     <dependencies>
-      <dependency id="hw.Helper.Core" version="17.0" />
+      <dependency id="hw.Helper.Core" version="18.1.1" />
     </dependencies>
 
   </metadata>
