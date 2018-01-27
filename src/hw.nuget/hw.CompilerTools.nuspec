@@ -17,8 +17,13 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016</copyright>
 
-    <version>18.0</version>
+    <version>18.1</version>
     <releaseNotes>
+      Change: Case insensitive checks
+      Change: Providing a way to define tokenfactories, that do not requrie exact sting match. For instance when tokens are not case sensitive
+      Refactor: remove old olsolete things
+      Change: Make CommonTokenType obsolete
+      18.0
       Change: SmbFileSourceProvider remaned to FileSourceProvider 
       17.2.1 
       Change: Debugability improved
