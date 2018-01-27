@@ -112,8 +112,6 @@ namespace hw.Helper
 
         }
 
-        [Obsolete("Use ToSmbFile instead.")]
-        public static hw.Helper.File FileHandle(this string name) => hw.Helper.File.Create(name);
         public static SmbFile ToSmbFile(this string name, bool autoCreateDirectories = true) => SmbFile.Create(name, autoCreateDirectories);
         public static string PathCombine(this string head, params string[] tail) => Path.Combine(head, Path.Combine(tail));
 

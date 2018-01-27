@@ -86,13 +86,6 @@ namespace hw.Debug
             return result;
         }
 
-        [Obsolete]
-        public static string MethodHeader(int oldStackFrameDepth, FilePositionTag tag = FilePositionTag.Debug, bool showParam = false)
-        {
-            var sf = new StackTrace(true).GetFrame(oldStackFrameDepth + 1);
-            return FilePosn(sf, tag) + DumpMethod(sf.GetMethod(), showParam);
-        }
-
         /// <summary>
         ///     creates a string to inspect the method call contained in current call stack
         /// </summary>

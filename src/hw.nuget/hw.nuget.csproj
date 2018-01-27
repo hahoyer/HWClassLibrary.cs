@@ -179,7 +179,6 @@
     <Compile Include="hw.Helper.Core\Helper\ValueCache.cs" />
     <Compile Include="hw.Helper.Core\Helper\StringAligner.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeNameExtender.cs" />
-    <Compile Include="hw.Helper.Core\Helper\File.cs" />
     <Compile Include="hw.CompilerTools\Parser\PrioTable.cs" />
     <Compile Include="hw.CompilerTools\Parser\PrioParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\IOperator.cs" />
