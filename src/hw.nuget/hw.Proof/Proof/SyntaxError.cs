@@ -6,7 +6,7 @@ using hw.Parser;
 
 namespace hw.Proof
 {
-    sealed class SyntaxError : CommonTokenType<ParsedSyntax>
+    sealed class SyntaxError : ParserTokenType<ParsedSyntax>
     {
         [EnableDump]
         readonly IssueId _issueId;

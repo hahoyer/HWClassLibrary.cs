@@ -5,7 +5,7 @@ using hw.Parser;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class Number : CommonTokenType<ParsedSyntax>
+    sealed class Number : ParserTokenType<ParsedSyntax>
     {
         protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {

@@ -6,7 +6,7 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class SyntaxError : CommonTokenType<Syntax>
+    sealed class SyntaxError : ParserTokenType<Syntax>
     {
         [EnableDump]
         readonly IssueId IssueId;

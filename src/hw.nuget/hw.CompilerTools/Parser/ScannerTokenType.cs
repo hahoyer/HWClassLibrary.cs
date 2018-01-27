@@ -19,11 +19,11 @@ namespace hw.Parser
     public abstract class ScannerTokenType<TSourcePart> : ScannerTokenType
         where TSourcePart : class, ISourcePartProxy
     {
-        protected sealed override IParserTokenType<TSourcePart1> GetParserTokenType<TSourcePart1>
+        protected sealed override IParserTokenType<TSourcePartTarget> GetParserTokenType<TSourcePartTarget>
             (string id)
         {
-            Tracer.Assert(typeof(TSourcePart) == typeof(TSourcePart1));
-            return (IParserTokenType<TSourcePart1>) GetParserTokenType(id);
+            Tracer.Assert(typeof(TSourcePart) == typeof(TSourcePartTarget));
+            return (IParserTokenType<TSourcePartTarget>) GetParserTokenType(id);
         }
 
         protected abstract IParserTokenType<TSourcePart> GetParserTokenType(string id);

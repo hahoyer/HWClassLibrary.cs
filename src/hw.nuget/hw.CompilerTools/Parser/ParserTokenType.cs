@@ -1,33 +1,25 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.DebugFormatter;
 using hw.Helper;
 using hw.Scanner;
 
 namespace hw.Parser
 {
     public abstract class ParserTokenType<TTreeItem>
-        : DumpableObject,
-            IParserTokenType<TTreeItem>,
-            IUniqueIdProvider
+        : ScannerTokenType<TTreeItem>,
+            IUniqueIdProvider,
+            IParserTokenType<TTreeItem>
         where TTreeItem : class, ISourcePartProxy
     {
-        static int _nextObjectId;
-
-        protected ParserTokenType()
-            : base(_nextObjectId++) { StopByObjectIds(-31); }
+        TTreeItem IParserTokenType<TTreeItem>.Create
+            (TTreeItem left, IToken token, TTreeItem right) => Create(left, token, right);
 
         string IParserTokenType<TTreeItem>.PrioTableId => Id;
 
-        TTreeItem IParserTokenType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right)
-            => Create(left, token, right);
+        string IUniqueIdProvider.Value => Id;
 
+        public abstract string Id {get;}
         protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
 
-        protected override string GetNodeDump() => base.GetNodeDump() + "(" + Id.Quote() + ")";
-        public override string ToString() => base.ToString() + " Id=" + Id.Quote();
-        string IUniqueIdProvider.Value => Id;
-        public abstract string Id { get; }
+        protected override IParserTokenType<TTreeItem> GetParserTokenType(string id) => this;
     }
 }

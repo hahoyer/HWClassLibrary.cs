@@ -5,7 +5,7 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    sealed class EndOfText : CommonTokenType<Syntax>, IBracketMatch<Syntax>
+    sealed class EndOfText : ParserTokenType<Syntax>, IBracketMatch<Syntax>
     {
         public override string Id => PrioTable.EndOfText;
 

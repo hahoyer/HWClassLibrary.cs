@@ -6,7 +6,7 @@ using hw.Parser;
 
 namespace hw.Proof.TokenClasses
 {
-    sealed class RightParenthesis : CommonTokenType<ParsedSyntax>, IBracketMatch<ParsedSyntax>
+    sealed class RightParenthesis : ParserTokenType<ParsedSyntax>, IBracketMatch<ParsedSyntax>
     {
         readonly int _level;
         public RightParenthesis(int level) { _level = level; }
