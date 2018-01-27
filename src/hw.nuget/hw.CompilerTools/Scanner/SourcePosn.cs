@@ -19,11 +19,10 @@ namespace hw.Scanner
             return x.Position - y.Position;
         }
 
-        public static bool operator<(SourcePosn left, SourcePosn right)
-            => left != null &&
-               right != null &&
-               left.Source == right.Source &&
-               left.Position < right.Position;
+        public static bool operator<(SourcePosn left, SourcePosn right) => left != null &&
+                                                                           right != null &&
+                                                                           left.Source == right.Source &&
+                                                                           left.Position < right.Position;
 
         public static bool operator<=(SourcePosn left, SourcePosn right) => left < right || left == right;
 
@@ -150,10 +149,10 @@ namespace hw.Scanner
 
         public int? Match(IMatch automaton) => automaton.Match(this);
 
-        public bool StartsWith(string data)
+        public bool StartsWith(string data, StringComparison type = StringComparison.InvariantCulture)
         {
             var length = data.Length;
-            return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length) == data;
+            return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length).Equals(data, type);
         }
 
         public SourcePart Span(SourcePosn other) => SourcePart.Span(this, other);

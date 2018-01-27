@@ -153,6 +153,7 @@ namespace hw.Scanner
         public static Match End => new Match(new EndMatch());
         public static Match Digit => Box(char.IsDigit);
         public static Match Letter => Box(char.IsLetter);
+        public static Match Any => Box(c => true);
 
         public static Match Box(Func<char, bool> func) => new Match(new FunctionalMatch(func, true));
 
@@ -164,6 +165,9 @@ namespace hw.Scanner
 
         public static Match operator+(Match x, Match y)
             => new Match(new Sequence(x.UnBox(), y.UnBox()));
+
+        public static Match operator|(Match x, Match y) => x.Else(y);
+
 
         readonly IMatch _data;
 
@@ -186,6 +190,8 @@ namespace hw.Scanner
 
         public Match Repeat(int minCount = 0, int? maxCount = null)
             => _data.Repeat(minCount, maxCount);
+
+        public Match Option() => _data.Repeat(maxCount: 1);
 
         public Match Else(IMatch other) => _data.Else(other);
         public Match Value(Func<string, IMatch> func) => new Match(new ValueMatch(_data, func));
