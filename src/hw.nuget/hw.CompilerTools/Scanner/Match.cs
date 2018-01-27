@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 
 namespace hw.Scanner
@@ -12,51 +10,10 @@ namespace hw.Scanner
 
     public sealed class Match : Dumpable, IMatch
     {
-        readonly IMatch _data;
-
-        internal Match(IMatch data)
-        {
-            Tracer.Assert(!(data is Match));
-            _data = data;
-        }
-
-        int? IMatch.Match(SourcePosn sourcePosn) => _data.Match(sourcePosn);
-
-        [DisableDump]
-        public IMatch UnBox => _data.UnBox();
-        public static Match Break => new Match(new BreakMatch());
-
-        public Match Repeat(int minCount = 0, int? maxCount = null)
-            => _data.Repeat(minCount, maxCount);
-
-        public Match Else(IMatch other) => _data.Else(other);
-        public Match Value(Func<string, IMatch> func) => new Match(new ValueMatch(_data, func));
-        [DisableDump]
-        public Match Find => new Match(new FindMatch(_data));
-
-        public static Match WhiteSpace => Box(char.IsWhiteSpace);
-        public static Match LineEnd => "\n".Box().Else("\r\n").Else(End);
-        public static Match End => new Match(new EndMatch());
-        public static Match Digit => Box(char.IsDigit);
-        public static Match Letter => Box(char.IsLetter);
-        [DisableDump]
-        public Match Not => new Match(new NotMatch(this));
-
-        public static Match Box(Func<char, bool> func) => new Match(new FunctionalMatch(func, true));
-
-        public static Match operator +(string x, Match y) => x.Box() + y;
-        public static Match operator +(Match x, string y) => x + y.Box();
-
-        public static Match operator +(IError x, Match y) => x.Box() + y;
-        public static Match operator +(Match x, IError y) => x + y.Box();
-
-        public static Match operator +(Match x, Match y)
-            => new Match(new Sequence(x.UnBox(), y.UnBox()));
-
         sealed class NotMatch : Dumpable, IMatch
         {
             readonly IMatch _data;
-            public NotMatch(IMatch data) { _data = data; }
+            public NotMatch(IMatch data) => _data = data;
 
             int? IMatch.Match(SourcePosn sourcePosn)
             {
@@ -69,6 +26,7 @@ namespace hw.Scanner
         {
             [EnableDump]
             readonly IMatch _data;
+
             [EnableDump]
             readonly IMatch _other;
 
@@ -96,6 +54,7 @@ namespace hw.Scanner
         {
             [EnableDump]
             readonly Func<char, bool> _func;
+
             [EnableDump]
             readonly bool _isTrue;
 
@@ -113,7 +72,8 @@ namespace hw.Scanner
         {
             [EnableDump]
             readonly IMatch _data;
-            public FindMatch(IMatch data) { _data = data; }
+
+            public FindMatch(IMatch data) => _data = data;
 
             int? IMatch.Match(SourcePosn sourcePosn)
             {
@@ -136,6 +96,7 @@ namespace hw.Scanner
         {
             [EnableDump]
             readonly IMatch _data;
+
             [EnableDump]
             readonly Func<string, IMatch> _func;
 
@@ -175,8 +136,8 @@ namespace hw.Scanner
 
         public sealed class Exception : System.Exception
         {
-            public readonly SourcePosn SourcePosn;
             public readonly IError Error;
+            public readonly SourcePosn SourcePosn;
 
             public Exception(SourcePosn sourcePosn, IError error)
             {
@@ -184,5 +145,49 @@ namespace hw.Scanner
                 Error = error;
             }
         }
+
+        public static Match Break => new Match(new BreakMatch());
+
+        public static Match WhiteSpace => Box(char.IsWhiteSpace);
+        public static Match LineEnd => "\n".Box().Else("\r\n").Else(End);
+        public static Match End => new Match(new EndMatch());
+        public static Match Digit => Box(char.IsDigit);
+        public static Match Letter => Box(char.IsLetter);
+
+        public static Match Box(Func<char, bool> func) => new Match(new FunctionalMatch(func, true));
+
+        public static Match operator+(string x, Match y) => x.Box() + y;
+        public static Match operator+(Match x, string y) => x + y.Box();
+
+        public static Match operator+(IError x, Match y) => x.Box() + y;
+        public static Match operator+(Match x, IError y) => x + y.Box();
+
+        public static Match operator+(Match x, Match y)
+            => new Match(new Sequence(x.UnBox(), y.UnBox()));
+
+        readonly IMatch _data;
+
+        internal Match(IMatch data)
+        {
+            Tracer.Assert(!(data is Match));
+            _data = data;
+        }
+
+        int? IMatch.Match(SourcePosn sourcePosn) => _data.Match(sourcePosn);
+
+        [DisableDump]
+        public IMatch UnBox => _data.UnBox();
+
+        [DisableDump]
+        public Match Find => new Match(new FindMatch(_data));
+
+        [DisableDump]
+        public Match Not => new Match(new NotMatch(this));
+
+        public Match Repeat(int minCount = 0, int? maxCount = null)
+            => _data.Repeat(minCount, maxCount);
+
+        public Match Else(IMatch other) => _data.Else(other);
+        public Match Value(Func<string, IMatch> func) => new Match(new ValueMatch(_data, func));
     }
 }

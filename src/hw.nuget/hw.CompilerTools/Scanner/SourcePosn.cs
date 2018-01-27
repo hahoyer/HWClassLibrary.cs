@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
 
@@ -10,23 +8,38 @@ namespace hw.Scanner
     /// <summary>
     ///     Source and position for compilation process
     /// </summary>
-    [DebuggerDisplay("{NodeDump}")]
+    [DebuggerDisplay("{" + nameof(NodeDump) + "}")]
     public sealed class SourcePosn : Dumpable, IEquatable<SourcePosn>
     {
-        public bool Equals(SourcePosn x, SourcePosn y) => x.Equals(y);
+        public static SourcePosn operator+(SourcePosn x, int y) => x.Source + (x.Position + y);
 
-        public bool Equals(SourcePosn other) => Equals(Source, other.Source) && Position == other.Position;
-
-        public override bool Equals(object obj)
+        public static int operator-(SourcePosn x, SourcePosn y)
         {
-            if(ReferenceEquals(null, obj))
-                return false;
-            if(ReferenceEquals(this, obj))
-                return true;
-            return obj is SourcePosn && Equals((SourcePosn) obj);
+            Tracer.Assert(x.Source == y.Source);
+            return x.Position - y.Position;
         }
 
-        public override int GetHashCode() => 0;
+        public static bool operator<(SourcePosn left, SourcePosn right)
+            => left != null &&
+               right != null &&
+               left.Source == right.Source &&
+               left.Position < right.Position;
+
+        public static bool operator<=(SourcePosn left, SourcePosn right) => left < right || left == right;
+
+        public static bool operator>(SourcePosn left, SourcePosn right) => right < left;
+        public static bool operator>=(SourcePosn left, SourcePosn right) => right <= left;
+        public static bool operator!=(SourcePosn left, SourcePosn right) => !(left == right);
+
+        public static bool operator==(SourcePosn left, SourcePosn right)
+        {
+            if((object) left == null)
+                return (object) right == null;
+            if((object) right == null)
+                return false;
+            return left.Source == right.Source &&
+                   left.Position == right.Position;
+        }
 
         public readonly Source Source;
         public int Position;
@@ -42,11 +55,9 @@ namespace hw.Scanner
             Source = source;
         }
 
-        public bool IsValid
-        {
-            get { return 0 <= Position && Position <= Source.Length; }
-            set { Position = (value ? 0 : -1); }
-        }
+        public bool Equals(SourcePosn other) => Equals(Source, other.Source) && Position == other.Position;
+
+        public bool IsValid {get => 0 <= Position && Position <= Source.Length; set => Position = value ? 0 : -1;}
 
         /// <summary>
         ///     The current character
@@ -64,6 +75,26 @@ namespace hw.Scanner
         /// <value> </value>
         public bool IsEnd => Source.IsEnd(Position);
 
+        [UsedImplicitly]
+        string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
+
+        public SourcePosn Clone => new SourcePosn(Source, Position);
+
+        public int LineIndex => Source.LineIndex(Position);
+        public int ColumnIndex => Source.ColumnIndex(Position);
+        public bool Equals(SourcePosn x, SourcePosn y) => x.Equals(y);
+
+        public override bool Equals(object obj)
+        {
+            if(ReferenceEquals(null, obj))
+                return false;
+            if(ReferenceEquals(this, obj))
+                return true;
+            return obj is SourcePosn posn && Equals(posn);
+        }
+
+        public override int GetHashCode() => 0;
+
         /// <summary>
         ///     Obtains a piece
         /// </summary>
@@ -77,7 +108,7 @@ namespace hw.Scanner
         /// </summary>
         /// <param name="flagText">the flag text</param>
         /// <returns>the "FileName(LineNr,ColNr): tag: " string</returns>
-        public string FilePosn(string flagText) => Source.FilePosn(Position, Position,flagText);
+        public string FilePosn(string flagText) => Source.FilePosn(Position, Position, flagText);
 
         /// <summary>
         ///     Default dump behaviour
@@ -110,29 +141,11 @@ namespace hw.Scanner
             return result;
         }
 
-        [UsedImplicitly]
-        string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
-
         public string GetDumpAroundCurrent(int dumpWidth)
         {
             if(IsValid)
-                return GetDumpBeforeCurrent(dumpWidth)
-                    + "[]"
-                    + GetDumpAfterCurrent(dumpWidth);
+                return GetDumpBeforeCurrent(dumpWidth) + "[]" + GetDumpAfterCurrent(dumpWidth);
             return "<invalid>";
-        }
-
-        public SourcePosn Clone => new SourcePosn(Source, Position);
-
-        public int LineIndex => Source.LineIndex(Position);
-        public int ColumnIndex => Source.ColumnIndex(Position);
-
-        public static SourcePosn operator +(SourcePosn x, int y) => x.Source + (x.Position + y);
-
-        public static int operator -(SourcePosn x, SourcePosn y)
-        {
-            Tracer.Assert(x.Source == y.Source);
-            return x.Position - y.Position;
         }
 
         public int? Match(IMatch automaton) => automaton.Match(this);
@@ -140,32 +153,10 @@ namespace hw.Scanner
         public bool StartsWith(string data)
         {
             var length = data.Length;
-            return !Source.IsEnd(Position + length - 1)
-                && Source.SubString(Position, length) == data;
+            return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length) == data;
         }
 
         public SourcePart Span(SourcePosn other) => SourcePart.Span(this, other);
         public SourcePart Span(int length) => SourcePart.Span(this, length);
-
-        public static bool operator <(SourcePosn left, SourcePosn right) => left != null &&
-            right != null &&
-            left.Source == right.Source &&
-            left.Position < right.Position;
-
-        public static bool operator <=(SourcePosn left, SourcePosn right) => left < right || left == right;
-
-        public static bool operator >(SourcePosn left, SourcePosn right) => right < left;
-        public static bool operator >=(SourcePosn left, SourcePosn right) => right <= left;
-        public static bool operator !=(SourcePosn left, SourcePosn right) => !(left == right);
-
-        public static bool operator ==(SourcePosn left, SourcePosn right)
-        {
-            if((object) left == null)
-                return ((object) right == null);
-            if((object) right == null)
-                return false;
-            return left.Source == right.Source &&
-                left.Position == right.Position;
-        }
     }
 }

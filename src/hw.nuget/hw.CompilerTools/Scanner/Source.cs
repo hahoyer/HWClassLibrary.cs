@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 
@@ -8,10 +6,12 @@ namespace hw.Scanner
 {
     public sealed class Source : Dumpable
     {
-        public readonly string Identifier;
-        readonly ISourceProvider SourceProvider;
         public const int NodeDumpWidth = 10;
         public const int DumpWidth = 20;
+
+        public static SourcePosn operator+(Source x, int y) => new SourcePosn(x, y);
+        public readonly string Identifier;
+        readonly ISourceProvider SourceProvider;
 
         public Source(ISourceProvider sourceProvider, string identifier = null)
         {
@@ -20,31 +20,32 @@ namespace hw.Scanner
         }
 
         public Source(SmbFile file, string identifier = null)
-            : this(new FileSourceProvider(file), identifier ?? file.FullName) { }
+            : this(new FileSourceProvider(file), identifier ?? file.FullName) {}
 
         public Source(string data, string identifier = null)
-            : this(new StringSourceProvider(data), identifier ?? "????") { }
+            : this(new StringSourceProvider(data), identifier ?? "????") {}
 
         public string Data => SourceProvider.Data;
 
         public char this[int index] => IsEnd(index) ? '\0' : Data[index];
-        public bool IsEnd(int posn) => Length <= posn;
         public int Length => Data.Length;
         public bool IsPersistent => SourceProvider.IsPersistent;
-        public string SubString(int start, int length) => Data.Substring(start, length);
         public SourcePart All => (this + 0).Span(Length);
+        public bool IsEnd(int posn) => Length <= posn;
+        public string SubString(int start, int length) => Data.Substring(start, length);
 
         public string FilePosn(int position, int positionEnd, string flagText, string tag = null)
             => Tracer.FilePosn
-            (
-                Identifier,
-                LineIndex(position),
-                ColumnIndex(position) + 1,
-                LineIndex(positionEnd),
-                ColumnIndex(positionEnd) + 1,
-                tag ?? FilePositionTag.Debug.ToString()) + flagText;
+               (
+                   Identifier,
+                   LineIndex(position),
+                   ColumnIndex(position) + 1,
+                   LineIndex(positionEnd),
+                   ColumnIndex(positionEnd) + 1,
+                   tag ?? FilePositionTag.Debug.ToString()) +
+               flagText;
 
-        public int LineIndex(int position) { return Data.Take(position).Count(c => c == '\n'); }
+        public int LineIndex(int position) {return Data.Take(position).Count(c => c == '\n');}
 
         public int ColumnIndex(int position)
             => Data
@@ -77,8 +78,6 @@ namespace hw.Scanner
         }
 
         protected override string Dump(bool isRecursion) => FilePosn(0, Length, "see there");
-
-        public static SourcePosn operator +(Source x, int y) => new SourcePosn(x, y);
 
         public int LineLength(int lineIndex)
             => FromLineAndColumn(lineIndex + 1, 0) - FromLineAndColumn(lineIndex, 0);
