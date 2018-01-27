@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
@@ -11,25 +10,16 @@ namespace hw.Parser
     /// </summary>
     public sealed class PrioTable : DumpableObject
     {
-        public string Title;
-        public const string Any = "(any)";
-        public const string EndOfText = "(eot)";
-        public const string BeginOfText = "(bot)";
-        public const string Error = "(err)";
-        public const string LeftBracket = "(left)";
-        public const string RightBracket = "(right)";
-        public const string Bracket = "(bracket)";
-
         public interface ITargetItem
         {
-            string Token { get; }
-            BracketContext LeftContext { get; }
+            string Token {get;}
+            BracketContext LeftContext {get;}
         }
 
         internal sealed class RelationDefinitionItem
         {
-            public readonly string[] Token;
             internal readonly bool IsRight;
+            public readonly string[] Token;
 
             public RelationDefinitionItem(bool isRight, string[] token)
             {
@@ -53,14 +43,10 @@ namespace hw.Parser
         internal sealed class Relation : EnumEx
         {
             public static readonly Relation Push = new Relation
-            {
-                IsPush = true
-            };
+                {IsPush = true};
 
             public static readonly Relation Pull = new Relation
-            {
-                IsPull = true
-            };
+                {IsPull = true};
 
             public static readonly Relation Match = new Relation
             {
@@ -75,11 +61,36 @@ namespace hw.Parser
                 IsBracket = true
             };
 
-            public bool IsPull;
-            public bool IsPush;
             public bool IsBracket;
             public bool IsMatch;
+
+            public bool IsPull;
+            public bool IsPush;
         }
+
+        enum FunctionType
+        {
+            Unkown,
+            Push,
+            Relation,
+            Pull,
+            Match
+        }
+
+        public const string Any = "(any)";
+        public const string EndOfText = "(eot)";
+        public const string BeginOfText = "(bot)";
+        public const string Error = "(err)";
+        public const string LeftBracket = "(left)";
+        public const string RightBracket = "(right)";
+        public const string Bracket = "(bracket)";
+
+        static readonly FunctionType[][] SameDepth =
+        {
+            new[] {FunctionType.Push, FunctionType.Push, FunctionType.Push},
+            new[] {FunctionType.Push, FunctionType.Relation, FunctionType.Relation},
+            new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Pull}
+        };
 
         /// <summary>
         ///     Define a prio table with tokens that have the same priority and are left associative
@@ -108,96 +119,13 @@ namespace hw.Parser
 
         public static PrioTable FromText(string text) => FromText(text.Split('\n', '\r'));
 
-        enum FunctionType
-        {
-            Unkown,
-            Push,
-            Relation,
-            Pull,
-            Match
-        }
+        public static PrioTable operator+(PrioTable x, PrioTable y) => new PrioTable(x, y);
 
-        static readonly FunctionType[][] SameDepth =
-        {
-            new[] {FunctionType.Push, FunctionType.Push, FunctionType.Push},
-            new[] {FunctionType.Push, FunctionType.Relation, FunctionType.Relation},
-            new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Pull}
-        };
-
-        readonly RelationDefinitionItem[] BaseRelation;
-        readonly BracketPairItem[] Brackets;
-        BracketContext BracketContextValue;
-
-        PrioTable()
-        {
-            BaseRelation = new RelationDefinitionItem[] {};
-            Brackets = new BracketPairItem[] {};
-        }
-
-        PrioTable(bool isRight, string[] token)
-            : this()
-        {
-            BaseRelation = new[] {new RelationDefinitionItem(isRight, token)};
-        }
-
-        PrioTable(PrioTable x, PrioTable y)
-            : this()
-        {
-            BaseRelation = x.BaseRelation.Concat(y.BaseRelation).ToArray();
-            Brackets = x.Brackets.Concat(y.Brackets).ToArray();
-        }
-
-        PrioTable(BracketPairItem bracketPairItem)
-            : this()
-        {
-            Brackets = new[] {bracketPairItem};
-        }
-
-        public static PrioTable operator +(PrioTable x, PrioTable y) => new PrioTable(x, y);
-
-        public static bool operator ==(PrioTable x, PrioTable y)
+        public static bool operator==(PrioTable x, PrioTable y)
             => ReferenceEquals(x, null) ? ReferenceEquals(y, null) : x.Equals(y);
 
-        [DisableDump]
-        internal BracketContext BracketContext
-            => BracketContextValue
-                ?? (BracketContextValue = BracketContext.Instance(Brackets));
-
-        internal Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
-        {
-            var delta = newItem.GetLeftDepth() - recentItem.GetRightDepth();
-
-            switch(delta)
-            {
-            case 0:
-                return GetRelationOnSameDepth
-                    (
-                        GetSubTypeIndex(newItem),
-                        GetSubTypeIndex(recentItem),
-                        newItem.Token,
-                        recentItem.Token);
-            case 1:
-                return Relation.Push;
-            default:
-                NotImplementedMethod(newItem, recentItem, nameof(delta), delta);
-                return null;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            var x = obj as PrioTable;
-            if(x == null)
-                return false;
-            return BaseRelation == x.BaseRelation && Brackets == x.Brackets;
-        }
-
-        public override int GetHashCode() => BaseRelation.GetHashCode() + Brackets.GetHashCode();
-
-        public static bool operator !=(PrioTable x, PrioTable y)
+        public static bool operator!=(PrioTable x, PrioTable y)
             => ReferenceEquals(x, null) ? !ReferenceEquals(y, null) : !x.Equals(y);
-
-        public override string ToString() => Title ?? Dump();
 
         static PrioTable FromText(string[] text)
             => FromText(text.Select(l => l.Split(' ', '\t')).ToArray());
@@ -211,28 +139,86 @@ namespace hw.Parser
                 var tokenCount = data.Length / 2;
                 switch(line[0].ToLowerInvariant())
                 {
-                case "left":
-                    result += Left(data);
-                    break;
-                case "right":
-                    result += Right(data);
-                    break;
-                case "parlevel":
-                    result += BracketParallels
+                    case "left":
+                        result += Left(data);
+                        break;
+                    case "right":
+                        result += Right(data);
+                        break;
+                    case "parlevel":
+                        result += BracketParallels
                         (
                             data.Take(tokenCount).ToArray(),
                             data.Skip(tokenCount).Take(tokenCount).ToArray());
-                    break;
-                case "":
-                    break;
-                default:
-                    throw new ArgumentException();
+                        break;
+                    case "": break;
+                    default: throw new ArgumentException();
                 }
             }
 
             result += BracketParallels(new[] {BeginOfText}, new[] {EndOfText});
             return result;
         }
+
+        readonly RelationDefinitionItem[] BaseRelation;
+        readonly BracketPairItem[] Brackets;
+        BracketContext BracketContextValue;
+        public string Title;
+
+        PrioTable()
+        {
+            BaseRelation = new RelationDefinitionItem[] {};
+            Brackets = new BracketPairItem[] {};
+        }
+
+        PrioTable(bool isRight, string[] token)
+            : this() => BaseRelation = new[] {new RelationDefinitionItem(isRight, token)};
+
+        PrioTable(PrioTable x, PrioTable y)
+            : this()
+        {
+            BaseRelation = x.BaseRelation.Concat(y.BaseRelation).ToArray();
+            Brackets = x.Brackets.Concat(y.Brackets).ToArray();
+        }
+
+        PrioTable(BracketPairItem bracketPairItem)
+            : this() => Brackets = new[] {bracketPairItem};
+
+        [DisableDump]
+        internal BracketContext BracketContext
+            => BracketContextValue ?? (BracketContextValue = BracketContext.Instance(Brackets));
+
+        internal Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
+        {
+            var delta = newItem.GetLeftDepth() - recentItem.GetRightDepth();
+
+            switch(delta)
+            {
+                case 0:
+                    return GetRelationOnSameDepth
+                    (
+                        GetSubTypeIndex(newItem),
+                        GetSubTypeIndex(recentItem),
+                        newItem.Token,
+                        recentItem.Token);
+                case 1: return Relation.Push;
+                default:
+                    NotImplementedMethod(newItem, recentItem, nameof(delta), delta);
+                    return null;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            var x = obj as PrioTable;
+            if(x == null)
+                return false;
+            return BaseRelation == x.BaseRelation && Brackets == x.Brackets;
+        }
+
+        public override int GetHashCode() => BaseRelation.GetHashCode() + Brackets.GetHashCode();
+
+        public override string ToString() => Title ?? Dump();
 
         int? BaseRelationIndex(string token) => BaseRelation.IndexWhere(item => item.Token.Contains(token));
 
@@ -259,18 +245,12 @@ namespace hw.Parser
         {
             switch(SameDepth[newIndex][otherIndex])
             {
-            case FunctionType.Unkown:
-                return NotImplemented(newToken, otherToken);
-            case FunctionType.Push:
-                return Relation.Push;
-            case FunctionType.Relation:
-                return GetRelation(newIndex, otherIndex, newToken, otherToken);
-            case FunctionType.Pull:
-                return Relation.Pull;
-            case FunctionType.Match:
-                return GetBracketMatch(newToken, otherToken);
-            default:
-                throw new ArgumentOutOfRangeException();
+                case FunctionType.Unkown: return NotImplemented(newToken, otherToken);
+                case FunctionType.Push: return Relation.Push;
+                case FunctionType.Relation: return GetRelation(newIndex, otherIndex, newToken, otherToken);
+                case FunctionType.Pull: return Relation.Pull;
+                case FunctionType.Match: return GetBracketMatch(newToken, otherToken);
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 

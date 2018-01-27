@@ -10,8 +10,8 @@ namespace hw.Parser
             IParserTokenType<TTreeItem>
         where TTreeItem : class, ISourcePartProxy
     {
-        TTreeItem IParserTokenType<TTreeItem>.Create
-            (TTreeItem left, IToken token, TTreeItem right) => Create(left, token, right);
+        TTreeItem IParserTokenType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right) 
+            => Create(left, token, right);
 
         string IParserTokenType<TTreeItem>.PrioTableId => Id;
 
@@ -21,5 +21,8 @@ namespace hw.Parser
         protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
 
         protected override IParserTokenType<TTreeItem> GetParserTokenType(string id) => this;
+
+        protected override string GetNodeDump() => base.GetNodeDump() + "(" + Id.Quote() + ")";
+        public override string ToString() => base.ToString() + " Id=" + Id.Quote();
     }
 }
