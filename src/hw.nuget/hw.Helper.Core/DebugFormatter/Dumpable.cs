@@ -25,7 +25,7 @@ namespace hw.DebugFormatter
             internal bool Trace {get;}
         }
 
-        static readonly Stack<MethodDumpTraceItem> _methodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
+        static readonly Stack<MethodDumpTraceItem> MethodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
         public static bool? IsMethodDumpTraceInhibited;
 
         /// <summary>
@@ -118,14 +118,14 @@ namespace hw.DebugFormatter
                 return;
 
             CheckDumpLevel(1);
-            _methodDumpTraceSwitches.Pop();
+            MethodDumpTraceSwitches.Pop();
         }
 
         static void CheckDumpLevel(int depth)
         {
             if(!Debugger.IsAttached)
                 return;
-            var top = _methodDumpTraceSwitches.Peek();
+            var top = MethodDumpTraceSwitches.Peek();
             if(top.Trace)
                 Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
         }
@@ -149,7 +149,7 @@ namespace hw.DebugFormatter
             if(!Debugger.IsAttached)
                 return;
             var frameCount = trace ? Tracer.CurrentFrameCount(depth + 1) : 0;
-            _methodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
+            MethodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
         }
 
         static bool IsMethodDumpTraceActive
@@ -161,7 +161,7 @@ namespace hw.DebugFormatter
                 if(!Debugger.IsAttached)
                     return false;
                 //CheckDumpLevel(2);
-                return _methodDumpTraceSwitches.Peek().Trace;
+                return MethodDumpTraceSwitches.Peek().Trace;
             }
         }
 

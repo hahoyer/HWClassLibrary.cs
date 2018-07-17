@@ -14,6 +14,7 @@ namespace hw.Helper
         {
             return InternalAddDistinct(a, b, isEqual);
         }
+
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine)
             where T : class
         {
@@ -48,7 +49,8 @@ namespace hw.Helper
             return true;
         }
 
-        static bool AddDistinct<T>(IList<T> a, T bi, Func<T, T, T> combine) where T : class
+        static bool AddDistinct<T>(IList<T> a, T bi, Func<T, T, T> combine)
+            where T : class
         {
             for(var i = 0; i < a.Count; i++)
             {
@@ -59,6 +61,7 @@ namespace hw.Helper
                     return false;
                 }
             }
+
             a.Add(bi);
             return true;
         }
@@ -76,6 +79,7 @@ namespace hw.Helper
                         yield return subResult.ToArray();
                         subResult = new List<T>();
                     }
+
                 subResult.Add(xx);
             }
 
@@ -84,7 +88,8 @@ namespace hw.Helper
         }
 
         [CanBeNull]
-        public static T Aggregate<T>(this IEnumerable<T> x, Func<T> getDefault = null) where T : class, IAggregateable<T>
+        public static T Aggregate<T>(this IEnumerable<T> x, Func<T> getDefault = null)
+            where T : class, IAggregateable<T>
         {
             var xx = x.ToArray();
             if(!xx.Any())
@@ -95,9 +100,10 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Dump<T>(this IEnumerable<T> x) { return Tracer.Dump(x); }
+        public static string Dump<T>(this IEnumerable<T> x) => Tracer.Dump(x);
 
-        public static string DumpLines<T>(this IEnumerable<T> x) where T : Dumpable
+        public static string DumpLines<T>(this IEnumerable<T> x)
+            where T : Dumpable
         {
             var i = 0;
             return x.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
@@ -119,6 +125,7 @@ namespace hw.Helper
                 result.Append(element);
                 i++;
             }
+
             return result.ToString();
         }
 
@@ -145,6 +152,7 @@ namespace hw.Helper
                     .Where(element => !listArray.Any(other => isInRelation(element.Item1, other)))
                     .Select(element => element.Item2);
         }
+
         /// <summary>
         ///     Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true
         ///     For example if relation is "element ;&less; other" will return the maximal element
@@ -165,6 +173,7 @@ namespace hw.Helper
         {
             return list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
         }
+
         public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list)
             where T : IComparable<T>
         {
@@ -201,18 +210,17 @@ namespace hw.Helper
 
         public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
             where T : class
-            where TResult : class
-        {
-            return target == default(T) ? default(TResult) : function(target);
-        }
+            where TResult : class => target == default(T) ? default(TResult) : function(target);
 
-        public static TResult AssertValue<TResult>(this TResult? target) where TResult : struct
+        public static TResult AssertValue<TResult>(this TResult? target)
+            where TResult : struct
         {
             Tracer.Assert(target != null);
             return target.Value;
         }
 
-        public static TResult AssertNotNull<TResult>(this TResult target) where TResult : class
+        public static TResult AssertNotNull<TResult>(this TResult target)
+            where TResult : class
         {
             Tracer.Assert(target != null);
             return target;
@@ -256,11 +264,12 @@ namespace hw.Helper
         }
 
         public static IEnumerable<Tuple<TKey, TLeft, TRight>> Merge<TKey, TLeft, TRight>
-            (
+        (
             this IEnumerable<TLeft> left,
             IEnumerable<TRight> right,
             Func<TLeft, TKey> getLeftKey,
-            Func<TRight, TKey> getRightKey) where TLeft : class where TRight : class
+            Func<TRight, TKey> getRightKey)
+            where TLeft : class where TRight : class
         {
             var leftCommon = left.Select
                 (l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
@@ -270,7 +279,7 @@ namespace hw.Helper
                 leftCommon.Union(rightCommon)
                     .GroupBy(t => t.Item1)
                     .Select<IGrouping<TKey, Tuple<TKey, TLeft, TRight>>, Tuple<TKey, TLeft, TRight>>
-                    (Merge);
+                        (Merge);
         }
 
         public static IEnumerable<Tuple<TKey, T, T>> Merge<TKey, T>
@@ -287,8 +296,7 @@ namespace hw.Helper
             var list = grouping.ToArray();
             switch(list.Length)
             {
-                case 1:
-                    return list[0];
+                case 1: return list[0];
                 case 2:
                     if(list[0].Item2 == null && list[1].Item3 == null)
                         return new Tuple<TKey, TLeft, TRight>
@@ -298,6 +306,7 @@ namespace hw.Helper
                             (grouping.Key, list[0].Item2, list[1].Item3);
                     break;
             }
+
             throw new DuplicateKeyException();
         }
 
@@ -309,7 +318,7 @@ namespace hw.Helper
         }
 
         public static void AddRange<TKey, TValue>
-            (
+        (
             this IDictionary<TKey, TValue> target,
             IEnumerable<KeyValuePair<TKey, TValue>> newEntries)
         {
@@ -335,6 +344,7 @@ namespace hw.Helper
                     return result;
                 result++;
             }
+
             return null;
         }
 
@@ -348,7 +358,7 @@ namespace hw.Helper
             }
         }
 
-        public static bool In<T>(this T a, params T[] b) { return b.Contains(a); }
+        public static bool In<T>(this T a, params T[] b) => b.Contains(a);
 
         internal static IEnumerable<T> SelectHierachical<T>
             (this T root, Func<T, IEnumerable<T>> getChildren)
@@ -385,6 +395,7 @@ namespace hw.Helper
         {
             return immediateParents(x).Closure(immediateParents).All(xx => !xx.Equals(x));
         }
+
         public static bool IsCircuidFree<TType>
             (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
         {
@@ -397,16 +408,44 @@ namespace hw.Helper
             return x.Where(xx => !xx.IsCircuidFree(immediateParents));
         }
 
-        public static IEnumerable<T> NullableToArray<T>(this T target) where T : class
-        {
-            return target == null ? new T[0] : new[] {target};
-        }
+        public static IEnumerable<T> NullableToArray<T>(this T target)
+            where T : class => target == null ? new T[0] : new[] {target};
 
-        public static IEnumerable<T> NullableToArray<T>(this T? target) where T : struct
-        {
-            return target == null ? new T[0] : new[] {target.Value};
-        }
+        public static IEnumerable<T> NullableToArray<T>(this T? target)
+            where T : struct => target == null ? new T[0] : new[] {target.Value};
 
+        public static TTarget Top<TTarget>
+        (
+            this IEnumerable<TTarget> target,
+            Func<TTarget, bool> selector = null,
+            Func<Exception> emptyException = null,
+            Func<IEnumerable<TTarget>, Exception> multipleException = null,
+            bool enableEmpty = true,
+            bool enableMultiple = true
+        )
+        {
+            if(selector != null)
+                target = target.Where(selector);
+
+            using(var enumerator = target.GetEnumerator())
+            {
+                if(!enumerator.MoveNext())
+                {
+                    if(emptyException != null)
+                        throw emptyException();
+                    return enableEmpty ? default(TTarget) : target.Single();
+                }
+
+                var result = enumerator.Current;
+                if(!enumerator.MoveNext())
+                    return result;
+
+                if(multipleException != null)
+                    throw multipleException(target);
+                return enableMultiple ? result : target.Single();
+            }
+
+        }
 
         // taken from http://dotnet-snippets.de/snippet/linq-erweiterung-split/4893
         public static IEnumerable<IEnumerable<T>> Split<T>
@@ -425,8 +464,10 @@ namespace hw.Helper
                 if(splitter(enumerator.Current))
                     yield break;
                 yield return enumerator.Current;
-            } while(enumerator.MoveNext());
+            }
+            while(enumerator.MoveNext());
         }
+
     }
 
     public interface IAggregateable<T>

@@ -48,10 +48,17 @@ namespace hw.Helper
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="data"> </param>
-        /// <param name="right"> </param>
+       /// <param name="right"> </param>
         /// <returns> </returns>
-        public static string Surround(this string data, string left, string right)
+        public static string Surround(this string data, string left, string right= null)
         {
+            if(right == null)
+            {
+                var value = left.Single().ToString();
+                var index = "<({[".IndexOf(value, StringComparison.Ordinal);
+                right = ">)}]"[index].ToString();
+            }
+
             if(data.IndexOf("\n", StringComparison.Ordinal) < 0)
                 return left + data + right;
             return "\n" + left + Indent("\n" + data) + "\n" + right;
@@ -157,5 +164,6 @@ namespace hw.Helper
                 stringAligner.AddFloatingColumn("  ");
             return stringAligner;
         }
+
     }
 }
