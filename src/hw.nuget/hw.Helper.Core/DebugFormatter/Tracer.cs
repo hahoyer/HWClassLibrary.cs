@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -11,14 +10,23 @@ namespace hw.DebugFormatter
     /// <summary>     Summary description for Tracer. </summary>
     public static class Tracer
     {
+        sealed class AssertionFailedException : Exception
+        {
+            public AssertionFailedException(string result)
+                : base(result) {}
+        }
+
+        sealed class BreakException : Exception {}
+
+        [UsedImplicitly]
+        public const string VisualStudioLineFormat =
+            "{fileName}({lineNr},{colNr},{lineNrEnd},{colNrEnd}): {tagText}: ";
+
         static readonly Writer _writer = new Writer();
         public static readonly Dumper Dumper = new Dumper();
 
         [UsedImplicitly]
         public static bool IsBreakDisabled;
-        [UsedImplicitly]
-        public const string VisualStudioLineFormat =
-            "{fileName}({lineNr},{colNr},{lineNrEnd},{colNrEnd}): {tagText}: ";
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
@@ -31,12 +39,12 @@ namespace hw.DebugFormatter
             if(sf.GetFileLineNumber() == 0)
                 return "<nofile> " + tag;
             return FilePosn
-                (
-                    sf.GetFileName(),
-                    sf.GetFileLineNumber() - 1,
-                    sf.GetFileColumnNumber(),
-                    tag
-                );
+            (
+                sf.GetFileName(),
+                sf.GetFileLineNumber() - 1,
+                sf.GetFileColumnNumber(),
+                tag
+            );
         }
 
         /// <summary>
@@ -48,12 +56,12 @@ namespace hw.DebugFormatter
         /// <param name="tag"> asis </param>
         /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
         public static string FilePosn
-            (
+        (
             string fileName,
             int lineNr,
             int colNr,
             FilePositionTag tag
-            )
+        )
             => FilePosn(fileName, lineNr, colNr, lineNr, colNr, tag);
 
         /// <summary>
@@ -67,7 +75,7 @@ namespace hw.DebugFormatter
         /// <param name="lineNrEnd"></param>
         /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
         public static string FilePosn
-            (
+        (
             string fileName,
             int lineNr,
             int colNr,
@@ -90,13 +98,13 @@ namespace hw.DebugFormatter
         /// <param name="lineNrEnd"></param>
         /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
         public static string FilePosn
-            (
+        (
             string fileName,
             int lineNr,
             int colNr,
             int lineNrEnd,
             int colNrEnd,
-            string tagText) 
+            string tagText)
             => VisualStudioLineFormat
                 .Replace("{fileName}", fileName)
                 .Replace("{lineNr}", (lineNr + 1).ToString())
@@ -123,6 +131,7 @@ namespace hw.DebugFormatter
                 result += m.GetGenericArguments().Select(t => t.PrettyName()).Stringify(", ");
                 result += ">";
             }
+
             result += "(";
             for(int i = 0, n = m.GetParameters().Length; i < n; i++)
             {
@@ -133,6 +142,7 @@ namespace hw.DebugFormatter
                 result += " ";
                 result += p.Name;
             }
+
             result += ")";
             return result;
         }
@@ -145,7 +155,7 @@ namespace hw.DebugFormatter
         /// <param name="showParam"> controls if parameter list is appended </param>
         /// <returns> string to inspect the method call </returns>
         public static string MethodHeader
-            (
+        (
             FilePositionTag tag = FilePositionTag.Debug,
             bool showParam = false,
             int stackFrameDepth = 0)
@@ -168,10 +178,10 @@ namespace hw.DebugFormatter
             for(var i = stackFrameDepth + 1; i < stackTrace.FrameCount; i++)
             {
                 var stackFrame = stackTrace.GetFrame(i);
-                var filePosn = FilePosn(stackFrame, tag)
-                    + DumpMethod(stackFrame.GetMethod(), false);
+                var filePosn = FilePosn(stackFrame, tag) + DumpMethod(stackFrame.GetMethod(), false);
                 result += "\n" + filePosn;
             }
+
             return result;
         }
 
@@ -195,17 +205,17 @@ namespace hw.DebugFormatter
         /// <param name="showParam"></param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         public static void FlaggedLine
-            (
+        (
             string s,
             FilePositionTag flagText = FilePositionTag.Debug,
             bool showParam = false,
             int stackFrameDepth = 0)
         {
             var methodHeader = MethodHeader
-                (
-                    flagText,
-                    stackFrameDepth: stackFrameDepth + 1,
-                    showParam: showParam);
+            (
+                flagText,
+                stackFrameDepth: stackFrameDepth + 1,
+                showParam: showParam);
             Line(methodHeader + " " + s);
         }
 
@@ -230,14 +240,14 @@ namespace hw.DebugFormatter
         }
 
         /// <summary>
-        ///     Generic dump function by use of reflection. 
+        ///     Generic dump function by use of reflection.
         /// </summary>
         /// <param name="name">Identifies the the value in result. Recomended use is nameof($value$), but any string is possible.</param>
-        /// <param name="value">The object, that will be dumped, by use of <see cref="DumpData(object)"/>.</param>
+        /// <param name="value">The object, that will be dumped, by use of <see cref="DumpData(object)" />.</param>
         /// <returns>A string according to pattern $name$ = $value$</returns>
         [DebuggerHidden]
-        public static string DumpValue(this string name, object value) 
-            => DumpData("", new[] { name, value }, 1);
+        public static string DumpValue(this string name, object value)
+            => DumpData("", new[] {name, value}, 1);
 
         /// <summary>
         ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
@@ -253,8 +263,11 @@ namespace hw.DebugFormatter
             (string text, object thisObject, object[] parameter, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-            return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text
-                + DumpMethodWithData(sf.GetMethod(), thisObject, parameter).Indent();
+            return FilePosn
+                       (sf, FilePositionTag.Debug) +
+                   DumpMethod(sf.GetMethod(), true) +
+                   text +
+                   DumpMethodWithData(sf.GetMethod(), thisObject, parameter).Indent();
         }
 
         /// <summary>
@@ -267,8 +280,11 @@ namespace hw.DebugFormatter
         public static string DumpData(string text, object[] data, int stackFrameDepth = 0)
         {
             var sf = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-            return FilePosn(sf, FilePositionTag.Debug) + DumpMethod(sf.GetMethod(), true) + text
-                + DumpMethodWithData(null, data).Indent();
+            return FilePosn
+                       (sf, FilePositionTag.Debug) +
+                   DumpMethod(sf.GetMethod(), true) +
+                   text +
+                   DumpMethodWithData(null, data).Indent();
         }
 
         static string DumpMethodWithData(MethodBase m, object o, object[] p)
@@ -297,6 +313,7 @@ namespace hw.DebugFormatter
                 result += "=";
                 result += Dump(p[i]);
             }
+
             for(var i = n; i < p.Length; i += 2)
             {
                 result += "\n";
@@ -304,6 +321,7 @@ namespace hw.DebugFormatter
                 result += "=";
                 result += Dump(p[i + 1]);
             }
+
             return result;
         }
 
@@ -318,8 +336,7 @@ namespace hw.DebugFormatter
         public static void ConditionalBreak
             (string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
-            var result = "Conditional break: " + cond + "\nData: "
-                + (getText == null ? "" : getText());
+            var result = "Conditional break: " + cond + "\nData: " + (getText == null ? "" : getText());
             FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
             TraceBreak();
         }
@@ -366,8 +383,7 @@ namespace hw.DebugFormatter
         public static string AssertionFailed
             (string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
-            var result = "Assertion Failed: " + cond + "\nData: "
-                + (getText == null ? "" : getText());
+            var result = "Assertion Failed: " + cond + "\nData: " + (getText == null ? "" : getText());
             FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
             AssertionBreak(result);
             return result;
@@ -392,18 +408,7 @@ namespace hw.DebugFormatter
 
         [DebuggerHidden]
         [ContractAnnotation("b: false => halt")]
-        public static void Assert(bool b, string s)
-        {
-            Assert(b, () => s, 1);
-        }
-
-        sealed class AssertionFailedException : Exception
-        {
-            public AssertionFailedException(string result)
-                : base(result) {}
-        }
-
-        sealed class BreakException : Exception {}
+        public static void Assert(bool b, string s) {Assert(b, () => s, 1);}
 
         [DebuggerHidden]
         static void AssertionBreak(string result)
@@ -431,6 +436,9 @@ namespace hw.DebugFormatter
 
         public static void IndentStart() => _writer.IndentStart();
         public static void IndentEnd() => _writer.IndentEnd();
+
+        public static void WriteLine(this string value) => Line(value);
+        public static void WriteLinePart(this string value) => LinePart(value);
     }
 
     public enum FilePositionTag

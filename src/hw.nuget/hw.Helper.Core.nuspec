@@ -16,8 +16,12 @@
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald H. Hoyer 2017</copyright>
-    <version>18.1.1</version>
+    <version>18.1.2</version>
     <releaseNotes>
+      New: StringExtender.Surround will guess closing parenthesis. Supported are angel, round, square and curly brackets 
+      New: LinqExtension.Top, which incorporates First, Single, FirstOrDefault and SingleOrDefault and is provides custom exceptions
+      New: minor extensions
+      18.1.1 
       Refactor: remove old olsolete things
       18.1
       Change: hw.Helper.File is obsolete now
