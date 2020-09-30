@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
@@ -35,7 +33,7 @@ namespace hw.Proof.TokenClasses
         {
             var i = 0;
             var resultList =
-                set.Aggregate("", (s, x) => s + "\n[" + i++ + "] " + SmartDump(x, false)).Indent();
+                set.Aggregate("", (s, target) => s + "\n[" + i++ + "] " + SmartDump(target, false)).Indent();
             return "Clauses:" + resultList;
         }
 
@@ -54,11 +52,11 @@ namespace hw.Proof.TokenClasses
         [DisableDump]
         bool ISmartDumpToken.IsIgnoreSignSituation => false;
 
-        string SmartDump(ParsedSyntax x, bool isWatched)
+        string SmartDump(ParsedSyntax target, bool isWatched)
         {
-            var result = x.SmartDump(this);
+            var result = target.SmartDump(this);
             if(isWatched)
-                result += ("\n" + x.Dump() + "\n").Indent(3);
+                result += ("\n" + target.Dump() + "\n").Indent(3);
             return result;
         }
     }

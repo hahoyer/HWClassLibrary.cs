@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using hw.Helper;
 
@@ -11,60 +9,60 @@ namespace hw.DebugFormatter
     {
         sealed class WriteInitiator
         {
-            string _name = "";
-            string _lastName = "";
+            string LastName = "";
+            string Name = "";
 
-            public bool ThreadChanged { get { return _name != _lastName; } }
+            public bool ThreadChanged => Name != LastName;
 
-            public string ThreadFlagString { get { return "[" + _lastName + "->" + _name + "]\n"; } }
+            public string ThreadFlagString => "[" + LastName + "->" + Name + "]\n";
 
             public void NewThread()
             {
-                _lastName = _name;
-                _name = Thread.CurrentThread.ManagedThreadId.ToString();
+                LastName = Name;
+                Name = Thread.CurrentThread.ManagedThreadId.ToString();
             }
         }
 
-        int _indentCount;
-        bool _isLineStart = true;
-        readonly WriteInitiator _writeInitiator = new WriteInitiator();
+        int IndentCount;
+        bool IsLineStart = true;
+        readonly WriteInitiator Instance = new WriteInitiator();
 
-        public Writer() { DebugTextWriter.Register(); }
+        public Writer() => DebugTextWriter.Register();
 
-        internal void IndentStart() { _indentCount++; }
-        internal void IndentEnd() { _indentCount--; }
+        internal void IndentStart() => IndentCount++;
+        internal void IndentEnd() => IndentCount--;
 
-        internal void ThreadSafeWrite(string s, bool isLine)
+        internal void ThreadSafeWrite(string text, bool isLine)
         {
-            lock(_writeInitiator)
+            lock(Instance)
             {
-                _writeInitiator.NewThread();
+                Instance.NewThread();
 
-                s = s.Indent(isLineStart: _isLineStart, count: _indentCount);
+                text = text.Indent(isLineStart: IsLineStart, count: IndentCount);
 
-                if(_writeInitiator.ThreadChanged && Debugger.IsAttached)
+                if(Instance.ThreadChanged && Debugger.IsAttached)
                 {
-                    var threadFlagString = _writeInitiator.ThreadFlagString;
-                    if(!_isLineStart)
-                        if(s.Length > 0 && s[0] == '\n')
+                    var threadFlagString = Instance.ThreadFlagString;
+                    if(!IsLineStart)
+                        if(text.Length > 0 && text[0] == '\n')
                             threadFlagString = "\n" + threadFlagString;
                         else
                             throw new NotImplementedException();
-                    System.Diagnostics.Debug.Write(threadFlagString);
+                    Debug.Write(threadFlagString);
                 }
 
-                Write(s, isLine);
+                Write(text, isLine);
 
-                _isLineStart = isLine;
+                IsLineStart = isLine;
             }
         }
 
-        static void Write(string s, bool isLine)
+        static void Write(string text, bool isLine)
         {
             if(isLine)
-                Console.WriteLine(s);
+                Console.WriteLine(text);
             else
-                Console.Write(s);
+                Console.Write(text);
         }
     }
 }

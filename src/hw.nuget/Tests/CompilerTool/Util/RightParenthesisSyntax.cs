@@ -3,16 +3,15 @@ using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    [DebuggerDisplay(value: "{NodeDump}")]
+    [DebuggerDisplay("{" + nameof(NodeDump) + "}")]
     sealed class RightParenthesisSyntax : TreeSyntax
     {
+        // ReSharper disable once NotAccessedField.Local
         readonly string Id;
 
         public RightParenthesisSyntax(string id, Syntax left, IToken part, Syntax right)
             : base(left, part, right)
-        {
-            Id = id;
-        }
+            => Id = id;
 
         public override string TokenClassName => "?)?";
 

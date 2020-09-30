@@ -1,67 +1,64 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using System.Reflection;
+using hw.Helper;
 
 namespace hw.DebugFormatter
 {
     public sealed class Dumper
     {
-        static BindingFlags AnyBinding
-        {
-            get { return BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic; }
-        }
-
         public readonly Configuration Configuration = new Configuration();
-        readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
-        long _nextObjectId;
+        readonly Dictionary<object, long> ActiveObjects = new Dictionary<object, long>();
+        long NextObjectId;
 
-        internal string Dump(object x)
+        static BindingFlags AnyBinding => BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
+
+        internal string Dump(object target)
         {
-            if(x == null)
+            if(target == null)
                 return "null";
 
-            long key;
-            if(_activeObjects.TryGetValue(x, out key))
+            if(ActiveObjects.TryGetValue(target, out var key))
             {
                 if(key == -1)
                 {
-                    key = _nextObjectId++;
-                    _activeObjects[x] = key;
+                    key = NextObjectId++;
+                    ActiveObjects[target] = key;
                 }
+
                 return "[see{" + key + "#}]";
             }
 
-            _activeObjects.Add(x, -1);
+            ActiveObjects.Add(target, -1);
 
-            var result = Dump(x.GetType(), x);
+            var result = Dump(target.GetType(), target);
 
-            key = _activeObjects[x];
+            key = ActiveObjects[target];
             if(key != -1)
                 result += "{" + key + "#}";
-            _activeObjects.Remove(x);
+            ActiveObjects.Remove(target);
 
             return result;
         }
 
-        internal string DumpData(object x) { return DumpData(x.GetType(), x); }
+        internal string DumpData(object target) => DumpData(target.GetType(), target);
 
-        string Dump(Type t, object x)
+        string Dump(Type t, object target)
         {
             var dea = DumpClassAttribute(t);
             if(dea != null)
-                return dea.Dump(t, x);
+                return dea.Dump(t, target);
 
             var handler = Configuration.GetDump(t);
             if(handler != null)
-                return handler(t, x);
+                return handler(t, target);
 
-            var result = ",\n".SaveConcat(BaseDump(t, x), DumpData(t, x));
+            var result = ",\n".SaveConcat(BaseDump(t, target), DumpData(t, target));
             if(result != "")
                 result = result.Surround("{", "}");
 
-            if(t == x.GetType() || result != "")
+            if(t == target.GetType() || result != "")
                 result = t + result;
 
             return result;
@@ -95,70 +92,58 @@ namespace hw.DebugFormatter
             return result.Stringify(",\n");
         }
 
-        string BaseDump(Type t, object x)
+        string BaseDump(Type type, object target)
         {
             var baseDump = "";
-            if(t.BaseType != null && t.BaseType != typeof(object) && t.BaseType != typeof(ValueType))
-                baseDump = Dump(t.BaseType, x);
+            if(type.BaseType != null && type.BaseType != typeof(object) && type.BaseType != typeof(ValueType))
+                baseDump = Dump(type.BaseType, target);
             if(baseDump != "")
                 baseDump = "Base:" + baseDump;
             return baseDump;
         }
 
-        static DumpClassAttribute DumpClassAttribute(Type t)
-        {
-            var result = t.GetRecentAttribute<DumpClassAttribute>();
-            if(result != null)
-                return result;
-            return DumpClassAttributeInterfaces(t);
-        }
+        static DumpClassAttribute DumpClassAttribute(Type type) 
+            => type.GetRecentAttribute<DumpClassAttribute>() ?? DumpClassAttributeInterfaces(type);
 
-        static DumpClassAttribute DumpClassAttributeInterfaces(Type t)
-        {
-            return t
-                .SelectHierachical(i => i.GetInterfaces())
-                .SelectMany(i => i.GetAttributes<DumpClassAttribute>(false))
-                .SingleOrDefault();
-        }
+        static DumpClassAttribute DumpClassAttributeInterfaces(Type type) => type
+            .SelectHierarchical(interfaceType => interfaceType.GetInterfaces())
+            .SelectMany(interfaceType => interfaceType.GetAttributes<DumpClassAttribute>(false))
+            .SingleOrDefault();
 
-        static bool IsRelevant(MemberInfo memberInfo, Type type, object x)
+        static bool IsRelevant(MemberInfo memberInfo, Type type, object target)
         {
             if(memberInfo.DeclaringType != type)
                 return false;
-            var propertyInfo = memberInfo as PropertyInfo;
-            if(propertyInfo != null && propertyInfo.GetIndexParameters().Length > 0)
+            if(memberInfo is PropertyInfo propertyInfo && propertyInfo.GetIndexParameters().Length > 0)
                 return false;
-            return CheckDumpDataAttribute(memberInfo) && CheckDumpExceptAttribute(memberInfo, x);
+            return CheckDumpDataAttribute(memberInfo) && CheckDumpExceptAttribute(memberInfo, target);
         }
 
-        static bool CheckDumpDataAttribute(MemberInfo m)
+        static bool CheckDumpDataAttribute(MemberInfo memberInfo)
         {
-            var dda = m.GetAttribute<DumpEnabledAttribute>(true);
-            if(dda != null)
-                return dda.IsEnabled;
+            var attribute = memberInfo.GetAttribute<DumpEnabledAttribute>(true);
+            if(attribute != null)
+                return attribute.IsEnabled;
 
-            return !IsPrivateOrDump(m);
+            return !IsPrivateOrDump(memberInfo);
         }
 
-        static bool IsPrivateOrDump(MemberInfo m)
+        static bool IsPrivateOrDump(MemberInfo memberInfo)
         {
-            if(m.Name.Contains("Dump") || m.Name.Contains("dump"))
+            if(memberInfo.Name.Contains("Dump") || memberInfo.Name.Contains("dump"))
                 return true;
 
-            var fieldInfo = m as FieldInfo;
-            if(fieldInfo != null)
+            if(memberInfo is FieldInfo fieldInfo)
                 return fieldInfo.IsPrivate;
 
-            if(((PropertyInfo) m).CanRead)
-                return ((PropertyInfo) m).GetGetMethod(true).IsPrivate;
-            return true;
+            return !((PropertyInfo)memberInfo).CanRead || ((PropertyInfo)memberInfo).GetGetMethod(true).IsPrivate;
         }
 
-        static string Format(MemberInfo memberInfo, object x)
+        static string Format(MemberInfo memberInfo, object target)
         {
             try
             {
-                return memberInfo.Name + "=" + Tracer.Dump(x.InvokeValue(memberInfo));
+                return memberInfo.Name.IsSetTo(target.InvokeValue(memberInfo));
             }
             catch(Exception)
             {
@@ -166,17 +151,18 @@ namespace hw.DebugFormatter
             }
         }
 
-        static bool CheckDumpExceptAttribute(MemberInfo f, object x)
+        static bool CheckDumpExceptAttribute(MemberInfo memberInfo, object target)
         {
             foreach(
-                var dea in
-                    Attribute.GetCustomAttributes(f, typeof(DumpAttributeBase))
-                        .Select(ax => ax as IDumpExceptAttribute)
-                        .Where(ax => ax != null))
+                var attribute in
+                Attribute.GetCustomAttributes(memberInfo, typeof(DumpAttributeBase))
+                    .Select(attribute => attribute as IDumpExceptAttribute)
+                    .Where(attribute => attribute != null))
             {
-                var v = x.InvokeValue(f);
-                return !dea.IsException(v);
+                var value = target.InvokeValue(memberInfo);
+                return !attribute.IsException(value);
             }
+
             return true;
         }
     }

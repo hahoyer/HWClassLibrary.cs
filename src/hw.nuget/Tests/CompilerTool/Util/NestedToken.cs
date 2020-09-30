@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace hw.Tests.CompilerTool.Util
+﻿namespace hw.Tests.CompilerTool.Util
 {
     sealed class NestedToken : NamedToken
     {

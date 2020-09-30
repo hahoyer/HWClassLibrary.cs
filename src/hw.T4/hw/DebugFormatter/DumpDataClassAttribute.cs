@@ -29,6 +29,6 @@ namespace hw.DebugFormatter
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public abstract class DumpDataClassAttribute : Attribute
     {
-        public abstract string Dump(Type t, object x);
+        public abstract string Dump(Type t, object target);
     }
 }

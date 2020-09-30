@@ -1,17 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using JetBrains.Annotations;
 
 namespace hw.UnitTest
 {
-    public abstract class DependantAttribute : Attribute
+    [PublicAPI]
+    [Obsolete("Use DependenceProvider")]
+    // ReSharper disable once IdentifierTypo
+    public abstract class DependantAttribute : DependenceProvider 
     {
-        internal TestType AsTestType(IEnumerable<TestType> testTypes)
-        {
-            return testTypes.SingleOrDefault(x => x.Type == GetType());
-        }
     }
 
+    [PublicAPI]
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class LowPriority : Attribute {}
+    public sealed class LowPriority : Attribute { }
 }

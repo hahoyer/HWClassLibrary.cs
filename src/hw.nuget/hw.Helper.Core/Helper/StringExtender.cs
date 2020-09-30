@@ -12,20 +12,22 @@ namespace hw.Helper
     /// <summary>
     ///     String helper functions.
     /// </summary>
+    [PublicAPI]
     public static class StringExtender
     {
         /// <summary>
-        ///     Indent paramer by 4 times count spaces
+        ///     Indent parameter by 4 times count spaces
         /// </summary>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <param name="tabString"></param>
         /// <param name="count"> The count. </param>
         /// <param name="isLineStart"></param>
         /// <returns> </returns>
-        public static string Indent(this string x, int count = 1, string tabString = "    ", bool isLineStart = false)
+        public static string Indent
+            (this string target, int count = 1, string tabString = "    ", bool isLineStart = false)
         {
             var effectiveTabString = tabString.Repeat(count);
-            return (isLineStart ? effectiveTabString : "") + x.Replace("\n", "\n" + effectiveTabString);
+            return (isLineStart? effectiveTabString : "") + target.Replace("\n", "\n" + effectiveTabString);
         }
 
         /// <summary>
@@ -48,9 +50,9 @@ namespace hw.Helper
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="data"> </param>
-       /// <param name="right"> </param>
+        /// <param name="right"> </param>
         /// <returns> </returns>
-        public static string Surround(this string data, string left, string right= null)
+        public static string Surround(this string data, string left, string right = null)
         {
             if(right == null)
             {
@@ -64,19 +66,20 @@ namespace hw.Helper
             return "\n" + left + Indent("\n" + data) + "\n" + right;
         }
 
-        public static string SaveConcat(this string delim, params string[] data) { return data.Where(d => !string.IsNullOrEmpty(d)).Stringify(delim); }
+        public static string SaveConcat
+            (this string delimiter, params string[] data) => data.Where(d => !string.IsNullOrEmpty(d)).Stringify(delimiter);
 
         /// <summary>
         ///     Converts string to a string literal.
         /// </summary>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <returns> </returns>
         /// created 08.01.2007 18:37
-        public static string Quote(this string x)
+        public static string Quote(this string target)
         {
-            if(x == null)
+            if(target == null)
                 return "null";
-            return "\"" + x.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+            return "\"" + target.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
         }
 
         /// <summary>
@@ -92,43 +95,36 @@ namespace hw.Helper
                 result += HexDumpFiller(i, bytes.Length);
                 result += bytes[i].ToString("x2");
             }
+
             result += HexDumpFiller(bytes.Length, bytes.Length);
             return result;
         }
 
-        static string HexDumpFiller(int i, int length)
-        {
-            Tracer.Assert(length < 16);
-            if(0 == length)
-                return "x[]";
-            if(i == 0)
-                return "x[";
-            if(i == length)
-                return "]";
-            if(i % 4 == 0)
-                return " ";
-            return "";
-        }
-
         public static string ExecuteCommand(this string command)
         {
-            var procStartInfo = new ProcessStartInfo("cmd", "/c " + command) {RedirectStandardOutput = true, UseShellExecute = false, CreateNoWindow = true};
+            var procStartInfo = new ProcessStartInfo("cmd", "/c " + command)
+                {RedirectStandardOutput = true, UseShellExecute = false, CreateNoWindow = true};
             var proc = new Process {StartInfo = procStartInfo};
             proc.Start();
             return proc.StandardOutput.ReadToEnd();
-
         }
 
-        public static SmbFile ToSmbFile(this string name, bool autoCreateDirectories = true) => SmbFile.Create(name, autoCreateDirectories);
-        public static string PathCombine(this string head, params string[] tail) => Path.Combine(head, Path.Combine(tail));
+        public static SmbFile ToSmbFile
+            (this string name, bool autoCreateDirectories = true) => SmbFile.Create(name, autoCreateDirectories);
 
-        public static string UnderScoreToCamelCase(this string name) => name.Split('_').Select(ToLowerFirstUpper).Stringify("");
+        public static string PathCombine
+            (this string head, params string[] tail) => Path.Combine(head, Path.Combine(tail));
 
-        public static string ToLowerFirstUpper(this string text) => text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant();
+        public static string UnderScoreToCamelCase
+            (this string name) => name.Split('_').Select(ToLowerFirstUpper).Stringify("");
+
+        public static string ToLowerFirstUpper
+            (this string text) => text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant();
+
         public static string TableNameToClassName(this string name) => name.UnderScoreToCamelCase().ToSingular();
 
         [StringFormatMethod("pattern")]
-        public static string ReplaceArgs(this string pattern, params object[] args) => String.Format(pattern, args);
+        public static string ReplaceArgs(this string pattern, params object[] args) => string.Format(pattern, args);
 
         public static bool Matches(this string input, string pattern) => new Regex(pattern).IsMatch(input);
 
@@ -140,20 +136,14 @@ namespace hw.Helper
                 yield return target.Substring(start, length);
                 start += length;
             }
+
             yield return target.Substring(start);
         }
 
-        public static string Format(this string x, StringAligner aligner) => aligner.Format(x);
-
-        internal static int BeginMatch(string a, string b)
-        {
-            for(var i = 0;; i++)
-                if(i >= a.Length || i >= b.Length || a[i] != b[i])
-                    return i;
-        }
+        public static string Format(this string target, StringAligner aligner) => aligner.Format(target);
 
         /// <summary>
-        ///     Provide deafault string aligner with columnCount columns
+        ///     Provide default string aligner with columnCount columns
         /// </summary>
         /// <param name="columnCount"></param>
         /// <returns></returns>
@@ -165,5 +155,25 @@ namespace hw.Helper
             return stringAligner;
         }
 
+        internal static int BeginMatch(string a, string b)
+        {
+            for(var i = 0;; i++)
+                if(i >= a.Length || i >= b.Length || a[i] != b[i])
+                    return i;
+        }
+
+        static string HexDumpFiller(int i, int length)
+        {
+            Tracer.Assert(length < 16);
+            if(0 == length)
+                return "target[]";
+            if(i == 0)
+                return "target[";
+            if(i == length)
+                return "]";
+            if(i % 4 == 0)
+                return " ";
+            return "";
+        }
     }
 }

@@ -13,15 +13,15 @@ namespace hw.Helper
     public static class ReflectionExtender
     {
         [NotNull]
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute { return @this.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type target, bool inherit) where TAttribute : Attribute { return target.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
 
         [NotNull]
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute { return @this.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo target, bool inherit) where TAttribute : Attribute { return target.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
 
         [CanBeNull]
-        public static TAttribute GetAttribute<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this Type target, bool inherit) where TAttribute : Attribute
         {
-            var list = GetAttributes<TAttribute>(@this, inherit).ToArray();
+            var list = GetAttributes<TAttribute>(target, inherit).ToArray();
             switch(list.Length)
             {
                 case 0:
@@ -30,19 +30,19 @@ namespace hw.Helper
                     return list[0];
             }
 
-            throw new MultipleAttributesException(typeof(TAttribute), @this, inherit, list.ToArray());
+            throw new MultipleAttributesException(typeof(TAttribute), target, inherit, list.ToArray());
         }
 
         [CanBeNull]
-        public static TAttribute GetRecentAttribute<TAttribute>(this Type @this) where TAttribute : Attribute { return GetAttribute<TAttribute>(@this, false) ?? GetRecentAttributeBase<TAttribute>(@this.BaseType); }
+        public static TAttribute GetRecentAttribute<TAttribute>(this Type target) where TAttribute : Attribute { return GetAttribute<TAttribute>(target, false) ?? GetRecentAttributeBase<TAttribute>(target.BaseType); }
 
         [CanBeNull]
-        static TAttribute GetRecentAttributeBase<TAttribute>(this Type @this) where TAttribute : Attribute { return @this == null ? null : @this.GetRecentAttribute<TAttribute>(); }
+        static TAttribute GetRecentAttributeBase<TAttribute>(this Type target) where TAttribute : Attribute { return target == null ? null : target.GetRecentAttribute<TAttribute>(); }
 
         [CanBeNull]
-        public static TAttribute GetAttribute<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this MemberInfo target, bool inherit) where TAttribute : Attribute
         {
-            var list = GetAttributes<TAttribute>(@this, inherit).ToArray();
+            var list = GetAttributes<TAttribute>(target, inherit).ToArray();
             switch(list.Length)
             {
                 case 0:
@@ -50,7 +50,7 @@ namespace hw.Helper
                 case 1:
                     return list[0];
             }
-            throw new MultipleAttributesException(typeof(TAttribute), @this, inherit, list.ToArray());
+            throw new MultipleAttributesException(typeof(TAttribute), target, inherit, list.ToArray());
         }
 
 
@@ -68,10 +68,10 @@ namespace hw.Helper
             [UsedImplicitly]
             readonly Attribute[] _list;
 
-            public MultipleAttributesException(Type attributeType, object @this, bool inherit, Attribute[] list)
+            public MultipleAttributesException(Type attributeType, object target, bool inherit, Attribute[] list)
             {
                 _attributeType = attributeType;
-                _this = @this;
+                _this = target;
                 _inherit = inherit;
                 _list = list;
             }
@@ -117,36 +117,36 @@ namespace hw.Helper
             }
         }
 
-        public static Guid ToGuid(this object x)
+        public static Guid ToGuid(this object target)
         {
-            if(x is DBNull || x == null)
+            if(target is DBNull || target == null)
                 return Guid.Empty;
-            return new Guid(x.ToString());
+            return new Guid(target.ToString());
         }
 
-        public static T Convert<T>(this object x) { return x is DBNull || x == null ? default(T) : (T) x; }
+        public static T Convert<T>(this object target) { return target is DBNull || target == null ? default(T) : (T) target; }
 
         static readonly bool[] _boolean = new[] {false, true};
 
-        public static bool ToBoolean(this object x, string[] values)
+        public static bool ToBoolean(this object target, string[] values)
         {
             for(var i = 0; i < values.Length; i++)
-                if(values[i].Equals((string) x, StringComparison.OrdinalIgnoreCase))
+                if(values[i].Equals((string) target, StringComparison.OrdinalIgnoreCase))
                     return _boolean[i];
             throw new InvalidDataException();
         }
 
-        public static DateTime ToDateTime(this object x) { return Convert<DateTime>(x); }
-        public static Decimal ToDecimal(this object x) { return Convert<decimal>(x); }
-        public static short ToInt16(this object x) { return Convert<short>(x); }
-        public static int ToInt32(this object x) { return Convert<int>(x); }
-        public static long ToInt64(this object x) { return Convert<long>(x); }
-        public static bool ToBoolean(this object x) { return Convert<bool>(x); }
-        public static Type ToType(this object x) { return Convert<Type>(x); }
+        public static DateTime ToDateTime(this object target) { return Convert<DateTime>(target); }
+        public static Decimal ToDecimal(this object target) { return Convert<decimal>(target); }
+        public static short ToInt16(this object target) { return Convert<short>(target); }
+        public static int ToInt32(this object target) { return Convert<int>(target); }
+        public static long ToInt64(this object target) { return Convert<long>(target); }
+        public static bool ToBoolean(this object target) { return Convert<bool>(target); }
+        public static Type ToType(this object target) { return Convert<Type>(target); }
 
-        public static string ToSingular(this object x)
+        public static string ToSingular(this object target)
         {
-            var plural = x.ToString();
+            var plural = target.ToString();
             if(plural.EndsWith("Tables"))
                 return plural.Substring(0, plural.Length - 1);
             if(plural.EndsWith("Types"))
@@ -191,9 +191,9 @@ namespace hw.Helper
 
         public static void ToStatement<T>(this T any) { }
 
-        public static T Eval<T>(this Expression x)
+        public static T Eval<T>(this Expression target)
         {
-            return (T) Expression.Lambda(x)
+            return (T) Expression.Lambda(target)
                 .Compile()
                 .DynamicInvoke();
         }
@@ -282,16 +282,16 @@ namespace hw.Helper
             return result;
         }
 
-        public static object InvokeValue(this object x, MemberInfo info)
+        public static object InvokeValue(this object target, MemberInfo info)
         {
             var fi = info as FieldInfo;
             if(fi != null)
-                return fi.GetValue(x);
+                return fi.GetValue(target);
             var pi = info as PropertyInfo;
             if(pi != null)
-                return pi.GetValue(x, null);
+                return pi.GetValue(target, null);
 
-            throw new FieldOrPropertyExpected(x, info);
+            throw new FieldOrPropertyExpected(target, info);
         }
     }
 

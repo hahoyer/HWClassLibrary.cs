@@ -1,9 +1,11 @@
 using System;
 using System.Globalization;
 using System.Threading;
+using JetBrains.Annotations;
 
 namespace hw.Helper
 {
+    [PublicAPI]
     public static class DateTimeExtender
     {
         public static string Format(this DateTime dateTime)
@@ -25,7 +27,7 @@ namespace hw.Helper
             return result;
         }
 
-        public static string DynamicShortFormat(this DateTime dateTime, bool showMiliseconds)
+        public static string DynamicShortFormat(this DateTime dateTime, bool showMilliseconds)
         {
             var result = "";
             result += dateTime.Hour.ToString("00");
@@ -33,7 +35,7 @@ namespace hw.Helper
             result += dateTime.Minute.ToString("00");
             result += ":";
             result += dateTime.Second.ToString("00");
-            if(showMiliseconds)
+            if(showMilliseconds)
             {
                 result += ".";
                 result += dateTime.Millisecond.ToString("000");
@@ -69,17 +71,10 @@ namespace hw.Helper
             if(timeSpan.Hours > 0)
                 return timeSpan.Hours + OmitCheck(":", timeSpan.Minutes, omitZeros) + "h";
             if(timeSpan.Minutes > 0)
-                return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols ? "'" : "m");
+                return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols? "'" : "m");
 
-            var nanoSeconds = ((long) (timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
-            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", useSymbols ? "\"" : "s");
-        }
-
-        static string OmitCheck(string delimiter, int value, bool omitZeros)
-        {
-            if(omitZeros && value == 0)
-                return "";
-            return delimiter + value.ToString("00");
+            var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
+            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", useSymbols? "\"" : "s");
         }
 
         public static int WeekNumber(this DateTime dateTime, CultureInfo culture)
@@ -102,5 +97,12 @@ namespace hw.Helper
         public static TimeSpan Days(this int value) => TimeSpan.FromDays(value);
 
         public static void Sleep(this TimeSpan value) => Thread.Sleep(value);
+
+        static string OmitCheck(string delimiter, int value, bool omitZeros)
+        {
+            if(omitZeros && value == 0)
+                return "";
+            return delimiter + value.ToString("00");
+        }
     }
 }

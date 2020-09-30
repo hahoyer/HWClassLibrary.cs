@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.Scanner;
+﻿using hw.Scanner;
+using JetBrains.Annotations;
 
 namespace hw.Tests.CompilerTool.Util
 {
+    [PublicAPI]
     sealed class Lexer : Match2TwoLayerScannerGuard
     {
-        readonly Match _whiteSpaces;
-        readonly Match _any;
-        readonly Match _text;
-        readonly IssueId _invalidTextEnd = IssueId.EOLInString;
-        readonly IssueId _invalidLineComment = IssueId.EOFInLineComment;
-        readonly IssueId _invalidComment = IssueId.EOFInComment;
-        readonly IMatch _number;
-        readonly Match _comment;
+        readonly Match WhiteSpaces;
+        readonly Match AnyMatch;
+        readonly Match TextMatch;
+        readonly IssueId InvalidTextEnd = IssueId.EOLInString;
+        readonly IssueId InvalidLineComment = IssueId.EOFInLineComment;
+        readonly IssueId InvalidComment = IssueId.EOFInComment;
+        readonly IMatch NumberMatch;
+        readonly Match CommentMatch;
 
         public Lexer()
             : base(error => new SyntaxError((IssueId) error))
@@ -26,33 +25,33 @@ namespace hw.Tests.CompilerTool.Util
 
             var identifier = (alpha + alpha.Else(Match.Digit).Repeat()).Else(symbol.Repeat(1));
 
-            _any = symbol1.Else(identifier);
+            AnyMatch = symbol1.Else(identifier);
 
-            _whiteSpaces = Match.WhiteSpace.Repeat(1);
+            WhiteSpaces = Match.WhiteSpace.Repeat(1);
 
-            _comment =
+            CommentMatch =
                 ("#" + " \t".AnyChar() + Match.LineEnd.Find)
                     .Else("#(" + Match.WhiteSpace + (Match.WhiteSpace + ")#").Find)
-                    .Else("#(" + _any.Value(id => (Match.WhiteSpace + id + ")#").Box().Find))
-                    .Else("#(" + Match.End.Find + _invalidComment)
-                    .Else("#" + Match.End.Find + _invalidLineComment)
+                    .Else("#(" + AnyMatch.Value(id => (Match.WhiteSpace + id + ")#").Box().Find))
+                    .Else("#(" + Match.End.Find + InvalidComment)
+                    .Else("#" + Match.End.Find + InvalidLineComment)
                 ;
 
-            _number = Match.Digit.Repeat(1);
+            NumberMatch = Match.Digit.Repeat(1);
 
-            _text = textFrame.Value
+            TextMatch = textFrame.Value
             (
                 head =>
                 {
-                    var textEnd = head.Else(Match.LineEnd + _invalidTextEnd);
+                    var textEnd = head.Else(Match.LineEnd + InvalidTextEnd);
                     return textEnd.Find + (head + textEnd.Find).Repeat();
                 });
         }
 
-        internal int? Space(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _whiteSpaces);
-        internal int? Comment(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _comment);
-        internal int? Number(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _number);
-        internal int? Any(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _any);
-        internal int? Text(SourcePosn sourcePosn) => GuardedMatch(sourcePosn, _text);
+        internal int? Space(SourcePosition sourcePosition) => GuardedMatch(sourcePosition, WhiteSpaces);
+        internal int? Comment(SourcePosition sourcePosition) => GuardedMatch(sourcePosition, CommentMatch);
+        internal int? Number(SourcePosition sourcePosition) => GuardedMatch(sourcePosition, NumberMatch);
+        internal int? Any(SourcePosition sourcePosition) => GuardedMatch(sourcePosition, AnyMatch);
+        internal int? Text(SourcePosition sourcePosition) => GuardedMatch(sourcePosition, TextMatch);
     }
 }

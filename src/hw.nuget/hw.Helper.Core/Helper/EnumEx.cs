@@ -3,39 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using hw.DebugFormatter;
+using JetBrains.Annotations;
 
 namespace hw.Helper
 {
+    [PublicAPI]
     public abstract class EnumEx : Dumpable
     {
-        static IEnumerable<MemberInfo> AllMemberInfos(Type type)
-        {
-            var memberInfos = type.GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-            return memberInfos.Where(memberInfo => IsValue(memberInfo, type));
-        }
-        static IEnumerable<EnumEx> AllInstances(Type type) { return AllMemberInfos(type).Select(Instance); }
-        static EnumEx Instance(MemberInfo memberInfo) { return (EnumEx) ((FieldInfo) memberInfo).GetValue(null); }
-        protected static IEnumerable<T> AllInstances<T>() { return AllInstances(typeof(T)).Cast<T>(); }
-
-        static bool IsValue(MemberInfo m, Type type)
-        {
-            if(m.DeclaringType != type)
-                return false;
-            if(m.MemberType != MemberTypes.Field)
-                return false;
-            if(m.GetAttribute<NotAnEnumInstanceAttribute>(false) != null)
-                return false;
-            var fieldInfo = m as FieldInfo;
-            if(fieldInfo == null)
-                return false;
-            if(fieldInfo.FieldType != type && !fieldInfo.FieldType.IsSubclassOf(type))
-                return false;
-            if((fieldInfo.Attributes & FieldAttributes.Static) == 0)
-                return false;
-            return true;
-        }
-        public override string ToString() { return Tag; }
-
         public virtual string Tag
         {
             get
@@ -46,13 +20,45 @@ namespace hw.Helper
                     if(instance != null)
                         return instance.Name;
                 }
+
                 return null;
             }
         }
 
-        protected override string Dump(bool isRecursion) { return GetType().PrettyName() + "." + Tag; }
+        public override string ToString() => Tag;
+        protected static IEnumerable<T> AllInstances<T>() => AllInstances(typeof(T)).Cast<T>();
+
+        protected override string Dump(bool isRecursion) => GetType().PrettyName() + "." + Tag;
+
+        static IEnumerable<MemberInfo> AllMemberInfos(Type type)
+        {
+            var memberInfos = type.GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            return memberInfos.Where(memberInfo => IsValue(memberInfo, type));
+        }
+
+        static IEnumerable<EnumEx> AllInstances(Type type) => AllMemberInfos(type).Select(Instance);
+        static EnumEx Instance(MemberInfo memberInfo) => (EnumEx)((FieldInfo)memberInfo).GetValue(null);
+
+        static bool IsValue(MemberInfo memberInfo, Type type)
+        {
+            if(type == null)
+                return false;
+            if(memberInfo.DeclaringType != type)
+                return false;
+            if(memberInfo.MemberType != MemberTypes.Field)
+                return false;
+            if(memberInfo.GetAttribute<NotAnEnumInstanceAttribute>(false) != null)
+                return false;
+            var fieldInfo = memberInfo as FieldInfo;
+            if(fieldInfo == null)
+                return false;
+            if(fieldInfo.FieldType != type && !fieldInfo.FieldType.IsSubclassOf(type))
+                return false;
+            if((fieldInfo.Attributes & FieldAttributes.Static) == 0)
+                return false;
+            return true;
+        }
     }
 
-    sealed class NotAnEnumInstanceAttribute : Attribute
-    {}
+    sealed class NotAnEnumInstanceAttribute : Attribute { }
 }

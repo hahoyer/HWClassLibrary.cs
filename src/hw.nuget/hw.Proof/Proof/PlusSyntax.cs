@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
@@ -13,13 +12,13 @@ namespace hw.Proof
         public PlusSyntax(Plus @operator, IToken token, Set<ParsedSyntax> set)
             : base(@operator, token, set)
         {
-            Tracer.Assert(set.All(x => !(x is PlusSyntax)));
+            Tracer.Assert(set.All(target => !(target is PlusSyntax)));
         }
 
         internal override ParsedSyntax IsolateFromEquation(string variable, ParsedSyntax otherSite)
         {
-            var contains = Set.Where(x => x.Variables.Contains(variable)).ToArray();
-            var notContains = Set.Where(x => !x.Variables.Contains(variable));
+            var contains = Set.Where(target => target.Variables.Contains(variable)).ToArray();
+            var notContains = Set.Where(target => !target.Variables.Contains(variable));
             if(contains.Count() != 1)
                 return null;
 
@@ -28,7 +27,7 @@ namespace hw.Proof
 
         internal override ParsedSyntax Times(BigRational value)
         {
-            return Operator.CombineAssosiative(Token, Set.Select(x => x.Times(value)));
+            return Operator.CombineAssosiative(Token, Set.Select(target => target.Times(value)));
         }
 
         protected override ParsedSyntax Normalize()
@@ -48,8 +47,8 @@ namespace hw.Proof
             if(result != 0)
                 return result;
 
-            var s1 = Set.OrderBy(x => x, Comparer).ToArray();
-            var s2 = other.Set.OrderBy(x => x, Comparer).ToArray();
+            var s1 = Set.OrderBy(target => target, Comparer).ToArray();
+            var s2 = other.Set.OrderBy(target => target, Comparer).ToArray();
 
             for(var i = 0; i < s1.Length; i++)
             {
@@ -73,7 +72,7 @@ namespace hw.Proof
                             result.SelectMany
                                 (soFar => variant.Select(newElement => soFar | newElement))
                                 .ToArray())
-                    .Select(x => Operator.CombineAssosiative(Token, x))
+                    .Select(target => Operator.CombineAssosiative(Token, target))
                     .ToSet();
             return results;
         }

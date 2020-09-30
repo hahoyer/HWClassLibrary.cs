@@ -10,99 +10,98 @@ using JetBrains.Annotations;
 
 namespace hw.Helper
 {
+    [PublicAPI]
     public static class ReflectionExtender
     {
-        [NotNull]
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute { return @this.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
-
-        [NotNull]
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute { return @this.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>(); }
-
-        [CanBeNull]
-        public static TAttribute GetAttribute<TAttribute>(this Type @this, bool inherit) where TAttribute : Attribute
-        {
-            var list = GetAttributes<TAttribute>(@this, inherit).ToArray();
-            switch(list.Length)
-            {
-                case 0:
-                    return null;
-                case 1:
-                    return list[0];
-            }
-
-            throw new MultipleAttributesException(typeof(TAttribute), @this, inherit, list.ToArray());
-        }
-
-        [CanBeNull]
-        public static TAttribute GetRecentAttribute<TAttribute>(this Type @this) where TAttribute : Attribute { return GetAttribute<TAttribute>(@this, false) ?? GetRecentAttributeBase<TAttribute>(@this.BaseType); }
-
-        [CanBeNull]
-        static TAttribute GetRecentAttributeBase<TAttribute>(this Type @this) where TAttribute : Attribute { return @this == null ? null : @this.GetRecentAttribute<TAttribute>(); }
-
-        [CanBeNull]
-        public static TAttribute GetAttribute<TAttribute>(this MemberInfo @this, bool inherit) where TAttribute : Attribute
-        {
-            var list = GetAttributes<TAttribute>(@this, inherit).ToArray();
-            switch(list.Length)
-            {
-                case 0:
-                    return null;
-                case 1:
-                    return list[0];
-            }
-            throw new MultipleAttributesException(typeof(TAttribute), @this, inherit, list.ToArray());
-        }
-
-
         public sealed class MultipleAttributesException : Exception
         {
             [UsedImplicitly]
-            readonly Type _attributeType;
+            readonly Type AttributeType;
 
             [UsedImplicitly]
-            readonly object _this;
+            readonly bool Inherit;
 
             [UsedImplicitly]
-            readonly bool _inherit;
+            readonly Attribute[] List;
 
             [UsedImplicitly]
-            readonly Attribute[] _list;
+            readonly object This;
 
-            public MultipleAttributesException(Type attributeType, object @this, bool inherit, Attribute[] list)
+            public MultipleAttributesException(Type attributeType, object target, bool inherit, Attribute[] list)
             {
-                _attributeType = attributeType;
-                _this = @this;
-                _inherit = inherit;
-                _list = list;
+                AttributeType = attributeType;
+                This = target;
+                Inherit = inherit;
+                List = list;
             }
+        }
+
+        static readonly bool[] Boolean = {false, true};
+
+        [NotNull]
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type target, bool inherit)
+            where TAttribute : Attribute => target.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>();
+
+        [NotNull]
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo target, bool inherit)
+            where TAttribute : Attribute => target.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>();
+
+        [CanBeNull]
+        public static TAttribute GetAttribute<TAttribute>(this Type target, bool inherit)
+            where TAttribute : Attribute
+        {
+            var list = GetAttributes<TAttribute>(target, inherit).ToArray();
+            switch(list.Length)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return list[0];
+            }
+
+            throw new MultipleAttributesException(typeof(TAttribute), target, inherit, list.Cast<Attribute>().ToArray());
+        }
+
+        [CanBeNull]
+        public static TAttribute GetRecentAttribute<TAttribute>(this Type target)
+            where TAttribute : Attribute => GetAttribute<TAttribute>(target, false) ??
+                                            GetRecentAttributeBase<TAttribute>(target.BaseType);
+
+        [CanBeNull]
+        public static TAttribute GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
+            where TAttribute : Attribute
+        {
+            var list = GetAttributes<TAttribute>(target, inherit).ToArray();
+            switch(list.Length)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return list[0];
+            }
+
+            throw new MultipleAttributesException(typeof(TAttribute), target, inherit, list.Cast<Attribute>().ToArray());
         }
 
         public static IEnumerable<Assembly> GetAssemblies(this Assembly rootAssembly)
         {
             var result = new[] {rootAssembly};
-            for(IEnumerable<Assembly> referencedAssemblies = result; referencedAssemblies.GetEnumerator().MoveNext(); result = result.Concat(referencedAssemblies).ToArray())
+            for(IEnumerable<Assembly> referencedAssemblies = result
+                ; referencedAssemblies.GetEnumerator().MoveNext()
+                ; result = result.Concat(referencedAssemblies).ToArray())
             {
-                var assemblyNames = referencedAssemblies.SelectMany(assembly => assembly.GetReferencedAssemblies()).ToArray();
+                var assemblyNames = referencedAssemblies.SelectMany(assembly => assembly.GetReferencedAssemblies())
+                    .ToArray();
                 var assemblies = assemblyNames.Select(AssemblyLoad).ToArray();
                 var enumerable = assemblies.Distinct().ToArray();
                 referencedAssemblies = enumerable.Where(assembly => !result.Contains(assembly)).ToArray();
             }
+
             return result;
         }
 
-        public static IEnumerable<Type> GetReferencedTypes(this Assembly rootAssembly) { return rootAssembly.GetAssemblies().SelectMany(GetTypes); }
-
-        static Type[] GetTypes(Assembly assembly)
-        {
-            try
-            {
-                return assembly.GetTypes();
-            }
-            catch(ReflectionTypeLoadException exception)
-            {
-                throw new Exception(assembly.FullName + "\n" + exception.LoaderExceptions.Stringify("\n"));
-            }
-        }
+        public static IEnumerable<Type> GetReferencedTypes
+            (this Assembly rootAssembly) => rootAssembly.GetAssemblies().SelectMany(GetTypes);
 
 
         public static Assembly AssemblyLoad(AssemblyName yy)
@@ -117,36 +116,34 @@ namespace hw.Helper
             }
         }
 
-        public static Guid ToGuid(this object x)
+        public static Guid ToGuid(this object target)
         {
-            if(x is DBNull || x == null)
+            if(target is DBNull || target == null)
                 return Guid.Empty;
-            return new Guid(x.ToString());
+            return new Guid(target.ToString());
         }
 
-        public static T Convert<T>(this object x) { return x is DBNull || x == null ? default(T) : (T) x; }
+        public static T Convert<T>(this object target) => target is DBNull || target == null? default(T) : (T)target;
 
-        static readonly bool[] _boolean = new[] {false, true};
-
-        public static bool ToBoolean(this object x, string[] values)
+        public static bool ToBoolean(this object target, string[] values)
         {
             for(var i = 0; i < values.Length; i++)
-                if(values[i].Equals((string) x, StringComparison.OrdinalIgnoreCase))
-                    return _boolean[i];
+                if(values[i].Equals((string)target, StringComparison.OrdinalIgnoreCase))
+                    return Boolean[i];
             throw new InvalidDataException();
         }
 
-        public static DateTime ToDateTime(this object x) { return Convert<DateTime>(x); }
-        public static Decimal ToDecimal(this object x) { return Convert<decimal>(x); }
-        public static short ToInt16(this object x) { return Convert<short>(x); }
-        public static int ToInt32(this object x) { return Convert<int>(x); }
-        public static long ToInt64(this object x) { return Convert<long>(x); }
-        public static bool ToBoolean(this object x) { return Convert<bool>(x); }
-        public static Type ToType(this object x) { return Convert<Type>(x); }
+        public static DateTime ToDateTime(this object target) => Convert<DateTime>(target);
+        public static decimal ToDecimal(this object target) => Convert<decimal>(target);
+        public static short ToInt16(this object target) => Convert<short>(target);
+        public static int ToInt32(this object target) => Convert<int>(target);
+        public static long ToInt64(this object target) => Convert<long>(target);
+        public static bool ToBoolean(this object target) => Convert<bool>(target);
+        public static Type ToType(this object target) => Convert<Type>(target);
 
-        public static string ToSingular(this object x)
+        public static string ToSingular(this object target)
         {
-            var plural = x.ToString();
+            var plural = target.ToString();
             if(plural.EndsWith("Tables"))
                 return plural.Substring(0, plural.Length - 1);
             if(plural.EndsWith("Types"))
@@ -169,11 +166,13 @@ namespace hw.Helper
             return type.GetInterfaces().Contains(otherType);
         }
 
-        public static bool Is<T>(this Type type) { return Is(type, typeof(T)); }
+        public static bool Is<T>(this Type type) => Is(type, typeof(T));
 
-        public static Type[] GetDirectInterfaces(this Type type) { return type.GetInterfaces().Except((type.BaseType ?? typeof(object)).GetInterfaces()).ToArray(); }
+        public static Type[] GetDirectInterfaces
+            (this Type type)
+            => type.GetInterfaces().Except((type.BaseType ?? typeof(object)).GetInterfaces()).ToArray();
 
-        public static Type GetGenericType(this Type type) { return type.IsGenericType ? type.GetGenericTypeDefinition() : null; }
+        public static Type GetGenericType(this Type type) => type.IsGenericType? type.GetGenericTypeDefinition() : null;
 
         public static IEnumerable<Type> ThisAndBias(this Type type)
         {
@@ -185,18 +184,13 @@ namespace hw.Helper
             }
         }
 
-        internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type) { return type.ThisAndBias().SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)); }
-
-        public static T Parse<T>(this string title) { return (T) Enum.Parse(typeof(T), title); }
+        public static T Parse<T>(this string title) => (T)Enum.Parse(typeof(T), title);
 
         public static void ToStatement<T>(this T any) { }
 
-        public static T Eval<T>(this Expression x)
-        {
-            return (T) Expression.Lambda(x)
-                .Compile()
-                .DynamicInvoke();
-        }
+        public static T Eval<T>(this Expression target) => (T)Expression.Lambda(target)
+            .Compile()
+            .DynamicInvoke();
 
         /// <summary>
         ///     Invoke a member method
@@ -206,7 +200,10 @@ namespace hw.Helper
         /// <param name="method"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static T Invoke<T>(this object target, string method, params object[] args) { return (T) target.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, target, args); }
+        public static T Invoke<T>
+            (this object target, string method, params object[] args) => (T)target.GetType()
+            .InvokeMember(method, BindingFlags.InvokeMethod, null, target, args);
+
         /// <summary>
         ///     Invoke a static method
         /// </summary>
@@ -215,7 +212,9 @@ namespace hw.Helper
         /// <param name="method"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static T Invoke<T>(this Type type, string method, params object[] args) { return ExceptionGuard(() => (T) type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args)); }
+        public static T Invoke<T>
+            (this Type type, string method, params object[] args) => ExceptionGuard(()
+            => (T)type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args));
 
         /// <summary>
         ///     Calls a function. In case of exceptions, onError is called, if provided. Otherwise default value is returned
@@ -232,7 +231,7 @@ namespace hw.Helper
             }
             catch(Exception exception)
             {
-                return onError == null ? default(T) : onError(exception);
+                return onError == null? default(T) : onError(exception);
             }
         }
 
@@ -249,12 +248,11 @@ namespace hw.Helper
             }
             catch(Exception exception)
             {
-                if(onError != null)
-                    onError(exception);
+                onError?.Invoke(exception);
             }
         }
 
-        public static Task<T> STAStart<T>(Func<T> func)
+        public static Task<T> StaStart<T>(Func<T> func)
         {
             var tcs = new TaskCompletionSource<T>();
             var thread = new Thread(() =>
@@ -273,7 +271,7 @@ namespace hw.Helper
             return tcs.Task;
         }
 
-        public static Task STAStart(Action func)
+        public static Task StaStart(Action func)
         {
             var result = new Task(func);
             var thread = new Thread(result.Start);
@@ -282,16 +280,36 @@ namespace hw.Helper
             return result;
         }
 
-        public static object InvokeValue(this object x, MemberInfo info)
+        public static object InvokeValue(this object target, MemberInfo info)
         {
             var fi = info as FieldInfo;
             if(fi != null)
-                return fi.GetValue(x);
+                return fi.GetValue(target);
             var pi = info as PropertyInfo;
             if(pi != null)
-                return pi.GetValue(x, null);
+                return pi.GetValue(target, null);
 
-            throw new FieldOrPropertyExpected(x, info);
+            throw new FieldOrPropertyExpected(target, info);
+        }
+
+        internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type) => type.ThisAndBias().SelectMany(t
+            => t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic |
+                           BindingFlags.DeclaredOnly));
+
+        [CanBeNull]
+        static TAttribute GetRecentAttributeBase<TAttribute>(this Type target)
+            where TAttribute : Attribute => target == null? null : target.GetRecentAttribute<TAttribute>();
+
+        static Type[] GetTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch(ReflectionTypeLoadException exception)
+            {
+                throw new Exception(assembly.FullName + "\n" + exception.LoaderExceptions.Stringify("\n"));
+            }
         }
     }
 
@@ -299,6 +317,7 @@ namespace hw.Helper
     {
         [UsedImplicitly]
         public new readonly object Data;
+
         [UsedImplicitly]
         public readonly MemberInfo MemberInfo;
 

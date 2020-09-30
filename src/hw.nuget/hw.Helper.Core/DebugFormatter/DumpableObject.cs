@@ -1,30 +1,38 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using hw.Helper;
-using System.Linq;
+using JetBrains.Annotations;
 
 namespace hw.DebugFormatter
 {
-    [AdditionalNodeInfo("NodeDump")]
-    [DebuggerDisplay("{NodeDump}")]
+    [AdditionalNodeInfo(nameof(NodeDump))]
+    [DebuggerDisplay("{" + nameof(NodeDump) + "}")]
     public abstract class DumpableObject : Dumpable
     {
-        static int _nextObjectId;
-        readonly int? _objectId;
-
-        protected DumpableObject()
-            : this(_nextObjectId++) { }
-
-        protected DumpableObject(int? nextObjectId) { _objectId = nextObjectId; }
+        static int NextObjectId;
 
         [DisableDump]
-        internal int ObjectId
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        [PublicAPI]
+        public bool IsStopByObjectIdActive { get; private set; }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        readonly int? ObjectIdValue;
+
+        protected DumpableObject()
+            : this(NextObjectId++) { }
+
+        [PublicAPI]
+        protected DumpableObject(int? nextObjectId) => ObjectIdValue = nextObjectId;
+
+        [DisableDump]
+        [PublicAPI]
+        public int ObjectId
         {
             get
             {
-                Tracer.Assert(_objectId != null);
-                return _objectId.Value;
+                Tracer.Assert(ObjectIdValue != null);
+                return ObjectIdValue.Value;
             }
         }
 
@@ -34,33 +42,32 @@ namespace hw.DebugFormatter
             get
             {
                 var result = GetNodeDump();
-                if(_objectId == null)
+                if(ObjectIdValue == null)
                     return result;
                 return result + "." + ObjectId + "i";
             }
         }
 
-        protected virtual string GetNodeDump() { return GetType().PrettyName(); }
-
-        internal string NodeDumpForDebug()
-        {
-            if(Debugger.IsAttached)
-                return GetNodeDump();
-            return "";
-        }
-
-        [DisableDump]
-        internal bool IsStopByObjectIdActive { get; private set; }
-
+        [PublicAPI]
         protected static string CallingMethodName
+            => Debugger.IsAttached? Tracer.CallingMethodName(2) : "";
+
+        [PublicAPI]
+        public string NodeDumpForDebug() => Debugger.IsAttached? GetNodeDump() : "";
+
+        public override string ToString() => base.ToString() + " ObjectId=" + ObjectId;
+
+        public override string DebuggerDump() => base.DebuggerDump() + " ObjectId=" + ObjectId;
+
+        [DebuggerHidden]
+        [PublicAPI]
+        public void StopByObjectIds(params int[] objectIds)
         {
-            get
-            {
-                if(Debugger.IsAttached)
-                    return Tracer.CallingMethodName(2);
-                return "";
-            }
+            foreach(var objectId in objectIds)
+                StopByObjectId(1, objectId);
         }
+
+        protected virtual string GetNodeDump() => GetType().PrettyName();
 
         protected override string Dump(bool isRecursion)
         {
@@ -70,17 +77,6 @@ namespace hw.DebugFormatter
             return result;
         }
 
-        public override string ToString() { return base.ToString() + " ObjectId=" + ObjectId; }
-
-        public override string DebuggerDump() { return base.DebuggerDump() + " ObjectId=" + ObjectId; }
-
-        [DebuggerHidden]
-        internal void StopByObjectIds(params int[] objectIds)
-        {
-            foreach(var objectId in objectIds)
-                StopByObjectId(1, objectId);
-        }
-
         [DebuggerHidden]
         void StopByObjectId(int stackFrameDepth, int objectId)
         {
@@ -88,7 +84,7 @@ namespace hw.DebugFormatter
             IsStopByObjectIdActive = true;
             if(ObjectId == objectId)
                 Tracer.ConditionalBreak
-                    ("", () => @"_objectId==" + objectId + "\n" + Dump(), stackFrameDepth + 1);
+                    ("", () => @"ObjectId==" + ObjectId + "\n" + Dump(), stackFrameDepth + 1);
             IsStopByObjectIdActive = isStopByObjectIdActive;
         }
     }
@@ -99,18 +95,16 @@ namespace hw.DebugFormatter
     [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)]
     public sealed class AdditionalNodeInfoAttribute : Attribute
     {
-        readonly string _property;
+        /// <summary>
+        ///     Property to obtain additional node info
+        /// </summary>
+        public string Property { get; }
 
         /// <summary>
         ///     Initializes a new instance of the AdditionalNodeInfoAttribute class.
         /// </summary>
         /// <param name="property"> The property. </param>
         /// created 07.02.2007 00:47
-        public AdditionalNodeInfoAttribute(string property) { _property = property; }
-
-        /// <summary>
-        ///     Property to obtain additional node info
-        /// </summary>
-        public string Property { get { return _property; } }
+        public AdditionalNodeInfoAttribute(string property) => Property = property;
     }
 }

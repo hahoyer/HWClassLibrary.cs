@@ -20,7 +20,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
@@ -63,7 +62,7 @@ namespace hw.Proof
         internal override ParsedSyntax Times(BigRational value) { return Target.Times(value * Value); }
 
         internal override ParsedSyntax IsolateFromSum(string variable, ParsedSyntax other) { return Target.IsolateFromSum(variable, other.Times(1 / Value)); }
-        internal override Set<ParsedSyntax> Replace(IEnumerable<KeyValuePair<string, ParsedSyntax>> definitions) { return Target.Replace(definitions).Select(x => x.Times(Value)).ToSet(); }
+        internal override Set<ParsedSyntax> Replace(IEnumerable<KeyValuePair<string, ParsedSyntax>> definitions) { return Target.Replace(definitions).Select(target => target.Times(Value)).ToSet(); }
 
         internal override ParsedSyntax CombineForPlus(ParsedSyntax other) { return other.CombineForPlus(Target, Value); }
         internal override ParsedSyntax CombineForPlus(VariableSyntax other) { return Target.CombineForPlus(other, Value); }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
@@ -9,14 +8,19 @@ namespace hw.Parser
 {
     public sealed partial class PrioParser<TSourcePart>
     {
+        internal interface ISubParserProvider
+        {
+            ISubParser<TSourcePart> NextParser { get; }
+        }
+
         sealed class PrioParserWorker : DumpableObject
         {
-            readonly Stack<OpenItem<TSourcePart>> Stack;
-            readonly int StartLevel;
-            readonly PrioParser<TSourcePart> Parent;
+            Item<TSourcePart> Current;
 
             TSourcePart Left;
-            Item<TSourcePart> Current;
+            readonly PrioParser<TSourcePart> Parent;
+            readonly Stack<OpenItem<TSourcePart>> Stack;
+            readonly int StartLevel;
 
             public PrioParserWorker(PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack)
             {
@@ -29,10 +33,12 @@ namespace hw.Parser
 
             bool Trace => Parent.Trace;
 
-            public TSourcePart Execute(SourcePosn sourcePosn)
+            bool IsBaseLevel => Stack.Count == StartLevel;
+
+            public TSourcePart Execute(SourcePosition sourcePosition)
             {
-                Current = CreateStartItem(sourcePosn, Parent.PrioTable);
-                TraceNewItem(sourcePosn);
+                Current = CreateStartItem(sourcePosition, Parent.PrioTable);
+                TraceNewItem(sourcePosition);
 
                 while(Current.GetRightDepth() > 0)
                 {
@@ -43,10 +49,11 @@ namespace hw.Parser
                         Step();
                         TraceEndPhase("inner loop");
                         Tracer.Assert(!IsBaseLevel);
-                    } while(Left != null);
+                    }
+                    while(Left != null);
 
-                    Current = ReadNextToken(sourcePosn, Current.GetRightContext());
-                    TraceNewItem(sourcePosn);
+                    Current = ReadNextToken(sourcePosition, Current.GetRightContext());
+                    TraceNewItem(sourcePosition);
                 }
 
                 while(!IsBaseLevel)
@@ -59,30 +66,30 @@ namespace hw.Parser
                 Tracer.Assert(IsBaseLevel);
 
                 if(Current.GetRightDepth() > 0)
-                    NotImplementedMethod(sourcePosn);
+                    NotImplementedMethod(sourcePosition);
 
                 return Current.Create(Left);
             }
 
-            Item<TSourcePart> CreateStartItem(SourcePosn sourcePosn, PrioTable prioTable)
+            Item<TSourcePart> CreateStartItem(SourcePosition sourcePosition, PrioTable prioTable)
                 =>
-                sourcePosn.Position == 0
-                    ? Item<TSourcePart>.CreateStart
-                        (sourcePosn.Source, prioTable, Parent.StartParserType)
-                    : ReadNextToken(sourcePosn, prioTable.BracketContext);
+                    sourcePosition.Position == 0
+                        ? Item<TSourcePart>.CreateStart
+                            (sourcePosition.Source, prioTable, Parent.StartParserType)
+                        : ReadNextToken(sourcePosition, prioTable.BracketContext);
 
-            Item<TSourcePart> ReadNextToken(SourcePosn sourcePosn, BracketContext context)
+            Item<TSourcePart> ReadNextToken(SourcePosition sourcePosition, BracketContext context)
             {
-                TraceNextToken(sourcePosn);
+                TraceNextToken(sourcePosition);
                 var result = Item<TSourcePart>.Create
-                    (Parent.Scanner.GetNextTokenGroup(sourcePosn), context);
+                    (Parent.Scanner.GetNextTokenGroup(sourcePosition), context);
 
                 var nextParser = (result.Type as ISubParserProvider)?.NextParser;
                 if(nextParser == null)
                     return result;
 
                 TraceSubParserStart(result);
-                var subType = nextParser.Execute(sourcePosn, Stack);
+                var subType = nextParser.Execute(sourcePosition, Stack);
                 TraceSubParserEnd(result);
 
                 return result.RecreateWith(newType: subType, newContext: context);
@@ -90,7 +97,7 @@ namespace hw.Parser
 
             void Step(bool canPush = true)
             {
-                var other = IsBaseLevel ? null : Stack.Peek();
+                var other = IsBaseLevel? null : Stack.Peek();
 
                 var relation = other == null
                     ? PrioTable.Relation.Push
@@ -119,7 +126,7 @@ namespace hw.Parser
                     Current = Item<TSourcePart>.Create
                     (
                         new IItem[0],
-                        ((IBracketMatch<TSourcePart>) Current.Type).Value,
+                        ((IBracketMatch<TSourcePart>)Current.Type).Value,
                         Current.Characters.End.Span(0),
                         other.BracketItem.LeftContext,
                         Current.GetRightContext().IsBracketAndLeftBracket("")
@@ -130,8 +137,6 @@ namespace hw.Parser
                 TraceMatchPhase();
             }
 
-            bool IsBaseLevel => Stack.Count == StartLevel;
-
             void TraceRelation(PrioTable.Relation relation)
             {
                 if(!Trace)
@@ -140,22 +145,22 @@ namespace hw.Parser
                 Tracer.Line("---- " + relation + " ----");
             }
 
-            void TraceNextToken(SourcePosn sourcePosn)
+            void TraceNextToken(SourcePosition sourcePosition)
             {
                 if(!Trace)
                     return;
 
                 Tracer.Line("\n== NextToken ====>");
-                Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
+                Tracer.Line(sourcePosition.GetDumpAroundCurrent(50));
             }
 
-            void TraceNewItem(SourcePosn sourcePosn)
+            void TraceNewItem(SourcePosition sourcePosition)
             {
                 if(!Trace)
                     return;
 
                 Tracer.Line(Current.Characters.GetDumpAroundCurrent(50));
-                Tracer.Line(sourcePosn.GetDumpAroundCurrent(50));
+                Tracer.Line(sourcePosition.GetDumpAroundCurrent(50));
                 Tracer.Line("Depth = " + Current.Depth);
                 Tracer.Line("=================>");
             }
@@ -215,8 +220,8 @@ namespace hw.Parser
                     return;
 
                 Tracer.Line("\n======================>");
-                Tracer.Line("begin of Subparser  ==>");
-                Tracer.Line("triggerd by " + item.Characters.GetDumpAroundCurrent(50));
+                Tracer.Line("begin of Sub-parser  ==>");
+                Tracer.Line("triggered by " + item.Characters.GetDumpAroundCurrent(50));
                 Tracer.Line("======================>");
                 Tracer.IndentStart();
             }
@@ -228,8 +233,8 @@ namespace hw.Parser
 
                 Tracer.IndentEnd();
                 Tracer.Line("\n======================>");
-                Tracer.Line("end of Subparser    ==>");
-                Tracer.Line("triggerd by " + item.Characters.GetDumpAroundCurrent(50));
+                Tracer.Line("end of Sub-parser    ==>");
+                Tracer.Line("triggered by " + item.Characters.GetDumpAroundCurrent(50));
                 Tracer.Line("======================>");
             }
 
@@ -239,12 +244,12 @@ namespace hw.Parser
                 if(count == 0)
                     return "stack empty";
 
-                const int MaxLines = 5;
+                const int maxLines = 5;
 
-                var isBig = count > MaxLines;
+                var isBig = count > maxLines;
                 var result =
-                    stack.Take(MaxLines - (isBig ? 1 : 0))
-                        .Select((item, i) => i.ToString() + ": " + TreeDump(item))
+                    stack.Take(maxLines - (isBig? 1 : 0))
+                        .Select((item, i) => i + ": " + TreeDump(item))
                         .Stringify("\n");
                 if(isBig)
                     result += "\n...";
@@ -265,21 +270,16 @@ namespace hw.Parser
                 var typeDump = item.Type == null
                     ? "null"
                     : item.Type.PrioTableId
-                    + " Type = "
-                    + item.Type.GetType().PrettyName();
+                      + " Type = "
+                      + item.Type.GetType().PrettyName();
                 Tracer.Line(title + " = " + typeDump + " Depth=" + item.Context.Depth);
             }
 
             static string TreeDump(OpenItem<TSourcePart> value)
                 => Extension.TreeDump(value.Left) + " "
-                + (value.Type == null
-                    ? "null"
-                    : value.Type.PrioTableId + " NextDepth=" + value.NextDepth);
-        }
-
-        internal interface ISubParserProvider
-        {
-            ISubParser<TSourcePart> NextParser { get; }
+                                                  + (value.Type == null
+                                                      ? "null"
+                                                      : value.Type.PrioTableId + " NextDepth=" + value.NextDepth);
         }
     }
 }

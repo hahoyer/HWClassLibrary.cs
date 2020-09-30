@@ -20,9 +20,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 
 namespace hw.Proof
@@ -37,7 +34,7 @@ b elem Integer;
 c elem Integer; 
 a^2 + b^2 = c^2;
 a gcd b = 1;
-c + a = x;
+c + a = target;
 c - a = y 
 ").Statement;
             Tracer.FlaggedLine("Statement: " + statement.SmartDump(), FilePositionTag.Test);

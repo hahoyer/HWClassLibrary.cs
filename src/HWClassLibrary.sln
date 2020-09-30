@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{74DE59EF-1FD7-49C7-AA7D-072C03150508}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -42,9 +44,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csp
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(CodealikeProperties) = postSolution
-		SolutionGuid = d80ee9bc-a7b5-4c8d-ac3c-c580438327d2
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -55,7 +54,6 @@ Global
 		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82BE46EE-086C-468D-8D01-B8955A5FE533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82BE46EE-086C-468D-8D01-B8955A5FE533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82BE46EE-086C-468D-8D01-B8955A5FE533}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82BE46EE-086C-468D-8D01-B8955A5FE533}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -65,5 +63,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {289E73DE-9C19-4C47-B8C1-70BAF7DF6FC3}
+	EndGlobalSection
+	GlobalSection(CodealikeProperties) = postSolution
+		SolutionGuid = d80ee9bc-a7b5-4c8d-ac3c-c580438327d2
 	EndGlobalSection
 EndGlobal

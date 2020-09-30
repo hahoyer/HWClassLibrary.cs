@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using hw.UnitTest;
@@ -54,6 +51,6 @@ namespace hw.Tests.Helper.Core
 
         }
 
-        static void InternalTest(long x, string y) { Tracer.Assert(x.Format3Digits() == y, () => x + " != " + y, stackFrameDepth: 1); }
+        static void InternalTest(long target, string y) { Tracer.Assert(target.Format3Digits() == y, () => target + " != " + y, stackFrameDepth: 1); }
     }
 }

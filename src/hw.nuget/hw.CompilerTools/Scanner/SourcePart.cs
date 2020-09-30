@@ -8,9 +8,24 @@ using JetBrains.Annotations;
 
 namespace hw.Scanner
 {
-    [DebuggerDisplay("{NodeDump}")]
-    public sealed class SourcePart : Dumpable, IAggregateable<SourcePart>, ISourcePartProxy
+    [DebuggerDisplay("{" + nameof(NodeDump) + "}")]
+    [PublicAPI]
+    public sealed class SourcePart
+        : Dumpable
+            , IAggregateable<SourcePart>
     {
+        [UsedImplicitly]
+        const int DumpWidth = 10;
+
+        [DisableDump]
+        public int Length { get; }
+
+        [DisableDump]
+        public int Position { get; }
+
+        [DisableDump]
+        public Source Source { get; }
+
         SourcePart(Source source, int position, int length)
         {
             Source = source;
@@ -19,16 +34,24 @@ namespace hw.Scanner
         }
 
         [DisableDump]
-        public Source Source { get; }
-
-        [DisableDump]
-        public int Position { get; }
-
-        [DisableDump]
-        public int Length { get; }
-
-        [DisableDump]
         public int EndPosition => Position + Length;
+
+        public string Id => Source.SubString(Position, Length);
+
+        [DisableDump]
+        public string FilePosition => "\n" + Source.FilePosition(Position, EndPosition, Id);
+
+        [UsedImplicitly]
+        public string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
+
+        [DisableDump]
+        public SourcePosition Start => Source + Position;
+
+        [DisableDump]
+        public SourcePosition End => Source + EndPosition;
+
+        [UsedImplicitly]
+        string DumpCurrent => Id;
 
 
         SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
@@ -50,27 +73,84 @@ namespace hw.Scanner
 
             var start = Math.Max(Position, other.Position);
             var end = Math.Min(EndPosition, other.EndPosition);
-            return end < start ? null : new SourcePart(Source, start, end - start);
+            return end < start? null : new SourcePart(Source, start, end - start);
         }
 
-        public static SourcePart operator +(SourcePart left, SourcePart right) => left == null
-            ? right
-            : right == null
-                ? left
-                : left.Overlay(right);
-
-        public string Id => Source.SubString(Position, Length);
-
-        [DisableDump]
-        public string FilePosition => "\n" + Source.FilePosn(Position, EndPosition, Id);
+        public static SourcePart operator +(SourcePart left, SourcePart right) => left == null? right :
+            right == null? left : left.Overlay(right);
 
         public string FileErrorPosition(string errorTag)
-            => "\n" + Source.FilePosn(Position, EndPosition, Id.Quote(), "error " + errorTag);
+            => "\n" + Source.FilePosition(Position, EndPosition, Id.Quote(), "error " + errorTag);
 
-        [UsedImplicitly]
-        string DumpCurrent => Id;
+        public string GetDumpAroundCurrent(int dumpWidth) => GetDumpBeforeCurrent(dumpWidth)
+                                                             + "["
+                                                             + DumpCurrent
+                                                             + "]"
+                                                             + GetDumpAfterCurrent(dumpWidth);
 
-        const int DumpWidth = 10;
+        public SourcePart Combine(SourcePart other)
+        {
+            Tracer.Assert(Source == other.Source);
+            Tracer.Assert(EndPosition <= other.Position);
+            return new SourcePart(Source, Position, other.EndPosition - Position);
+        }
+
+        public static SourcePart Span(SourcePosition first, SourcePosition other)
+        {
+            var length = other - first;
+            return new SourcePart(first.Source, first.Position, length);
+        }
+
+        public static SourcePart Span(SourcePosition first, int length)
+            => new SourcePart(first.Source, first.Position, length);
+
+        public bool Contains(SourcePosition sourcePosition) => Source == sourcePosition.Source &&
+                                                           Position <= sourcePosition.Position &&
+                                                           EndPosition > sourcePosition.Position;
+
+        public bool Contains(SourcePart sourcePart) => Source == sourcePart.Source &&
+                                                       Position <= sourcePart.Position &&
+                                                       sourcePart.EndPosition <= EndPosition;
+
+        public bool IsMatch(SourcePart sourcePosition)
+        {
+            if(Source != sourcePosition.Source)
+                return false;
+            if(EndPosition == sourcePosition.Position)
+                return true;
+
+            return Position == sourcePosition.EndPosition;
+        }
+
+        public static IEnumerable<SourcePart> SaveCombine(IEnumerable<SourcePart> values) => values
+            .GroupBy(item => item.Source)
+            .SelectMany(SaveCombineForSource);
+
+        public static bool operator !=(SourcePart left, SourcePart right) => !(left == right);
+
+        public static bool operator >(SourcePart left, SourcePosition right) => right < left;
+        public static bool operator >(SourcePosition left, SourcePart right) => right < left;
+        public static bool operator >(SourcePart left, SourcePart right) => right < left;
+
+        public static bool operator <(SourcePart left, SourcePosition right)
+            => left != null && left.End < right;
+
+        public static bool operator <(SourcePosition left, SourcePart right)
+            => right != null && left < right.Start;
+
+        public static bool operator <(SourcePart left, SourcePart right)
+            => left != null && right != null && left.End <= right.Start;
+
+        public static bool operator ==(SourcePart left, SourcePart right)
+        {
+            if((object)left == null)
+                return (object)right == null;
+            if((object)right == null)
+                return false;
+
+            return left.Start == right.Start &&
+                   left.Length == right.Length;
+        }
 
         string GetDumpAfterCurrent(int dumpWidth)
         {
@@ -91,62 +171,6 @@ namespace hw.Scanner
             if(Position >= dumpWidth)
                 result = "..." + result;
             return result;
-        }
-
-        [UsedImplicitly]
-        public string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
-
-        public string GetDumpAroundCurrent(int dumpWidth) => GetDumpBeforeCurrent(dumpWidth)
-            + "["
-            + DumpCurrent
-            + "]"
-            + GetDumpAfterCurrent(dumpWidth);
-
-        [DisableDump]
-        public SourcePosn Start => Source + Position;
-
-        [DisableDump]
-        public SourcePosn End => Source + EndPosition;
-
-        public SourcePart Combine(SourcePart other)
-        {
-            Tracer.Assert(Source == other.Source);
-            Tracer.Assert(EndPosition <= other.Position);
-            return new SourcePart(Source, Position, other.EndPosition - Position);
-        }
-
-        public static SourcePart Span(SourcePosn first, SourcePosn other)
-        {
-            var length = other - first;
-            return new SourcePart(first.Source, first.Position, length);
-        }
-
-        public static SourcePart Span(SourcePosn first, int length)
-            => new SourcePart(first.Source, first.Position, length);
-
-        public bool Contains(SourcePosn sourcePosn) => Source == sourcePosn.Source &&
-            Position <= sourcePosn.Position &&
-            EndPosition > sourcePosn.Position;
-
-        public bool Contains(SourcePart sourcePart) => Source == sourcePart.Source &&
-            Position <= sourcePart.Position &&
-            sourcePart.EndPosition <= EndPosition;
-
-        public bool IsMatch(SourcePart sourcePosn)
-        {
-            if(Source != sourcePosn.Source)
-                return false;
-            if(EndPosition == sourcePosn.Position)
-                return true;
-
-            return Position == sourcePosn.EndPosition;
-        }
-
-        public static IEnumerable<SourcePart> SaveCombine(IEnumerable<SourcePart> values)
-        {
-            return values
-                .GroupBy(item => item.Source)
-                .SelectMany(SaveCombineForSource);
         }
 
         static IEnumerable<SourcePart> SaveCombineForSource(IEnumerable<SourcePart> values)
@@ -176,34 +200,6 @@ namespace hw.Scanner
                 }
 
             yield return currentValue;
-        }
-
-        SourcePart ISourcePartProxy.All => this;
-
-        public static bool operator !=(SourcePart left, SourcePart right) => !(left == right);
-
-        public static bool operator >(SourcePart left, SourcePosn right) => right < left;
-        public static bool operator >(SourcePosn left, SourcePart right) => right < left;
-        public static bool operator >(SourcePart left, SourcePart right) => right < left;
-
-        public static bool operator <(SourcePart left, SourcePosn right)
-            => left != null && left.End < right;
-
-        public static bool operator <(SourcePosn left, SourcePart right)
-            => right != null && left < right.Start;
-
-        public static bool operator <(SourcePart left, SourcePart right)
-            => left != null && right != null && left.End <= right.Start;
-
-        public static bool operator ==(SourcePart left, SourcePart right)
-        {
-            if((object) left == null)
-                return (object) right == null;
-            if((object) right == null)
-                return false;
-
-            return left.Start == right.Start &&
-                left.Length == right.Length;
         }
     }
 }

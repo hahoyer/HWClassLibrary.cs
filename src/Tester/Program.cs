@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Reflection;
 using hw.DebugFormatter;
 using hw.UnitTest;
 
 namespace Tester
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {

@@ -20,7 +20,7 @@ namespace hw.DebugFormatter
 
         [UsedImplicitly]
         public const string VisualStudioLineFormat =
-            "{fileName}({lineNr},{colNr},{lineNrEnd},{colNrEnd}): {tagText}: ";
+            "{fileName}({lineNumber},{columnNumber},{lineNumberEnd},{columnNumberEnd}): {tagText}: ";
 
         static readonly Writer _writer = new Writer();
         public static readonly Dumper Dumper = new Dumper();
@@ -33,7 +33,7 @@ namespace hw.DebugFormatter
         /// </summary>
         /// <param name="sf"> the stack frame where the location is stored </param>
         /// <param name="tag"> </param>
-        /// <returns> the "FileName(LineNr,ColNr): tag: " string </returns>
+        /// <returns> the "FileName(lineNumber,ColNr): tag: " string </returns>
         public static string FilePosn(this StackFrame sf, FilePositionTag tag)
         {
             if(sf.GetFileLineNumber() == 0)
@@ -51,66 +51,66 @@ namespace hw.DebugFormatter
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
         /// <param name="fileName"> asis </param>
-        /// <param name="lineNr"> asis </param>
-        /// <param name="colNr"> asis </param>
+        /// <param name="lineNumber"> asis </param>
+        /// <param name="columnNumber"> asis </param>
         /// <param name="tag"> asis </param>
-        /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
+        /// <returns> the "fileName(lineNumber,columnNumber): tag: " string </returns>
         public static string FilePosn
         (
             string fileName,
-            int lineNr,
-            int colNr,
+            int lineNumber,
+            int columnNumber,
             FilePositionTag tag
         )
-            => FilePosn(fileName, lineNr, colNr, lineNr, colNr, tag);
+            => FilePosn(fileName, lineNumber, columnNumber, lineNumber, columnNumber, tag);
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
         /// <param name="fileName"> asis </param>
-        /// <param name="lineNr"> asis </param>
-        /// <param name="colNr"> asis </param>
-        /// <param name="colNrEnd"></param>
+        /// <param name="lineNumber"> asis </param>
+        /// <param name="columnNumber"> asis </param>
+        /// <param name="columnNumberEnd"></param>
         /// <param name="tag"> asis </param>
-        /// <param name="lineNrEnd"></param>
-        /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
+        /// <param name="lineNumberEnd"></param>
+        /// <returns> the "fileName(lineNumber,columnNumber): tag: " string </returns>
         public static string FilePosn
         (
             string fileName,
-            int lineNr,
-            int colNr,
-            int lineNrEnd,
-            int colNrEnd,
+            int lineNumber,
+            int columnNumber,
+            int lineNumberEnd,
+            int columnNumberEnd,
             FilePositionTag tag)
         {
             var tagText = tag.ToString();
-            return FilePosn(fileName, lineNr, colNr, lineNrEnd, colNrEnd, tagText);
+            return FilePosn(fileName, lineNumber, columnNumber, lineNumberEnd, columnNumberEnd, tagText);
         }
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
         /// <param name="fileName"> asis </param>
-        /// <param name="lineNr"> asis </param>
-        /// <param name="colNr"> asis </param>
-        /// <param name="colNrEnd"></param>
+        /// <param name="lineNumber"> asis </param>
+        /// <param name="columnNumber"> asis </param>
+        /// <param name="columnNumberEnd"></param>
         /// <param name="tagText"> asis </param>
-        /// <param name="lineNrEnd"></param>
-        /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
+        /// <param name="lineNumberEnd"></param>
+        /// <returns> the "fileName(lineNumber,columnNumber): tag: " string </returns>
         public static string FilePosn
         (
             string fileName,
-            int lineNr,
-            int colNr,
-            int lineNrEnd,
-            int colNrEnd,
+            int lineNumber,
+            int columnNumber,
+            int lineNumberEnd,
+            int columnNumberEnd,
             string tagText)
             => VisualStudioLineFormat
                 .Replace("{fileName}", fileName)
-                .Replace("{lineNr}", (lineNr + 1).ToString())
-                .Replace("{colNr}", colNr.ToString())
-                .Replace("{lineNrEnd}", (lineNrEnd + 1).ToString())
-                .Replace("{colNrEnd}", colNrEnd.ToString())
+                .Replace("{lineNumber}", (lineNumber + 1).ToString())
+                .Replace("{columnNumber}", columnNumber.ToString())
+                .Replace("{lineNumberEnd}", (lineNumberEnd + 1).ToString())
+                .Replace("{columnNumberEnd}", columnNumberEnd.ToString())
                 .Replace("{tagText}", tagText);
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace hw.DebugFormatter
         public static void LinePart(string s) => _writer.ThreadSafeWrite(s, false);
 
         /// <summary>
-        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
+        ///     write a line to debug output, flagged with FileName(lineNumber,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="s"> the text </param>
         /// <param name="flagText"> </param>
@@ -222,21 +222,21 @@ namespace hw.DebugFormatter
         /// <summary>
         ///     generic dump function by use of reflection
         /// </summary>
-        /// <param name="x"> the object to dump </param>
+        /// <param name="target"> the object to dump </param>
         /// <returns> </returns>
-        public static string Dump(object x) => Dumper.Dump(x);
+        public static string Dump(object target) => Dumper.Dump(target);
 
 
         /// <summary>
         ///     generic dump function by use of reflection
         /// </summary>
-        /// <param name="x"> the object to dump </param>
+        /// <param name="target"> the object to dump </param>
         /// <returns> </returns>
-        public static string DumpData(object x)
+        public static string DumpData(object target)
         {
-            if(x == null)
+            if(target == null)
                 return "";
-            return Dumper.DumpData(x);
+            return Dumper.DumpData(target);
         }
 
         /// <summary>

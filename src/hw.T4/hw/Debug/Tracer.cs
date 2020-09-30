@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using hw.DebugFormatter;
 using hw.Helper;
 using JetBrains.Annotations;
 
@@ -22,7 +23,7 @@ namespace hw.Debug
         /// </summary>
         /// <param name="sf"> the stack frame where the location is stored </param>
         /// <param name="tag"> </param>
-        /// <returns> the "FileName(LineNr,ColNr): tag: " string </returns>
+        /// <returns> the "FileName(lineNumber,ColNr): tag: " string </returns>
         public static string FilePosn(this StackFrame sf, FilePositionTag tag)
         {
             if(sf.GetFileLineNumber() == 0)
@@ -34,25 +35,25 @@ namespace hw.Debug
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
         /// <param name="fileName"> asis </param>
-        /// <param name="lineNr"> asis </param>
-        /// <param name="colNr"> asis </param>
+        /// <param name="lineNumber"> asis </param>
+        /// <param name="columnNumber"> asis </param>
         /// <param name="tag"> asis </param>
-        /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
-        public static string FilePosn(string fileName, int lineNr, int colNr, FilePositionTag tag)
+        /// <returns> the "fileName(lineNumber,columnNumber): tag: " string </returns>
+        public static string FilePosn(string fileName, int lineNumber, int columnNumber, FilePositionTag tag)
         {
             var tagText = tag.ToString();
-            return FilePosn(fileName, lineNr, colNr, tagText);
+            return FilePosn(fileName, lineNumber, columnNumber, tagText);
         }
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
         /// <param name="fileName"> asis </param>
-        /// <param name="lineNr"> asis </param>
-        /// <param name="colNr"> asis </param>
+        /// <param name="lineNumber"> asis </param>
+        /// <param name="columnNumber"> asis </param>
         /// <param name="tagText"> asis </param>
-        /// <returns> the "fileName(lineNr,colNr): tag: " string </returns>
-        public static string FilePosn(string fileName, int lineNr, int colNr, string tagText) { return fileName + "(" + (lineNr + 1) + "," + colNr + "): " + tagText + ": "; }
+        /// <returns> the "fileName(lineNumber,columnNumber): tag: " string </returns>
+        public static string FilePosn(string fileName, int lineNumber, int columnNumber, string tagText) { return fileName + "(" + (lineNumber + 1) + "," + columnNumber + "): " + tagText + ": "; }
 
         /// <summary>
         ///     creates a string to inspect a method
@@ -132,7 +133,7 @@ namespace hw.Debug
         public static void LinePart(string s) { _writer.ThreadSafeWrite(s, false); }
 
         /// <summary>
-        ///     write a line to debug output, flagged with FileName(LineNr,ColNr): Method (without parameter list)
+        ///     write a line to debug output, flagged with FileName(lineNumber,ColNr): Method (without parameter list)
         /// </summary>
         /// <param name="s"> the text </param>
         /// <param name="flagText"> </param>
@@ -146,21 +147,21 @@ namespace hw.Debug
         /// <summary>
         ///     generic dump function by use of reflection
         /// </summary>
-        /// <param name="x"> the object to dump </param>
+        /// <param name="target"> the object to dump </param>
         /// <returns> </returns>
-        public static string Dump(object x) { return Dumper.Dump(x); }
+        public static string Dump(object target) { return Dumper.Dump(target); }
 
 
         /// <summary>
         ///     generic dump function by use of reflection
         /// </summary>
-        /// <param name="x"> the object to dump </param>
+        /// <param name="target"> the object to dump </param>
         /// <returns> </returns>
-        public static string DumpData(object x)
+        public static string DumpData(object target)
         {
-            if(x == null)
+            if(target == null)
                 return "";
-            return Dumper.DumpData(x);
+            return Dumper.DumpData(target);
         }
 
         /// <summary>

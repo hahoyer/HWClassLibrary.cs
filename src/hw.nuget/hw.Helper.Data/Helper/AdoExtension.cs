@@ -4,34 +4,26 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
-using System.Linq;
-using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace hw.Helper
 {
+    [PublicAPI]
     public static class AdoExtension
     {
-        public static DataTable GetSchemaTable(this DbConnection connection, string text)
-        {
-            return connection
-                .ToDataReader(text)
-                .GetSchemaTable();
-        }
+        public static DataTable GetSchemaTable(this DbConnection connection, string text) => connection
+            .ToDataReader(text)
+            .GetSchemaTable();
 
-        public static DbDataReader ToDataReader(this DbConnection connection, string text)
-        {
-            return connection
-                .ToCommand(text)
-                .ExecuteReader();
-        }
+        public static DbDataReader ToDataReader(this DbConnection connection, string text) => connection
+            .ToCommand(text)
+            .ExecuteReader();
 
         public static T[] ToArray<T>(this DbConnection connection, string text)
             where T : IReaderInitialize, new()
-        {
-            return connection
+            => connection
                 .ToDataReader(text)
                 .ToArray<T>();
-        }
 
         public static DbCommand ToCommand(this DbConnection connection, string text)
         {
@@ -40,7 +32,8 @@ namespace hw.Helper
             return command;
         }
 
-        public static T[] ToArray<T>(this DbDataReader reader) where T : IReaderInitialize, new()
+        public static T[] ToArray<T>(this DbDataReader reader)
+            where T : IReaderInitialize, new()
         {
             var result = new List<T>();
             while(reader.Read())
@@ -49,6 +42,7 @@ namespace hw.Helper
                 t.Initialize(reader);
                 result.Add(t);
             }
+
             return result.ToArray();
         }
 
@@ -57,7 +51,7 @@ namespace hw.Helper
             var result = new List<T>();
             var e = reader.GetEnumerator();
             while(e.MoveNext())
-                result.Add(converter((DbDataRecord) e.Current));
+                result.Add(converter((DbDataRecord)e.Current));
             return result.ToArray();
         }
 
@@ -69,13 +63,14 @@ namespace hw.Helper
             return result;
         }
 
-        public static DateTime EnsureSqlDateTime(this DateTime dateTime) { return new SqlDateTime(dateTime).Value; }
+        public static DateTime EnsureSqlDateTime(this DateTime dateTime) => new SqlDateTime(dateTime).Value;
 
-        public static SqlConnection ToConnection(this string serverName, string dataBase = null)
-        {
-            return ConnectionString(serverName, dataBase)
-                .ToConnection();
-        }
+        public static SqlConnection ToConnection
+            (this string serverName, string dataBase = null) => ConnectionString(serverName, dataBase)
+            .ToConnection();
+
+        public static string SQLFormat(this string data) => SqlFormat(data);
+        public static string SqlFormat(this string data) => "'" + data.Replace("'", "''") + "'";
 
         internal static SqlConnection ToConnection(this SqlConnectionStringBuilder connectionString)
         {
@@ -84,17 +79,11 @@ namespace hw.Helper
             return connection;
         }
 
-        static SqlConnectionStringBuilder ConnectionString(string serverName, string dataBase)
+        static SqlConnectionStringBuilder ConnectionString
+            (string serverName, string dataBase) => new SqlConnectionStringBuilder
         {
-            return new SqlConnectionStringBuilder
-            {
-                DataSource = serverName,
-                IntegratedSecurity = true,
-                MultipleActiveResultSets = true,
-                InitialCatalog = dataBase
-            };
-        }
-
-        public static string SQLFormat(this string data) { return "'" + data.Replace("'", "''") + "'"; }
+            DataSource = serverName, IntegratedSecurity = true, MultipleActiveResultSets = true
+            , InitialCatalog = dataBase
+        };
     }
 }

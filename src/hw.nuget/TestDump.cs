@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 using hw.UnitTest;
+#pragma warning disable 414
 
 namespace hw
 {
@@ -11,18 +9,16 @@ namespace hw
     {
         class Foo
         {
-            public int X = 20;
             public string S1 = "FooString";
+            public int X = 20;
         }
 
-        class Bar : Foo
-        {
-        }
+        class Bar : Foo { }
 
         class Bla : Bar
         {
-            public int Z = 17;
             public new string S1 = "BlaString";
+            public int Z = 17;
         }
 
         [UnitTest]
@@ -34,17 +30,18 @@ namespace hw
     {
         Base:hw.TestDump+Foo
         {
-            X=20,
-            S1=""FooString""
+            S1=""FooString"",
+            X=20
         }
     },
-    Z=17,
-    S1=""BlaString""
+    S1=""BlaString"",
+    Z=17
 }";
 
             var xxx = new Bla();
             var s = Tracer.Dump(xxx);
-            Tracer.Assert(s == expectedTrace.Replace("\r", ""), () => "\n--Epected--\n" + expectedTrace + "|----\n--Found--\n" + s + "|----\n");
+            Tracer.Assert(s == expectedTrace.Replace("\r", "")
+                , () => "\n--Expected--\n" + expectedTrace + "|----\n--Found--\n" + s + "|----\n");
         }
     }
 }

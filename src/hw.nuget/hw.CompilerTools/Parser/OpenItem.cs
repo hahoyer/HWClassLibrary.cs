@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.DebugFormatter;
+﻿using hw.DebugFormatter;
 using hw.Helper;
-using hw.Scanner;
+using JetBrains.Annotations;
 
 namespace hw.Parser
 {
+    [PublicAPI]
     public sealed class OpenItem<TTreeItem> : DumpableObject
-        where TTreeItem : class, ISourcePartProxy
+        where TTreeItem : class
     {
-        internal readonly IToken Token;
-        internal readonly TTreeItem Left;
-        internal readonly IParserTokenType<TTreeItem> Type;
-        internal readonly PrioTable.ITargetItem BracketItem;
+        public  readonly PrioTable.ITargetItem BracketItem;
+        public readonly TTreeItem Left;
+        public readonly IToken Token;
+        public readonly IParserTokenType<TTreeItem> Type;
 
         internal OpenItem(TTreeItem left, Item<TTreeItem> current)
         {
@@ -25,6 +23,9 @@ namespace hw.Parser
 
         internal int NextDepth => BracketItem.GetRightDepth();
 
+        protected override string GetNodeDump()
+            => Tracer.Dump(Left) + " " + Type.GetType().PrettyName();
+
         internal TTreeItem Create(TTreeItem right)
         {
             if(Type != null)
@@ -32,8 +33,5 @@ namespace hw.Parser
             Tracer.Assert(Left == null);
             return right;
         }
-
-        protected override string GetNodeDump()
-            => Tracer.Dump(Left) + " " + Type.GetType().PrettyName();
     }
 }

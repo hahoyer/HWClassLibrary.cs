@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.Parser;
+﻿using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {
@@ -14,6 +11,7 @@ namespace hw.Tests.CompilerTool.Util
             if(left != null)
                 return left.RightParenthesis(Id, token, right);
 
+            // ReSharper disable once ExpressionIsAlwaysNull
             NotImplementedMethod(left, token, right);
             return null;
         }
@@ -28,6 +26,7 @@ namespace hw.Tests.CompilerTool.Util
                     if(result.Right == null)
                         return result.Left;
 
+                    // ReSharper disable once ExpressionIsAlwaysNull
                     NotImplementedMethod(left, token, right);
                     return null;
                 }

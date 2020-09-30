@@ -20,8 +20,8 @@ namespace hw.DebugFormatter
             public Dumper(Profiler profiler, int? count, double hidden)
             {
                 _count = count;
-                _data = profiler._profileItems.Values.OrderByDescending(x => x.Duration).ToArray();
-                _sumAll = _data.Sum(x => x.Duration);
+                _data = profiler._profileItems.Values.OrderByDescending(target => target.Duration).ToArray();
+                _sumAll = _data.Sum(target => target.Duration);
                 _sumMax = new TimeSpan((long) (_sumAll.Ticks * (1.0 - hidden)));
                 _index = 0;
                 _sum = new TimeSpan();
@@ -292,7 +292,7 @@ namespace hw.DebugFormatter
                 + tag
                 + ":  "
                 + _countEnd.Format3Digits()
-                + "x  "
+                + "target  "
                 + AverageDuration.Format3Digits()
                 + "  "
                 + _duration.Format3Digits()

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.DebugFormatter;
+﻿using hw.DebugFormatter;
 using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
@@ -22,15 +19,15 @@ namespace hw.Tests.CompilerTool.Util
         sealed class SyntaxBoxToken : ParserTokenType<Syntax>
         {
             [EnableDump]
-            readonly Syntax _content;
-            public SyntaxBoxToken(Syntax content) { _content = content; }
+            readonly Syntax Content;
+            public SyntaxBoxToken(Syntax content) { Content = content; }
             public override string Id => "<box>";
 
             protected override Syntax Create(Syntax left, IToken token, Syntax right)
             {
                 Tracer.Assert(left == null);
                 Tracer.Assert(right == null);
-                return _content;
+                return Content;
             }
         }
 

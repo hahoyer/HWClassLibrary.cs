@@ -2,24 +2,26 @@
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
+using JetBrains.Annotations;
 
 namespace hw.Parser
 {
     /// <summary>
     ///     Priority table used in parsing to create the syntax tree.
     /// </summary>
+    [PublicAPI]
     public sealed class PrioTable : DumpableObject
     {
         public interface ITargetItem
         {
-            string Token {get;}
-            BracketContext LeftContext {get;}
+            string Token { get; }
+            BracketContext LeftContext { get; }
         }
 
-        internal sealed class RelationDefinitionItem
+        public sealed class RelationDefinitionItem
         {
-            internal readonly bool IsRight;
             public readonly string[] Token;
+            internal readonly bool IsRight;
 
             public RelationDefinitionItem(bool isRight, string[] token)
             {
@@ -28,7 +30,7 @@ namespace hw.Parser
             }
         }
 
-        internal sealed class BracketPairItem
+        public sealed class BracketPairItem
         {
             public readonly string Left;
             public readonly string Right;
@@ -40,7 +42,7 @@ namespace hw.Parser
             }
         }
 
-        internal sealed class Relation : EnumEx
+        public sealed class Relation : EnumEx
         {
             public static readonly Relation Push = new Relation
                 {IsPush = true};
@@ -50,15 +52,12 @@ namespace hw.Parser
 
             public static readonly Relation Match = new Relation
             {
-                IsPull = true,
-                IsBracket = true,
-                IsMatch = true
+                IsPull = true, IsBracket = true, IsMatch = true
             };
 
             public static readonly Relation Mismatch = new Relation
             {
-                IsPull = true,
-                IsBracket = true
+                IsPull = true, IsBracket = true
             };
 
             public bool IsBracket;
@@ -70,11 +69,11 @@ namespace hw.Parser
 
         enum FunctionType
         {
-            Unkown,
-            Push,
-            Relation,
-            Pull,
-            Match
+            Unknown
+            , Push
+            , Relation
+            , Pull
+            , Match
         }
 
         public const string Any = "(any)";
@@ -87,24 +86,53 @@ namespace hw.Parser
 
         static readonly FunctionType[][] SameDepth =
         {
-            new[] {FunctionType.Push, FunctionType.Push, FunctionType.Push},
-            new[] {FunctionType.Push, FunctionType.Relation, FunctionType.Relation},
-            new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Pull}
+            new[] {FunctionType.Push, FunctionType.Push, FunctionType.Push}
+            , new[] {FunctionType.Push, FunctionType.Relation, FunctionType.Relation}
+            , new[] {FunctionType.Match, FunctionType.Pull, FunctionType.Pull}
         };
+
+        public string Title;
+
+        readonly RelationDefinitionItem[] BaseRelation;
+        BracketContext BracketContextValue;
+        readonly BracketPairItem[] Brackets;
+
+        PrioTable()
+        {
+            BaseRelation = new RelationDefinitionItem[] { };
+            Brackets = new BracketPairItem[] { };
+        }
+
+        PrioTable(bool isRight, string[] token)
+            : this() => BaseRelation = new[] {new RelationDefinitionItem(isRight, token)};
+
+        PrioTable(PrioTable target, PrioTable y)
+            : this()
+        {
+            BaseRelation = target.BaseRelation.Concat(y.BaseRelation).ToArray();
+            Brackets = target.Brackets.Concat(y.Brackets).ToArray();
+        }
+
+        PrioTable(BracketPairItem bracketPairItem)
+            : this() => Brackets = new[] {bracketPairItem};
+
+        [DisableDump]
+        public BracketContext BracketContext
+            => BracketContextValue ?? (BracketContextValue = BracketContext.Instance(Brackets));
 
         /// <summary>
         ///     Define a prio table with tokens that have the same priority and are left associative
         /// </summary>
-        /// <param name="x"> </param>
+        /// <param name="target"> </param>
         /// <returns> </returns>
-        public static PrioTable Left(params string[] x) => new PrioTable(false, x);
+        public static PrioTable Left(params string[] target) => new PrioTable(false, target);
 
         /// <summary>
         ///     Define a prio table with tokens that have the same priority and are right associative
         /// </summary>
-        /// <param name="x"> </param>
+        /// <param name="target"> </param>
         /// <returns> </returns>
-        public static PrioTable Right(params string[] x) => new PrioTable(true, x);
+        public static PrioTable Right(params string[] target) => new PrioTable(true, target);
 
         public static PrioTable BracketParallels(string[] leftBrackets, string[] rightBrackets)
         {
@@ -119,13 +147,46 @@ namespace hw.Parser
 
         public static PrioTable FromText(string text) => FromText(text.Split('\n', '\r'));
 
-        public static PrioTable operator+(PrioTable x, PrioTable y) => new PrioTable(x, y);
+        public static PrioTable operator +(PrioTable target, PrioTable y) => new PrioTable(target, y);
 
-        public static bool operator==(PrioTable x, PrioTable y)
-            => ReferenceEquals(x, null) ? ReferenceEquals(y, null) : x.Equals(y);
+        public static bool operator ==(PrioTable target, PrioTable y)
+            => target?.Equals(y) ?? ReferenceEquals(y, null);
 
-        public static bool operator!=(PrioTable x, PrioTable y)
-            => ReferenceEquals(x, null) ? !ReferenceEquals(y, null) : !x.Equals(y);
+        public static bool operator !=(PrioTable target, PrioTable y)
+            => !target?.Equals(y) ?? !ReferenceEquals(y, null);
+
+        public override bool Equals(object obj)
+        {
+            var target = obj as PrioTable;
+            if(target == null)
+                return false;
+            return BaseRelation == target.BaseRelation && Brackets == target.Brackets;
+        }
+
+        public override int GetHashCode() => BaseRelation.GetHashCode() + Brackets.GetHashCode();
+
+        public override string ToString() => Title ?? Dump();
+
+        public Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
+        {
+            var delta = newItem.GetLeftDepth() - recentItem.GetRightDepth();
+
+            switch(delta)
+            {
+                case 0:
+                    return GetRelationOnSameDepth
+                    (
+                        GetSubTypeIndex(newItem),
+                        GetSubTypeIndex(recentItem),
+                        newItem.Token,
+                        recentItem.Token);
+                case 1:
+                    return Relation.Push;
+                default:
+                    NotImplementedMethod(newItem, recentItem, nameof(delta), delta);
+                    return null;
+            }
+        }
 
         static PrioTable FromText(string[] text)
             => FromText(text.Select(l => l.Split(' ', '\t')).ToArray());
@@ -145,80 +206,23 @@ namespace hw.Parser
                     case "right":
                         result += Right(data);
                         break;
+                    // ReSharper disable once StringLiteralTypo
                     case "parlevel":
                         result += BracketParallels
                         (
                             data.Take(tokenCount).ToArray(),
                             data.Skip(tokenCount).Take(tokenCount).ToArray());
                         break;
-                    case "": break;
-                    default: throw new ArgumentException();
+                    case "":
+                        break;
+                    default:
+                        throw new ArgumentException();
                 }
             }
 
             result += BracketParallels(new[] {BeginOfText}, new[] {EndOfText});
             return result;
         }
-
-        readonly RelationDefinitionItem[] BaseRelation;
-        readonly BracketPairItem[] Brackets;
-        BracketContext BracketContextValue;
-        public string Title;
-
-        PrioTable()
-        {
-            BaseRelation = new RelationDefinitionItem[] {};
-            Brackets = new BracketPairItem[] {};
-        }
-
-        PrioTable(bool isRight, string[] token)
-            : this() => BaseRelation = new[] {new RelationDefinitionItem(isRight, token)};
-
-        PrioTable(PrioTable x, PrioTable y)
-            : this()
-        {
-            BaseRelation = x.BaseRelation.Concat(y.BaseRelation).ToArray();
-            Brackets = x.Brackets.Concat(y.Brackets).ToArray();
-        }
-
-        PrioTable(BracketPairItem bracketPairItem)
-            : this() => Brackets = new[] {bracketPairItem};
-
-        [DisableDump]
-        internal BracketContext BracketContext
-            => BracketContextValue ?? (BracketContextValue = BracketContext.Instance(Brackets));
-
-        internal Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
-        {
-            var delta = newItem.GetLeftDepth() - recentItem.GetRightDepth();
-
-            switch(delta)
-            {
-                case 0:
-                    return GetRelationOnSameDepth
-                    (
-                        GetSubTypeIndex(newItem),
-                        GetSubTypeIndex(recentItem),
-                        newItem.Token,
-                        recentItem.Token);
-                case 1: return Relation.Push;
-                default:
-                    NotImplementedMethod(newItem, recentItem, nameof(delta), delta);
-                    return null;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            var x = obj as PrioTable;
-            if(x == null)
-                return false;
-            return BaseRelation == x.BaseRelation && Brackets == x.Brackets;
-        }
-
-        public override int GetHashCode() => BaseRelation.GetHashCode() + Brackets.GetHashCode();
-
-        public override string ToString() => Title ?? Dump();
 
         int? BaseRelationIndex(string token) => BaseRelation.IndexWhere(item => item.Token.Contains(token));
 
@@ -227,11 +231,8 @@ namespace hw.Parser
             var parent = this;
             Tracer.Assert(!string.IsNullOrWhiteSpace(target.Token));
             var token = target.Token;
-            if(parent.Brackets.Any(item => item.Left == token))
-                return 0;
-            if(parent.Brackets.Any(item => item.Right == token))
-                return 2;
-            return 1;
+            return parent.Brackets.Any(item => item.Left == token)? 0 :
+                parent.Brackets.Any(item => item.Right == token)? 2 : 1;
         }
 
         Relation NotImplemented(string newToken, string recentToken)
@@ -240,17 +241,22 @@ namespace hw.Parser
             return null;
         }
 
-        Relation GetRelationOnSameDepth
-            (int newIndex, int otherIndex, string newToken, string otherToken)
+        Relation GetRelationOnSameDepth(int newIndex, int otherIndex, string newToken, string otherToken)
         {
             switch(SameDepth[newIndex][otherIndex])
             {
-                case FunctionType.Unkown: return NotImplemented(newToken, otherToken);
-                case FunctionType.Push: return Relation.Push;
-                case FunctionType.Relation: return GetRelation(newIndex, otherIndex, newToken, otherToken);
-                case FunctionType.Pull: return Relation.Pull;
-                case FunctionType.Match: return GetBracketMatch(newToken, otherToken);
-                default: throw new ArgumentOutOfRangeException();
+                case FunctionType.Unknown:
+                    return NotImplemented(newToken, otherToken);
+                case FunctionType.Push:
+                    return Relation.Push;
+                case FunctionType.Relation:
+                    return GetRelation(newIndex, otherIndex, newToken, otherToken);
+                case FunctionType.Pull:
+                    return Relation.Pull;
+                case FunctionType.Match:
+                    return GetBracketMatch(newToken, otherToken);
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -258,11 +264,8 @@ namespace hw.Parser
         {
             var newIndex = GetRightBracketIndex(newToken);
             var otherIndex = GetLeftBracketIndex(otherToken);
-            if(newIndex == otherIndex)
-                return Relation.Match;
-            if(newIndex > otherIndex)
-                return Relation.Mismatch;
-            return Relation.Push;
+            return newIndex == otherIndex? Relation.Match :
+                newIndex > otherIndex? Relation.Mismatch : Relation.Push;
         }
 
         int GetLeftBracketIndex(string token)
@@ -275,12 +278,11 @@ namespace hw.Parser
                 .IndexWhere(item => item.Right == token)
                 .AssertValue();
 
-        Relation GetRelation
-            (int newTypeIndex, int otherTypeIndex, string newToken, string otherToken)
+        Relation GetRelation(int newTypeIndex, int otherTypeIndex, string newToken, string otherToken)
         {
             var index = GetRelationIndex(newToken, newTypeIndex);
             var delta = index - GetRelationIndex(otherToken, otherTypeIndex);
-            var isPush = delta == 0 ? BaseRelation[index].IsRight : delta < 0;
+            var isPush = delta == 0? BaseRelation[index].IsRight : delta < 0;
             return isPush
                 ? Relation.Push
                 : Relation.Pull;

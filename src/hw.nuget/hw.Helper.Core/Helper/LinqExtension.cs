@@ -7,71 +7,21 @@ using JetBrains.Annotations;
 
 namespace hw.Helper
 {
+    [PublicAPI]
     public static class LinqExtension
     {
-        public static bool AddDistinct<T>
-            (this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
-        {
-            return InternalAddDistinct(a, b, isEqual);
-        }
+        public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
+            => InternalAddDistinct(a, b, isEqual);
 
         public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine)
             where T : class
-        {
-            return InternalAddDistinct(a, b, combine);
-        }
+            => InternalAddDistinct(a, b, combine);
 
-        static bool InternalAddDistinct<T>
-            (ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
-        {
-            var result = false;
-            foreach(var bi in b)
-                if(AddDistinct(a, bi, isEqual))
-                    result = true;
-            return result;
-        }
-
-        static bool InternalAddDistinct<T>(IList<T> a, IEnumerable<T> b, Func<T, T, T> combine)
-            where T : class
-        {
-            var result = false;
-            foreach(var bi in b)
-                if(AddDistinct(a, bi, combine))
-                    result = true;
-            return result;
-        }
-
-        static bool AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
-        {
-            if(a.Any(ai => isEqual(ai, bi)))
-                return false;
-            a.Add(bi);
-            return true;
-        }
-
-        static bool AddDistinct<T>(IList<T> a, T bi, Func<T, T, T> combine)
-            where T : class
-        {
-            for(var i = 0; i < a.Count; i++)
-            {
-                var ab = combine(a[i], bi);
-                if(ab != null)
-                {
-                    a[i] = ab;
-                    return false;
-                }
-            }
-
-            a.Add(bi);
-            return true;
-        }
-
-        public static IEnumerable<IEnumerable<T>> Separate<T>
-            (this IEnumerable<T> x, Func<T, bool> isHead)
+        public static IEnumerable<IEnumerable<T>> Separate<T>(this IEnumerable<T> target, Func<T, bool> isHead)
         {
             var subResult = new List<T>();
 
-            foreach(var xx in x)
+            foreach(var xx in target)
             {
                 if(isHead(xx))
                     if(subResult.Count > 0)
@@ -88,10 +38,10 @@ namespace hw.Helper
         }
 
         [CanBeNull]
-        public static T Aggregate<T>(this IEnumerable<T> x, Func<T> getDefault = null)
+        public static T Aggregate<T>(this IEnumerable<T> target, Func<T> getDefault = null)
             where T : class, IAggregateable<T>
         {
-            var xx = x.ToArray();
+            var xx = target.ToArray();
             if(!xx.Any())
                 return getDefault?.Invoke();
             var result = xx[0];
@@ -100,22 +50,21 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Dump<T>(this IEnumerable<T> x) => Tracer.Dump(x);
+        public static string Dump<T>(this IEnumerable<T> target) => Tracer.Dump(target);
 
-        public static string DumpLines<T>(this IEnumerable<T> x)
+        public static string DumpLines<T>(this IEnumerable<T> target)
             where T : Dumpable
         {
             var i = 0;
-            return x.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
+            return target.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
         }
 
-        public static string Stringify<T>
-            (this IEnumerable<T> x, string separator, bool showNumbers = false)
+        public static string Stringify<T>(this IEnumerable<T> target, string separator, bool showNumbers = false)
         {
             var result = new StringBuilder();
             var i = 0;
             var isNext = false;
-            foreach(var element in x)
+            foreach(var element in target)
             {
                 if(isNext)
                     result.Append(separator);
@@ -129,22 +78,21 @@ namespace hw.Helper
             return result.ToString();
         }
 
-        public static TimeSpan Sum<T>(this IEnumerable<T> x, Func<T, TimeSpan> selector)
+        public static TimeSpan Sum<T>(this IEnumerable<T> target, Func<T, TimeSpan> selector)
         {
             var result = new TimeSpan();
-            return x.Aggregate(result, (current, element) => current + selector(element));
+            return target.Aggregate(result, (current, element) => current + selector(element));
         }
 
         /// <summary>
         ///     Returns index list of all elements, that have no other element, with "isInRelation(element, other)" is true
-        ///     For example if relation is "element ;&less; other" will return the maximal element
+        ///     For example if relation is "element ;&lt; other" will return the maximal element
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <param name="isInRelation"></param>
         /// <returns></returns>
-        public static IEnumerable<int> FrameIndexList<T>
-            (this IEnumerable<T> list, Func<T, T, bool> isInRelation)
+        public static IEnumerable<int> FrameIndexList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
         {
             var listArray = list.ToArray();
             return
@@ -155,14 +103,13 @@ namespace hw.Helper
 
         /// <summary>
         ///     Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true
-        ///     For example if relation is "element ;&less; other" will return the maximal element
+        ///     For example if relation is "element &lt; other" will return the maximal element
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <param name="isInRelation"></param>
         /// <returns></returns>
-        public static IEnumerable<T> FrameElementList<T>
-            (this IEnumerable<T> list, Func<T, T, bool> isInRelation)
+        public static IEnumerable<T> FrameElementList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
         {
             var listArray = list.ToArray();
             return listArray.FrameIndexList(isInRelation).Select(index => listArray[index]);
@@ -170,47 +117,39 @@ namespace hw.Helper
 
         public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list)
             where T : IComparable<T>
-        {
-            return list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
-        }
+            => list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
 
         public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list)
             where T : IComparable<T>
-        {
-            return list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
-        }
+            => list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
 
         /// <summary>
         ///     Checks if object starts with given object.
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <param name="y"> The y. </param>
         /// <returns> </returns>
-        public static bool StartsWith<T>(this IList<T> x, IList<T> y)
+        public static bool StartsWith<T>(this IList<T> target, IList<T> y)
         {
-            if(x.Count < y.Count)
+            if(target.Count < y.Count)
                 return false;
-            return !y.Where((t, i) => !Equals(x[i], t)).Any();
+            return !y.Where((t, i) => !Equals(target[i], t)).Any();
         }
 
         /// <summary>
         ///     Checks if object starts with given object and is longer.
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <param name="y"> The y. </param>
         /// <returns> </returns>
-        public static bool StartsWithAndNotEqual<T>(this IList<T> x, IList<T> y)
-        {
-            if(x.Count == y.Count)
-                return false;
-            return x.StartsWith(y);
-        }
+        public static bool StartsWithAndNotEqual<T>(this IList<T> target, IList<T> y) 
+            => target.Count != y.Count && target.StartsWith(y);
 
         public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
             where T : class
-            where TResult : class => target == default(T) ? default(TResult) : function(target);
+            where TResult : class => target == default(T)? default(TResult) : function(target);
 
         public static TResult AssertValue<TResult>(this TResult? target)
             where TResult : struct
@@ -268,8 +207,10 @@ namespace hw.Helper
             this IEnumerable<TLeft> left,
             IEnumerable<TRight> right,
             Func<TLeft, TKey> getLeftKey,
-            Func<TRight, TKey> getRightKey)
-            where TLeft : class where TRight : class
+            Func<TRight, TKey> getRightKey
+        )
+            where TLeft : class
+            where TRight : class
         {
             var leftCommon = left.Select
                 (l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
@@ -278,25 +219,25 @@ namespace hw.Helper
             return
                 leftCommon.Union(rightCommon)
                     .GroupBy(t => t.Item1)
-                    .Select<IGrouping<TKey, Tuple<TKey, TLeft, TRight>>, Tuple<TKey, TLeft, TRight>>
+                    .Select
                         (Merge);
         }
 
         public static IEnumerable<Tuple<TKey, T, T>> Merge<TKey, T>
             (this IEnumerable<T> left, IEnumerable<T> right, Func<T, TKey> getKey)
             where T : class
-        {
-            return Merge(left, right, getKey, getKey);
-        }
+            => Merge(left, right, getKey, getKey);
 
         public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>
             (IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping)
-            where TLeft : class where TRight : class
+            where TLeft : class
+            where TRight : class
         {
             var list = grouping.ToArray();
             switch(list.Length)
             {
-                case 1: return list[0];
+                case 1:
+                    return list[0];
                 case 2:
                     if(list[0].Item2 == null && list[1].Item3 == null)
                         return new Tuple<TKey, TLeft, TRight>
@@ -312,17 +253,16 @@ namespace hw.Helper
 
         public static FunctionCache<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>
             (this IEnumerable<T> list, Func<T, TKey> selector)
-        {
-            return new FunctionCache<TKey, IEnumerable<T>>
+            => new FunctionCache<TKey, IEnumerable<T>>
                 (key => list.Where(item => Equals(selector(item), key)));
-        }
 
         public static void AddRange<TKey, TValue>
         (
             this IDictionary<TKey, TValue> target,
-            IEnumerable<KeyValuePair<TKey, TValue>> newEntries)
+            IEnumerable<KeyValuePair<TKey, TValue>> newEntries
+        )
         {
-            foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
+            foreach(var item in newEntries.Where(entry => !target.ContainsKey(entry.Key)))
                 target.Add(item);
         }
 
@@ -333,9 +273,9 @@ namespace hw.Helper
         public static int? IndexWhere<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
             if(items == null)
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
             if(predicate == null)
-                throw new ArgumentNullException("predicate");
+                throw new ArgumentNullException(nameof(predicate));
 
             var result = 0;
             foreach(var item in items)
@@ -360,26 +300,18 @@ namespace hw.Helper
 
         public static bool In<T>(this T a, params T[] b) => b.Contains(a);
 
-        internal static IEnumerable<T> SelectHierachical<T>
-            (this T root, Func<T, IEnumerable<T>> getChildren)
-        {
-            yield return root;
-            foreach(var item in getChildren(root).SelectMany(i => i.SelectHierachical(getChildren)))
-                yield return item;
-        }
-
         public static IEnumerable<TType> Sort<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         {
-            var xx = x.ToArray();
-            Tracer.Assert(xx.IsCircuidFree(immediateParents));
+            var xx = target.ToArray();
+            Tracer.Assert(xx.IsCircuitFree(immediateParents));
             return null;
         }
 
         public static IEnumerable<TType> Closure<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         {
-            var types = x.ToArray();
+            var types = target.ToArray();
             var targets = types;
             while(true)
             {
@@ -390,29 +322,40 @@ namespace hw.Helper
             }
         }
 
-        public static bool IsCircuidFree<TType>
-            (this TType x, Func<TType, IEnumerable<TType>> immediateParents)
-        {
-            return immediateParents(x).Closure(immediateParents).All(xx => !xx.Equals(x));
-        }
+        [Obsolete("Use IsCircuitFree")]
+        // ReSharper disable once IdentifierTypo
+        public static bool IsCircuidFree<TType>(this TType target, Func<TType, IEnumerable<TType>> immediateParents)
+            => immediateParents(target).Closure(immediateParents).All(type => !type.Equals(target));
 
+        [Obsolete("Use IsCircuitFree")]
+        // ReSharper disable once IdentifierTypo
         public static bool IsCircuidFree<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
-        {
-            return x.All(xx => xx.IsCircuidFree(immediateParents));
-        }
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
+            => target.All(type => type.IsCircuitFree(immediateParents));
 
+        [Obsolete("Use Circuits")]
+        // ReSharper disable once IdentifierTypo
         public static IEnumerable<TType> Circuids<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
-        {
-            return x.Where(xx => !xx.IsCircuidFree(immediateParents));
-        }
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
+            => target.Where(type => !type.IsCircuitFree(immediateParents));
+
+
+        public static bool IsCircuitFree<TType>(this TType target, Func<TType, IEnumerable<TType>> immediateParents)
+            => immediateParents(target).Closure(immediateParents).All(item => !item.Equals(target));
+
+        public static bool IsCircuitFree<TType>
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
+            => target.All(item => item.IsCircuitFree(immediateParents));
+
+        public static IEnumerable<TType> Circuits<TType>
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
+            => target.Where(item => !item.IsCircuitFree(immediateParents));
 
         public static IEnumerable<T> NullableToArray<T>(this T target)
-            where T : class => target == null ? new T[0] : new[] {target};
+            where T : class => target == null? new T[0] : new[] {target};
 
         public static IEnumerable<T> NullableToArray<T>(this T? target)
-            where T : struct => target == null ? new T[0] : new[] {target.Value};
+            where T : struct => target == null? new T[0] : new[] {target.Value};
 
         public static TTarget Top<TTarget>
         (
@@ -433,7 +376,7 @@ namespace hw.Helper
                 {
                     if(emptyException != null)
                         throw emptyException();
-                    return enableEmpty ? default(TTarget) : target.Single();
+                    return enableEmpty? default(TTarget) : target.Single();
                 }
 
                 var result = enumerator.Current;
@@ -442,18 +385,106 @@ namespace hw.Helper
 
                 if(multipleException != null)
                     throw multipleException(target);
-                return enableMultiple ? result : target.Single();
+                return enableMultiple? result : target.Single();
             }
-
         }
 
         // taken from http://dotnet-snippets.de/snippet/linq-erweiterung-split/4893
-        public static IEnumerable<IEnumerable<T>> Split<T>
-            (this IEnumerable<T> source, Func<T, bool> splitter)
+        public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> source, Func<T, bool> splitter)
         {
             using(var enumerator = source.GetEnumerator())
+            {
                 while(enumerator.MoveNext())
                     yield return GetInnerSequence(enumerator, splitter).ToList();
+            }
+        }
+
+        public static int? MaxEx(this IEnumerable<int> values)
+        {
+            if(values == null)
+                throw new ArgumentNullException(nameof(values));
+            int? result = null;
+            foreach(var value in values)
+                if(result == null)
+                    result = value;
+                else if(value > result)
+                    result = value;
+            return result;
+        }
+
+        public static int? MinEx(this IEnumerable<int> values)
+        {
+            if(values == null)
+                throw new ArgumentNullException(nameof(values));
+            int? result = null;
+            foreach(var value in values)
+                if(result == null)
+                    result = value;
+                else if(value < result)
+                    result = value;
+            return result;
+        }
+
+        [Obsolete("Use SelectHierarchical")]
+        // ReSharper disable once IdentifierTypo
+        internal static IEnumerable<T> SelectHierachical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
+        {
+            yield return root;
+            foreach(var item in getChildren(root).SelectMany(i => i.SelectHierachical(getChildren)))
+                yield return item;
+        }
+
+        internal static IEnumerable<T> SelectHierarchical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
+        {
+            yield return root;
+            foreach(var item in getChildren(root).SelectMany(i => i.SelectHierarchical(getChildren)))
+                yield return item;
+        }
+
+        static bool InternalAddDistinct<T>(ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
+        {
+            var result = false;
+            // ReSharper disable once LoopCanBePartlyConvertedToQuery
+            foreach(var bi in b)
+                if(AddDistinct(a, bi, isEqual))
+                    result = true;
+            return result;
+        }
+
+        static bool InternalAddDistinct<T>(IList<T> a, IEnumerable<T> b, Func<T, T, T> combine)
+            where T : class
+        {
+            var result = false;
+            // ReSharper disable once LoopCanBePartlyConvertedToQuery
+            foreach(var bi in b)
+                if(AddDistinct(a, bi, combine))
+                    result = true;
+            return result;
+        }
+
+        static bool AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
+        {
+            if(a.Any(ai => isEqual(ai, bi)))
+                return false;
+            a.Add(bi);
+            return true;
+        }
+
+        static bool AddDistinct<T>(IList<T> a, T bi, Func<T, T, T> combine)
+            where T : class
+        {
+            for(var i = 0; i < a.Count; i++)
+            {
+                var ab = combine(a[i], bi);
+                if(ab != null)
+                {
+                    a[i] = ab;
+                    return false;
+                }
+            }
+
+            a.Add(bi);
+            return true;
         }
 
         // taken from http://dotnet-snippets.de/snippet/linq-erweiterung-split/4893
@@ -467,13 +498,13 @@ namespace hw.Helper
             }
             while(enumerator.MoveNext());
         }
-
     }
 
+    // ReSharper disable once IdentifierTypo
     public interface IAggregateable<T>
     {
         T Aggregate(T other);
     }
 
-    sealed class DuplicateKeyException : Exception {}
+    sealed class DuplicateKeyException : Exception { }
 }

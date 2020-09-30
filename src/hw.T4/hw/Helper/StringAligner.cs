@@ -21,7 +21,7 @@ namespace hw.Helper
 
         public string[] Format(string[] lines)
         {
-            var result = lines.Select(x => x).ToArray();
+            var result = lines.Select(target => target).ToArray();
             var p = new int[result.Length];
             foreach(var column in _floatingColumns)
                 column.Format(result, p);

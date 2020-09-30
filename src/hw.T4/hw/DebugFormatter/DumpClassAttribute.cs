@@ -35,9 +35,9 @@ namespace hw.DebugFormatter
         /// <summary>
         ///     override this function to define special dump behaviour of class
         /// </summary>
-        /// <param name="t"> the type to dump. Is the type of any base class of "x" </param>
-        /// <param name="x"> the object to dump </param>
+        /// <param name="t"> the type to dump. Is the type of any base class of "target" </param>
+        /// <param name="target"> the object to dump </param>
         /// <returns> </returns>
-        public abstract string Dump(Type t, object x);
+        public abstract string Dump(Type t, object target);
     }
 }

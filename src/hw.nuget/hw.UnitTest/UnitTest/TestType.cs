@@ -4,36 +4,53 @@ using System.Linq;
 using System.Reflection;
 using hw.DebugFormatter;
 using hw.Helper;
+using JetBrains.Annotations;
 
 namespace hw.UnitTest
 {
     sealed class TestType : Dumpable
     {
+        public bool IsStarted { get; set; }
         internal readonly Type Type;
-        internal TestType(Type type) { Type = type; }
-        readonly List<TestMethod> _failedMethods = new List<TestMethod>();
-        bool _isSuspended;
+        readonly List<TestMethod> FailedMethods = new List<TestMethod>();
+        bool IsComplete { get; set; }
+        bool IsSuspended;
+        internal TestType(Type type) => Type = type;
 
-        public IEnumerable<DependantAttribute> Dependants { get { return Type.GetAttributes<DependantAttribute>(true); } }
-
-        IEnumerable<TestMethod> UnitTestMethods
+        public string ConfigurationString
         {
-            get
+            get => ConfigurationMode + " " + Type.FullName + " " + FailedMethodNames + "\n";
+            set
             {
-                return Type
-                    .GetMethods()
-                    .Where(IsUnitTestMethod)
-                    .Select(methodInfo => new TestMethod(methodInfo, Type))
-                    .Concat(DefaultTestMethods)
-                    .Concat(InterfaceMethods);
+                var elements = value.Split(' ');
+                Tracer.Assert(elements[1] == Type.FullName);
+                ConfigurationMode = elements[0];
+                FailedMethodNames = elements[2];
             }
         }
 
-        static bool IsUnitTestMethod(MethodInfo methodInfo)
-        {
-            return methodInfo.GetAttribute<UnitTestAttribute>(true) != null
-                || TestRunner.RegisteredFrameworks.Any(item=> item.IsUnitTestMethod(methodInfo));
-        }
+        public int ConfigurationModePriority
+            => !IsStarted || IsSuspended? 4 :
+                IsSuccessful? 2 :
+                IsComplete? 1 :
+                3;
+
+        internal IEnumerable<DependenceProvider> DependenceProviders => Type.GetAttributes<DependenceProvider>(true);
+
+
+        [PublicAPI]
+        [Obsolete("Use IsSuccessful")]
+        // ReSharper disable once IdentifierTypo
+        internal bool IsSuccessfull => IsSuccessful;
+
+        internal bool IsSuccessful => IsComplete && FailedMethods.Count == 0;
+
+        IEnumerable<TestMethod> UnitTestMethods => Type
+            .GetMethods()
+            .Where(IsUnitTestMethod)
+            .Select(methodInfo => new TestMethod(methodInfo, Type))
+            .Concat(DefaultTestMethods)
+            .Concat(InterfaceMethods);
 
         IEnumerable<TestMethod> InterfaceMethods
         {
@@ -49,34 +66,14 @@ namespace hw.UnitTest
             get
             {
                 var testAttribute = Type.GetAttribute<UnitTestAttribute>(true);
-                if(testAttribute != null && testAttribute.DefaultMethod != null)
+                if(testAttribute?.DefaultMethod != null)
                     yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod), Type);
-            }
-        }
-
-        public bool IsStarted { get; set; }
-
-        public bool IsStartable(Func<Type, bool> isLevel) { return !IsStarted && !_isSuspended && isLevel(Type); }
-
-        public bool IsComplete { get; set; }
-
-        public bool IsSuccessfull { get { return IsComplete && _failedMethods.Count == 0; } }
-
-        public string ConfigurationString
-        {
-            get { return ConfigurationMode + " " + Type.FullName + " " + FailedMethodNames + "\n"; }
-            set
-            {
-                var elements = value.Split(' ');
-                Tracer.Assert(elements[1] == Type.FullName);
-                ConfigurationMode = elements[0];
-                FailedMethodNames = elements[2];
             }
         }
 
         string FailedMethodNames
         {
-            get { return _failedMethods.Aggregate("", (current, testMethod) => current + testMethod.ConfigurationString); }
+            get => FailedMethods.Aggregate("", (current, testMethod) => current + testMethod.ConfigurationString);
             set
             {
                 var forcedMethods =
@@ -90,40 +87,28 @@ namespace hw.UnitTest
 
         string ConfigurationMode
         {
-            get
-            {
-                if(!IsStarted || _isSuspended)
-                    return "notrun";
-                if(IsSuccessfull)
-                    return "success";
-                if(IsComplete)
-                    return "error";
-
-                return "dependanterror";
-            }
+            get 
+            // ReSharper disable once StringLiteralTypo
+                => !IsStarted || IsSuspended? "notrun" :
+                IsSuccessful? "success" :
+                IsComplete? "error" : 
+                // ReSharper disable once StringLiteralTypo
+                "dependanterror";
             set
             {
                 if(value != "error")
-                    _isSuspended = true;
+                    IsSuspended = true;
             }
         }
 
-        public override string ToString() { return ConfigurationString; }
+        [PublicAPI]
+        [Obsolete("Use CanBeStarted")]
+        // ReSharper disable once IdentifierTypo
+        public bool IsStartable(Func<Type, bool> isLevel) => CanBeStarted(isLevel);
 
-        public int ConfigurationModePriority
-        {
-            get
-            {
-                if(!IsStarted || _isSuspended)
-                    return 4;
-                if(IsSuccessfull)
-                    return 2;
-                if(IsComplete)
-                    return 1;
+        public bool CanBeStarted(Func<Type, bool> isLevel) => !IsStarted && !IsSuspended && isLevel(Type);
 
-                return 3;
-            }
-        }
+        public override string ToString() => ConfigurationString;
 
         public void Run()
         {
@@ -134,9 +119,14 @@ namespace hw.UnitTest
                 }
                 catch(TestFailedException)
                 {
-                    _failedMethods.Add(unitTestMethod);
+                    FailedMethods.Add(unitTestMethod);
                 }
+
             IsComplete = true;
         }
+
+        static bool IsUnitTestMethod(MethodInfo methodInfo)
+            => methodInfo.GetAttribute<UnitTestAttribute>(true) != null
+               || TestRunner.RegisteredFrameworks.Any(item => item.IsUnitTestMethod(methodInfo));
     }
 }

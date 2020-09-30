@@ -5,51 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using hw.DebugFormatter;
+using JetBrains.Annotations;
 
 namespace hw.Helper
 {
     [Serializable]
+    [PublicAPI]
     public sealed class SmbFile
     {
-        /// <summary>
-        ///     constructs a FileInfo
-        /// </summary>
-        /// <param name="name"> the filename </param>
-        /// <param name="autoCreateDirectories"></param>
-        internal static SmbFile Create(string name, bool autoCreateDirectories)
-            => new SmbFile(name, autoCreateDirectories);
-
-        /// <summary>
-        ///     Gets the directory of the source file that called this function
-        /// </summary>
-        /// <param name="depth"> The depth. </param>
-        /// <returns> </returns>
-        public static string SourcePath(int depth)
-            => new FileInfo(SourceFileName(depth + 1)).DirectoryName;
-
-        /// <summary>
-        ///     Gets the name of the source file that called this function
-        /// </summary>
-        /// <param name="depth"> stack depths of the function used. </param>
-        /// <returns> </returns>
-        public static string SourceFileName(int depth)
-        {
-            var sf = new StackTrace(true).GetFrame(depth + 1);
-            return sf.GetFileName();
-        }
-
-        /// <summary>
-        ///     Gets list of files that match given path and pattern
-        /// </summary>
-        /// <param name="filePattern"></param>
-        /// <returns></returns>
-        public static string[] Select(string filePattern)
-        {
-            var namePattern = filePattern.Split('\\').Last();
-            var path = filePattern.Substring(0, filePattern.Length - namePattern.Length - 1);
-            return System.IO.Directory.GetFiles(path, namePattern);
-        }
-
         /// <summary>
         ///     Ensure, that all directories are existent when writing to file.
         ///     Can be modified at any time.
@@ -58,19 +21,20 @@ namespace hw.Helper
         [EnableDumpExcept(true)]
         public bool AutoCreateDirectories;
 
-        readonly string _name;
-        FileSystemInfo _fileInfoCache;
+        FileSystemInfo FileInfoCache;
 
-        SmbFile(string name, bool autoCreateDirectories)
+        readonly string InternalName;
+
+        public SmbFile() => InternalName = "";
+
+        SmbFile(string internalName, bool autoCreateDirectories)
         {
-            _name = name;
+            InternalName = internalName;
             AutoCreateDirectories = autoCreateDirectories;
         }
 
-        public SmbFile() => _name = "";
-
         /// <summary>
-        ///     considers the file as a string. If file existe it should be a text file
+        ///     considers the file as a string. If file exists it should be a text file
         /// </summary>
         /// <value> the content of the file if existing else null. </value>
         [DisableDump]
@@ -78,17 +42,21 @@ namespace hw.Helper
         {
             get
             {
-                if(!File.Exists(_name))
+                if(!File.Exists(InternalName))
                     return null;
 
-                using(var f = File.OpenText(_name))
-                    return f.ReadToEnd();
+                using(var reader = File.OpenText(InternalName))
+                {
+                    return reader.ReadToEnd();
+                }
             }
             set
             {
                 CheckedEnsureDirectoryOfFileExists();
-                using(var f = File.CreateText(_name))
-                    f.Write(value);
+                using(var writer = File.CreateText(InternalName))
+                {
+                    writer.Write(value);
+                }
             }
         }
 
@@ -104,13 +72,13 @@ namespace hw.Helper
             {
                 var f = Reader;
                 var result = new byte[Size];
-                f.Read(result, 0, (int) Size);
+                f.Read(result, 0, (int)Size);
                 f.Close();
                 return result;
             }
             set
             {
-                var f = File.OpenWrite(_name);
+                var f = File.OpenWrite(InternalName);
                 f.Write(value, 0, value.Length);
                 f.Close();
             }
@@ -118,13 +86,13 @@ namespace hw.Helper
 
         [DisableDump]
         public FileStream Reader
-            => new FileStream(_name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            => new FileStream(InternalName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
         /// <summary>
         ///     Size of file in bytes
         /// </summary>
         [DisableDump]
-        public long Size => ((FileInfo) FileSystemInfo).Length;
+        public long Size => ((FileInfo)FileSystemInfo).Length;
 
         /// <summary>
         ///     Gets the full path of the directory or file.
@@ -166,7 +134,7 @@ namespace hw.Helper
 
                 try
                 {
-                    ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos("dummy");
+                    ((DirectoryInfo)FileSystemInfo).GetFileSystemInfos("dummy");
                     return true;
                 }
                 catch(Exception)
@@ -179,22 +147,7 @@ namespace hw.Helper
         /// <summary>
         ///     returns true if it is a directory
         /// </summary>
-        public bool IsDirectory => System.IO.Directory.Exists(_name);
-
-        FileSystemInfo FileSystemInfo
-        {
-            get
-            {
-                if(_fileInfoCache != null)
-                    return _fileInfoCache;
-
-                _fileInfoCache = IsDirectory
-                    ? (FileSystemInfo) new DirectoryInfo(_name)
-                    : new FileInfo(_name);
-
-                return _fileInfoCache;
-            }
-        }
+        public bool IsDirectory => System.IO.Directory.Exists(InternalName);
 
         /// <summary>
         ///     Content of directory, one line for each file
@@ -203,10 +156,7 @@ namespace hw.Helper
         public string DirectoryString => GetDirectoryString();
 
         [DisableDump]
-        public SmbFile[] Items
-        {
-            get {return GetItems().Select(f => Create(f.FullName, AutoCreateDirectories)).ToArray();}
-        }
+        public SmbFile[] Items => GetItems().Select(f => Create(f.FullName, AutoCreateDirectories)).ToArray();
 
         [EnableDumpExcept(false)]
         public bool IsLocked
@@ -215,7 +165,7 @@ namespace hw.Helper
             {
                 try
                 {
-                    File.OpenRead(_name).Close();
+                    File.OpenRead(InternalName).Close();
                     return false;
                 }
                 catch(IOException)
@@ -230,9 +180,55 @@ namespace hw.Helper
         [DisableDump]
         public DateTime ModifiedDate => FileSystemInfo.LastWriteTime;
 
+        FileSystemInfo FileSystemInfo
+        {
+            get
+            {
+                if(FileInfoCache != null)
+                    return FileInfoCache;
+
+                FileInfoCache = IsDirectory
+                    ? (FileSystemInfo)new DirectoryInfo(InternalName)
+                    : new FileInfo(InternalName);
+
+                return FileInfoCache;
+            }
+        }
+
+        /// <summary>
+        ///     Gets the directory of the source file that called this function
+        /// </summary>
+        /// <param name="depth"> The depth. </param>
+        /// <returns> </returns>
+        public static string SourcePath(int depth)
+            => new FileInfo(SourceFileName(depth + 1)).DirectoryName;
+
+        /// <summary>
+        ///     Gets the name of the source file that called this function
+        /// </summary>
+        /// <param name="depth"> stack depths of the function used. </param>
+        /// <returns> </returns>
+        public static string SourceFileName(int depth)
+        {
+            var sf = new StackTrace(true).GetFrame(depth + 1);
+            return sf.GetFileName();
+        }
+
+        /// <summary>
+        ///     Gets list of files that match given path and pattern
+        /// </summary>
+        /// <param name="filePattern"></param>
+        /// <returns></returns>
+        public static string[] Select(string filePattern)
+        {
+            var namePattern = filePattern.Split('\\').Last();
+            var path = filePattern.Substring(0, filePattern.Length - namePattern.Length - 1);
+            return System.IO.Directory.GetFiles(path, namePattern);
+        }
+
         public string SubString(long start, int size)
         {
-            if(!File.Exists(_name))
+            if(!File.Exists(InternalName))
                 return null;
 
             using(var f = Reader)
@@ -261,7 +257,7 @@ namespace hw.Helper
             {
                 EnsureDirectoryOfFileExists();
                 System.IO.Directory.CreateDirectory(FullName);
-                _fileInfoCache = null;
+                FileInfoCache = null;
             }
         }
 
@@ -273,9 +269,9 @@ namespace hw.Helper
         public void Delete(bool recursive = false)
         {
             if(IsDirectory)
-                System.IO.Directory.Delete(_name, recursive);
+                System.IO.Directory.Delete(InternalName, recursive);
             else
-                File.Delete(_name);
+                File.Delete(InternalName);
         }
 
         /// <summary>
@@ -284,25 +280,10 @@ namespace hw.Helper
         public void Move(string newName)
         {
             if(IsDirectory)
-                System.IO.Directory.Move(_name, newName);
+                System.IO.Directory.Move(InternalName, newName);
             else
-                File.Move(_name, newName);
+                File.Move(InternalName, newName);
         }
-
-        string GetDirectoryString()
-        {
-            var result = "";
-            foreach(var fi in GetItems())
-            {
-                result += fi.Name;
-                result += "\n";
-            }
-
-            return result;
-        }
-
-        FileSystemInfo[] GetItems()
-            => ((DirectoryInfo) FileSystemInfo).GetFileSystemInfos().ToArray();
 
         public void CopyTo(string destinationPath)
         {
@@ -374,11 +355,33 @@ namespace hw.Helper
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = FullName
+                    WindowStyle = ProcessWindowStyle.Hidden, FileName = FullName
                 }
             };
             process.Start();
         }
+
+        /// <summary>
+        ///     constructs a FileInfo
+        /// </summary>
+        /// <param name="name"> the filename </param>
+        /// <param name="autoCreateDirectories"></param>
+        internal static SmbFile Create(string name, bool autoCreateDirectories)
+            => new SmbFile(name, autoCreateDirectories);
+
+        string GetDirectoryString()
+        {
+            var result = "";
+            foreach(var fi in GetItems())
+            {
+                result += fi.Name;
+                result += "\n";
+            }
+
+            return result;
+        }
+
+        FileSystemInfo[] GetItems()
+            => ((DirectoryInfo)FileSystemInfo).GetFileSystemInfos().ToArray();
     }
 }

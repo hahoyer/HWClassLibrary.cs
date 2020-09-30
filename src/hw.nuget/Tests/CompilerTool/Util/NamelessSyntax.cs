@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.Parser;
+﻿using hw.Parser;
 
 namespace hw.Tests.CompilerTool.Util
 {

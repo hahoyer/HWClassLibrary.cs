@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.DebugFormatter;
+﻿using hw.DebugFormatter;
 using hw.Helper;
 using hw.UnitTest;
+// ReSharper disable UnusedVariable
 
 namespace hw.Tests.Helper.Core
 {
@@ -12,35 +10,31 @@ namespace hw.Tests.Helper.Core
     {
         sealed class ClassWithCache : ValueCache.IContainer
         {
-            readonly ValueCache Cache;
-            public ClassWithCache() { Cache = new ValueCache(); }
-
-            ValueCache ValueCache.IContainer.Cache { get { return Cache; } }
-
             public int Get12Called;
+            readonly ValueCache Cache;
+            public ClassWithCache() => Cache = new ValueCache();
 
-            public int Get12()
-            {
-                return this.CachedValue
-                    (
-                        () =>
-                        {
-                            Get12Called ++;
-                            return 12;
-                        }
-                    );
-            }
+            ValueCache ValueCache.IContainer.Cache => Cache;
+
+            public int Get12() => this.CachedValue
+            (
+                () =>
+                {
+                    Get12Called++;
+                    return 12;
+                }
+            );
         }
 
         [UnitTest]
         public static void Inline()
         {
-            var x = new ClassWithCache();
-            Tracer.Assert(x.Get12Called == 0);
-            var y12 = x.Get12();
-            Tracer.Assert(x.Get12Called == 1);
-            var y12Again = x.Get12();
-            Tracer.Assert(x.Get12Called == 1);
+            var target = new ClassWithCache();
+            Tracer.Assert(target.Get12Called == 0);
+            var y12 = target.Get12();
+            Tracer.Assert(target.Get12Called == 1);
+            var y12Again = target.Get12();
+            Tracer.Assert(target.Get12Called == 1);
         }
     }
 }

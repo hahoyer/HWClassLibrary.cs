@@ -15,9 +15,12 @@
     <language>en-US</language>
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>Copyright Harald H. Hoyer 2017</copyright>
-    <version>18.1.2</version>
+    <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
+
+    <version>20.1.0</version>
     <releaseNotes>
+      change: log4net moved to extra package
+      18.1.2
       New: StringExtender.Surround will guess closing parenthesis. Supported are angel, round, square and curly brackets 
       New: LinqExtension.Top, which incorporates First, Single, FirstOrDefault and SingleOrDefault and is provides custom exceptions
       New: minor extensions

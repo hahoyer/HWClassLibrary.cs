@@ -5,9 +5,9 @@ namespace hw.Proof
 {
     sealed class Lexer : DumpableObject
     {
-        readonly Match _any;
-        readonly IMatch _number;
-        readonly Match _whiteSpaces;
+        readonly Match AnyMatch;
+        readonly IMatch NumberMatch;
+        readonly Match WhiteSpaces;
 
         public Lexer()
         {
@@ -15,13 +15,13 @@ namespace hw.Proof
             var symbol1 = "({[)}];,".AnyChar();
             var symbol = "°^!²§³$%&/=?\\@€*+~><|:.-".AnyChar();
             var identifier = (alpha + alpha.Else(Match.Digit).Repeat()).Else(symbol.Repeat(1));
-            _any = symbol1.Else(identifier);
-            _whiteSpaces = Match.WhiteSpace.Repeat(1);
-            _number = Match.Digit.Repeat(1);
+            AnyMatch = symbol1.Else(identifier);
+            WhiteSpaces = Match.WhiteSpace.Repeat(1);
+            NumberMatch = Match.Digit.Repeat(1);
         }
 
-        internal int? Space(SourcePosn sourcePosn) => sourcePosn.Match(_whiteSpaces);
-        internal int? Number(SourcePosn sourcePosn) => sourcePosn.Match(_number);
-        internal int? Any(SourcePosn sourcePosn) => sourcePosn.Match(_any);
+        internal int? Space(SourcePosition sourcePosition) => sourcePosition.Match(WhiteSpaces);
+        internal int? Number(SourcePosition sourcePosition) => sourcePosition.Match(NumberMatch);
+        internal int? Any(SourcePosition sourcePosition) => sourcePosition.Match(AnyMatch);
     }
 }

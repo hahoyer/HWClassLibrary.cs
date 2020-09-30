@@ -6,9 +6,9 @@ namespace hw.Scanner
 {
     /// <summary>
     ///     Language scanner, that returns groups of tokens at each call to <see cref="IScanner.GetNextTokenGroup" />.
-    ///     A tokengroup in this implementation consists of a number of whitespace tokens and one actual token.
+    ///     A token-group in this implementation consists of a number of whitespace tokens and one actual token.
     ///     The token building is defined by a <see cref="ITokenFactory" />. <br />
-    ///     This is the recommented scanner implementation
+    ///     This is the recommended scanner implementation
     /// </summary>
     /// <remarks>
     ///     - The scanning process will try to match any of the <see cref="ITokenFactory.Classes" /> in order provided.
@@ -16,15 +16,37 @@ namespace hw.Scanner
     ///     <see cref="ITokenFactory.InvalidCharacterError" />.<br />
     ///     - Only the last (or only) token in group returned <see cref="IScanner.GetNextTokenGroup" /> by will have a token
     ///     class with <see cref="IParserTokenFactory" /> defined.<br />
-    ///     - During scanning process, exceptions of type <see cref="TwoLayerScanner.Exception" /> will be catched
+    ///     - During scanning process, exceptions of type <see cref="TwoLayerScanner.Exception" /> will be catch-ed
     ///     and converted into appropriate token<br />
     ///     - When the <see cref="ITokenFactory.EndOfText" /> is returned the source position is set to invalid.<br />
     /// </remarks>
-    public sealed class TwoLayerScanner : Dumpable, IScanner
+    public sealed class TwoLayerScanner
+        : Dumpable
+            , IScanner
     {
+        /// <summary>
+        ///     Exception type that is recognized by <see cref="TwoLayerScanner" /> processing
+        ///     and used to convert it into a correct token,
+        ///     containing the <see cref="IScannerTokenType" /> provided with exception
+        ///     to identify the error on higher level.
+        /// </summary>
+        public sealed class Exception : System.Exception
+        {
+            public readonly SourcePosition SourcePosition;
+            public readonly IScannerTokenType SyntaxError;
+
+            public Exception(SourcePosition sourcePosition, IScannerTokenType syntaxError)
+            {
+                SourcePosition = sourcePosition;
+                SyntaxError = syntaxError;
+            }
+        }
+
         sealed class Worker : DumpableObject
         {
-            sealed class Item : DumpableObject, IItem
+            sealed class Item
+                : DumpableObject
+                    , IItem
             {
                 readonly SourcePart SourcePart;
                 readonly IScannerTokenType Type;
@@ -38,18 +60,17 @@ namespace hw.Scanner
                 IScannerTokenType IItem.ScannerTokenType => Type;
                 SourcePart IItem.SourcePart => SourcePart;
 
-                protected override string GetNodeDump() {return base.GetNodeDump()+"("+Type.Id+")";}
-
+                protected override string GetNodeDump() => base.GetNodeDump() + "(" + Type.Id + ")";
             }
 
             readonly TwoLayerScanner Parent;
-            readonly SourcePosn SourcePosn;
+            readonly SourcePosition SourcePosition;
 
-            internal Worker(TwoLayerScanner parent, SourcePosn sourcePosn)
+            internal Worker(TwoLayerScanner parent, SourcePosition sourcePosition)
             {
-                Tracer.Assert(sourcePosn.IsValid);
+                Tracer.Assert(sourcePosition.IsValid);
                 Parent = parent;
-                SourcePosn = sourcePosn;
+                SourcePosition = sourcePosition;
             }
 
             ITokenFactory TokenFactory => Parent.TokenFactory;
@@ -70,65 +91,47 @@ namespace hw.Scanner
             {
                 try
                 {
-                    if(SourcePosn.IsEnd)
-                        return CreateAndAdvance(length: 0, type: TokenFactory.EndOfText);
+                    if(SourcePosition.IsEnd)
+                        return CreateAndAdvance(0, TokenFactory.EndOfText);
 
                     foreach(var item in TokenFactory.Classes)
                     {
-                        var length = item.Match(SourcePosn);
+                        var length = item.Match(SourcePosition);
                         if(length != null)
                             return CreateAndAdvance(length.Value, item.ScannerTokenType);
                     }
 
-                    return CreateAndAdvance(length: 1, type: TokenFactory.InvalidCharacterError);
+                    return CreateAndAdvance(1, TokenFactory.InvalidCharacterError);
                 }
                 catch(Exception scannerException)
                 {
                     return CreateAndAdvance
-                        (scannerException.SourcePosn - SourcePosn, scannerException.SyntaxError);
+                        (scannerException.SourcePosition - SourcePosition, scannerException.SyntaxError);
                 }
             }
 
-            void Advance(int position) => Advance(SourcePosn, position);
+            void Advance(int position) => Advance(SourcePosition, position);
 
-            static void Advance(SourcePosn sourcePosn, int position)
+            static void Advance(SourcePosition sourcePosition, int position)
             {
-                var wasEnd = sourcePosn.IsEnd;
-                sourcePosn.Position += position;
+                var wasEnd = sourcePosition.IsEnd;
+                sourcePosition.Position += position;
                 if(wasEnd && position > 0)
-                    sourcePosn.IsValid = false;
+                    sourcePosition.IsValid = false;
             }
 
             IItem CreateAndAdvance(int length, IScannerTokenType type)
             {
-                var result = new Item(SourcePart.Span(SourcePosn, length), type);
+                var result = new Item(SourcePart.Span(SourcePosition, length), type);
                 Advance(length);
                 return result;
             }
         }
 
-        /// <summary>
-        ///     Exception type that is requognized by <see cref="TwoLayerScanner" /> processing
-        ///     and used to convert it into a correct token,
-        ///     containing the <see cref="IScannerTokenType" /> provided with exception
-        ///     to identify the error on higher level.
-        /// </summary>
-        public sealed class Exception : System.Exception
-        {
-            public readonly SourcePosn SourcePosn;
-            public readonly IScannerTokenType SyntaxError;
-
-            public Exception(SourcePosn sourcePosn, IScannerTokenType syntaxError)
-            {
-                SourcePosn = sourcePosn;
-                SyntaxError = syntaxError;
-            }
-        }
-
         readonly ITokenFactory TokenFactory;
-        public TwoLayerScanner(ITokenFactory tokenFactory) { TokenFactory = tokenFactory; }
+        public TwoLayerScanner(ITokenFactory tokenFactory) => TokenFactory = tokenFactory;
 
-        IItem[] IScanner.GetNextTokenGroup(SourcePosn sourcePosn)
-            => new Worker(this, sourcePosn).GetNextTokenGroup().ToArray();
+        IItem[] IScanner.GetNextTokenGroup(SourcePosition sourcePosition)
+            => new Worker(this, sourcePosition).GetNextTokenGroup().ToArray();
     }
 }

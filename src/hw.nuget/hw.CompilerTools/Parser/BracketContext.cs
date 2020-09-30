@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
@@ -9,10 +7,10 @@ namespace hw.Parser
     public sealed class BracketContext : DumpableObject
     {
         readonly FunctionCache<string, BracketContext> AddCache;
+        readonly PrioTable.BracketPairItem[] Brackets;
 
         [EnableDump]
         readonly int[] Data;
-        readonly PrioTable.BracketPairItem[] Brackets;
 
         BracketContext(int[] data, PrioTable.BracketPairItem[] brackets)
         {
@@ -21,7 +19,20 @@ namespace hw.Parser
             Brackets = brackets;
         }
 
+        internal int Depth => Data.Length;
+
         protected override string GetNodeDump() => Data.Stringify("/");
+
+        internal BracketContext Add(string token) => AddCache[token];
+
+        internal bool? IsBracketAndLeftBracket(string token)
+        {
+            var delta = Depth - Add(token).Depth;
+            return delta == 0? (bool?)null : delta < 0;
+        }
+
+        internal static BracketContext Instance(PrioTable.BracketPairItem[] brackets)
+            => new BracketContext(new int[0], brackets);
 
         BracketContext GetAddCache(string token)
         {
@@ -43,23 +54,10 @@ namespace hw.Parser
             return this;
         }
 
-        internal int Depth => Data.Length;
-
-        internal BracketContext Add(string token) => AddCache[token];
-
-        internal bool? IsBracketAndLeftBracket(string token)
-        {
-            var delta = Depth - Add(token).Depth;
-            return delta == 0 ? (bool?) null : delta < 0;
-        }
-
-        internal static BracketContext Instance(PrioTable.BracketPairItem[] brackets)
-            => new BracketContext(new int[0], brackets);
-
         int GetContextIndex(string token)
         {
             if(token == "")
-                token = Depth == 0 ? PrioTable.BeginOfText : PrioTable.EndOfText;
+                token = Depth == 0? PrioTable.BeginOfText : PrioTable.EndOfText;
 
             for(var index = 0; index < Brackets.Length; index++)
             {
@@ -69,6 +67,7 @@ namespace hw.Parser
                 if(token == item.Right)
                     return index + 1;
             }
+
             return 0;
         }
     }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using hw.DebugFormatter;
 using hw.Parser;
 
@@ -17,14 +15,14 @@ namespace hw.Tests.CompilerTool.Util
         {
             get
             {
-                var x = PrioTable.Left(PrioTable.Any);
-                x += PrioTable.Left("*");
-                x += PrioTable.Left("+");
-                x += PrioTable.Left(";");
-                x += PrioTable.BracketParallels(LeftBrackets, RightBrackets);
-                Tracer.FlaggedLine("\n" + x.Dump() + "\n");
-                x.Title = Tracer.MethodHeader();
-                return x;
+                var target = PrioTable.Left(PrioTable.Any);
+                target += PrioTable.Left("*");
+                target += PrioTable.Left("+");
+                target += PrioTable.Left(";");
+                target += PrioTable.BracketParallels(LeftBrackets, RightBrackets);
+                Tracer.FlaggedLine("\n" + target.Dump() + "\n");
+                target.Title = Tracer.MethodHeader();
+                return target;
             }
         }
 

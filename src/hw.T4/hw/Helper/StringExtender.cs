@@ -17,15 +17,15 @@ namespace hw.Helper
         /// <summary>
         ///     Indent paramer by 4 times count spaces
         /// </summary>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <param name="tabString"></param>
         /// <param name="count"> The count. </param>
         /// <param name="isLineStart"></param>
         /// <returns> </returns>
-        public static string Indent(this string x, int count = 1, string tabString = "    ", bool isLineStart = false)
+        public static string Indent(this string target, int count = 1, string tabString = "    ", bool isLineStart = false)
         {
             var effectiveTabString = tabString.Repeat(count);
-            return (isLineStart ? effectiveTabString : "") + x.Replace("\n", "\n" + effectiveTabString);
+            return (isLineStart ? effectiveTabString : "") + target.Replace("\n", "\n" + effectiveTabString);
         }
 
         /// <summary>
@@ -69,14 +69,14 @@ namespace hw.Helper
         /// <summary>
         ///     Converts string to a string literal.
         /// </summary>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <returns> </returns>
         /// created 08.01.2007 18:37
-        public static string Quote(this string x)
+        public static string Quote(this string target)
         {
-            if(x == null)
+            if(target == null)
                 return "null";
-            return "\"" + x.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+            return "\"" + target.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
         }
 
         /// <summary>
@@ -100,9 +100,9 @@ namespace hw.Helper
         {
             Tracer.Assert(length < 16);
             if(0 == length)
-                return "x[]";
+                return "target[]";
             if(i == 0)
-                return "x[";
+                return "target[";
             if(i == length)
                 return "]";
             if(i % 4 == 0)
@@ -143,7 +143,7 @@ namespace hw.Helper
             yield return target.Substring(start);
         }
 
-        public static string Format(this string x, StringAligner aligner) => aligner.Format(x);
+        public static string Format(this string target, StringAligner aligner) => aligner.Format(target);
 
         internal static int BeginMatch(string a, string b)
         {

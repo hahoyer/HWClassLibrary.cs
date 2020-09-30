@@ -21,8 +21,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
@@ -64,12 +62,12 @@ namespace hw.Helper
             return result;
         }
 
-        public static BigRational operator *(BigRational x, BigRational y) { return new BigRational(x.Nominator * y.Nominator, x.Denominator * y.Denominator); }
-        public static BigRational operator /(BigRational x, BigRational y) { return new BigRational(x.Nominator * y.Denominator, x.Denominator * y.Nominator); }
-        public static BigRational operator /(int x, BigRational y) { return new BigRational(x * y.Denominator, y.Nominator); }
-        public static BigRational operator -(BigRational x) { return new BigRational(-x.Nominator, x.Denominator); }
-        public static BigRational operator +(BigRational x, int y) { return new BigRational(x.Nominator + y * x.Denominator, x.Denominator); }
-        public static BigRational operator +(BigRational x, BigRational y) { return new BigRational(x.Nominator * y.Denominator + y.Nominator * x.Denominator, x.Denominator * y.Denominator); }
+        public static BigRational operator *(BigRational target, BigRational y) { return new BigRational(target.Nominator * y.Nominator, target.Denominator * y.Denominator); }
+        public static BigRational operator /(BigRational target, BigRational y) { return new BigRational(target.Nominator * y.Denominator, target.Denominator * y.Nominator); }
+        public static BigRational operator /(int target, BigRational y) { return new BigRational(target * y.Denominator, y.Nominator); }
+        public static BigRational operator -(BigRational target) { return new BigRational(-target.Nominator, target.Denominator); }
+        public static BigRational operator +(BigRational target, int y) { return new BigRational(target.Nominator + y * target.Denominator, target.Denominator); }
+        public static BigRational operator +(BigRational target, BigRational y) { return new BigRational(target.Nominator * y.Denominator + y.Nominator * target.Denominator, target.Denominator * y.Denominator); }
 
         public override string ToString()
         {

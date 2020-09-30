@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using hw.Scanner;
+using JetBrains.Annotations;
 
 namespace hw.Parser
 {
+    [PublicAPI]
     public interface IParser<TSourcePart>
-        where TSourcePart : class, ISourcePartProxy
+        where TSourcePart : class
     {
-        TSourcePart Execute(SourcePosn start, Stack<OpenItem<TSourcePart>> stack = null);
         bool Trace { get; set; }
+        TSourcePart Execute(SourcePosition start, Stack<OpenItem<TSourcePart>> stack = null);
     }
 
     public interface ISubParser<TSourcePart>
-        where TSourcePart : class, ISourcePartProxy
+        where TSourcePart : class
     {
-        IParserTokenType<TSourcePart> Execute(SourcePosn sourcePosn, Stack<OpenItem<TSourcePart>> stack = null);
+        IParserTokenType<TSourcePart> Execute(SourcePosition sourcePosition, Stack<OpenItem<TSourcePart>> stack = null);
     }
 }

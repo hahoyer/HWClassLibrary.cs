@@ -2,28 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
+using JetBrains.Annotations;
 
 namespace hw.Helper
 {
+    [PublicAPI]
     public sealed class StringAligner
     {
-        readonly List<FloatingColumn> _floatingColumns = new List<FloatingColumn>();
+        readonly List<FloatingColumn> FloatingColumns = new List<FloatingColumn>();
 
         public void AddFloatingColumn(params string[] pattern)
         {
-            var c = _floatingColumns.Count;
-            _floatingColumns.Add(new StringPattern(pattern));
+            var c = FloatingColumns.Count;
+            FloatingColumns.Add(new StringPattern(pattern));
             if(c > 0)
-                _floatingColumns[c - 1].FindStartFailed = _floatingColumns[c].FindStart;
+                FloatingColumns[c - 1].FindStartFailed = FloatingColumns[c].FindStart;
         }
 
-        public string Format(string lines) { return Format(lines.Split('\n')).Aggregate("", (current, temp) => current + temp + "\n"); }
+        public string Format
+            (string lines) => Format(lines.Split('\n')).Aggregate("", (current, temp) => current + temp + "\n");
 
         public string[] Format(string[] lines)
         {
-            var result = lines.Select(x => x).ToArray();
+            var result = lines.Select(target => target).ToArray();
             var p = new int[result.Length];
-            foreach(var column in _floatingColumns)
+            foreach(var column in FloatingColumns)
                 column.Format(result, p);
             return result;
         }
@@ -32,6 +35,7 @@ namespace hw.Helper
     /// <summary>
     ///     Description of a floating column
     /// </summary>
+    [PublicAPI]
     public abstract class FloatingColumn : Dumpable
     {
         /// <summary>
@@ -43,7 +47,7 @@ namespace hw.Helper
         ///     Initializes a new instance of the <see cref="FloatingColumn" /> class.
         /// </summary>
         /// created 15.10.2006 15:44
-        protected FloatingColumn() { FindStartFailed = ((s, i) => s.Length); }
+        protected FloatingColumn() => FindStartFailed = (s, i) => s.Length;
 
         /// <summary>
         ///     Formats the specified lines beginning at specified positions .
@@ -58,39 +62,12 @@ namespace hw.Helper
                 count--;
             for(var i = 0; i < count; i++)
                 positions[i] = FindStart(lines[i], positions[i]);
-            while(Levelling(count, lines, positions))
-                continue;
+            while(Levelling(count, lines, positions)) { }
+
             for(var i = 0; i < count; i++)
                 positions[i] = FindStart(lines[i], positions[i]);
             for(var i = 0; i < count; i++)
                 positions[i] = FindEnd(lines[i], positions[i]);
-        }
-
-        static void FormatLine(ref string line, ref int position, int offset)
-        {
-            if(offset == 0)
-                return;
-            line = line.Insert(position, " ".Repeat(offset));
-            position += offset;
-        }
-
-        static bool Levelling(int count, string[] lines, int[] positions)
-        {
-            for(var i = 1; i < count; i++)
-            {
-                var delta = positions[i] - positions[i - 1];
-                if(delta < -1)
-                {
-                    FormatLine(ref lines[i], ref positions[i], -delta - 1);
-                    return true;
-                }
-                if(delta > 1)
-                {
-                    FormatLine(ref lines[i - 1], ref positions[i - 1], delta - 1);
-                    return true;
-                }
-            }
-            return false;
         }
 
         /// <summary>
@@ -110,6 +87,36 @@ namespace hw.Helper
         /// <returns> </returns>
         /// created 15.10.2006 15:22
         public abstract int FindEnd(string s, int i);
+
+        static void FormatLine(ref string line, ref int position, int offset)
+        {
+            if(offset == 0)
+                return;
+            line = line.Insert(position, " ".Repeat(offset));
+            position += offset;
+        }
+
+        // ReSharper disable once IdentifierTypo
+        static bool Levelling(int count, string[] lines, int[] positions)
+        {
+            for(var i = 1; i < count; i++)
+            {
+                var delta = positions[i] - positions[i - 1];
+                if(delta < -1)
+                {
+                    FormatLine(ref lines[i], ref positions[i], -delta - 1);
+                    return true;
+                }
+
+                if(delta > 1)
+                {
+                    FormatLine(ref lines[i - 1], ref positions[i - 1], delta - 1);
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     /// <summary>
@@ -117,14 +124,14 @@ namespace hw.Helper
     /// </summary>
     sealed class StringPattern : FloatingColumn
     {
-        readonly string[] _pattern;
+        readonly string[] Pattern;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="StringPattern" /> class.
         /// </summary>
         /// <param name="pattern"> The pattern. </param>
         /// created 15.10.2006 14:57
-        public StringPattern(string[] pattern) { _pattern = pattern; }
+        public StringPattern(string[] pattern) => Pattern = pattern;
 
         /// <summary>
         ///     Finds the start.of column marker
@@ -136,10 +143,10 @@ namespace hw.Helper
         /// created 15.10.2006 15:23
         public override int FindStart(string s, int start)
         {
-            var result = s.IndexOf(_pattern[0], start, StringComparison.Ordinal);
-            for(var i = 1; i < _pattern.Length; i++)
+            var result = s.IndexOf(Pattern[0], start, StringComparison.Ordinal);
+            for(var i = 1; i < Pattern.Length; i++)
             {
-                var result1 = s.IndexOf(_pattern[i], start, StringComparison.Ordinal);
+                var result1 = s.IndexOf(Pattern[i], start, StringComparison.Ordinal);
                 if(result == -1 || result1 != -1 && result1 < result)
                     result = result1;
             }
@@ -159,11 +166,11 @@ namespace hw.Helper
         /// created 15.10.2006 15:22
         public override int FindEnd(string s, int start)
         {
-            var result = s.IndexOf(_pattern[0], start, StringComparison.Ordinal);
+            var result = s.IndexOf(Pattern[0], start, StringComparison.Ordinal);
             var ip = 0;
-            for(var i = 1; i < _pattern.Length; i++)
+            for(var i = 1; i < Pattern.Length; i++)
             {
-                var result1 = s.IndexOf(_pattern[i], start, StringComparison.Ordinal);
+                var result1 = s.IndexOf(Pattern[i], start, StringComparison.Ordinal);
                 if(result == -1 || result1 != -1 && result1 < result)
                 {
                     ip = i;
@@ -172,7 +179,7 @@ namespace hw.Helper
             }
 
             if(result != -1)
-                return result + _pattern[ip].Length;
+                return result + Pattern[ip].Length;
 
             return start;
         }

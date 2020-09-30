@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 using hw.Scanner;
 
@@ -10,8 +8,10 @@ namespace hw.Parser
     {
         [DisableDump]
         IEnumerable<IItem> PrecededWith { get; }
+
         [DisableDump]
         SourcePart Characters { get; }
+
         [DisableDump]
         bool? IsBracketAndLeftBracket { get; }
     }

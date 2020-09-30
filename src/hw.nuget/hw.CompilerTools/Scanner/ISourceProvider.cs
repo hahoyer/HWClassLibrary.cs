@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace hw.Scanner
+﻿namespace hw.Scanner
 {
     public interface ISourceProvider
     {

@@ -6,27 +6,57 @@ using JetBrains.Annotations;
 
 namespace hw.DebugFormatter
 {
-    /// <summary>
-    ///     Summary description for Dumpable.
-    /// </summary>
     [Dump("Dump")]
-    [DebuggerDisplay("{DebuggerDumpString}")]
+    [DebuggerDisplay("{" + nameof(DebuggerDumpString) + "}")]
     public class Dumpable
     {
         sealed class MethodDumpTraceItem
         {
+            internal int FrameCount { get; }
+            internal bool Trace { get; }
+
             public MethodDumpTraceItem(int frameCount, bool trace)
             {
                 FrameCount = frameCount;
                 Trace = trace;
             }
-
-            internal int FrameCount {get;}
-            internal bool Trace {get;}
         }
 
-        static readonly Stack<MethodDumpTraceItem> MethodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
+        [PublicAPI]
         public static bool? IsMethodDumpTraceInhibited;
+
+        static readonly Stack<MethodDumpTraceItem> MethodDumpTraceSwitches = new Stack<MethodDumpTraceItem>();
+
+        /// <summary>
+        ///     Gets a value indicating whether this instance is in dump.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c>
+        ///     if this instance is in dump; otherwise,
+        ///     <c>false</c>
+        ///     .
+        /// </value>
+        /// created 23.09.2006 17:39
+        [DisableDump]
+        [PublicAPI]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        public bool IsInDump { get; set; }
+
+        /// <summary>
+        ///     dump string to be shown in debug windows
+        /// </summary>
+        [DisableDump]
+        [PublicAPI]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        public string DebuggerDumpString => DebuggerDump().Replace("\n", "\r\n");
+
+        [DisableDump]
+        [PublicAPI]
+        // ReSharper disable once InconsistentNaming
+        public string d => DebuggerDumpString;
+
+        static bool IsMethodDumpTraceActive
+            => !IsMethodDumpTraceInhibited ?? Debugger.IsAttached && MethodDumpTraceSwitches.Peek().Trace;
 
         /// <summary>
         ///     Method dump with break,
@@ -34,6 +64,7 @@ namespace hw.DebugFormatter
         /// <param name="p"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [PublicAPI]
         public static void NotImplementedFunction(params object[] p)
         {
             var os = Tracer.DumpMethodWithData("not implemented", null, p, 1);
@@ -48,6 +79,7 @@ namespace hw.DebugFormatter
         /// <param name="value"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [PublicAPI]
         public static void Dump(string name, object value)
         {
             if(IsMethodDumpTraceActive)
@@ -64,6 +96,7 @@ namespace hw.DebugFormatter
         /// <param name="getValue"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [PublicAPI]
         public static void Dump(string name, Func<object> getValue)
         {
             if(IsMethodDumpTraceActive)
@@ -72,6 +105,50 @@ namespace hw.DebugFormatter
                 Tracer.Line(os);
             }
         }
+
+        /// <summary>
+        ///     generate dump string to be shown in debug windows
+        /// </summary>
+        /// <returns> </returns>
+        [PublicAPI]
+        public virtual string DebuggerDump() => Tracer.Dump(this);
+
+        // ReSharper disable once InconsistentNaming
+        [PublicAPI]
+        public void t() => Tracer.Line(DebuggerDumpString);
+
+        public string Dump()
+        {
+            var oldIsInDump = IsInDump;
+            IsInDump = true;
+            try
+            {
+                return Dump(oldIsInDump);
+            }
+            finally
+            {
+                IsInDump = oldIsInDump;
+            }
+        }
+
+        [PublicAPI]
+        public virtual string DumpData()
+        {
+            string result;
+            try
+            {
+                result = Tracer.DumpData(this);
+            }
+            catch(Exception)
+            {
+                result = "<not implemented>";
+            }
+
+            return result;
+        }
+
+        [PublicAPI]
+        public void Dispose() { }
 
         /// <summary>
         ///     Method dump,
@@ -97,6 +174,7 @@ namespace hw.DebugFormatter
         ///     Method dump,
         /// </summary>
         [DebuggerHidden]
+        [PublicAPI]
         protected static void ReturnVoidMethodDump(bool breakExecution = true)
         {
             if(IsMethodDumpTraceActive)
@@ -121,15 +199,6 @@ namespace hw.DebugFormatter
             MethodDumpTraceSwitches.Pop();
         }
 
-        static void CheckDumpLevel(int depth)
-        {
-            if(!Debugger.IsAttached)
-                return;
-            var top = MethodDumpTraceSwitches.Peek();
-            if(top.Trace)
-                Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
-        }
-
         /// <summary>
         ///     Method dump with break,
         /// </summary>
@@ -137,67 +206,13 @@ namespace hw.DebugFormatter
         /// <param name="p"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [PublicAPI]
         protected static void DumpDataWithBreak(string text, params object[] p)
         {
             var os = Tracer.DumpData(text, p, 1);
             Tracer.Line(os);
             Tracer.TraceBreak();
         }
-
-        static void StartMethodDump(int depth, bool trace)
-        {
-            if(!Debugger.IsAttached)
-                return;
-            var frameCount = trace ? Tracer.CurrentFrameCount(depth + 1) : 0;
-            MethodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
-        }
-
-        static bool IsMethodDumpTraceActive
-        {
-            get
-            {
-                if(IsMethodDumpTraceInhibited != null)
-                    return !IsMethodDumpTraceInhibited.Value;
-                if(!Debugger.IsAttached)
-                    return false;
-                //CheckDumpLevel(2);
-                return MethodDumpTraceSwitches.Peek().Trace;
-            }
-        }
-
-        /// <summary>
-        ///     dump string to be shown in debug windows
-        /// </summary>
-        [DisableDump]
-        [UsedImplicitly]
-        public string DebuggerDumpString => DebuggerDump().Replace("\n", "\r\n");
-
-        [DisableDump]
-        [UsedImplicitly]
-        // ReSharper disable once InconsistentNaming
-        public string d => DebuggerDumpString;
-
-        /// <summary>
-        ///     Gets a value indicating whether this instance is in dump.
-        /// </summary>
-        /// <value>
-        ///     <c>true</c>
-        ///     if this instance is in dump; otherwise,
-        ///     <c>false</c>
-        ///     .
-        /// </value>
-        /// created 23.09.2006 17:39
-        [DisableDump]
-        public bool IsInDump {get; set;}
-
-        /// <summary>
-        ///     generate dump string to be shown in debug windows
-        /// </summary>
-        /// <returns> </returns>
-        public virtual string DebuggerDump() => Tracer.Dump(this);
-
-        // ReSharper disable once InconsistentNaming
-        public void t() => Tracer.Line(DebuggerDumpString);
 
         /// <summary>
         ///     Method start dump,
@@ -209,15 +224,15 @@ namespace hw.DebugFormatter
         protected void StartMethodDump(bool trace, params object[] p)
         {
             StartMethodDump(1, trace);
-            if(IsMethodDumpTraceActive)
-            {
-                var os = Tracer.DumpMethodWithData("", this, p, 1);
-                Tracer.Line(os);
-                Tracer.IndentStart();
-            }
+            if(!IsMethodDumpTraceActive)
+                return;
+            var os = Tracer.DumpMethodWithData("", this, p, 1);
+            Tracer.Line(os);
+            Tracer.IndentStart();
         }
 
         [DebuggerHidden]
+        [PublicAPI]
         protected void BreakExecution()
         {
             if(IsMethodDumpTraceActive)
@@ -231,6 +246,7 @@ namespace hw.DebugFormatter
         /// <param name="p"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [PublicAPI]
         protected void DumpMethodWithBreak(string text, params object[] p)
         {
             var os = Tracer.DumpMethodWithData(text, this, p, 1);
@@ -254,20 +270,6 @@ namespace hw.DebugFormatter
             Tracer.TraceBreak();
         }
 
-        public string Dump()
-        {
-            var oldIsInDump = IsInDump;
-            IsInDump = true;
-            try
-            {
-                return Dump(oldIsInDump);
-            }
-            finally
-            {
-                IsInDump = oldIsInDump;
-            }
-        }
-
         protected virtual string Dump(bool isRecursion)
         {
             var surround = "<recursion>";
@@ -276,21 +278,21 @@ namespace hw.DebugFormatter
             return GetType().PrettyName() + surround;
         }
 
-        public virtual string DumpData()
+        static void CheckDumpLevel(int depth)
         {
-            string result;
-            try
-            {
-                result = Tracer.DumpData(this);
-            }
-            catch(Exception)
-            {
-                result = "<not implemented>";
-            }
-
-            return result;
+            if(!Debugger.IsAttached)
+                return;
+            var top = MethodDumpTraceSwitches.Peek();
+            if(top.Trace)
+                Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
         }
 
-        public void Dispose() {}
+        static void StartMethodDump(int depth, bool trace)
+        {
+            if(!Debugger.IsAttached)
+                return;
+            var frameCount = trace? Tracer.CurrentFrameCount(depth + 1) : 0;
+            MethodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
+        }
     }
 }

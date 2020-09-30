@@ -1,27 +1,4 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -30,73 +7,78 @@ using hw.DebugFormatter;
 
 namespace hw.Graphics
 {
-    sealed class SyntaxDrawer : DumpableObject, ISyntaxDrawer
+    sealed class SyntaxDrawer
+        : DumpableObject
+            , ISyntaxDrawer
     {
-        readonly System.Drawing.Graphics _graphics;
-        readonly Font _font;
-        readonly SolidBrush _lineBrush;
-        readonly SolidBrush _nodeBrush;
-        readonly Bitmap _bitmap;
-        readonly int _sizeBase;
-        readonly StringFormat _stringFormat;
-        readonly Pen _linePen;
-        readonly Syntax _syntax;
+        readonly Bitmap Bitmap;
+        readonly Font Font;
+        readonly System.Drawing.Graphics Graphics;
+        readonly SolidBrush LineBrush;
+        readonly Pen LinePen;
+        readonly SolidBrush NodeBrush;
+        readonly int SizeBase;
+        readonly StringFormat StringFormat;
+        readonly Syntax Syntax;
 
         SyntaxDrawer(IGraphTarget target)
         {
-            _stringFormat = new StringFormat(StringFormatFlags.NoWrap);
-            _font = new Font(FontFamily.Families.Single(f1 => f1.Name == "Arial"), 10);
-            _lineBrush = new SolidBrush(Color.Black);
-            _linePen = new Pen(_lineBrush, 1);
-            _nodeBrush = new SolidBrush(Color.LightBlue);
-            _graphics = System.Drawing.Graphics.FromImage(new Bitmap(1, 1));
-            _sizeBase = (_font.Height * 8) / 10;
+            StringFormat = new StringFormat(StringFormatFlags.NoWrap);
+            Font = new Font(FontFamily.Families.Single(f1 => f1.Name == "Arial"), 10);
+            LineBrush = new SolidBrush(Color.Black);
+            LinePen = new Pen(LineBrush, 1);
+            NodeBrush = new SolidBrush(Color.LightBlue);
+            Graphics = System.Drawing.Graphics.FromImage(new Bitmap(1, 1));
+            SizeBase = Font.Height * 8 / 10;
 
-            _syntax = Syntax.Create(target, this);
-            var width = _syntax.Width + _sizeBase + 1;
-            var height = _syntax.Height + _sizeBase + 1;
-            _bitmap = new Bitmap(width, height);
-            _graphics = System.Drawing.Graphics.FromImage(_bitmap);
+            Syntax = Syntax.Create(target, this);
+            var width = Syntax.Width + SizeBase + 1;
+            var height = Syntax.Height + SizeBase + 1;
+            Bitmap = new Bitmap(width, height);
+            Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             var frame = new Rectangle(0, 0, width, height);
-            _graphics.FillRectangle(new SolidBrush(Color.Transparent), frame);
-            _graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            Graphics.FillRectangle(new SolidBrush(Color.Transparent), frame);
+            Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
         }
 
-        internal static Image DrawBitmap(IGraphTarget syntax) { return new SyntaxDrawer(syntax).Draw(); }
-
-        Image Draw()
-        {
-            _syntax.Draw(new Point(_sizeBase / 2, _sizeBase / 2));
-            return _bitmap;
-        }
-
-        Size ISyntaxDrawer.Gap { get { return new Size(_sizeBase, _sizeBase); } }
+        void ISyntaxDrawer.DrawLine(Point start, Point end) => Graphics.DrawLine(LinePen, start, end);
 
         void ISyntaxDrawer.DrawNode(Point origin, string nodeName)
         {
             var size = NodeSize(nodeName);
-            var arcSize = new Size(2 * _sizeBase, 2 * _sizeBase);
-            var bodyWidth = new Size(size.Width - 2 * _sizeBase, 0);
-            var lineOrigin = origin + new Size(_sizeBase, 0);
+            var arcSize = new Size(2 * SizeBase, 2 * SizeBase);
+            var bodyWidth = new Size(size.Width - 2 * SizeBase, 0);
+            var lineOrigin = origin + new Size(SizeBase, 0);
 
             var r = new GraphicsPath();
             r.AddArc(new Rectangle(origin, arcSize), 90, 180);
             r.AddLine(lineOrigin, lineOrigin + bodyWidth);
             r.AddArc(new Rectangle(origin + bodyWidth, arcSize), 270, 180);
-            r.AddLine(lineOrigin + bodyWidth + new Size(0, _sizeBase * 2), lineOrigin + new Size(0, _sizeBase * 2));
-            _graphics.FillPath(_nodeBrush, r);
-            _graphics.DrawPath(_linePen, r);
+            r.AddLine(lineOrigin + bodyWidth + new Size(0, SizeBase * 2), lineOrigin + new Size(0, SizeBase * 2));
+            Graphics.FillPath(NodeBrush, r);
+            Graphics.DrawPath(LinePen, r);
 
             var s = new StringFormat {Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center};
-            _graphics.DrawString(nodeName, _font, _lineBrush, new Rectangle(origin, size), s);
+            Graphics.DrawString(nodeName, Font, LineBrush, new Rectangle(origin, size), s);
         }
 
-        void ISyntaxDrawer.DrawLine(Point start, Point end) { _graphics.DrawLine(_linePen, start, end); }
+        Size ISyntaxDrawer.Gap => new Size(SizeBase, SizeBase);
+        int ISyntaxDrawer.NodeHeight(string nodeName) => SizeBase * 2;
+        int ISyntaxDrawer.NodeWidth(string nodeName) => Math.Max(TextWidth(nodeName), SizeBase) + SizeBase;
 
-        int TextWidth(string nodeName) { return (int) _graphics.MeasureString(nodeName, _font, new PointF(0, 0), _stringFormat).Width; }
+        internal static Image DrawBitmap(IGraphTarget syntax) => new SyntaxDrawer(syntax).Draw();
 
-        Size NodeSize(string nodeName) { return new Size(((ISyntaxDrawer) this).NodeWidth(nodeName), ((ISyntaxDrawer) this).NodeHeight(nodeName)); }
-        int ISyntaxDrawer.NodeHeight(string nodeName) { return _sizeBase * 2; }
-        int ISyntaxDrawer.NodeWidth(string nodeName) { return Math.Max(TextWidth(nodeName), _sizeBase) + _sizeBase; }
+        Image Draw()
+        {
+            Syntax.Draw(new Point(SizeBase / 2, SizeBase / 2));
+            return Bitmap;
+        }
+
+        int TextWidth
+            (string nodeName) => (int)Graphics.MeasureString(nodeName, Font, new PointF(0, 0), StringFormat).Width;
+
+        Size NodeSize
+            (string nodeName) => new Size(((ISyntaxDrawer)this).NodeWidth(nodeName)
+            , ((ISyntaxDrawer)this).NodeHeight(nodeName));
     }
 }

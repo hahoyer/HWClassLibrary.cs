@@ -3,41 +3,84 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using hw.Helper;
+using JetBrains.Annotations;
 
 namespace hw.DebugFormatter
 {
+    [PublicAPI]
     public sealed class Profiler
     {
+        /// <summary>
+        ///     Measurement Item
+        /// </summary>
+        public sealed class Item
+        {
+            ProfileItem ProfileItem;
+            readonly Profiler Profiler;
+
+            internal Item(Profiler profiler, string flag, int stackFrameDepth)
+            {
+                Profiler = profiler;
+                Start(flag, stackFrameDepth + 1);
+            }
+
+            /// <summary>
+            ///     End of measurement for this item
+            /// </summary>
+            [PublicAPI]
+            public void End()
+            {
+                Tracer.Assert(Profiler.Current == ProfileItem);
+                Profiler.AfterAction();
+            }
+
+            /// <summary>
+            ///     End of measurement for this item and start of new measurement
+            /// </summary>
+            [PublicAPI]
+            public void Next(string flag = "")
+            {
+                End();
+                Start(flag, 1);
+            }
+
+            void Start(string flag, int stackFrameDepth)
+            {
+                _instance.BeforeAction(flag, stackFrameDepth + 1);
+                ProfileItem = Profiler.Current;
+            }
+        }
+
         sealed class Dumper
         {
-            readonly int? _count;
-            readonly ProfileItem[] _data;
-            readonly TimeSpan _sumMax;
-            readonly TimeSpan _sumAll;
-            int _index;
-            TimeSpan _sum;
+            readonly int? Count;
+            readonly ProfileItem[] Data;
+            int Index;
+            TimeSpan Sum;
+            readonly TimeSpan SumAll;
+            readonly TimeSpan SumMax;
 
             public Dumper(Profiler profiler, int? count, double hidden)
             {
-                _count = count;
-                _data = profiler._profileItems.Values.OrderByDescending(x => x.Duration).ToArray();
-                _sumAll = _data.Sum(x => x.Duration);
-                _sumMax = new TimeSpan((long) (_sumAll.Ticks * (1.0 - hidden)));
-                _index = 0;
-                _sum = new TimeSpan();
+                Count = count;
+                Data = profiler.ProfileItems.Values.OrderByDescending(target => target.Duration).ToArray();
+                SumAll = Data.Sum(target => target.Duration);
+                SumMax = new TimeSpan((long)(SumAll.Ticks * (1.0 - hidden)));
+                Index = 0;
+                Sum = new TimeSpan();
             }
 
             public string Format()
             {
-                if(_data.Length == 0)
+                if(Data.Length == 0)
                     return "\n=========== Profile empty ============\n";
 
                 var result = "";
-                for(; _index < _data.Length && _index != _count && _sum <= _sumMax; _index++)
+                for(; Index < Data.Length && Index != Count && Sum <= SumMax; Index++)
                 {
-                    var item = _data[_index];
-                    result += item.Format(_index.ToString());
-                    _sum += item.Duration;
+                    var item = Data[Index];
+                    result += item.Format(Index.ToString());
+                    Sum += item.Duration;
                 }
 
                 var stringAligner = new StringAligner();
@@ -47,17 +90,33 @@ namespace hw.DebugFormatter
                 stringAligner.AddFloatingColumn("  ");
 
                 result = "\n=========== Profile ==================\n" + stringAligner.Format(result);
-                result += "Total:\t" + _sumAll.Format3Digits();
-                if(_index < _data.Length)
+                result += "Total:\t" + SumAll.Format3Digits();
+                if(Index < Data.Length)
                     result +=
                         " ("
-                            + (_data.Length - _index)
-                            + " not-shown-items "
-                            + (_sumAll - _sum).Format3Digits()
-                            + ")";
+                        + (Data.Length - Index)
+                        + " not-shown-items "
+                        + (SumAll - Sum).Format3Digits()
+                        + ")";
                 result += "\n======================================\n";
                 return result;
             }
+        }
+
+        static Profiler _instance = new Profiler();
+        ProfileItem Current;
+
+        readonly Dictionary<string, ProfileItem> ProfileItems = new Dictionary<string, ProfileItem>();
+        readonly Stack<ProfileItem> Stack = new Stack<ProfileItem>();
+        readonly Stopwatch Stopwatch;
+
+
+        Profiler()
+        {
+            Current = new ProfileItem("");
+            Stopwatch = new Stopwatch();
+            Current.Start(Stopwatch.Elapsed);
+            Stopwatch.Start();
         }
 
         /// <summary>
@@ -65,7 +124,7 @@ namespace hw.DebugFormatter
         ///     action
         /// </summary>
         /// <param name="action"></param>
-        /// <param name="count"> The number of measured expressions in result, default is "null" for "no restricton. </param>
+        /// <param name="count"> The number of measured expressions in result, default is "null" for "no restriction. </param>
         /// <param name="hidden"> The relative amount of time that will be hidden in result, default is 0.1. </param>
         public static void Frame(Action action, int? count = null, double hidden = 0.1)
         {
@@ -79,7 +138,7 @@ namespace hw.DebugFormatter
         ///     function
         /// </summary>
         /// <param name="function"></param>
-        /// <param name="count"> The number of measured expressions in result, default is "null" for "no restricton. </param>
+        /// <param name="count"> The number of measured expressions in result, default is "null" for "no restriction. </param>
         /// <param name="hidden"> The relative amount of time that will be hidden in result, default is 0.1. </param>
         public static TResult Frame<TResult>(Func<TResult> function, int? count = null, double hidden = 0.1)
         {
@@ -94,23 +153,24 @@ namespace hw.DebugFormatter
         /// </summary>
         /// <param name="flag"> </param>
         /// <returns> an item, that represents the measurement.</returns>
-        public static Item Start(string flag = "") { return new Item(_instance, flag, 1); }
+        public static Item Start(string flag = "") => new Item(_instance, flag, 1);
 
         /// <summary>
         ///     Measures the specified expression.
         /// </summary>
-        /// <typeparam name="T"> The type the specitied expression returns </typeparam>
+        /// <typeparam name="T"> The type the specified expression returns </typeparam>
         /// <param name="expression"> a function without parameters returning something. </param>
         /// <param name="flag"> A flag that is used in dump. </param>
-        /// <returns> the result of the invokation of the specified expression </returns>
-        public static T Measure<T>(Func<T> expression, string flag = "") { return _instance.InternalMeasure(expression, flag, 1); }
+        /// <returns> the result of the invocation of the specified expression </returns>
+        public static T Measure<T>
+            (Func<T> expression, string flag = "") => _instance.InternalMeasure(expression, flag, 1);
 
         /// <summary>
         ///     Measures the specified action.
         /// </summary>
         /// <param name="action"> The action. </param>
         /// <param name="flag"> A flag that is used in dump. </param>
-        public static void Measure(Action action, string flag = "") { _instance.InternalMeasure(action, flag, 1); }
+        public static void Measure(Action action, string flag = "") => _instance.InternalMeasure(action, flag, 1);
 
         /// <summary>
         ///     Resets the profiler data.
@@ -118,21 +178,24 @@ namespace hw.DebugFormatter
         public static void Reset()
         {
             lock(_instance)
+            {
                 _instance.InternalReset();
+            }
+
             _instance = new Profiler();
         }
 
         /// <summary>
         ///     Formats the data accumulated so far.
         /// </summary>
-        /// <param name="count"> The number of measured expressions in result, default is "null" for "no restricton. </param>
+        /// <param name="count"> The number of measured expressions in result, default is "null" for "no restriction. </param>
         /// <param name="hidden"> The relative amount of time that will be hidden in result, default is 0.1. </param>
         /// <returns> The formatted data. </returns>
         /// <remarks>
         ///     The result contains one line for each measured expression, that is not ignored.
         ///     Each line contains
         ///     <para>
-        ///         - the file path, the line and the start column of the measuered expression in the source file, (The
+        ///         - the file path, the line and the start column of the measured expression in the source file, (The
         ///         information is formatted in a way, that within VisualStudio doubleclicking on such a line will open it.)
         ///     </para>
         ///     <para> - the flag, if provided, </para>
@@ -147,23 +210,9 @@ namespace hw.DebugFormatter
         public static string Format(int? count = null, double hidden = 0.1)
         {
             lock(_instance)
+            {
                 return new Dumper(_instance, count, hidden).Format();
-        }
-
-        static Profiler _instance = new Profiler();
-
-        readonly Dictionary<string, ProfileItem> _profileItems = new Dictionary<string, ProfileItem>();
-        readonly Stopwatch _stopwatch;
-        readonly Stack<ProfileItem> _stack = new Stack<ProfileItem>();
-        ProfileItem _current;
-
-
-        Profiler()
-        {
-            _current = new ProfileItem("");
-            _stopwatch = new Stopwatch();
-            _current.Start(_stopwatch.Elapsed);
-            _stopwatch.Start();
+            }
         }
 
         void InternalMeasure(Action action, string flag, int stackFrameDepth)
@@ -185,18 +234,19 @@ namespace hw.DebugFormatter
         {
             lock(this)
             {
-                _stopwatch.Stop();
-                var start = _stopwatch.Elapsed;
-                _current.Suspend(start);
-                _stack.Push(_current);
-                var position = Tracer.MethodHeader(stackFrameDepth:stackFrameDepth + 1) + flag;
-                if(!_profileItems.TryGetValue(position, out _current))
+                Stopwatch.Stop();
+                var start = Stopwatch.Elapsed;
+                Current.Suspend(start);
+                Stack.Push(Current);
+                var position = Tracer.MethodHeader(stackFrameDepth: stackFrameDepth + 1) + flag;
+                if(!ProfileItems.TryGetValue(position, out Current))
                 {
-                    _current = new ProfileItem(position);
-                    _profileItems.Add(position, _current);
+                    Current = new ProfileItem(position);
+                    ProfileItems.Add(position, Current);
                 }
-                _current.Start(start);
-                _stopwatch.Start();
+
+                Current.Start(start);
+                Stopwatch.Start();
             }
         }
 
@@ -204,115 +254,82 @@ namespace hw.DebugFormatter
         {
             lock(this)
             {
-                _stopwatch.Stop();
-                var end = _stopwatch.Elapsed;
-                _current.End(end);
-                _current = _stack.Pop();
-                _current.Resume(end);
-                _stopwatch.Start();
+                Stopwatch.Stop();
+                var end = Stopwatch.Elapsed;
+                Current.End(end);
+                Current = Stack.Pop();
+                Current.Resume(end);
+                Stopwatch.Start();
             }
         }
 
-        void InternalReset() { Tracer.Assert(_stack.Count == 0); }
-
-
-        /// <summary>
-        ///     Measuement Item
-        /// </summary>
-        public sealed class Item
+        void InternalReset()
         {
-            readonly Profiler _profiler;
-            ProfileItem _item;
-            internal Item(Profiler profiler, string flag, int stackFrameDepth)
+            lock(this)
             {
-                _profiler = profiler;
-                Start(flag, stackFrameDepth + 1);
-            }
-            void Start(string flag, int stackFrameDepth)
-            {
-                _instance.BeforeAction(flag, stackFrameDepth + 1);
-                _item = _profiler._current;
-            }
-
-            /// <summary>
-            ///     End of measurement for this item
-            /// </summary>
-            public void End()
-            {
-                Tracer.Assert(_profiler._current == _item);
-                _profiler.AfterAction();
-            }
-            /// <summary>
-            ///     End of measurement for this item and start of new measurement
-            /// </summary>
-            public void Next(string flag = "")
-            {
-                End();
-                Start(flag, 1);
+                Tracer.Assert(Stack.Count == 0);
             }
         }
     }
 
     sealed class ProfileItem
     {
-        readonly string _position;
-        TimeSpan _duration;
-        long _countStart;
-        long _countEnd;
-        long _suspendCount;
+        public TimeSpan Duration { get; private set; }
+        long CountEnd;
+        long CountStart;
+        readonly string Position;
+        long SuspendCount;
 
-        public ProfileItem(string position) { _position = position; }
+        public ProfileItem(string position) => Position = position;
+        TimeSpan AverageDuration => new TimeSpan(Duration.Ticks / CountEnd);
 
-        public TimeSpan Duration { get { return _duration; } }
-        TimeSpan AverageDuration { get { return new TimeSpan(_duration.Ticks / _countEnd); } }
-
-        bool IsValid { get { return _countStart == _countEnd && _suspendCount == 0; } }
+        bool IsValid => CountStart == CountEnd && SuspendCount == 0;
 
         public void Start(TimeSpan duration)
         {
-            _countStart++;
-            _duration -= duration;
+            CountStart++;
+            Duration -= duration;
             if(IsValid)
-                Tracer.Assert(_duration.Ticks >= 0);
+                Tracer.Assert(Duration.Ticks >= 0);
         }
 
         public void End(TimeSpan duration)
         {
-            _countEnd++;
-            _duration += duration;
+            CountEnd++;
+            Duration += duration;
             if(IsValid)
-                Tracer.Assert(_duration.Ticks >= 0);
+                Tracer.Assert(Duration.Ticks >= 0);
         }
 
         public string Format(string tag)
         {
             Tracer.Assert(IsValid);
-            return _position
-                + " #"
-                + tag
-                + ":  "
-                + _countEnd.Format3Digits()
-                + "x  "
-                + AverageDuration.Format3Digits()
-                + "  "
-                + _duration.Format3Digits()
-                + "\n";
+            return Position
+                   + " #"
+                   + tag
+                   + ":  "
+                   + CountEnd.Format3Digits()
+                   + "target  "
+                   + AverageDuration.Format3Digits()
+                   + "  "
+                   + Duration.Format3Digits()
+                   + "\n";
         }
 
         public void Suspend(TimeSpan start)
         {
-            _suspendCount++;
-            _duration += start;
+            SuspendCount++;
+            Duration += start;
             if(IsValid)
-                Tracer.Assert(_duration.Ticks >= 0);
+                Tracer.Assert(Duration.Ticks >= 0);
         }
 
         public void Resume(TimeSpan end)
         {
-            _suspendCount--;
-            _duration -= end;
+            SuspendCount--;
+            Duration -= end;
             if(IsValid)
-                Tracer.Assert(_duration.Ticks >= 0);
+                Tracer.Assert(Duration.Ticks >= 0);
         }
     }
 }

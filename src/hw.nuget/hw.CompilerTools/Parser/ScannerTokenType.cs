@@ -4,26 +4,29 @@ using hw.Scanner;
 
 namespace hw.Parser
 {
-    public abstract class ScannerTokenType : DumpableObject, IScannerTokenType, IParserTokenFactory
+    public abstract class ScannerTokenType
+        : DumpableObject
+            , IScannerTokenType
+            , IParserTokenFactory
     {
         IParserTokenType<TSourcePart> IParserTokenFactory.GetTokenType<TSourcePart>(string id)
             => GetParserTokenType<TSourcePart>(id);
 
-        IParserTokenFactory IScannerTokenType.ParserTokenFactory => this;
         string IScannerTokenType.Id => GetType().PrettyName();
 
+        IParserTokenFactory IScannerTokenType.ParserTokenFactory => this;
+
         protected abstract IParserTokenType<TSourcePart> GetParserTokenType<TSourcePart>(string id)
-            where TSourcePart : class, ISourcePartProxy;
+            where TSourcePart : class;
     }
 
     public abstract class ScannerTokenType<TSourcePart> : ScannerTokenType
-        where TSourcePart : class, ISourcePartProxy
+        where TSourcePart : class
     {
-        protected sealed override IParserTokenType<TSourcePartTarget> GetParserTokenType<TSourcePartTarget>
-            (string id)
+        protected sealed override IParserTokenType<TSourcePartTarget> GetParserTokenType<TSourcePartTarget>(string id)
         {
             Tracer.Assert(typeof(TSourcePart) == typeof(TSourcePartTarget));
-            return (IParserTokenType<TSourcePartTarget>) GetParserTokenType(id);
+            return (IParserTokenType<TSourcePartTarget>)GetParserTokenType(id);
         }
 
         protected abstract IParserTokenType<TSourcePart> GetParserTokenType(string id);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using hw.DebugFormatter;
+﻿using hw.DebugFormatter;
 using hw.Parser;
 
 namespace hw.Proof
@@ -9,8 +6,8 @@ namespace hw.Proof
     sealed class SyntaxError : ParserTokenType<ParsedSyntax>
     {
         [EnableDump]
-        readonly IssueId _issueId;
-        public SyntaxError(IssueId issueId) { _issueId = issueId; }
+        readonly IssueId IssueId;
+        public SyntaxError(IssueId issueId) { IssueId = issueId; }
 
         protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {

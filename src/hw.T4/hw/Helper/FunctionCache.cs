@@ -29,22 +29,22 @@ namespace hw.Helper
             _createValue = createValue;
         }
 
-        public FunctionCache(FunctionCache<TKey, TValue> x, IEqualityComparer<TKey> comparer)
-            : base(x, comparer)
+        public FunctionCache(FunctionCache<TKey, TValue> target, IEqualityComparer<TKey> comparer)
+            : base(target, comparer)
         {
-            _createValue = x._createValue;
+            _createValue = target._createValue;
         }
 
-        public FunctionCache(IDictionary<TKey, TValue> x, Func<TKey, TValue> createValue)
-            : base(x)
+        public FunctionCache(IDictionary<TKey, TValue> target, Func<TKey, TValue> createValue)
+            : base(target)
         {
             _createValue = createValue;
         }
 
-        public FunctionCache(FunctionCache<TKey, TValue> x)
-            : base(x)
+        public FunctionCache(FunctionCache<TKey, TValue> target)
+            : base(target)
         {
-            _createValue = x._createValue;
+            _createValue = target._createValue;
         }
 
         public FunctionCache() { _createValue = ThrowKeyNotFoundException; }
@@ -119,10 +119,10 @@ namespace hw.Helper
             /// </summary>
             /// <returns> true if the specified objects are equal; otherwise, false. </returns>
             /// <param name="y"> The second object of type T to compare. </param>
-            /// <param name="x"> The first object of type T to compare. </param>
-            public bool Equals(string x, string y)
+            /// <param name="target"> The first object of type T to compare. </param>
+            public bool Equals(string target, string y)
             {
-                return x.ToUpperInvariant() == y.ToUpperInvariant();
+                return target.ToUpperInvariant() == y.ToUpperInvariant();
             }
 
             /// <summary>

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using hw.Helper;
 using System.Linq;
 using System.Reflection;
 using hw.DebugFormatter;
+using hw.Helper;
 
 namespace hw.UnitTest
 {
@@ -11,10 +11,8 @@ namespace hw.UnitTest
     {
         public string FileName;
         public int LineNumber;
-        public string ToString(FilePositionTag tag)
-        {
-            return Tracer.FilePosn(FileName, LineNumber, 0, tag);
-        }
+
+        public string ToString(FilePositionTag tag) => Tracer.FilePosition(FileName, LineNumber, 0, tag);
     }
 
     sealed class TestMethod : Dumpable
@@ -30,119 +28,126 @@ namespace hw.UnitTest
 
         sealed class MethodActor : IActor
         {
-            readonly Type _type;
-            readonly MethodInfo _target;
+            readonly MethodInfo Target;
+            readonly Type Type;
+
             public MethodActor(MethodInfo target, Type type)
             {
-                _target = target;
-                _type = type;
+                Target = target;
+                Type = type;
             }
-            string IActor.Name { get { return _target.Name; } }
-            string IActor.LongName
-            {
-                get
-                {
-                    Tracer.Assert(_target.DeclaringType != null);
-                    return _target.DeclaringType.PrettyName() + "." + _target.Name;
-                }
-            }
-            object IActor.Instance
-            {
-                get
-                {
-                    if(_target.IsStatic || _target.ReflectedType == null)
-                        return null;
-                    return Activator.CreateInstance(_target.ReflectedType);
-                }
-            }
+
             IEnumerable<SourceFilePosition> IActor.FilePositions
             {
                 get
                 {
-                    var b = _type.GetAttribute<UnitTestAttribute>(true);
+                    var b = Type.GetAttribute<UnitTestAttribute>(true);
                     if(b != null)
                         yield return b.Where;
-                    var a = _target.GetAttribute<UnitTestAttribute>(true);
+                    var a = Target.GetAttribute<UnitTestAttribute>(true);
                     if(a != null)
                         yield return a.Where;
                 }
             }
-            void IActor.Run(object test) { _target.Invoke(test, new object[0]); }
+
+            object IActor.Instance
+            {
+                get
+                {
+                    if(Target.IsStatic || Target.ReflectedType == null)
+                        return null;
+                    return Activator.CreateInstance(Target.ReflectedType);
+                }
+            }
+
+            string IActor.LongName
+            {
+                get
+                {
+                    Tracer.Assert(Target.DeclaringType != null);
+                    return Target.DeclaringType.PrettyName() + "." + Target.Name;
+                }
+            }
+
+            string IActor.Name => Target.Name;
+            void IActor.Run(object test) => Target.Invoke(test, new object[0]);
         }
 
         sealed class InterfaceActor : IActor
         {
-            readonly Type _target;
-            public InterfaceActor(Type target) { _target = target; }
-            string IActor.Name { get { return _target.Name; } }
-            string IActor.LongName { get { return _target.PrettyName(); } }
-            object IActor.Instance { get { return Activator.CreateInstance(_target); } }
+            readonly Type Target;
+            public InterfaceActor(Type target) => Target = target;
+
             IEnumerable<SourceFilePosition> IActor.FilePositions
             {
                 get
                 {
-                    var b = _target.GetAttribute<UnitTestAttribute>(true);
+                    var b = Target.GetAttribute<UnitTestAttribute>(true);
                     if(b != null)
                         yield return b.Where;
                 }
             }
-            void IActor.Run(object test) { ((ITestFixture) test).Run(); }
+
+            object IActor.Instance => Activator.CreateInstance(Target);
+            string IActor.LongName => Target.PrettyName();
+            string IActor.Name => Target.Name;
+            void IActor.Run(object test) => ((ITestFixture)test).Run();
         }
 
-        readonly IActor _actor;
         public bool IsSuspended;
-        public TestMethod(MethodInfo methodInfo, Type type)
-        {
-            _actor = new MethodActor(methodInfo, type);
-        }
 
-        public TestMethod(Type type) { _actor = new InterfaceActor(type); }
+        readonly IActor Actor;
 
-        public string ConfigurationString { get { return Name + ","; } }
+        public TestMethod(MethodInfo methodInfo, Type type) => Actor = new MethodActor(methodInfo, type);
 
-        public string Name { get { return _actor.Name; } }
+        public TestMethod(Type type) => Actor = new InterfaceActor(type);
 
-        void ShowException(Exception e)
-        {
-            Tracer.Line("*********************Exception: " + _actor.LongName);
-            Tracer.Line(e.GetType().FullName);
-            Tracer.Line(e.Message);
-            Tracer.Line("*********************End Exception: " + _actor.LongName);
-            throw new TestFailedException();
-        }
+        public string ConfigurationString => Name + ",";
+
+        public string Name => Actor.Name;
 
         public void Run()
         {
-            Tracer.Line("Start " + _actor.LongName);
+            Tracer.Line("Start " + Actor.LongName);
             Tracer.IndentStart();
             Tracer.Line
-                (
-                    _actor.FilePositions.Select
+            (
+                Actor.FilePositions.Select
                         (p => p.ToString(FilePositionTag.Test) + " position of test")
-                        .Stringify("\n"));
+                    .Stringify("\n"));
             try
             {
                 if(!IsSuspended)
                 {
-                    var test = _actor.Instance;
+                    var test = Actor.Instance;
                     var isBreakDisabled = Tracer.IsBreakDisabled;
                     Tracer.IsBreakDisabled = !TestRunner.IsModeErrorFocus;
                     try
                     {
-                        _actor.Run(test);
+                        Actor.Run(test);
                     }
                     catch(Exception e)
                     {
                         ShowException(e);
                     }
+
                     Tracer.IsBreakDisabled = isBreakDisabled;
                 }
             }
             finally
             {
                 Tracer.IndentEnd();
-                Tracer.Line("End " + _actor.LongName);
+                Tracer.Line("End " + Actor.LongName);
             }
+        }
+
+        void ShowException(Exception e)
+        {
+            Tracer.Line("*********************Exception: " + Actor.LongName);
+            Tracer.Line(e.GetType().FullName);
+            Tracer.Line(e.Message);
+            Tracer.Line("*********************End Exception: " + Actor.LongName);
+            throw new TestFailedException();
         }
     }
 }

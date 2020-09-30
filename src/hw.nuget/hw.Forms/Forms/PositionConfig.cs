@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,11 +14,12 @@ namespace hw.Forms
     /// <summary>
     ///     Used to persist location of window of parent
     /// </summary>
+    [PublicAPI]
     public sealed class PositionConfig : IDisposable
     {
-        Form _target;
-        bool _loadPositionCalled;
-        readonly Func<string> _getFileName;
+        readonly Func<string> GetFileName;
+        Form InternalTarget;
+        bool LoadPositionCalled;
 
         /// <summary>
         ///     Ctor
@@ -30,9 +30,7 @@ namespace hw.Forms
         ///     <para>Default: Target.Name</para>
         /// </param>
         public PositionConfig(Func<string> getFileName = null)
-        {
-            _getFileName = getFileName ?? (() => _target == null ? null : _target.Name);
-        }
+            => GetFileName = getFileName ?? (() => InternalTarget == null? null : InternalTarget.Name);
 
         /// <summary>
         ///     Form that will be controlled by this instance
@@ -40,11 +38,11 @@ namespace hw.Forms
         public Form Target
         {
             [UsedImplicitly]
-            get { return _target; }
+            get => InternalTarget;
             set
             {
                 Disconnect();
-                _target = value;
+                InternalTarget = value;
                 Connect();
             }
         }
@@ -52,69 +50,24 @@ namespace hw.Forms
         /// <summary>
         ///     Name that will be used as filename
         /// </summary>
-        public string FileName { get { return _getFileName(); } }
-
-        void IDisposable.Dispose() { Disconnect(); }
-
-        void Disconnect()
-        {
-            if(_target == null)
-                return;
-
-            _target.SuspendLayout();
-            _loadPositionCalled = false;
-            _target.Load -= OnLoad;
-            _target.LocationChanged -= OnLocationChanged;
-            _target.SizeChanged -= OnLocationChanged;
-            _target.ResumeLayout();
-            _target = null;
-        }
-
-        void Connect()
-        {
-            if(_target == null)
-                return;
-            _target.SuspendLayout();
-            _loadPositionCalled = false;
-            _target.Load += OnLoad;
-            _target.LocationChanged += OnLocationChanged;
-            _target.SizeChanged += OnLocationChanged;
-            _target.ResumeLayout();
-        }
-
-        void OnLocationChanged(object target, EventArgs e)
-        {
-            if(target != _target)
-                return;
-            SavePosition();
-        }
-
-        void OnLoad(object target, EventArgs e)
-        {
-            if(target != _target)
-                return;
-            LoadPosition();
-        }
+        public string FileName => GetFileName();
 
         Rectangle? Position
         {
-            get
-            {
-                return Convert
-                    (0, null, s => (Rectangle?) new RectangleConverter().ConvertFromString(s));
-            }
-            set { Save(value, WindowState); }
+            get => Convert
+                (0, null, s => (Rectangle?)new RectangleConverter().ConvertFromString(s));
+            set => Save(value, WindowState);
         }
 
         string[] ParameterStrings
         {
             get
             {
-                if(_target == null)
+                if(InternalTarget == null)
                     return null;
 
                 var content = FileHandle.String;
-                return content == null ? null : content.Split('\n');
+                return content == null? null : content.Split('\n');
             }
         }
 
@@ -123,8 +76,56 @@ namespace hw.Forms
             get
             {
                 var fileName = FileName;
-                return fileName == null ? null : fileName.ToSmbFile();
+                return fileName == null? null : fileName.ToSmbFile();
             }
+        }
+
+        FormWindowState WindowState
+        {
+            get => Convert(1, FormWindowState.Normal, s => s.Parse<FormWindowState>());
+            set => Save(Position, value);
+        }
+
+        void IDisposable.Dispose() { Disconnect(); }
+
+        void Disconnect()
+        {
+            if(InternalTarget == null)
+                return;
+
+            InternalTarget.SuspendLayout();
+            LoadPositionCalled = false;
+            InternalTarget.Load -= OnLoad;
+            InternalTarget.LocationChanged -= OnLocationChanged;
+            InternalTarget.SizeChanged -= OnLocationChanged;
+            InternalTarget.ResumeLayout();
+            InternalTarget = null;
+        }
+
+        void Connect()
+        {
+            if(InternalTarget == null)
+                return;
+            InternalTarget.SuspendLayout();
+            LoadPositionCalled = false;
+            InternalTarget.Load += OnLoad;
+            InternalTarget.LocationChanged += OnLocationChanged;
+            InternalTarget.SizeChanged += OnLocationChanged;
+            InternalTarget.ResumeLayout();
+        }
+
+        void OnLocationChanged(object target, EventArgs e)
+        {
+            if(target != InternalTarget)
+                return;
+            SavePosition();
+        }
+
+        void OnLoad(object target, EventArgs e)
+        {
+            if(target != InternalTarget)
+                return;
+            LoadPosition();
         }
 
         void Save(Rectangle? position, FormWindowState state)
@@ -134,15 +135,9 @@ namespace hw.Forms
             fileHandle.String = "{0}\n{1}"
                 .ReplaceArgs
                 (
-                    position == null ? "" : new RectangleConverter().ConvertToString(position.Value),
+                    position == null? "" : new RectangleConverter().ConvertToString(position.Value),
                     state
                 );
-        }
-
-        FormWindowState WindowState
-        {
-            get { return Convert(1, FormWindowState.Normal, s => s.Parse<FormWindowState>()); }
-            set { Save(Position, value); }
         }
 
         T Convert<T>(int position, T defaultValue, Func<string, T> converter)
@@ -160,24 +155,25 @@ namespace hw.Forms
             {
                 var position = Position;
                 Tracer.Assert(position != null);
-                _target.SuspendLayout();
-                _target.StartPosition = FormStartPosition.Manual;
-                _target.Bounds = EnsureVisible(position.Value);
-                _target.WindowState = WindowState;
-                _target.ResumeLayout(true);
+                InternalTarget.SuspendLayout();
+                InternalTarget.StartPosition = FormStartPosition.Manual;
+                InternalTarget.Bounds = EnsureVisible(position.Value);
+                InternalTarget.WindowState = WindowState;
+                InternalTarget.ResumeLayout(true);
             }
-            _loadPositionCalled = true;
+
+            LoadPositionCalled = true;
         }
 
         void SavePosition()
         {
-            if(!_loadPositionCalled)
+            if(!LoadPositionCalled)
                 return;
 
-            if(_target.WindowState == FormWindowState.Normal)
-                Position = _target.Bounds;
+            if(InternalTarget.WindowState == FormWindowState.Normal)
+                Position = InternalTarget.Bounds;
 
-            WindowState = _target.WindowState;
+            WindowState = InternalTarget.WindowState;
         }
 
         static Rectangle EnsureVisible(Rectangle value)
@@ -192,13 +188,13 @@ namespace hw.Forms
             var rightDistance = value.Right - closestScreen.Bounds.Left;
 
             if(leftDistance > 0 && rightDistance > 0)
-                result.X += leftDistance < rightDistance ? -(leftDistance + 10) : rightDistance + 10;
+                result.X += leftDistance < rightDistance? -(leftDistance + 10) : rightDistance + 10;
 
             var topDistance = value.Top - closestScreen.Bounds.Bottom;
             var bottomDistance = value.Bottom - closestScreen.Bounds.Top;
 
             if(topDistance > 0 && bottomDistance > 0)
-                result.Y += topDistance < bottomDistance ? -(topDistance + 10) : bottomDistance + 10;
+                result.Y += topDistance < bottomDistance? -(topDistance + 10) : bottomDistance + 10;
 
             Tracer.Assert(closestScreen.Bounds.IntersectsWith(result));
             return result;

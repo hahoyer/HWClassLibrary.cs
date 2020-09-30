@@ -17,51 +17,51 @@ namespace hw.DebugFormatter
         readonly Dictionary<object, long> _activeObjects = new Dictionary<object, long>();
         long _nextObjectId;
 
-        internal string Dump(object x)
+        internal string Dump(object target)
         {
-            if(x == null)
+            if(target == null)
                 return "null";
 
             long key;
-            if(_activeObjects.TryGetValue(x, out key))
+            if(_activeObjects.TryGetValue(target, out key))
             {
                 if(key == -1)
                 {
                     key = _nextObjectId++;
-                    _activeObjects[x] = key;
+                    _activeObjects[target] = key;
                 }
                 return "[see{" + key + "#}]";
             }
 
-            _activeObjects.Add(x, -1);
+            _activeObjects.Add(target, -1);
 
-            var result = Dump(x.GetType(), x);
+            var result = Dump(target.GetType(), target);
 
-            key = _activeObjects[x];
+            key = _activeObjects[target];
             if(key != -1)
                 result += "{" + key + "#}";
-            _activeObjects.Remove(x);
+            _activeObjects.Remove(target);
 
             return result;
         }
 
-        internal string DumpData(object x) { return DumpData(x.GetType(), x); }
+        internal string DumpData(object target) { return DumpData(target.GetType(), target); }
 
-        string Dump(Type t, object x)
+        string Dump(Type t, object target)
         {
             var dea = DumpClassAttribute(t);
             if(dea != null)
-                return dea.Dump(t, x);
+                return dea.Dump(t, target);
 
             var handler = Configuration.GetDump(t);
             if(handler != null)
-                return handler(t, x);
+                return handler(t, target);
 
-            var result = ",\n".SaveConcat(BaseDump(t, x), DumpData(t, x));
+            var result = ",\n".SaveConcat(BaseDump(t, target), DumpData(t, target));
             if(result != "")
                 result = result.Surround("{", "}");
 
-            if(t == x.GetType() || result != "")
+            if(t == target.GetType() || result != "")
                 result = t + result;
 
             return result;
@@ -95,11 +95,11 @@ namespace hw.DebugFormatter
             return result.Stringify(",\n");
         }
 
-        string BaseDump(Type t, object x)
+        string BaseDump(Type t, object target)
         {
             var baseDump = "";
             if(t.BaseType != null && t.BaseType != typeof(object) && t.BaseType != typeof(ValueType))
-                baseDump = Dump(t.BaseType, x);
+                baseDump = Dump(t.BaseType, target);
             if(baseDump != "")
                 baseDump = "Base:" + baseDump;
             return baseDump;
@@ -121,14 +121,14 @@ namespace hw.DebugFormatter
                 .SingleOrDefault();
         }
 
-        static bool IsRelevant(MemberInfo memberInfo, Type type, object x)
+        static bool IsRelevant(MemberInfo memberInfo, Type type, object target)
         {
             if(memberInfo.DeclaringType != type)
                 return false;
             var propertyInfo = memberInfo as PropertyInfo;
             if(propertyInfo != null && propertyInfo.GetIndexParameters().Length > 0)
                 return false;
-            return CheckDumpDataAttribute(memberInfo) && CheckDumpExceptAttribute(memberInfo, x);
+            return CheckDumpDataAttribute(memberInfo) && CheckDumpExceptAttribute(memberInfo, target);
         }
 
         static bool CheckDumpDataAttribute(MemberInfo m)
@@ -154,11 +154,11 @@ namespace hw.DebugFormatter
             return true;
         }
 
-        static string Format(MemberInfo memberInfo, object x)
+        static string Format(MemberInfo memberInfo, object target)
         {
             try
             {
-                return memberInfo.Name + "=" + Tracer.Dump(x.InvokeValue(memberInfo));
+                return memberInfo.Name + "=" + Tracer.Dump(target.InvokeValue(memberInfo));
             }
             catch(Exception)
             {
@@ -166,7 +166,7 @@ namespace hw.DebugFormatter
             }
         }
 
-        static bool CheckDumpExceptAttribute(MemberInfo f, object x)
+        static bool CheckDumpExceptAttribute(MemberInfo f, object target)
         {
             foreach(
                 var dea in
@@ -174,7 +174,7 @@ namespace hw.DebugFormatter
                         .Select(ax => ax as IDumpExceptAttribute)
                         .Where(ax => ax != null))
             {
-                var v = x.InvokeValue(f);
+                var v = target.InvokeValue(f);
                 return !dea.IsException(v);
             }
             return true;

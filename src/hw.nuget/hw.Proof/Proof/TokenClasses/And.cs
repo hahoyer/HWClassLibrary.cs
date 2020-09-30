@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
 
@@ -24,8 +21,8 @@ namespace hw.Proof.TokenClasses
         [DisableDump]
         ParsedSyntax IAssociative.Empty => TrueSyntax.Instance;
 
-        AssociativeSyntax IAssociative.Syntax(IToken token, Set<ParsedSyntax> x)
-            => new AndSyntax(this, token, x);
+        AssociativeSyntax IAssociative.Syntax(IToken token, Set<ParsedSyntax> target)
+            => new AndSyntax(this, token, target);
 
         ParsedSyntax IAssociative.Combine(ParsedSyntax left, ParsedSyntax right) => null;
         bool IAssociative.IsEmpty(ParsedSyntax parsedSyntax) => parsedSyntax is TrueSyntax;

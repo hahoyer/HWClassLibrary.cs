@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using hw.UnitTest;
+// ReSharper disable IdentifierTypo
 
 namespace hw.Tests.Helper.Core
 {
@@ -18,21 +17,21 @@ namespace hw.Tests.Helper.Core
             var t3 = TimeSpan.FromMinutes(3.0012);
 
             var format3Digits1 = t1.Format3Digits(false);
-            var format3Digitss1 = t1.Format3Digits(true);
-            var format3Digitss2 = t2.Format3Digits(true);
+            var format3Digitss1 = t1.Format3Digits();
+            var format3Digitss2 = t2.Format3Digits();
 
 
             Tracer.Assert
                 (format3Digits1 == format3Digitss1, () => format3Digits1 + " != " + format3Digitss1);
             Tracer.Assert(format3Digitss2 == "3'", () => format3Digitss2);
             Tracer.Assert
-                (
-                    t2.Format3Digits(false) != format3Digitss2,
-                    () => t2.Format3Digits(false) + " != " + format3Digitss2);
+            (
+                t2.Format3Digits(false) != format3Digitss2,
+                () => t2.Format3Digits(false) + " != " + format3Digitss2);
             Tracer.Assert
-                (
-                    t3.Format3Digits(false) != t3.Format3Digits(true),
-                    () => t3.Format3Digits(false) + " != " + t3.Format3Digits(true));
+            (
+                t3.Format3Digits(false) != t3.Format3Digits(),
+                () => t3.Format3Digits(false) + " != " + t3.Format3Digits());
 
             var format3Digitsu1 = t1.Format3Digits();
             Tracer.Assert(format3Digitsu1 == "3:12'", () => format3Digitsu1);

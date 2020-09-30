@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using hw.DebugFormatter;
 using hw.UnitTest;
 using NUnit.Framework;
+// ReSharper disable UnusedVariable
 
 namespace hw.Tests.CompilerTool
 {
     [UnitTest]
     [TestFixture]
-    public sealed class SimpleParser : DependantAttribute
+    public sealed class SimpleParser : DependenceProvider
     {
         [UnitTest]
         public static void NormalParser()

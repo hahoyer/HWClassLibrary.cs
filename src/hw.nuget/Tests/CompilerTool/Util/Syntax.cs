@@ -5,18 +5,14 @@ using hw.Scanner;
 
 namespace hw.Tests.CompilerTool.Util
 {
-    abstract class Syntax : DumpableObject, IBinaryTreeItem, ISourcePartProxy
+    abstract class Syntax
+        : DumpableObject
+            , IBinaryTreeItem
     {
         [DisableDump]
         public readonly IToken Token;
 
-        protected Syntax(IToken token) { Token = token; }
-
-        IBinaryTreeItem IBinaryTreeItem.Left => Left;
-
-        string IBinaryTreeItem.TokenId => TokenClassName;
-        IBinaryTreeItem IBinaryTreeItem.Right => Right;
-        SourcePart ISourcePartProxy.All => SourcePart;
+        protected Syntax(IToken token) => Token = token;
         public abstract Syntax Left { get; }
 
         public SourcePart SourcePart => Token.SourcePart();
@@ -28,8 +24,13 @@ namespace hw.Tests.CompilerTool.Util
             get { yield return Token; }
         }
 
-        protected override string Dump(bool isRecursion) => this.TreeDump();
+        IBinaryTreeItem IBinaryTreeItem.Left => Left;
+        IBinaryTreeItem IBinaryTreeItem.Right => Right;
+
+        string IBinaryTreeItem.TokenId => TokenClassName;
 
         public abstract Syntax RightParenthesis(string id, IToken token, Syntax right);
+
+        protected override string Dump(bool isRecursion) => this.TreeDump();
     }
 }

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
@@ -24,7 +22,7 @@ namespace hw.Proof
             get
             {
                 if(Operator.IsVariablesProvider)
-                    return Set<string>.Create(Set.SelectMany(x => x.Variables).ToArray());
+                    return Set<string>.Create(Set.SelectMany(target => target.Variables).ToArray());
                 return new Set<string>();
             }
         }
@@ -57,7 +55,7 @@ namespace hw.Proof
         bool IsVariablesProvider { get; }
         ParsedSyntax Empty { get; }
         string SmartDump(Set<ParsedSyntax> set);
-        AssociativeSyntax Syntax(IToken token, Set<ParsedSyntax> x);
+        AssociativeSyntax Syntax(IToken token, Set<ParsedSyntax> target);
         ParsedSyntax Combine(ParsedSyntax left, ParsedSyntax right);
         bool IsEmpty(ParsedSyntax parsedSyntax);
     }

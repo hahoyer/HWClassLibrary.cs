@@ -67,11 +67,11 @@ namespace hw.Helper
         }
 
         public static IEnumerable<IEnumerable<T>> Separate<T>
-            (this IEnumerable<T> x, Func<T, bool> isHead)
+            (this IEnumerable<T> target, Func<T, bool> isHead)
         {
             var subResult = new List<T>();
 
-            foreach(var xx in x)
+            foreach(var xx in target)
             {
                 if(isHead(xx))
                     if(subResult.Count > 0)
@@ -88,10 +88,10 @@ namespace hw.Helper
         }
 
         [CanBeNull]
-        public static T Aggregate<T>(this IEnumerable<T> x, Func<T> getDefault = null)
+        public static T Aggregate<T>(this IEnumerable<T> target, Func<T> getDefault = null)
             where T : class, IAggregateable<T>
         {
-            var xx = x.ToArray();
+            var xx = target.ToArray();
             if(!xx.Any())
                 return getDefault?.Invoke();
             var result = xx[0];
@@ -100,22 +100,22 @@ namespace hw.Helper
             return result;
         }
 
-        public static string Dump<T>(this IEnumerable<T> x) => Tracer.Dump(x);
+        public static string Dump<T>(this IEnumerable<T> target) => Tracer.Dump(target);
 
-        public static string DumpLines<T>(this IEnumerable<T> x)
+        public static string DumpLines<T>(this IEnumerable<T> target)
             where T : Dumpable
         {
             var i = 0;
-            return x.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
+            return target.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
         }
 
         public static string Stringify<T>
-            (this IEnumerable<T> x, string separator, bool showNumbers = false)
+            (this IEnumerable<T> target, string separator, bool showNumbers = false)
         {
             var result = new StringBuilder();
             var i = 0;
             var isNext = false;
-            foreach(var element in x)
+            foreach(var element in target)
             {
                 if(isNext)
                     result.Append(separator);
@@ -129,10 +129,10 @@ namespace hw.Helper
             return result.ToString();
         }
 
-        public static TimeSpan Sum<T>(this IEnumerable<T> x, Func<T, TimeSpan> selector)
+        public static TimeSpan Sum<T>(this IEnumerable<T> target, Func<T, TimeSpan> selector)
         {
             var result = new TimeSpan();
-            return x.Aggregate(result, (current, element) => current + selector(element));
+            return target.Aggregate(result, (current, element) => current + selector(element));
         }
 
         /// <summary>
@@ -184,28 +184,28 @@ namespace hw.Helper
         ///     Checks if object starts with given object.
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <param name="y"> The y. </param>
         /// <returns> </returns>
-        public static bool StartsWith<T>(this IList<T> x, IList<T> y)
+        public static bool StartsWith<T>(this IList<T> target, IList<T> y)
         {
-            if(x.Count < y.Count)
+            if(target.Count < y.Count)
                 return false;
-            return !y.Where((t, i) => !Equals(x[i], t)).Any();
+            return !y.Where((t, i) => !Equals(target[i], t)).Any();
         }
 
         /// <summary>
         ///     Checks if object starts with given object and is longer.
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="x"> The x. </param>
+        /// <param name="target"> The target. </param>
         /// <param name="y"> The y. </param>
         /// <returns> </returns>
-        public static bool StartsWithAndNotEqual<T>(this IList<T> x, IList<T> y)
+        public static bool StartsWithAndNotEqual<T>(this IList<T> target, IList<T> y)
         {
-            if(x.Count == y.Count)
+            if(target.Count == y.Count)
                 return false;
-            return x.StartsWith(y);
+            return target.StartsWith(y);
         }
 
         public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
@@ -322,7 +322,7 @@ namespace hw.Helper
             this IDictionary<TKey, TValue> target,
             IEnumerable<KeyValuePair<TKey, TValue>> newEntries)
         {
-            foreach(var item in newEntries.Where(x => !target.ContainsKey(x.Key)))
+            foreach(var item in newEntries.Where(target => !target.ContainsKey(target.Key)))
                 target.Add(item);
         }
 
@@ -369,17 +369,17 @@ namespace hw.Helper
         }
 
         public static IEnumerable<TType> Sort<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         {
-            var xx = x.ToArray();
+            var xx = target.ToArray();
             Tracer.Assert(xx.IsCircuidFree(immediateParents));
             return null;
         }
 
         public static IEnumerable<TType> Closure<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         {
-            var types = x.ToArray();
+            var types = target.ToArray();
             var targets = types;
             while(true)
             {
@@ -391,21 +391,21 @@ namespace hw.Helper
         }
 
         public static bool IsCircuidFree<TType>
-            (this TType x, Func<TType, IEnumerable<TType>> immediateParents)
+            (this TType target, Func<TType, IEnumerable<TType>> immediateParents)
         {
-            return immediateParents(x).Closure(immediateParents).All(xx => !xx.Equals(x));
+            return immediateParents(target).Closure(immediateParents).All(xx => !xx.Equals(target));
         }
 
         public static bool IsCircuidFree<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         {
-            return x.All(xx => xx.IsCircuidFree(immediateParents));
+            return target.All(xx => xx.IsCircuidFree(immediateParents));
         }
 
         public static IEnumerable<TType> Circuids<TType>
-            (this IEnumerable<TType> x, Func<TType, IEnumerable<TType>> immediateParents)
+            (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         {
-            return x.Where(xx => !xx.IsCircuidFree(immediateParents));
+            return target.Where(xx => !xx.IsCircuidFree(immediateParents));
         }
 
         public static IEnumerable<T> NullableToArray<T>(this T target)

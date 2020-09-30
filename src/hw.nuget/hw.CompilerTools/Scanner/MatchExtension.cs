@@ -2,131 +2,149 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
+using JetBrains.Annotations;
 
 namespace hw.Scanner
 {
+    [PublicAPI]
     public static class MatchExtension
     {
-        sealed class ErrorMatch : Dumpable, IMatch
+        [PublicAPI]
+        public interface IPositionExceptionFactory
         {
-            readonly Match.IError _error;
-            public ErrorMatch(Match.IError error) => _error = error;
+            Exception Create(SourcePosition sourcePosition);
+        }
 
-            int? IMatch.Match(SourcePosn sourcePosn)
+        sealed class ErrorMatch
+            : Dumpable
+                , IMatch
+        {
+            readonly Match.IError Error;
+            public ErrorMatch(Match.IError error) => Error = error;
+
+            int? IMatch.Match(SourcePosition sourcePosition)
             {
-                if(_error is IPositionExceptionFactory positionFactory)
-                    throw positionFactory.Create(sourcePosn);
+                if(Error is IPositionExceptionFactory positionFactory)
+                    throw positionFactory.Create(sourcePosition);
 
-                throw new Match.Exception(sourcePosn, _error);
+                throw new Match.Exception(sourcePosition, Error);
             }
         }
 
-        sealed class CharMatch : Dumpable, IMatch
+        sealed class CharMatch
+            : Dumpable
+                , IMatch
         {
             [EnableDump]
-            readonly string _data;
+            readonly string Data;
 
             readonly StringComparison Type;
 
             public CharMatch(string data, bool isCaseSenitive)
             {
-                _data = data;
-                Type = isCaseSenitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+                Data = data;
+                Type = isCaseSenitive? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
             }
 
-            int? IMatch.Match(SourcePosn sourcePosn)
+            int? IMatch.Match(SourcePosition sourcePosition)
             {
-                var result = _data.Length;
-                return sourcePosn.StartsWith(_data, Type) ? (int?) result : null;
+                var result = Data.Length;
+                return sourcePosition.StartsWith(Data, Type)? (int?)result : null;
             }
         }
 
-        sealed class AnyCharMatch : Dumpable, IMatch
+        sealed class AnyCharMatch
+            : Dumpable
+                , IMatch
         {
             sealed class DefaultComparer : IEqualityComparer<char>
             {
-                bool IEqualityComparer<char>.Equals(char x, char y) => x == y;
+                bool IEqualityComparer<char>.Equals(char target, char y) => target == y;
                 int IEqualityComparer<char>.GetHashCode(char obj) => obj;
             }
 
             sealed class UpperInvariantComparer : IEqualityComparer<char>
             {
-                bool IEqualityComparer<char>.Equals(char x, char y)
-                    => char.ToUpperInvariant(x) == char.ToUpperInvariant(y);
+                bool IEqualityComparer<char>.Equals(char target, char y)
+                    => char.ToUpperInvariant(target) == char.ToUpperInvariant(y);
 
                 int IEqualityComparer<char>.GetHashCode(char obj) => char.ToUpperInvariant(obj);
             }
 
-            static IEqualityComparer<char> Default => new DefaultComparer();
-            static IEqualityComparer<char> UpperInvariant => new UpperInvariantComparer();
-
             [EnableDump]
-            readonly string _data;
+            readonly string Data;
 
             readonly IEqualityComparer<char> Comparer;
 
             public AnyCharMatch(string data, bool isCaseSenitive = true)
             {
-                _data = data;
-                Comparer = isCaseSenitive ? Default : UpperInvariant;
+                Data = data;
+                Comparer = isCaseSenitive? Default : UpperInvariant;
             }
 
-            int? IMatch.Match(SourcePosn sourcePosn)
-                => _data.Contains(sourcePosn.Current, Comparer) ? (int?) 1 : null;
+            static IEqualityComparer<char> Default => new DefaultComparer();
+            static IEqualityComparer<char> UpperInvariant => new UpperInvariantComparer();
+
+            int? IMatch.Match(SourcePosition sourcePosition)
+                => Data.Contains(sourcePosition.Current, Comparer)? (int?)1 : null;
         }
 
-        sealed class ElseMatch : Dumpable, IMatch
+        sealed class ElseMatch
+            : Dumpable
+                , IMatch
         {
             [EnableDump]
-            readonly IMatch _data;
+            readonly IMatch Data;
 
             [EnableDump]
-            readonly IMatch _other;
+            readonly IMatch Other;
 
             public ElseMatch(IMatch data, IMatch other)
             {
-                _data = data;
-                _other = other;
+                Data = data;
+                Other = other;
             }
 
-            int? IMatch.Match(SourcePosn sourcePosn)
-                => _data.Match(sourcePosn) ?? _other.Match(sourcePosn);
+            int? IMatch.Match(SourcePosition sourcePosition)
+                => Data.Match(sourcePosition) ?? Other.Match(sourcePosition);
         }
 
-        sealed class Repeater : Dumpable, IMatch
+        sealed class Repeater
+            : Dumpable
+                , IMatch
         {
             [EnableDump]
-            readonly IMatch _data;
+            readonly IMatch Data;
 
             [EnableDump]
-            readonly int? _maxCount;
+            readonly int? MaxCount;
 
             [EnableDump]
-            readonly int _minCount;
+            readonly int MinCount;
 
             public Repeater(IMatch data, int minCount, int? maxCount)
             {
                 Tracer.Assert(!(data is Match));
                 Tracer.Assert(minCount >= 0);
                 Tracer.Assert(maxCount == null || maxCount >= minCount);
-                _data = data;
-                _minCount = minCount;
-                _maxCount = maxCount;
+                Data = data;
+                MinCount = minCount;
+                MaxCount = maxCount;
             }
 
-            int? IMatch.Match(SourcePosn sourcePosn)
+            int? IMatch.Match(SourcePosition sourcePosition)
             {
                 var count = 0;
-                var current = sourcePosn;
+                var current = sourcePosition;
                 while(true)
                 {
-                    var result = current - sourcePosn;
-                    if(count == _maxCount)
+                    var result = current - sourcePosition;
+                    if(count == MaxCount)
                         return result;
 
-                    var length = _data.Match(current);
+                    var length = Data.Match(current);
                     if(length == null)
-                        return count < _minCount ? null : (int?) result;
+                        return count < MinCount? null : (int?)result;
                     if(current.IsEnd)
                         return null;
 
@@ -136,18 +154,16 @@ namespace hw.Scanner
             }
         }
 
-        public interface IPositionExceptionFactory
-        {
-            Exception Create(SourcePosn sourcePosn);
-        }
+        public static IMatch UnBox(this IMatch data) => data is Match box? box.UnBox : data;
 
-        public static IMatch UnBox(this IMatch data) => data is Match box ? box.UnBox : data;
-
-        public static Match AnyChar(this string data, bool isCaseSenitive = true) 
+        public static Match AnyChar(this string data, bool isCaseSenitive = true)
             => new Match(new AnyCharMatch(data, isCaseSenitive));
 
         public static Match Box(this Match.IError error) => new Match(new ErrorMatch(error));
-        public static Match Box(this string data, bool isCaseSenitive = true) => new Match(new CharMatch(data,isCaseSenitive));
+
+        public static Match Box
+            (this string data, bool isCaseSenitive = true) => new Match(new CharMatch(data, isCaseSenitive));
+
         public static Match Box(this IMatch data) => data as Match ?? new Match(data);
 
         public static Match Repeat(this IMatch data, int minCount = 0, int? maxCount = null)

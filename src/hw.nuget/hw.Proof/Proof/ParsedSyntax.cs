@@ -5,16 +5,23 @@ using hw.DebugFormatter;
 using hw.Helper;
 using hw.Parser;
 using hw.Proof.TokenClasses;
-using hw.Scanner;
 using JetBrains.Annotations;
 
 namespace hw.Proof
 {
-    abstract class ParsedSyntax : DumpableObject, IComparable<ParsedSyntax>, ISourcePartProxy
+    abstract class ParsedSyntax
+        : DumpableObject
+            , IComparable<ParsedSyntax>
     {
+        sealed class ComparerClass : IComparer<ParsedSyntax>
+        {
+            public int Compare(ParsedSyntax target, ParsedSyntax y) => target?.CompareTo(y)?? 0;
+        }
+
+        internal static readonly IComparer<ParsedSyntax> Comparer = new ComparerClass();
         protected readonly IToken Token;
 
-        protected ParsedSyntax(IToken token) { Token = token; }
+        protected ParsedSyntax(IToken token) => Token = token;
 
         [DisableDump]
         internal virtual Set<string> Variables
@@ -26,38 +33,19 @@ namespace hw.Proof
             }
         }
 
-        SourcePart ISourcePartProxy.All => Token.SourcePart();
+        [DisableDump]
+        internal bool IsSimpleVariable => this is VariableSyntax;
 
         [DisableDump]
-        internal bool IsSimpleVariable { get { return this is VariableSyntax; } }
-
-        [DisableDump]
-        internal virtual bool IsNegative { get { return false; } }
-
-        internal ParsedSyntax Associative<TOperation>
-            (TOperation operation, IToken token, ParsedSyntax other)
-            where TOperation : IAssociative
-        {
-            return operation.CombineAssosiative(token, new[] {this, other});
-        }
-
-        internal virtual bool IsDistinct(ParsedSyntax other)
-        {
-            NotImplementedMethod(other);
-            return false;
-        }
+        internal virtual bool IsNegative => false;
 
         [UsedImplicitly]
-        internal string SmartDumpText { get { return SmartDump(null); } }
+        internal string SmartDumpText => SmartDump(null);
 
         [DisableDump]
-        internal virtual BigRational Factor { get { return 1; } }
+        internal virtual BigRational Factor => 1;
 
-        internal virtual string SmartDump(ISmartDumpToken @operator)
-        {
-            NotImplementedMethod(@operator);
-            return GetNodeDump();
-        }
+        int IComparable<ParsedSyntax>.CompareTo(ParsedSyntax other) => CompareTo(other);
 
         protected virtual ParsedSyntax IsolateClause(string variable)
         {
@@ -65,24 +53,41 @@ namespace hw.Proof
             return null;
         }
 
-        int IComparable<ParsedSyntax>.CompareTo(ParsedSyntax other) { return CompareTo(other); }
-
-        internal virtual ParsedSyntax IsolateFromEquation(string variable, ParsedSyntax otherSite)
+        protected virtual ParsedSyntax Normalize()
         {
+            NotImplementedMethod();
             return null;
         }
 
-        internal ParsedSyntax Minus(IEnumerable<ParsedSyntax> others)
+        protected Set<ParsedSyntax> DefaultReplace() => this.ToSet();
+
+        internal ParsedSyntax Associative<TOperation>(TOperation operation, IToken token, ParsedSyntax other)
+            where TOperation : IAssociative
+            => operation.CombineAssosiative(token, new[] {this, other});
+
+        internal virtual bool IsDistinct(ParsedSyntax other)
         {
-            return others.Aggregate(this, (x, y) => x.Minus(y));
+            NotImplementedMethod(other);
+            return false;
         }
 
-        internal ParsedSyntax Minus(ParsedSyntax other) { return Minus(null, other); }
-        internal ParsedSyntax Minus(IToken token, ParsedSyntax other)
+        internal virtual string SmartDump(ISmartDumpToken @operator)
         {
-            return Plus(token, other.Negative());
+            NotImplementedMethod(@operator);
+            return GetNodeDump();
         }
-        internal ParsedSyntax Negative() { return Times(-1); }
+
+        internal virtual ParsedSyntax IsolateFromEquation(string variable, ParsedSyntax otherSite) => null;
+
+        internal ParsedSyntax Minus
+            (IEnumerable<ParsedSyntax> others) => others.Aggregate(this, (target, y) => target.Minus(y));
+
+        internal ParsedSyntax Minus(ParsedSyntax other) => Minus(null, other);
+
+        internal ParsedSyntax Minus(IToken token, ParsedSyntax other) => Plus(token, other.Negative());
+
+        internal ParsedSyntax Negative() => Times(-1);
+
         internal virtual ParsedSyntax Times(BigRational value)
         {
             if(value == 0)
@@ -92,10 +97,7 @@ namespace hw.Proof
             return new FactorSyntax(this, value);
         }
 
-        internal virtual ParsedSyntax IsolateFromSum(string variable, ParsedSyntax other)
-        {
-            return null;
-        }
+        internal virtual ParsedSyntax IsolateFromSum(string variable, ParsedSyntax other) => null;
 
         internal ParsedSyntax Equal(IToken token, ParsedSyntax other)
         {
@@ -107,35 +109,8 @@ namespace hw.Proof
             return DefaultEqual(token, other);
         }
 
-        protected virtual ParsedSyntax Normalize()
-        {
-            NotImplementedMethod();
-            return null;
-        }
-
-        EqualSyntax DefaultEqual(IToken token, ParsedSyntax other)
-        {
-            return new EqualSyntax(this, token, other);
-        }
-
-        internal ParsedSyntax Plus(IToken token, ParsedSyntax otherSite)
-        {
-            return Associative(Definitions.Plus, token, otherSite);
-        }
-
-        int? GenericCompareTo<T>(ParsedSyntax other) where T : ParsedSyntax, IComparableEx<T>
-        {
-            if(this is T)
-            {
-                if(other is T)
-                    return ((T) this).CompareToEx((T) other);
-                return 1;
-            }
-            if(other is T)
-                return -1;
-
-            return null;
-        }
+        internal ParsedSyntax Plus
+            (IToken token, ParsedSyntax otherSite) => Associative(Definitions.Plus, token, otherSite);
 
         internal virtual int VirtualCompareTo(ParsedSyntax other)
         {
@@ -143,27 +118,22 @@ namespace hw.Proof
             return 0;
         }
 
-        internal virtual Set<ParsedSyntax> Replace
-            (IEnumerable<KeyValuePair<string, ParsedSyntax>> definitions)
+        internal virtual Set<ParsedSyntax> Replace(IEnumerable<KeyValuePair<string, ParsedSyntax>> definitions)
         {
             NotImplementedMethod(definitions);
             return null;
         }
 
-        internal ParsedSyntax Pair(IPair @operator, ParsedSyntax right)
-        {
-            return @operator.Pair(this, right);
-        }
-        protected Set<ParsedSyntax> DefaultReplace() { return this.ToSet(); }
+        internal ParsedSyntax Pair(IPair @operator, ParsedSyntax right) => @operator.Pair(this, right);
 
         internal int CompareTo(ParsedSyntax right)
         {
             var result = Variables.Count().CompareTo(right.Variables.Count());
             if(result != 0)
                 return result;
-            var v1 = Variables.OrderBy(x => x).ToArray();
-            var v2 = right.Variables.OrderBy(x => x).ToArray();
-            result = v1.Zip(v2, String.CompareOrdinal).FirstOrDefault(x => x != 0);
+            var v1 = Variables.OrderBy(target => target).ToArray();
+            var v2 = right.Variables.OrderBy(target => target).ToArray();
+            result = v1.Zip(v2, string.CompareOrdinal).FirstOrDefault(target => target != 0);
             if(result != 0)
                 return result;
             var potentialResult = GenericCompareTo<EqualSyntax>(right);
@@ -185,15 +155,8 @@ namespace hw.Proof
                 potentialResult = GenericCompareTo<IntegerSyntax>(right);
             if(potentialResult == null)
                 potentialResult = GenericCompareTo<TrueSyntax>(right);
-            result = potentialResult == null ? VirtualCompareTo(right) : potentialResult.Value;
+            result = potentialResult == null? VirtualCompareTo(right) : potentialResult.Value;
             return result;
-        }
-
-        internal static readonly IComparer<ParsedSyntax> Comparer = new ComparerClass();
-
-        sealed class ComparerClass : IComparer<ParsedSyntax>
-        {
-            public int Compare(ParsedSyntax x, ParsedSyntax y) { return x.CompareTo(y); }
         }
 
         internal virtual ParsedSyntax CombineForPlus(ParsedSyntax other)
@@ -232,8 +195,7 @@ namespace hw.Proof
             return null;
         }
 
-        internal virtual ParsedSyntax CombineForPlus
-            (ParsedSyntax other, BigRational otherValue, BigRational thisValue)
+        internal virtual ParsedSyntax CombineForPlus(ParsedSyntax other, BigRational otherValue, BigRational thisValue)
         {
             NotImplementedMethod(other, otherValue, thisValue);
             return null;
@@ -246,9 +208,25 @@ namespace hw.Proof
             return null;
         }
 
-        internal KeyValuePair<string, ParsedSyntax> GetDefinition(string variable)
+        internal KeyValuePair<string, ParsedSyntax> GetDefinition
+            (string variable) => new KeyValuePair<string, ParsedSyntax>(variable, IsolateClause(variable));
+
+        EqualSyntax DefaultEqual(IToken token, ParsedSyntax other) => new EqualSyntax(this, token, other);
+
+        int? GenericCompareTo<T>(ParsedSyntax other)
+            where T : ParsedSyntax, IComparableEx<T>
         {
-            return new KeyValuePair<string, ParsedSyntax>(variable, IsolateClause(variable));
+            if(this is T)
+            {
+                if(other is T)
+                    return ((T)this).CompareToEx((T)other);
+                return 1;
+            }
+
+            if(other is T)
+                return -1;
+
+            return null;
         }
     }
 

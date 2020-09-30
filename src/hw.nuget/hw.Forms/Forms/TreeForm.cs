@@ -1,28 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace hw.Forms
 {
+    [PublicAPI]
     public sealed partial class TreeForm : Form
     {
-        readonly PositionConfig _positionConfig;
-        object _target;
+        readonly PositionConfig PositionConfig;
+        object TargetValue;
+
         public TreeForm()
         {
             InitializeComponent();
-            _positionConfig = new PositionConfig {Target = this};
+            PositionConfig = new PositionConfig {Target = this};
         }
 
         public object Target
         {
-            get { return _target; }
+            get => TargetValue;
             set
             {
-                _target = value;
-                treeView1.Connect(_target);
-                Text = _target.GetAdditionalInfo();
+                TargetValue = value;
+                treeView1.Connect(TargetValue);
+                Text = TargetValue.GetAdditionalInfo();
             }
         }
     }

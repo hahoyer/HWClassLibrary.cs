@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
 using hw.Parser;
 using hw.Proof.TokenClasses;
@@ -45,26 +42,26 @@ namespace hw.Proof
         {
             get
             {
-                var x = PrioTable.Left(PrioTable.Any);
+                var target = PrioTable.Left(PrioTable.Any);
 
-                x += PrioTable.Right("^");
-                x += PrioTable.Left("*", "/", "\\", "gcd");
-                x += PrioTable.Left("+", "-");
+                target += PrioTable.Right("^");
+                target += PrioTable.Left("*", "/", "\\", "gcd");
+                target += PrioTable.Left("+", "-");
 
-                x += PrioTable.Left("<", ">", "<=", ">=");
-                x += PrioTable.Left("=", "<>");
+                target += PrioTable.Left("<", ">", "<=", ">=");
+                target += PrioTable.Left("=", "<>");
 
-                x += PrioTable.Left("elem");
-                x += PrioTable.Left("&");
-                x += PrioTable.Left("|");
+                target += PrioTable.Left("elem");
+                target += PrioTable.Left("&");
+                target += PrioTable.Left("|");
 
-                x += PrioTable.Right(",");
-                x += PrioTable.Right(";");
+                target += PrioTable.Right(",");
+                target += PrioTable.Right(";");
 
-                x += PrioTable.BracketParallels(LeftBrackets, RightBrackets);
+                target += PrioTable.BracketParallels(LeftBrackets, RightBrackets);
 
-                //Tracer.FlaggedLine("\n"+x+"\n");
-                return x;
+                //Tracer.FlaggedLine("\n"+target+"\n");
+                return target;
             }
         }
 

@@ -18,8 +18,6 @@
 //     Comments, bugs and suggestions to hahoyer at yahoo.de
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 [assembly: CLSCompliant(false)]
 //[assembly: DebuggerVisualizer(typeof (Visualizer), Target = typeof (Dumpable), Description = "Dumpable")]

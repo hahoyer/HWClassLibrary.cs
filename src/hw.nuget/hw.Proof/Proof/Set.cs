@@ -1,45 +1,23 @@
-#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
+using JetBrains.Annotations;
 
 namespace hw.Proof
 {
+    [PublicAPI]
     public sealed class Set<T> : IEnumerable<T>
         where T : IComparable<T>
     {
         [EnableDump]
-        readonly List<T> _data;
+        readonly List<T> Data;
 
         public Set()
             : this(new T[0]) { }
 
-        Set(T[] ts) { _data = new List<T>(ts); }
-
-        int Count { get { return _data.Count; } }
+        Set(T[] ts) => Data = new List<T>(ts);
 
         /// <summary>
         ///     Returns true if the instance is empty.
@@ -47,9 +25,16 @@ namespace hw.Proof
         /// <value> <c>true</c> if this instance is empty; otherwise, <c>false</c> . </value>
         /// created 14.07.2007 16:43 on HAHOYER-DELL by hh
         [DisableDump]
-        public bool IsEmpty { get { return Count == 0; } }
+        public bool IsEmpty => Count == 0;
 
-        public static Set<T> Empty { get { return new Set<T>(); } }
+        public static Set<T> Empty => new Set<T>();
+
+        int Count => Data.Count;
+
+        T this[int i] => Data[i];
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public IEnumerator<T> GetEnumerator() => Data.GetEnumerator();
 
         /// <summary>
         ///     Adds an element.
@@ -60,20 +45,10 @@ namespace hw.Proof
         {
             if(Contains(t))
                 return;
-            _data.Add(t);
+            Data.Add(t);
         }
 
-        public bool Contains(T t) { return _data.Any(t1 => t1.CompareTo(t) == 0); }
-
-        Set<T> And(Set<T> other) { return _data.Where(other.Contains).ToSet(); }
-
-        Set<T> Or(IEnumerable<T> other)
-        {
-            var result = new Set<T>(_data.ToArray());
-            foreach(var value in other)
-                result.Add(value);
-            return result;
-        }
+        public bool Contains(T t) => Data.Any(t1 => t1.CompareTo(t) == 0);
 
         public static Set<T> Create(IEnumerable<T> data)
         {
@@ -83,23 +58,31 @@ namespace hw.Proof
             return result;
         }
 
-        Set<T> Without(Set<T> other) { return _data.Where(x => !other.Contains(x)).ToSet(); }
+        public static Set<T> operator &(Set<T> a, Set<T> b) => a.And(b);
 
-        T this[int i] { get { return _data[i]; } }
+        public static Set<T> operator |(Set<T> a, IEnumerable<T> b) => a.Or(b);
+        public static Set<T> operator |(Set<T> a, T b) => a.Or(b.ToSet());
+        public static Set<T> operator -(Set<T> a, T b) => a.Without(b.ToSet());
 
-        public static Set<T> operator &(Set<T> a, Set<T> b) { return a.And(b); }
+        Set<T> And(Set<T> other) => Data.Where(other.Contains).ToSet();
 
-        public static Set<T> operator |(Set<T> a, IEnumerable<T> b) { return a.Or(b); }
-        public static Set<T> operator |(Set<T> a, T b) { return a.Or(b.ToSet()); }
-        public static Set<T> operator -(Set<T> a, T b) { return a.Without(b.ToSet()); }
+        Set<T> Or(IEnumerable<T> other)
+        {
+            var result = new Set<T>(Data.ToArray());
+            foreach(var value in other)
+                result.Add(value);
+            return result;
+        }
 
-        public IEnumerator<T> GetEnumerator() { return _data.GetEnumerator(); }
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        Set<T> Without(Set<T> other) => Data.Where(target => !other.Contains(target)).ToSet();
     }
 
     public static class SetExtender
     {
-        public static Set<T> ToSet<T>(this IEnumerable<T> x) where T : IComparable<T> { return Set<T>.Create(x); }
-        public static Set<T> ToSet<T>(this T x) where T : IComparable<T> { return Set<T>.Create(new[] {x}); }
+        public static Set<T> ToSet<T>(this IEnumerable<T> target)
+            where T : IComparable<T> => Set<T>.Create(target);
+
+        public static Set<T> ToSet<T>(this T target)
+            where T : IComparable<T> => Set<T>.Create(new[] {target});
     }
 }
