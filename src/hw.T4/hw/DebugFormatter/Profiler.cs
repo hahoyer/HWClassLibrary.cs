@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using hw.Helper;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     public sealed class Profiler
     {

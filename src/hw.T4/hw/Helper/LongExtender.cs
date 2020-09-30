@@ -8,6 +8,11 @@ namespace hw.Helper
     {
         public static string Format3Digits(this long value, bool omitZeros = true)
         {
+            if(value == 0)
+                return "0";
+            if(value < 0)
+                return "-" + Format3Digits(-value, omitZeros);
+
             var size = 0;
             for(; value >= 1000; size++, value /= 10)
                 continue;

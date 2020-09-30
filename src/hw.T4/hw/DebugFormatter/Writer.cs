@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using hw.Helper;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     sealed class Writer
     {
@@ -28,6 +28,8 @@ namespace hw.Debug
         int _indentCount;
         bool _isLineStart = true;
         readonly WriteInitiator _writeInitiator = new WriteInitiator();
+
+        public Writer() { DebugTextWriter.Register(); }
 
         internal void IndentStart() { _indentCount++; }
         internal void IndentEnd() { _indentCount--; }
@@ -59,12 +61,7 @@ namespace hw.Debug
 
         static void Write(string s, bool isLine)
         {
-            if(Debugger.IsAttached)
-                if(isLine)
-                    System.Diagnostics.Debug.WriteLine(s);
-                else
-                    System.Diagnostics.Debug.Write(s);
-            else if(isLine)
+            if(isLine)
                 Console.WriteLine(s);
             else
                 Console.Write(s);

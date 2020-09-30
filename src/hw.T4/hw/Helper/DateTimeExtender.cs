@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
+using System.Threading;
 
 namespace hw.Helper
 {
@@ -51,11 +50,13 @@ namespace hw.Helper
                 result += dateTime.Day.ToString("00");
                 result += ".";
             }
+
             if(!sameMonth)
             {
                 result += dateTime.Month.ToString("00");
                 result += ".";
             }
+
             if(!sameYear)
                 result += dateTime.Year.ToString("00");
             return result;
@@ -71,7 +72,7 @@ namespace hw.Helper
                 return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols ? "'" : "m");
 
             var nanoSeconds = ((long) (timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
-            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", (useSymbols ? "\"" : "s"));
+            return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", useSymbols ? "\"" : "s");
         }
 
         static string OmitCheck(string delimiter, int value, bool omitZeros)
@@ -90,5 +91,16 @@ namespace hw.Helper
                 .Calendar
                 .GetWeekOfYear(dateTime, dateTimeFormatInfo.CalendarWeekRule, dateTimeFormatInfo.FirstDayOfWeek);
         }
+
+        public static TimeSpan Seconds(this double value) => TimeSpan.FromSeconds(value);
+        public static TimeSpan Seconds(this int value) => TimeSpan.FromSeconds(value);
+        public static TimeSpan Minutes(this double value) => TimeSpan.FromMinutes(value);
+        public static TimeSpan Minutes(this int value) => TimeSpan.FromMinutes(value);
+        public static TimeSpan Hours(this double value) => TimeSpan.FromHours(value);
+        public static TimeSpan Hours(this int value) => TimeSpan.FromHours(value);
+        public static TimeSpan Days(this double value) => TimeSpan.FromDays(value);
+        public static TimeSpan Days(this int value) => TimeSpan.FromDays(value);
+
+        public static void Sleep(this TimeSpan value) => Thread.Sleep(value);
     }
 }

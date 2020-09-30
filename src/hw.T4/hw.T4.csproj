@@ -24,12 +24,15 @@
     <Reference Include="envdte100, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=2019.1.3.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2019.1.3\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.TextTemplating, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.10.0.30319\lib\net40\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.10.0.30320\lib\net40\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -38,32 +41,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="hw\Debug\Configuration.cs" />
-    <Compile Include="hw\Debug\DisableDumpAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\Configuration.cs" />
+    <Compile Include="hw\DebugFormatter\DebugTextWriter.cs" />
+    <Compile Include="hw\DebugFormatter\DisableDumpAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\Dumpable.cs" />
+    <Compile Include="hw\DebugFormatter\DumpableObject.cs" />
+    <Compile Include="hw\DebugFormatter\DumpAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\DumpClassAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\DumpDataClassAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\DumpEnabledAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\Dumper.cs" />
+    <Compile Include="hw\DebugFormatter\DumpToStringAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\EnableDumpAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\EnableDumpExceptAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\EnableDumpWithExceptionPredicateAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\Log4NetTextWriter.cs" />
+    <Compile Include="hw\DebugFormatter\Profiler.cs" />
+    <Compile Include="hw\DebugFormatter\TextWriters.cs" />
+    <Compile Include="hw\DebugFormatter\Tracer.cs" />
+    <Compile Include="hw\DebugFormatter\Writer.cs" />
     <Compile Include="hw\Debug\Dumpable.cs" />
-    <Compile Include="hw\Debug\DumpableObject.cs" />
-    <Compile Include="hw\Debug\DumpAttribute.cs" />
-    <Compile Include="hw\Debug\DumpClassAttribute.cs" />
-    <Compile Include="hw\Debug\DumpDataClassAttribute.cs" />
-    <Compile Include="hw\Debug\DumpEnabledAttribute.cs" />
-    <Compile Include="hw\Debug\Dumper.cs" />
-    <Compile Include="hw\Debug\DumpToStringAttribute.cs" />
-    <Compile Include="hw\Debug\EnableDumpAttribute.cs" />
-    <Compile Include="hw\Debug\EnableDumpExceptAttribute.cs" />
-    <Compile Include="hw\Debug\EnableDumpWithExceptionPredicateAttribute.cs" />
-    <Compile Include="hw\Debug\Profiler.cs" />
     <Compile Include="hw\Debug\Tracer.cs" />
-    <Compile Include="hw\Debug\Writer.cs" />
     <Compile Include="hw\Helper\Box.cs" />
     <Compile Include="hw\Helper\DateRange.cs" />
     <Compile Include="hw\Helper\DateTimeExtender.cs" />
     <Compile Include="hw\Helper\EnumEx.cs" />
-    <Compile Include="hw\Helper\File.cs" />
     <Compile Include="hw\Helper\FunctionCache.cs" />
+    <Compile Include="hw\Helper\IUniqueIdProvider.cs" />
+    <Compile Include="hw\Helper\LinqExtension.cs" />
     <Compile Include="hw\Helper\ListExtender.cs" />
     <Compile Include="hw\Helper\LongExtender.cs" />
     <Compile Include="hw\Helper\ReflectionExtender.cs" />
-    <Compile Include="hw\Helper\RelationExtender.cs" />
+    <Compile Include="hw\Helper\SmbFile.cs" />
     <Compile Include="hw\Helper\StringAligner.cs" />
     <Compile Include="hw\Helper\StringExtender.cs" />
     <Compile Include="hw\Helper\T4Context.cs" />
@@ -71,8 +80,7 @@
     <Compile Include="hw\Helper\TypeLibrary.cs" />
     <Compile Include="hw\Helper\TypeNameExtender.cs" />
     <Compile Include="hw\Helper\ValueCache.cs" />
-    <Compile Include="hw\JetBrainsAnnotations.cs" />
-    <Compile Include="hw\UnitTest\CategoryAttribute.cs" />
+    <Compile Include="hw\Helper\ValueCacheExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

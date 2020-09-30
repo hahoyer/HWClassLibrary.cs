@@ -11,7 +11,7 @@ namespace hw.Helper
         public readonly FunctionCache<string, Type> ByNamePart;
         public readonly FunctionCache<string, Type[]> ByNamePartMulti;
         public readonly FunctionCache<Type, string> CompleteName;
-        public readonly FunctionCache<Type, string> PrettyName; 
+        public readonly FunctionCache<Type, string> PrettyName;
 
         public TypeLibrary(IEnumerable<Type> types)
         {
@@ -25,6 +25,7 @@ namespace hw.Helper
 
         Type GetTypeByNamePart(string arg) { return _types.Single(t => t.CompleteName().EndsWith(arg)); }
         Type[] GetTypesByNamePart(string arg) { return _types.Where(t => t.CompleteName().EndsWith(arg)).ToArray(); }
+        public Type[] Types => _types;
 
         Type[] ConflictingTypes(Type type)
         {
@@ -36,45 +37,54 @@ namespace hw.Helper
 
         string ObtainTypeName(Type type, bool shortenNamespace)
         {
-            var result = type.Name;
-            if(result.Contains("`"))
-                result = result.Remove(result.IndexOf('`'));
+            if (type == typeof(int))
+                return "int";
+            if (type == typeof(string))
+                return "string";
 
+            var namePart = ObtainNamePart(type, shortenNamespace);
+            var namespacePart = ObtainNameSpacePart(type, shortenNamespace);
+
+            return namespacePart + namePart;
+        }
+
+        string ObtainNameSpacePart(Type type, bool shortenNamespace)
+        {
             if(type.IsNested && !type.IsGenericParameter)
-                return ObtainName(type.DeclaringType, shortenNamespace) + "." + result;
+                return ObtainTypeName(type.DeclaringType, shortenNamespace) + ".";
 
-            if(type.Namespace == null)
-                return result;
+            if (type.Namespace == null)
+                return "";
 
-            if(!shortenNamespace)
-                return type.Namespace + "." + result;
+            if (!shortenNamespace)
+                return type.Namespace + ".";
 
             var conflictingTypes = ConflictingTypes(type);
 
             var namespaceParts = type.Namespace.Split('.').Reverse().ToArray();
             var namespacePart = "";
-            for(var i = 0; i < namespaceParts.Length && conflictingTypes.Length > 0; i++)
+            for (var i = 0; i < namespaceParts.Length && conflictingTypes.Length > 0; i++)
             {
                 namespacePart = namespaceParts[i] + "." + namespacePart;
                 conflictingTypes = conflictingTypes.Where(conflictingType => ("." + conflictingType.Namespace + ".").EndsWith("." + namespacePart)).ToArray();
             }
 
-            return namespacePart + result;
+            return namespacePart;
         }
 
-        string ObtainName(Type type, bool shortenNamespace)
+        string ObtainNamePart(Type type, bool shortenNamespace)
         {
-            if(type == typeof(int))
-                return "int";
-            if(type == typeof(string))
-                return "string";
+            var result = type.Name;
+            
+            if (result.Contains("`"))
+                result = result.Remove(result.IndexOf('`'));
 
-            var result = ObtainTypeName(type, shortenNamespace);
-            if(type.IsGenericType)
-                result = result + ObtainNameForGeneric(type.GetGenericArguments(), shortenNamespace);
+            if (type.IsGenericType)
+                return result + ObtainNameForGeneric(type.GetGenericArguments(), shortenNamespace);
+
             return result;
         }
-       
+
         string ObtainNameForGeneric(Type[] types, bool shortenNamespace)
         {
             var result = "";
@@ -83,7 +93,7 @@ namespace hw.Helper
             {
                 result += delim;
                 delim = ",";
-                result += ObtainName(t, shortenNamespace);
+                result += ObtainTypeName(t, shortenNamespace);
             }
             return result + ">";
         }

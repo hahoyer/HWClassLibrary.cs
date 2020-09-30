@@ -1,26 +1,4 @@
-﻿#region Copyright (C) 2013
-
-//     Project hw.nuget
-//     Copyright (C) 2013 - 2013 Harald Hoyer
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//     
-//     Comments, bugs and suggestions to hahoyer at yahoo.de
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -215,32 +193,32 @@ namespace hw.Helper
 
         public static T Eval<T>(this Expression x)
         {
-            return (T)Expression.Lambda(x)
+            return (T) Expression.Lambda(x)
                 .Compile()
                 .DynamicInvoke();
         }
 
         /// <summary>
-        /// Invoke a member method
+        ///     Invoke a member method
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="target"></param>
         /// <param name="method"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static T Invoke<T>(this object target, string method, params object[] args) { return (T)target.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, target, args); }
+        public static T Invoke<T>(this object target, string method, params object[] args) { return (T) target.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, target, args); }
         /// <summary>
-        /// Invoke a static method
+        ///     Invoke a static method
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="type"></param>
         /// <param name="method"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static T Invoke<T>(this Type type, string method, params object[] args) { return ExceptionGuard(() => (T)type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args)); }
+        public static T Invoke<T>(this Type type, string method, params object[] args) { return ExceptionGuard(() => (T) type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args)); }
 
         /// <summary>
-        /// Calls a function. In case of exceptions, onError is called, if provided. Otherwise default value is returned
+        ///     Calls a function. In case of exceptions, onError is called, if provided. Otherwise default value is returned
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="function"></param>
@@ -252,14 +230,14 @@ namespace hw.Helper
             {
                 return function();
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 return onError == null ? default(T) : onError(exception);
             }
         }
 
         /// <summary>
-        /// Calls an action. In case of exceptions, onError is called, if provided.
+        ///     Calls an action. In case of exceptions, onError is called, if provided.
         /// </summary>
         /// <param name="action"></param>
         /// <param name="onError"></param>
@@ -269,7 +247,7 @@ namespace hw.Helper
             {
                 action();
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 if(onError != null)
                     onError(exception);
@@ -285,7 +263,7 @@ namespace hw.Helper
                 {
                     tcs.SetResult(func());
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     tcs.SetException(e);
                 }
@@ -303,7 +281,7 @@ namespace hw.Helper
             thread.Start();
             return result;
         }
-        
+
         public static object InvokeValue(this object x, MemberInfo info)
         {
             var fi = info as FieldInfo;
@@ -313,11 +291,11 @@ namespace hw.Helper
             if(pi != null)
                 return pi.GetValue(x, null);
 
-            throw new FieldOrPropertyExpected(x,info);
+            throw new FieldOrPropertyExpected(x, info);
         }
     }
 
-    public sealed class FieldOrPropertyExpected : Exception
+    sealed class FieldOrPropertyExpected : Exception
     {
         [UsedImplicitly]
         public new readonly object Data;

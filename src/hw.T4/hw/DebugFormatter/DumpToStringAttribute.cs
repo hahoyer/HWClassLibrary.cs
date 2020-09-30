@@ -24,12 +24,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public sealed class DisableDumpAttribute : DumpEnabledAttribute
+    /// <summary>
+    ///     Used to control dump. Use ToString function
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class DumpToStringAttribute : DumpClassAttribute
     {
-        public DisableDumpAttribute()
-            : base(false) { }
+        /// <summary>
+        ///     set "ToString" as dump behaviour of class
+        /// </summary>
+        /// <param name="t"> the type to dump. Is the type of any base class of "x" </param>
+        /// <param name="x"> the object to dump </param>
+        /// <returns> </returns>
+        public override string Dump(Type t, object x) { return x.ToString(); }
     }
 }

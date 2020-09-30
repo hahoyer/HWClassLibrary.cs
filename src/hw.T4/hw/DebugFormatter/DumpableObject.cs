@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using hw.Helper;
+using System.Linq;
 
-namespace hw.Debug
+namespace hw.DebugFormatter
 {
     [AdditionalNodeInfo("NodeDump")]
     [DebuggerDisplay("{NodeDump}")]
@@ -75,10 +75,14 @@ namespace hw.Debug
         public override string DebuggerDump() { return base.DebuggerDump() + " ObjectId=" + ObjectId; }
 
         [DebuggerHidden]
-        internal void StopByObjectId(int objectId) { StopByObjectId(1, objectId); }
+        internal void StopByObjectIds(params int[] objectIds)
+        {
+            foreach(var objectId in objectIds)
+                StopByObjectId(1, objectId);
+        }
 
         [DebuggerHidden]
-        internal void StopByObjectId(int stackFrameDepth, int objectId)
+        void StopByObjectId(int stackFrameDepth, int objectId)
         {
             var isStopByObjectIdActive = IsStopByObjectIdActive;
             IsStopByObjectIdActive = true;
@@ -109,5 +113,4 @@ namespace hw.Debug
         /// </summary>
         public string Property { get { return _property; } }
     }
-
 }
