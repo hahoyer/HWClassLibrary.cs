@@ -95,7 +95,7 @@ namespace hw.Scanner
             {
                 var wasEnd = sourcePosn.IsEnd;
                 sourcePosn.Position += position;
-                if(wasEnd)
+                if(wasEnd && position > 0)
                     sourcePosn.IsValid = false;
             }
 
