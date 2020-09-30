@@ -54,7 +54,8 @@
         <language>en-US</language>
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2014</copyright>
+      <license type="expression">CC-BY-4.0</license>
+        <copyright>Copyright Harald Hoyer 2014-2020</copyright>
 
         <version>20.0</version>
         <releaseNotes>
@@ -65,6 +66,6 @@
         </releaseNotes>
     </metadata>
     <files>
-        <file src="hw.ReplaceVariables\" target="content\hw" />
+        <file src="hw.ReplaceVariables/" target="content/hw" />
     </files>
 </package>

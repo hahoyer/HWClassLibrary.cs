@@ -15,9 +15,10 @@
     <language>en-US</language>
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>Copyright Harald Hoyer 2014</copyright>
+    <license type="expression">CC-BY-4.0</license>
+    <copyright>Copyright Harald Hoyer 2014-2020</copyright>
 
-    <version>20.0</version>
+    <version>20.0.0.1</version>
     <releaseNotes>
       Upgrade: new style
       17.1
@@ -38,6 +39,6 @@
   </metadata>
   <files>
 
-    <file src="hw.UnitTest\" target="content\hw" />
+    <file src="hw.UnitTest/" target="content/hw" />
   </files>
 </package>

@@ -1,32 +1,33 @@
 <?xml version="1.0"?>
 
 <package>
-    <metadata>
-        <id>hw.T4Helper</id>
-        <title>hw.T4Helper</title>
-        <authors>hahoyer</authors>
-        <description>
-            Provides template support for multifile generation.
-        </description>
-        <summary>
-            T4-template support
-        </summary>
-        <language>en-US</language>
-        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2013</copyright>
-        <frameworkAssemblies>
-            <frameworkAssembly assemblyName="EnvDTE.dll"/>
-            <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating.10.0"/>
-        </frameworkAssemblies>
+  <metadata>
+    <id>hw.T4Helper</id>
+    <title>hw.T4Helper</title>
+    <authors>hahoyer</authors>
+    <description>
+      Provides template support for multifile generation.
+    </description>
+    <summary>
+      T4-template support
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">CC-BY-4.0</license>
+    <copyright>Copyright Harald Hoyer 2013-2020</copyright>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="EnvDTE.dll" />
+      <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating.10.0" />
+    </frameworkAssemblies>
 
-        <version>20.0</version>
-        <dependencies>
-            <dependency id="hw.Helper.Core" version="1.0.0.1" />
-        </dependencies>
+    <version>20.0</version>
+    <dependencies>
+      <dependency id="hw.Helper.Core" version="1.0.0.1" />
+    </dependencies>
 
-    </metadata>
-    <files>
-        <file src="hw.T4Helper\" target="content\hw" />
-    </files>
+  </metadata>
+  <files>
+    <file src="hw.T4Helper/" target="content/hw" />
+  </files>
 </package>

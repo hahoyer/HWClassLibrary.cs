@@ -11,8 +11,8 @@
     <language>en-US</language>
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">CC-BY-4.0</license>
     <copyright>Copyright Harald Hoyer 2020</copyright>
-
     <version>20.0</version>
 
     <dependencies>
@@ -20,9 +20,9 @@
       <dependency id="log4net" version="2.0.11" />
     </dependencies>
   </metadata>
-  
-  
+
+
   <files>
-    <file src="hw.log4net\" target="content\hw" />
+    <file src="hw.log4net/" target="content/hw" />
   </files>
 </package>

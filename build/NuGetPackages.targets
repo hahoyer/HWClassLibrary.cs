@@ -78,7 +78,7 @@
 
         <Exec 
             Condition="'$(Configuration)' == 'Release'"
-            Command="$(NuGetCommand) setApiKey a5f7f807-2780-44f4-8346-648338424192" 
+            Command="$(NuGetCommand) setApiKey oy2fug2gycdys7a7nnaajvnlwtwe7zfu5a5kd4t36caqgu" 
             />
         
         <Exec  

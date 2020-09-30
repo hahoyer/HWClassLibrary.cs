@@ -2,9 +2,11 @@
 using System.Reflection;
 using hw.DebugFormatter;
 using hw.UnitTest;
+using JetBrains.Annotations;
 
 namespace Tester
 {
+    [PublicAPI]
     static class Program
     {
         static void Main(string[] args)

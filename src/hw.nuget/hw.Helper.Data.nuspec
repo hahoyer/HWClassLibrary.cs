@@ -1,28 +1,29 @@
 <?xml version="1.0"?>
 
 <package>
-    <metadata>
-        <id>hw.Helper.Data</id>
-        <title>hw.Helper.Data</title>
-        <authors>hahoyer</authors>
-        <description>
-            Helper classes for ADO-functions.
-        </description>
-        <summary>
-            Helper classes for ADO-functions.
-        </summary>
-        <language>en-US</language>
-        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2013</copyright>
+  <metadata>
+    <id>hw.Helper.Data</id>
+    <title>hw.Helper.Data</title>
+    <authors>hahoyer</authors>
+    <description>
+      Helper classes for ADO-functions.
+    </description>
+    <summary>
+      Helper classes for ADO-functions.
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">CC-BY-4.0</license>
+    <copyright>Copyright Harald Hoyer 2013</copyright>
 
-        <version>20.0</version>
-        <releaseNotes>
-          change: Upgrade to new style
-          some more functions
-        </releaseNotes>
-    </metadata>
-    <files>
-        <file src="hw.Helper.Data\" target="content\hw" />
-    </files>
+    <version>20.0</version>
+    <releaseNotes>
+      change: Upgrade to new style
+      some more functions
+    </releaseNotes>
+  </metadata>
+  <files>
+    <file src="hw.Helper.Data/" target="content/hw" />
+  </files>
 </package>
