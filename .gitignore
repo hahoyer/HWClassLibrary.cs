@@ -1,6 +1,5 @@
 /intermediate/
 /out/
-/src/packages/
 /oem
 _ReSharper.*
 *.suo
@@ -10,3 +9,4 @@ obj/
 /src/.vs
 .sync
 .idea
+/bin/packages

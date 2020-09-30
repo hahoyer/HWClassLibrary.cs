@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<package>
+  <metadata>
+    <id>hw.log4net</id>
+    <title>hw.log4net</title>
+    <authors>hahoyer</authors>
+    <description>
+      log4net integration.
+    </description>
+    <language>en-US</language>
+    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright Harald Hoyer 2020</copyright>
+
+    <version>20.1.0.0</version>
+
+    <dependencies>
+      <dependency id="hw.Helper.Core" version="20.1.0" />
+      <dependency id="log4net" version="2.0.11" />
+    </dependencies>
+  </metadata>
+  
+  
+  <files>
+    <file src="hw.log4net\" target="content\hw" />
+  </files>
+</package>
