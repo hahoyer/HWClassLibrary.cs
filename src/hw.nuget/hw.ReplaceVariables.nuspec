@@ -56,9 +56,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright Harald Hoyer 2014</copyright>
 
-        <version>14.3.0.0</version>
+        <version>20.0</version>
         <releaseNotes>
-            - parameter checks
+          change: Upgrade to new style
+          14.3.0.0
+          - parameter checks
             - access variables only when required by target string
         </releaseNotes>
     </metadata>

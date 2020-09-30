@@ -20,7 +20,7 @@
             <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating.10.0"/>
         </frameworkAssemblies>
 
-        <version>1.0.0.0</version>
+        <version>20.0</version>
         <dependencies>
             <dependency id="hw.Helper.Core" version="1.0.0.1" />
         </dependencies>

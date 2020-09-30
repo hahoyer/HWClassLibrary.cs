@@ -17,8 +17,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.1.0</version>
+    <version>20.0</version>
     <releaseNotes>
+      change: Upgrade to new style
       change: log4net moved to extra package
       18.1.2
       New: StringExtender.Surround will guess closing parenthesis. Supported are angel, round, square and curly brackets 

@@ -17,8 +17,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2016 - 2020</copyright>
 
-    <version>20.1.0</version>
+    <version>20.0</version>
     <releaseNotes>
+      change: Upgrade to new style
       Admin: Requires hw.Core 18.1.1
       18.1
       Change: Case insensitive checks

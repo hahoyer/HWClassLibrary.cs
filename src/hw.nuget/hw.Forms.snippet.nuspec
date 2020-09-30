@@ -17,14 +17,16 @@
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <language>en-US</language>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>Copyright Harald Hoyer 2013</copyright>
+    <copyright>Copyright Harald Hoyer 2013-2020</copyright>
 
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Drawing" />
     </frameworkAssemblies>
 
-    <version>17.1</version>
+    <version>20.0</version>
     <releaseNotes>
+      change: Upgrade to new style
+      17.1
       Upgrade: File to SmbFile
       16.0
       Automatic dependeny to core removed

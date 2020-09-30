@@ -13,7 +13,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Harald Hoyer 2020</copyright>
 
-    <version>20.1.0.0</version>
+    <version>20.0</version>
 
     <dependencies>
       <dependency id="hw.Helper.Core" version="20.1.0" />

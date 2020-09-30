@@ -16,10 +16,11 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <language>en-US</language>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright Harald Hoyer 2016</copyright>
+        <copyright>Copyright Harald Hoyer 2016-2020</copyright>
 
-        <version>16.0</version>
+        <version>20.0</version>
         <releaseNotes>
+          change: Upgrade to new style
             Separated from hw.CompilerTools
         </releaseNotes>
         <dependencies>
