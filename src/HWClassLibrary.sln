@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{74DE59
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6CF995B9-16A2-45C2-9EB2-0275F8314824}"
 	ProjectSection(SolutionItems) = preProject
+		..\build\ApiKey.targets = ..\build\ApiKey.targets
 		..\build\CSharp.Exe.targets = ..\build\CSharp.Exe.targets
 		..\build\CSharp.Library.targets = ..\build\CSharp.Library.targets
 		..\build\CSharp.Library.UnitTest.targets = ..\build\CSharp.Library.UnitTest.targets

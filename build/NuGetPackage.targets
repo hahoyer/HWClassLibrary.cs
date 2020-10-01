@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <Import Project="CSharp.Library.targets" />
+    <Import Project="ApiKey.targets" />
 
     <PropertyGroup>
         <CleanDependsOn>
@@ -33,7 +34,7 @@
 
         <Exec
             Condition="'$(Configuration)' == 'Release'"
-            Command="$(NuGetCommand) setApiKey a5f7f807-2780-44f4-8346-648338424192"
+            Command="$(NuGetCommand) setApiKey $(ApiKey)"
             />
 
         <Exec

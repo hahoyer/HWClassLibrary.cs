@@ -10,3 +10,4 @@ obj/
 .sync
 .idea
 /bin/packages
+/build/ApiKey.targets
