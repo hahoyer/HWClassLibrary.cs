@@ -41,7 +41,7 @@ namespace hw.Proof
             if(!@operator.IsEmpty(current))
                 result.Add(current);
 
-            return result.ToArray().ToSet<ParsedSyntax>();
+            return result.ToArray().ToSet();
         }
 
         internal static Set<ParsedSyntax> ToList(this IAssociative @operator, ParsedSyntax parsedSyntax)
