@@ -45,18 +45,14 @@ namespace hw.Helper
                 if(!File.Exists(InternalName))
                     return null;
 
-                using(var reader = File.OpenText(InternalName))
-                {
-                    return reader.ReadToEnd();
-                }
+                using var reader = File.OpenText(InternalName);
+                return reader.ReadToEnd();
             }
             set
             {
                 CheckedEnsureDirectoryOfFileExists();
-                using(var writer = File.CreateText(InternalName))
-                {
-                    writer.Write(value);
-                }
+                using var writer = File.CreateText(InternalName);
+                writer.Write(value);
             }
         }
 
@@ -231,13 +227,11 @@ namespace hw.Helper
             if(!File.Exists(InternalName))
                 return null;
 
-            using(var f = Reader)
-            {
-                f.Position = start;
-                var buffer = new byte[size];
-                f.Read(buffer, 0, size);
-                return Encoding.UTF8.GetString(buffer);
-            }
+            using var f = Reader;
+            f.Position = start;
+            var buffer = new byte[size];
+            f.Read(buffer, 0, size);
+            return Encoding.UTF8.GetString(buffer);
         }
 
         public void CheckedEnsureDirectoryOfFileExists()
