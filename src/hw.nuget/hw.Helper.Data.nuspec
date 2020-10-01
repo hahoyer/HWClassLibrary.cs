@@ -14,16 +14,16 @@
     <language>en-US</language>
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">CC-BY-4.0</license>
+    <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013</copyright>
 
-    <version>20.0</version>
+    <version>20.0.0.1</version>
     <releaseNotes>
       change: Upgrade to new style
       some more functions
     </releaseNotes>
   </metadata>
   <files>
-    <file src="hw.Helper.Data/" target="content/hw" />
+    <file src="hw.Helper.Data\" target="content/hw" />
   </files>
 </package>

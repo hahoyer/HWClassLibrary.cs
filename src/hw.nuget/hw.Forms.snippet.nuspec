@@ -17,14 +17,14 @@
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <language>en-US</language>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">CC-BY-4.0</license>
+    <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013-2020</copyright>
 
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Drawing" />
     </frameworkAssemblies>
 
-    <version>20.0</version>
+    <version>20.0.0.1</version>
     <releaseNotes>
       change: Upgrade to new style
       17.1
@@ -40,6 +40,6 @@
 
   </metadata>
   <files>
-    <file src="hw.Forms/" target="content/hw" />
+    <file src="hw.Forms\" target="content/hw" />
   </files>
 </package>

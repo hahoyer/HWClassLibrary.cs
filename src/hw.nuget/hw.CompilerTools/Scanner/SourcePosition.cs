@@ -2,18 +2,16 @@
 using System.Diagnostics;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
+using SourcePosn = hw.Scanner.SourcePosition;
 
 namespace hw.Scanner
 {
 
-    [Obsolete("Use SourcePosition")]
+    [Obsolete("Use SourcePosition or using SourcePosn = hw.Scanner.SourcePosition;", true)]
     [PublicAPI]
     // ReSharper disable once IdentifierTypo
-    public sealed class SourcePosn : SourcePosition
+    public sealed class SourcePosn 
     {
-        // ReSharper disable once IdentifierTypo
-        public SourcePosn(Source source, int position)
-            : base(source, position) { }
     }
 
     /// <summary>
@@ -21,7 +19,7 @@ namespace hw.Scanner
     /// </summary>
     [DebuggerDisplay("{" + nameof(NodeDump) + "}")]
     [PublicAPI]
-    public class SourcePosition : Dumpable, IEquatable<SourcePosition>
+    public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     {
         public static SourcePosition operator+(SourcePosition target, int y) => target.Source + (target.Position + y);
 
@@ -162,7 +160,7 @@ namespace hw.Scanner
             return "<invalid>";
         }
 
-        public int? Match(IMatch automaton) => automaton.Match(this);
+        public int? Match(IMatch automaton) => automaton.Match(new SourcePosition(Source,Position));
 
         public bool StartsWith(string data, StringComparison type = StringComparison.InvariantCulture)
         {
@@ -170,7 +168,7 @@ namespace hw.Scanner
             return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length).Equals(data, type);
         }
 
-        public SourcePart Span(SourcePosition other) => SourcePart.Span(this, other);
-        public SourcePart Span(int length) => SourcePart.Span(this, length);
+        public SourcePart Span(SourcePosition other) => SourcePart.Span(new SourcePosition(Source,Position), other);
+        public SourcePart Span(int length) => SourcePart.Span(new SourcePosition(Source,Position), length);
     }
 }
