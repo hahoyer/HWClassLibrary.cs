@@ -15,11 +15,13 @@
     <language>en-US</language>
     <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">CC-BY-4.0</license>
+    <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.0.1</version>
+    <version>20.0.1 </version>
     <releaseNotes>
+      bug: fixed null pointer exception in DumpExceptAttribute
+      20.0.0.6
       change: Upgrade to new style
       change: log4net moved to extra package
       18.1.2
@@ -92,6 +94,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="hw.Helper.Core/" target="content/hw" />
+    <file src="hw.Helper.Core\" target="content/hw" />
   </files>
 </package>

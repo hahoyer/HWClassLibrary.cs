@@ -30,8 +30,8 @@ namespace hw.DebugFormatter
 
         protected DumpExceptAttribute(object exceptionValue) => ExceptionValue = exceptionValue;
 
-        protected bool IsException(object targetValue) 
-            => targetValue.Equals(ExceptionValue ?? DateTime.MinValue);
+        protected bool IsException(object targetValue)
+            => Equals(targetValue, ExceptionValue ?? DateTime.MinValue);
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
