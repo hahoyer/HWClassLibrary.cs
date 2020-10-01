@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="">
 
     <Import Project="CSharp.Library.targets" />
+    <Import Project="ApiKey.targets" />
 
     <Target Name="AfterBuild" DependsOnTargets="DeployPackage" />
 
@@ -78,7 +79,7 @@
 
         <Exec 
             Condition="'$(Configuration)' == 'Release'"
-            Command="$(NuGetCommand) setApiKey oy2fug2gycdys7a7nnaajvnlwtwe7zfu5a5kd4t36caqgu" 
+            Command="$(NuGetCommand) setApiKey $(ApiKey)" 
             />
         
         <Exec  
