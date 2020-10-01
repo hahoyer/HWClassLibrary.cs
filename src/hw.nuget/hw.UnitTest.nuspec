@@ -18,8 +18,9 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2014-2020</copyright>
 
-    <version>20.0.0.2</version>
+    <version>20.0.0.3</version>
     <releaseNotes>
+      new: IsBreakDisabled: debug is more convenient
       Upgrade: new style
       17.1
       Upgrade: File to SmbFile

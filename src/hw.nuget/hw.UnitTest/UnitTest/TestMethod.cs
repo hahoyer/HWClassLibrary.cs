@@ -121,7 +121,7 @@ namespace hw.UnitTest
                 {
                     var test = Actor.Instance;
                     var isBreakDisabled = Tracer.IsBreakDisabled;
-                    Tracer.IsBreakDisabled = !TestRunner.IsModeErrorFocus;
+                    Tracer.IsBreakDisabled = TestRunner.IsBreakDisabled ?? !TestRunner.IsModeErrorFocus;
                     try
                     {
                         Actor.Run(test);

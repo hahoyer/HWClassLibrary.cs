@@ -11,6 +11,7 @@ namespace hw.UnitTest
     public sealed class TestRunner : Dumpable
     {
         public static bool IsModeErrorFocus;
+        public static bool? IsBreakDisabled;
 
         public static readonly List<IFramework> RegisteredFrameworks = new List<IFramework>();
         int Complete;
