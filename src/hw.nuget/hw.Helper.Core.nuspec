@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.1.1 </version>
+    <version>20.0.2</version>
     <releaseNotes>
+      bug: fixed EnableDumpExcept does not work for null
+      20.0.1.1
       refactor: use new C# options
       bug: fixed null pointer exception in DumpExceptAttribute
       20.0.0.6
