@@ -20,6 +20,9 @@
 
     <version>20.0.2</version>
     <releaseNotes>
+      new: function cache introduced into common cache
+      new: concat: SelectMany without transformation
+      new: introducing T-operator 
       bug: fixed EnableDumpExcept does not work for null
       20.0.1.1
       refactor: use new C# options

@@ -294,5 +294,7 @@ namespace hw.DebugFormatter
             var frameCount = trace? Tracer.CurrentFrameCount(depth + 1) : 0;
             MethodDumpTraceSwitches.Push(new MethodDumpTraceItem(frameCount, trace));
         }
+
+        public static TValue[] T<TValue>(params TValue[] value) => value;
     }
 }
