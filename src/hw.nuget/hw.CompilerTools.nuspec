@@ -20,6 +20,7 @@
 
     <version>20.0.4</version>
     <releaseNotes>
+      20.0.4
       new: TextPart/TextPosition
       20.0.3.1
       bugfix: SourcePosn and SourcePosition are not compatible enough

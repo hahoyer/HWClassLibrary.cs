@@ -77,6 +77,7 @@
     <Compile Include="hw.Helper.Core\DebugFormatter\Dumper.cs" />
     <Compile Include="hw.Helper.Core\DebugFormatter\TextWriters.cs" />
     <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
+    <Compile Include="hw.Helper.Core\Helper\LocationProviderAttribute.cs" />
     <Compile Include="hw.Helper.Core\Helper\SmbFile.cs" />
     <Compile Include="hw.Helper.Core\Helper\TextPart.cs" />
     <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />

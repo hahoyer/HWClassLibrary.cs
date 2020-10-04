@@ -4,161 +4,124 @@ using System.Linq;
 using System.Reflection;
 using hw.DebugFormatter;
 using hw.Helper;
+using JetBrains.Annotations;
 
 namespace hw.UnitTest
 {
-    public sealed class SourceFilePosition
-    {
-        public string FileName;
-        public int LineNumber;
-
-        public string ToString(FilePositionTag tag)
-            => Tracer.FilePosition(FileName, new TextPart {Start = new TextPosition {LineNumber = LineNumber}}, tag);
-    }
-
+    [PublicAPI]
     sealed class TestMethod : Dumpable
     {
-        internal interface IActor
+        internal abstract class ActorBase : Dumpable
         {
-            string Name { get; }
-            string LongName { get; }
-            object Instance { get; }
-            IEnumerable<SourceFilePosition> FilePositions { get; }
-            string RunString { get; }
-            void Run(object test);
+            internal Type InstanceType;
+            internal readonly MethodInfo MethodInfo;
+
+            protected ActorBase(MethodInfo methodInfo)
+            {
+                InstanceType = methodInfo.DeclaringType;
+                Tracer.Assert(InstanceType != null);
+                MethodInfo = methodInfo;
+                Tracer.Assert(!MethodInfo.IsStatic);
+            }
+
+            internal virtual object Instance => Activator.CreateInstance(InstanceType);
+            internal virtual void Run(object target) => MethodInfo.Invoke(target, new object[0]);
         }
 
-        sealed class MethodActor : IActor
+        sealed class MethodActor : ActorBase
         {
-            readonly MethodInfo Target;
-            readonly Type Type;
-
-            public MethodActor(MethodInfo target, Type type)
-            {
-                Target = target;
-                Type = type;
-            }
-
-            IEnumerable<SourceFilePosition> IActor.FilePositions
-            {
-                get
-                {
-                    var b = Type.GetAttribute<UnitTestAttribute>(true);
-                    if(b != null)
-                        yield return b.Where;
-                    var a = Target.GetAttribute<UnitTestAttribute>(true);
-                    if(a != null)
-                        yield return a.Where;
-                }
-            }
-
-            object IActor.Instance
-            {
-                get
-                {
-                    if(Target.IsStatic || Target.ReflectedType == null)
-                        return null;
-                    return Activator.CreateInstance(Target.ReflectedType);
-                }
-            }
-
-            string IActor.LongName
-            {
-                get
-                {
-                    Tracer.Assert(Target.DeclaringType != null);
-                    return Target.DeclaringType.PrettyName() + "." + Target.Name;
-                }
-            }
-
-            string IActor.Name => Target.Name;
-            void IActor.Run(object test) => Target.Invoke(test, new object[0]);
-
-            string IActor.RunString
-            {
-                get
-                {
-                    var type = Target.ReflectedType;
-                    return type == null? null : $"new {type.FullName}().{Target.Name}()";
-                }
-            }
+            internal MethodActor(MethodInfo methodInfo)
+                : base(methodInfo) { }
         }
 
-        sealed class InterfaceActor : IActor
+        sealed class ActionActor : ActorBase
         {
-            readonly Type Target;
-            public InterfaceActor(Type target) => Target = target;
+            internal override object Instance { get; }
 
-            IEnumerable<SourceFilePosition> IActor.FilePositions
-            {
-                get
-                {
-                    var b = Target.GetAttribute<UnitTestAttribute>(true);
-                    if(b != null)
-                        yield return b.Where;
-                }
-            }
-
-            object IActor.Instance => Activator.CreateInstance(Target);
-            string IActor.LongName => Target.PrettyName();
-            string IActor.Name => Target.Name;
-            void IActor.Run(object test) => ((ITestFixture)test).Run();
-            string IActor.RunString => $"((ITestFixture)new {Target.FullName}()).Run()";
+            internal ActionActor(Action action)
+                : base(action.Method)
+                => Instance = action.Target;
         }
+
+        sealed class InterfaceActor : ActorBase
+        {
+            internal InterfaceActor(Type target)
+                : base(typeof(ITestFixture).GetMethod("Run"))
+                => InstanceType = target;
+
+            internal override void Run(object target) => ((ITestFixture)target).Run();
+        }
+
+        public bool IsActive;
 
         public bool IsSuspended;
 
-        internal readonly IActor Actor;
+        internal readonly ActorBase Actor;
 
-        public TestMethod(MethodInfo methodInfo, Type type) => Actor = new MethodActor(methodInfo, type);
-
+        public TestMethod(MethodInfo methodInfo) => Actor = new MethodActor(methodInfo);
         public TestMethod(Type type) => Actor = new InterfaceActor(type);
+        public TestMethod(Action action) => Actor = new ActionActor(action);
 
+        public string LongName => Actor.InstanceType.PrettyName() + "." + Name;
         public string ConfigurationString => Name + ",";
+        public string Name => Actor.MethodInfo.Name;
+        public string RunString => $"TestRunner.RunTest(new {Actor.InstanceType.FullName}().{Name})";
 
-        public string Name => Actor.Name;
+        internal IEnumerable<SourceFilePosition> FilePositions
+        {
+            get
+            {
+                var b = Actor.InstanceType.GetAttributes<ILocationProvider>(true).FirstOrDefault();
+                if(b != null)
+                    yield return b.Where;
+                var a = Actor.MethodInfo?.GetAttributes<ILocationProvider>(true).FirstOrDefault();
+                if(a != null)
+                    yield return a.Where;
+            }
+        }
 
         public void Run()
         {
-            Tracer.Line("Start " + Actor.LongName);
+            ("Start " + LongName).Log();
             Tracer.IndentStart();
-            Tracer.Line
-            (
-                Actor.FilePositions.Select
-                        (p => p.ToString(FilePositionTag.Test) + " position of test")
-                    .Stringify("\n"));
+            FilePositions.Select
+                    (p => p.ToString(FilePositionTag.Test) + " position of test")
+                .Stringify("\n").Log();
             try
             {
                 if(!IsSuspended)
                 {
                     var test = Actor.Instance;
                     var isBreakDisabled = Tracer.IsBreakDisabled;
-                    Tracer.IsBreakDisabled = TestRunner.IsBreakDisabled ?? !TestRunner.IsModeErrorFocus;
                     try
                     {
+                        Tracer.IsBreakDisabled = !TestRunner.Configuration.IsBreakEnabled;
                         Actor.Run(test);
                     }
                     catch(Exception e)
                     {
                         ShowException(e);
                     }
+                    finally
+                    {
+                        Tracer.IsBreakDisabled = isBreakDisabled;
+                    }
 
-                    Tracer.IsBreakDisabled = isBreakDisabled;
                 }
             }
             finally
             {
                 Tracer.IndentEnd();
-                Tracer.Line("End " + Actor.LongName);
+                ("End " + LongName).Log();
             }
         }
 
         void ShowException(Exception e)
         {
-            Tracer.Line("*********************Exception: " + Actor.LongName);
-            Tracer.Line(e.GetType().FullName);
-            Tracer.Line(e.Message);
-            Tracer.Line("*********************End Exception: " + Actor.LongName);
+            ("*********************Exception: " + LongName).Log();
+            e.GetType().FullName.Log();
+            e.Message.Log();
+            ("*********************End Exception: " + LongName).Log();
             throw new TestFailedException();
         }
     }

@@ -40,21 +40,20 @@ namespace hw.Helper
 
         [NotNull]
         public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type target, bool inherit)
-            where TAttribute : Attribute => target.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>();
+            => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
         [NotNull]
         public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo target, bool inherit)
-            where TAttribute : Attribute => target.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>();
+            => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
         [CanBeNull]
         public static TAttribute GetAttribute<TAttribute>(this Type target, bool inherit)
-            where TAttribute : Attribute
         {
             var list = GetAttributes<TAttribute>(target, inherit).ToArray();
             switch(list.Length)
             {
                 case 0:
-                    return null;
+                    return default;
                 case 1:
                     return list[0];
             }
@@ -64,18 +63,18 @@ namespace hw.Helper
 
         [CanBeNull]
         public static TAttribute GetRecentAttribute<TAttribute>(this Type target)
-            where TAttribute : Attribute => GetAttribute<TAttribute>(target, false) ??
+            => GetAttribute<TAttribute>(target, false) ??
                                             GetRecentAttributeBase<TAttribute>(target.BaseType);
 
         [CanBeNull]
         public static TAttribute GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
-            where TAttribute : Attribute
+            
         {
             var list = GetAttributes<TAttribute>(target, inherit).ToArray();
             switch(list.Length)
             {
                 case 0:
-                    return null;
+                    return default;
                 case 1:
                     return list[0];
             }
@@ -298,7 +297,7 @@ namespace hw.Helper
 
         [CanBeNull]
         static TAttribute GetRecentAttributeBase<TAttribute>(this Type target)
-            where TAttribute : Attribute => target == null? null : target.GetRecentAttribute<TAttribute>();
+            => target == null? default : target.GetRecentAttribute<TAttribute>();
 
         static Type[] GetTypes(Assembly assembly)
         {

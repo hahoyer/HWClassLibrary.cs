@@ -11,9 +11,9 @@ namespace hw.UnitTest
     sealed class TestType : Dumpable
     {
         public bool IsStarted { get; set; }
+        internal readonly List<TestMethod> FailedMethods = new List<TestMethod>();
+        internal bool IsComplete { get; set; }
         internal readonly Type Type;
-        readonly List<TestMethod> FailedMethods = new List<TestMethod>();
-        bool IsComplete { get; set; }
         bool IsSuspended;
         internal TestType(Type type) => Type = type;
 
@@ -29,12 +29,6 @@ namespace hw.UnitTest
             }
         }
 
-        public int ConfigurationModePriority
-            => !IsStarted || IsSuspended? 4 :
-                IsSuccessful? 2 :
-                IsComplete? 1 :
-                3;
-
         internal IEnumerable<DependenceProvider> DependenceProviders => Type.GetAttributes<DependenceProvider>(true);
 
 
@@ -45,10 +39,10 @@ namespace hw.UnitTest
 
         internal bool IsSuccessful => IsComplete && FailedMethods.Count == 0;
 
-        IEnumerable<TestMethod> UnitTestMethods => Type
+        internal IEnumerable<TestMethod> UnitTestMethods => Type
             .GetMethods()
             .Where(IsUnitTestMethod)
-            .Select(methodInfo => new TestMethod(methodInfo, Type))
+            .Select(methodInfo => new TestMethod(methodInfo))
             .Concat(DefaultTestMethods)
             .Concat(InterfaceMethods);
 
@@ -67,7 +61,7 @@ namespace hw.UnitTest
             {
                 var testAttribute = Type.GetAttribute<UnitTestAttribute>(true);
                 if(testAttribute?.DefaultMethod != null)
-                    yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod), Type);
+                    yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod));
             }
         }
 
@@ -85,21 +79,27 @@ namespace hw.UnitTest
             }
         }
 
-        internal string ConfigurationMode
+        string ConfigurationMode
         {
-            get 
+            get
             // ReSharper disable once StringLiteralTypo
                 => !IsStarted || IsSuspended? "notrun" :
-                IsSuccessful? "success" :
-                IsComplete? "error" : 
-                // ReSharper disable once StringLiteralTypo
-                "dependanterror";
-            private set
+                    IsSuccessful? "success" :
+                    IsComplete? "error" :
+                    // ReSharper disable once StringLiteralTypo
+                    "dependanterror";
+            set
             {
                 if(value != "error")
                     IsSuspended = true;
             }
         }
+
+        internal int ConfigurationModePriority
+            => !IsStarted || IsSuspended? 4 :
+                IsSuccessful? 2 :
+                IsComplete? 1 :
+                3;
 
         [PublicAPI]
         [Obsolete("Use CanBeStarted")]
@@ -110,25 +110,18 @@ namespace hw.UnitTest
 
         public override string ToString() => ConfigurationString;
 
-        public void Run()
-        {
-            foreach(var unitTestMethod in UnitTestMethods.Where(unitTestMethod => !unitTestMethod.IsSuspended))
-                try
-                {
-                    unitTestMethod.Run();
-                }
-                catch(TestFailedException)
-                {
-                    FailedMethods.Add(unitTestMethod);
-                }
-
-            IsComplete = true;
-        }
-
         static bool IsUnitTestMethod(MethodInfo methodInfo)
             => methodInfo.GetAttribute<UnitTestAttribute>(true) != null
                || TestRunner.RegisteredFrameworks.Any(item => item.IsUnitTestMethod(methodInfo));
 
-        internal IEnumerable<string> GeneratedTestCalls => UnitTestMethods.Select(method => $"{method.Actor.RunString};");
+        public int GetPriority(TestMethod method)
+            => method.IsActive? 5 :
+                !IsStarted || IsSuspended? 4 :
+                IsSuccessful? 2 :
+                IsComplete? 1 :
+                3;
+
+        public string GetMode(TestMethod method) 
+            => method.IsActive? "active" : ConfigurationMode;
     }
 }

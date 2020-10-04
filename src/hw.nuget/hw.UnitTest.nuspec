@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2014-2020</copyright>
 
-    <version>20.0.3</version>
+    <version>20.0.4</version>
     <releaseNotes>
+      new: Sample test file generation improved
+      20.0.3
       new: TextPart/TextPosition
       20.0.2
       new: Support generation of a cs file with sample tests
@@ -38,7 +40,7 @@
       Breaking Change: Attributes TestFixture and Test renamed to UnitTest
     </releaseNotes>
     <dependencies>
-      <dependency id="hw.Helper.Core" version="20.0.4" />
+      <dependency id="hw.Helper.Core" version="20.0.5" />
     </dependencies>
 
   </metadata>

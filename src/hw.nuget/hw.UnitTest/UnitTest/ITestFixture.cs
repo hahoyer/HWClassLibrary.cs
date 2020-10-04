@@ -1,6 +1,6 @@
 namespace hw.UnitTest
 {
-    interface ITestFixture
+    public interface ITestFixture
     {
         void Run();
     }

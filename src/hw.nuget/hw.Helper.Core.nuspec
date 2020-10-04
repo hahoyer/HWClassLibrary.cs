@@ -18,8 +18,11 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.4</version>
+    <version>20.0.5</version>
     <releaseNotes>
+      new: Location provider attributes
+      change: Attribute-constraint removed for GeAttribute-methods
+      20.0.4
       new: TextPart/TextPosition
       20.0.3
       new: SmbFile.FilePosition
