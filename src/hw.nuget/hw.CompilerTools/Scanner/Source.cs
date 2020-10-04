@@ -43,21 +43,24 @@ namespace hw.Scanner
             => Tracer.FilePosition
                (
                    Identifier,
-                   LineIndex(position),
-                   ColumnIndex(position) + 1,
-                   LineIndex(positionEnd),
-                   ColumnIndex(positionEnd) + 1,
+                   new TextPart
+                   {
+                       Start = GetTextPosition(position), End = GetTextPosition(positionEnd)
+                   },
                    tag ?? FilePositionTag.Debug.ToString()) +
                flagText;
+
+        public TextPosition GetTextPosition(int position)
+            => new TextPosition {LineNumber = LineIndex(position), ColumnNumber = ColumnIndex(position) + 1};
 
         public string FilePosition(int position, int positionEnd, string flagText, string tag = null)
             => Tracer.FilePosition
                (
                    Identifier,
-                   LineIndex(position),
-                   ColumnIndex(position) + 1,
-                   LineIndex(positionEnd),
-                   ColumnIndex(positionEnd) + 1,
+                   new TextPart
+                   {
+                       Start = GetTextPosition(position), End = GetTextPosition(positionEnd)
+                   },
                    tag ?? FilePositionTag.Debug.ToString()) +
                flagText;
 

@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 namespace hw.DebugFormatter
 {
     /// <summary>     Summary description for Tracer. </summary>
+    [PublicAPI]
     public static class Tracer
     {
         sealed class AssertionFailedException : Exception
@@ -18,41 +19,51 @@ namespace hw.DebugFormatter
 
         sealed class BreakException : Exception { }
 
-        [UsedImplicitly]
         public const string VisualStudioLineFormat =
             "{fileName}({lineNumber},{columnNumber},{lineNumberEnd},{columnNumberEnd}): {tagText}: ";
 
         public static readonly Dumper Dumper = new Dumper();
 
-        [UsedImplicitly]
         public static bool IsBreakDisabled;
 
         static readonly Writer Writer = new Writer();
 
         [Obsolete("Use FilePosition")]
-        [PublicAPI]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn(this StackFrame sf, FilePositionTag tag)
             => FilePosition(sf, tag);
 
         [Obsolete("Use FilePosition")]
-        [PublicAPI]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn(string fileName, int lineNumber, int columnNumber, FilePositionTag tag)
-            => FilePosition(fileName, lineNumber, columnNumber, tag);
+            => FilePosition(fileName, new TextPart
+            {
+                Start = new TextPosition
+                {
+                    LineNumber = lineNumber, ColumnNumber = columnNumber
+                }
+            }, tag);
 
         [Obsolete("Use FilePosition")]
-        [PublicAPI]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn
         (
             string fileName, int lineNumber, int columnNumber, int lineNumberEnd, int columnNumberEnd
             , FilePositionTag tag
         )
-            => FilePosition(fileName, lineNumber, columnNumber, lineNumberEnd, columnNumberEnd, tag);
+            => FilePosition(fileName, new TextPart
+            {
+                Start = new TextPosition
+                {
+                    LineNumber = lineNumber, ColumnNumber = columnNumber
+                }
+                , End = new TextPosition
+                {
+                    LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
+                }
+            }, tag);
 
         [Obsolete("Use FilePosition")]
-        [PublicAPI]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn
         (
@@ -63,7 +74,18 @@ namespace hw.DebugFormatter
             int columnNumberEnd,
             string tagText
         )
-            => FilePosition(fileName, lineNumber, columnNumber, lineNumberEnd, columnNumberEnd, tagText);
+            => FilePosition(fileName, new TextPart
+                {
+                    Start = new TextPosition
+                    {
+                        LineNumber = lineNumber, ColumnNumber = columnNumber
+                    }
+                    , End = new TextPosition
+                    {
+                        LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
+                    }
+                }
+                , tagText);
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
@@ -71,7 +93,6 @@ namespace hw.DebugFormatter
         /// <param name="stackFrame"> the stack frame where the location is stored </param>
         /// <param name="tag"> </param>
         /// <returns> the "FileName(lineNumber,ColNr): tag: " string </returns>
-        [PublicAPI]
         public static string FilePosition(StackFrame stackFrame, FilePositionTag tag)
         {
             // ReSharper disable once StringLiteralTypo
@@ -80,8 +101,14 @@ namespace hw.DebugFormatter
             return FilePosition
             (
                 stackFrame.GetFileName(),
-                stackFrame.GetFileLineNumber() - 1,
-                stackFrame.GetFileColumnNumber(),
+                new TextPart
+                {
+                    Start = new TextPosition
+                    {
+                        LineNumber = stackFrame.GetFileLineNumber() - 1, ColumnNumber = stackFrame.GetFileColumnNumber()
+                    }
+                }
+                ,
                 tag
             );
         }
@@ -89,7 +116,6 @@ namespace hw.DebugFormatter
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
-        [PublicAPI]
         public static string FilePosition
         (
             string fileName,
@@ -97,12 +123,19 @@ namespace hw.DebugFormatter
             int columnNumber,
             FilePositionTag tag
         )
-            => FilePosition(fileName, lineNumber, columnNumber, lineNumber, columnNumber, tag);
+            => FilePosition(fileName
+                , new TextPart
+                {
+                    Start = new TextPosition
+                    {
+                        LineNumber = lineNumber, ColumnNumber = columnNumber
+                    }
+                }
+                , tag);
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
-        [PublicAPI]
         public static string FilePosition
         (
             string fileName,
@@ -112,15 +145,23 @@ namespace hw.DebugFormatter
             int columnNumberEnd,
             FilePositionTag tag
         )
-        {
-            var tagText = tag.ToString();
-            return FilePosition(fileName, lineNumber, columnNumber, lineNumberEnd, columnNumberEnd, tagText);
-        }
+            => FilePosition(fileName
+                , new TextPart
+                {
+                    Start = new TextPosition
+                    {
+                        LineNumber = lineNumber, ColumnNumber = columnNumber
+                    }
+                    , End = new TextPosition
+                    {
+                        LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
+                    }
+                }
+                , tag);
 
         /// <summary>
         ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
         /// </summary>
-        [PublicAPI]
         public static string FilePosition
         (
             string fileName,
@@ -130,13 +171,29 @@ namespace hw.DebugFormatter
             int columnNumberEnd,
             string tagText
         )
-            => VisualStudioLineFormat
+            => FilePosition(fileName
+                , new TextPart
+                {
+                    Start = new TextPosition {LineNumber = lineNumber, ColumnNumber = columnNumber}
+                    , End = new TextPosition {LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd}
+                }
+                , tagText);
+
+        public static string FilePosition(string fileName, TextPart textPart, FilePositionTag tag)
+            => FilePosition(fileName, textPart, tag.ToString());
+
+        public static string FilePosition(string fileName, TextPart textPart, string tagText)
+        {
+            var start = textPart?.Start ?? new TextPosition {LineNumber = 1, ColumnNumber = 1};
+            var end = textPart?.End ?? start;
+            return VisualStudioLineFormat
                 .Replace("{fileName}", fileName)
-                .Replace("{lineNumber}", (lineNumber + 1).ToString())
-                .Replace("{columnNumber}", columnNumber.ToString())
-                .Replace("{lineNumberEnd}", (lineNumberEnd + 1).ToString())
-                .Replace("{columnNumberEnd}", columnNumberEnd.ToString())
+                .Replace("{lineNumber}", (start.LineNumber + 1).ToString())
+                .Replace("{columnNumber}", start.ColumnNumber.ToString())
+                .Replace("{lineNumberEnd}", (end.LineNumber + 1).ToString())
+                .Replace("{columnNumberEnd}", end.ColumnNumber.ToString())
                 .Replace("{tagText}", tagText);
+        }
 
         /// <summary>
         ///     creates a string to inspect a method
@@ -144,7 +201,6 @@ namespace hw.DebugFormatter
         /// <param name="methodBase"> the method </param>
         /// <param name="showParam"> controls if parameter list is appended </param>
         /// <returns> string to inspect a method </returns>
-        [PublicAPI]
         public static string DumpMethod(this MethodBase methodBase, bool showParam)
         {
             var result = methodBase.DeclaringType.PrettyName() + ".";
@@ -197,7 +253,6 @@ namespace hw.DebugFormatter
             return DumpMethod(stackFrame.GetMethod(), false);
         }
 
-        [PublicAPI]
         public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0)
         {
             var stackTrace = new StackTrace(true);
@@ -216,14 +271,12 @@ namespace hw.DebugFormatter
         ///     write a line to debug output
         /// </summary>
         /// <param name="text"> the text </param>
-        [PublicAPI]
         public static void Line(string text) => Writer.ThreadSafeWrite(text, true);
 
         /// <summary>
         ///     write a line to debug output
         /// </summary>
         /// <param name="text"> the text </param>
-        [PublicAPI]
         public static void LinePart(string text) => Writer.ThreadSafeWrite(text, false);
 
         /// <summary>
@@ -233,7 +286,6 @@ namespace hw.DebugFormatter
         /// <param name="flagText"> </param>
         /// <param name="showParam"></param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
-        [PublicAPI]
         public static void FlaggedLine
         (
             string text,
@@ -255,7 +307,6 @@ namespace hw.DebugFormatter
         /// </summary>
         /// <param name="target"> the object to dump </param>
         /// <returns> </returns>
-        [PublicAPI]
         public static string Dump(object target) => Dumper.Dump(target);
 
 
@@ -273,7 +324,6 @@ namespace hw.DebugFormatter
         /// <param name="value">The object, that will be dumped, by use of <see cref="DumpData(object)" />.</param>
         /// <returns>A string according to pattern $name$ = $value$</returns>
         [DebuggerHidden]
-        [PublicAPI]
         public static string DumpValue(this string name, object value)
             => DumpData("", new[] {name, value}, 1);
 
@@ -281,7 +331,6 @@ namespace hw.DebugFormatter
         ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
         /// </summary>
         /// <param name="parameter"> parameter objects list for the frame </param>
-        [PublicAPI]
         public static void DumpStaticMethodWithData(params object[] parameter)
         {
             var result = DumpMethodWithData("", null, parameter, 1);
@@ -331,7 +380,6 @@ namespace hw.DebugFormatter
         /// <param name="getText"> The text. </param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
-        [PublicAPI]
         public static void ConditionalBreak(bool b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b)
@@ -346,7 +394,6 @@ namespace hw.DebugFormatter
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// created 15.10.2006 18:04
         [DebuggerHidden]
-        [PublicAPI]
         public static void ThrowAssertionFailed(string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
             var result = AssertionFailed(cond, getText, stackFrameDepth + 1);
@@ -390,7 +437,6 @@ namespace hw.DebugFormatter
         [ContractAnnotation("b: false => halt")]
         public static void Assert(bool b, string s) => Assert(b, () => s, 1);
 
-        [UsedImplicitly]
         [DebuggerHidden]
         public static void TraceBreak()
         {
@@ -404,27 +450,22 @@ namespace hw.DebugFormatter
         public static int CurrentFrameCount(int stackFrameDepth) => new StackTrace(true).FrameCount - stackFrameDepth;
 
         [DebuggerHidden]
-        [PublicAPI]
         public static void LaunchDebugger() => Debugger.Launch();
 
         public static void IndentStart() => Writer.IndentStart();
         public static void IndentEnd() => Writer.IndentEnd();
 
-        [PublicAPI]
         [Obsolete("Use Log")]
         public static void WriteLine(this string value) => Line(value);
 
-        [PublicAPI]
         [Obsolete("Use LogLinePart")]
         public static void WriteLinePart(this string value) => LinePart(value);
 
-        [PublicAPI]
         public static void Log(this string value) => Line(value);
 
-        [PublicAPI]
         public static void LogLinePart(this string value) => LinePart(value);
 
-        internal static string DumpMethodWithData
+        public static string DumpMethodWithData
             (string text, object thisObject, object[] parameter, int stackFrameDepth = 0)
         {
             var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
@@ -461,7 +502,7 @@ namespace hw.DebugFormatter
             for(var index = parameterCount; index < parameters.Length; index += 2)
             {
                 result += "\n";
-                result += IsSetTo((string)parameters[index ], parameters[index + 1]);
+                result += IsSetTo((string)parameters[index], parameters[index + 1]);
             }
 
             return result;

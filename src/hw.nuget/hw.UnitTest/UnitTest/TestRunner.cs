@@ -118,7 +118,7 @@ namespace hw.UnitTest
 
         void Run()
         {
-            PendingTestsFile?.FilePosition(1, 1, 1, 1, FilePositionTag.Test).Log();
+            PendingTestsFile?.FilePosition(null, FilePositionTag.Test).Log();
             Status = "run";
             for(var index = 0; index < TestLevels.Length && AllIsFine; index++)
             {
@@ -171,7 +171,7 @@ namespace hw.UnitTest
         }
 
         void ConfigFileMessage(string flagText)
-            => (Tracer.FilePosition(ConfigFile.FullName, 1, 1, FilePositionTag.Test) + flagText).Log();
+            => (Tracer.FilePosition(ConfigFile.FullName, null, FilePositionTag.Test) + flagText).Log();
 
 
         void LoadConfiguration()

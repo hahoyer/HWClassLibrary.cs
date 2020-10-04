@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.3</version>
+    <version>20.0.4</version>
     <releaseNotes>
+      new: TextPart/TextPosition
+      20.0.3
       new: SmbFile.FilePosition
       20.0.2
       new: function cache introduced into common cache

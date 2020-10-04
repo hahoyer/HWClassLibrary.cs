@@ -196,7 +196,7 @@ namespace hw.Helper
         /// </summary>
         /// <param name="depth"> The depth. </param>
         /// <returns> </returns>
-        public static string SourcePath(int depth)
+        public static string SourcePath(int depth = 0)
             => new FileInfo(SourceFileName(depth + 1)).DirectoryName;
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace hw.Helper
         /// </summary>
         /// <param name="depth"> stack depths of the function used. </param>
         /// <returns> </returns>
-        public static string SourceFileName(int depth)
+        public static string SourceFileName(int depth = 0)
         {
             var sf = new StackTrace(true).GetFrame(depth + 1);
             return sf.GetFileName();
@@ -380,12 +380,16 @@ namespace hw.Helper
 
         public string FilePosition
         (
-            int lineNumber,
-            int columnNumber,
-            int lineNumberEnd,
-            int columnNumberEnd,
+            TextPart textPart,
             FilePositionTag tag
         )
-            => Tracer.FilePosition(FullName, lineNumber, columnNumber, lineNumberEnd, columnNumberEnd, tag);
+            => Tracer.FilePosition(FullName, textPart, tag);
+ 
+        public string FilePosition
+        (
+            TextPart textPart,
+            string tag
+        )
+            => Tracer.FilePosition(FullName, textPart, tag);
     }
 }
