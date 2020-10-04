@@ -377,5 +377,15 @@ namespace hw.Helper
 
         FileSystemInfo[] GetItems()
             => ((DirectoryInfo)FileSystemInfo).GetFileSystemInfos().ToArray();
+
+        public string FilePosition
+        (
+            int lineNumber,
+            int columnNumber,
+            int lineNumberEnd,
+            int columnNumberEnd,
+            FilePositionTag tag
+        )
+            => Tracer.FilePosition(FullName, lineNumber, columnNumber, lineNumberEnd, columnNumberEnd, tag);
     }
 }

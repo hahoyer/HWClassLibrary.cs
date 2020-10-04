@@ -8,17 +8,20 @@ using JetBrains.Annotations;
 
 namespace hw.UnitTest
 {
+    [PublicAPI]
     public sealed class TestRunner : Dumpable
     {
         public static bool IsModeErrorFocus;
         public static bool? IsBreakDisabled;
+        public static string TestsFileName;
 
         public static readonly List<IFramework> RegisteredFrameworks = new List<IFramework>();
         int Complete;
 
         // ReSharper disable once StringLiteralTypo
-        readonly SmbFile ConfigFile = "Test.HWconfig".ToSmbFile();
+        readonly SmbFile ConfigFile = "Test.HW.config".ToSmbFile();
         string CurrentMethodName = "";
+        readonly SmbFile PendingTestsFile = TestsFileName?.ToSmbFile();
         string Status = "Start";
 
         readonly Func<Type, bool>[] TestLevels;
@@ -64,8 +67,34 @@ namespace hw.UnitTest
             }
         }
 
-        string HeaderText => DateTime.Now.Format() + " " + Status + " " + Complete + " of "
-                             + TestTypes.Length + " " + CurrentMethodName;
+        string PendingTestsString
+            => $@"//{HeaderText}
+
+namespace hw.UnitTest
+{{
+    public static class PendingTests
+    {{
+        public static void Run()
+        {{
+        {GeneratedTestCalls}
+}}}}}}
+";
+
+        string GeneratedTestCalls
+            => TestTypes
+                .Where(testType => !testType.IsSuccessful)
+                .OrderBy(testType => testType.ConfigurationModePriority)
+                .GroupBy(testType => testType.ConfigurationMode)
+                .Select(GeneratedTestCallsForMode)
+                .Stringify("\n");
+
+        string HeaderText => $"{DateTime.Now.Format()} {Status} {Complete} of {TestTypes.Length} {CurrentMethodName}";
+
+        string GeneratedTestCallsForMode(IGrouping<string, TestType> group)
+            => $"\n// {group.Key} \n\n" +
+               group
+                   .SelectMany(testType => testType.GeneratedTestCalls)
+                   .Stringify("\n");
 
         public static bool RunTests(Assembly rootAssembly)
         {
@@ -89,6 +118,7 @@ namespace hw.UnitTest
 
         void Run()
         {
+            PendingTestsFile?.FilePosition(1, 1, 1, 1, FilePositionTag.Test).Log();
             Status = "run";
             for(var index = 0; index < TestLevels.Length && AllIsFine; index++)
             {
@@ -135,11 +165,13 @@ namespace hw.UnitTest
         void SaveConfiguration()
         {
             ConfigFile.String = ConfigurationString;
+            if(PendingTestsFile != null)
+                PendingTestsFile.String = PendingTestsString;
             ConfigFileMessage("Configuration saved");
         }
 
         void ConfigFileMessage(string flagText)
-            => Tracer.Line(Tracer.FilePosition(ConfigFile.FullName, 1, 1, FilePositionTag.Test) + flagText);
+            => (Tracer.FilePosition(ConfigFile.FullName, 1, 1, FilePositionTag.Test) + flagText).Log();
 
 
         void LoadConfiguration()

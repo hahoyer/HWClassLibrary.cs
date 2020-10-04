@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.2</version>
+    <version>20.0.3</version>
     <releaseNotes>
+      new: SmbFile.FilePosition
+      20.0.2
       new: function cache introduced into common cache
       new: concat: SelectMany without transformation
       new: introducing T-operator 

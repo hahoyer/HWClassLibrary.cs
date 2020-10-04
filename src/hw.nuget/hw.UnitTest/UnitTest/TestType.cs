@@ -85,7 +85,7 @@ namespace hw.UnitTest
             }
         }
 
-        string ConfigurationMode
+        internal string ConfigurationMode
         {
             get 
             // ReSharper disable once StringLiteralTypo
@@ -94,7 +94,7 @@ namespace hw.UnitTest
                 IsComplete? "error" : 
                 // ReSharper disable once StringLiteralTypo
                 "dependanterror";
-            set
+            private set
             {
                 if(value != "error")
                     IsSuspended = true;
@@ -128,5 +128,7 @@ namespace hw.UnitTest
         static bool IsUnitTestMethod(MethodInfo methodInfo)
             => methodInfo.GetAttribute<UnitTestAttribute>(true) != null
                || TestRunner.RegisteredFrameworks.Any(item => item.IsUnitTestMethod(methodInfo));
+
+        internal IEnumerable<string> GeneratedTestCalls => UnitTestMethods.Select(method => $"{method.Actor.RunString};");
     }
 }

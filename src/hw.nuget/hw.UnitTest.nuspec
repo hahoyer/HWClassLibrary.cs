@@ -18,8 +18,9 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2014-2020</copyright>
 
-    <version>20.0.1</version>
+    <version>20.0.2</version>
     <releaseNotes>
+      new: Support generation of a cs file with sample tests
       20.0.0.3
       new: IsBreakDisabled: debug is more convenient
       Upgrade: new style
