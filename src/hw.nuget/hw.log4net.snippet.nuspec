@@ -13,12 +13,15 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2020</copyright>
-    <version>20.0.0.1</version>
+    <version>20.0.1</version>
 
     <dependencies>
-      <dependency id="hw.Helper.Core" version="20.0" />
+      <dependency id="hw.Helper.Core" version="20.0.7" />
       <dependency id="log4net" version="2.0.11" />
     </dependencies>
+    <releaseNotes>
+      change: stack level detection
+    </releaseNotes>
   </metadata>
 
 
