@@ -18,13 +18,15 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2016 - 2020</copyright>
 
-    <version>20.0.5</version>
+    <version>20.0.6</version>
     
     <dependencies>
-      <dependency id="hw.Helper.Core" version="20.0.5" />
+      <dependency id="hw.Helper.Core" version="20.0.7" />
     </dependencies>
     
     <releaseNotes>
+      change: Trace improved
+      20.0.5
       change: Trace improved
       20.0.4
       new: TextPart/TextPosition

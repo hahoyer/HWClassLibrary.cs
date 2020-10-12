@@ -21,6 +21,7 @@
     <version>20.0.7</version>
     <releaseNotes>
       change: Trace: stack level detection
+      new: log function with flagged line ability
       20.0.6
       change: Trace improved
       change: SmbFile now provides FileInfo
