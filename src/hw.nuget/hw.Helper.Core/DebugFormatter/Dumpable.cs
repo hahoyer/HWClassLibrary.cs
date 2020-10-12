@@ -64,11 +64,12 @@ namespace hw.DebugFormatter
         /// <param name="p"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         [PublicAPI]
         public static void NotImplementedFunction(params object[] p)
         {
             var os = Tracer.DumpMethodWithData("not implemented", null, p, 1);
-            Tracer.Line(os);
+            os.Log();
             Tracer.TraceBreak();
         }
 
@@ -79,13 +80,14 @@ namespace hw.DebugFormatter
         /// <param name="value"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         [PublicAPI]
         public static void Dump(string name, object value)
         {
             if(IsMethodDumpTraceActive)
             {
                 var os = Tracer.DumpData("", new[] {name, value}, 1);
-                Tracer.Line(os);
+                os.Log();
             }
         }
 
@@ -96,13 +98,14 @@ namespace hw.DebugFormatter
         /// <param name="getValue"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         [PublicAPI]
         public static void Dump(string name, Func<object> getValue)
         {
             if(IsMethodDumpTraceActive)
             {
                 var os = Tracer.DumpData("", new[] {name, getValue()}, 1);
-                Tracer.Line(os);
+                os.Log();
             }
         }
 
@@ -115,7 +118,8 @@ namespace hw.DebugFormatter
 
         // ReSharper disable once InconsistentNaming
         [PublicAPI]
-        public void t() => Tracer.Line(DebuggerDumpString);
+        [IsLoggingFunction]
+        public void t() => DebuggerDumpString.Log();
 
         public string Dump()
         {
@@ -157,12 +161,13 @@ namespace hw.DebugFormatter
         /// <param name="breakExecution"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         protected static T ReturnMethodDump<T>(T rv, bool breakExecution = true)
         {
             if(IsMethodDumpTraceActive)
             {
                 Tracer.IndentEnd();
-                Tracer.Line(Tracer.MethodHeader(stackFrameDepth: 1) + "[returns] " + Tracer.Dump(rv));
+                (Tracer.MethodHeader(stackFrameDepth: 1) + "[returns] " + Tracer.Dump(rv)).Log();
                 if(breakExecution)
                     Tracer.TraceBreak();
             }
@@ -175,12 +180,13 @@ namespace hw.DebugFormatter
         /// </summary>
         [DebuggerHidden]
         [PublicAPI]
+        [IsLoggingFunction]
         protected static void ReturnVoidMethodDump(bool breakExecution = true)
         {
             if(IsMethodDumpTraceActive)
             {
                 Tracer.IndentEnd();
-                Tracer.Line(Tracer.MethodHeader(stackFrameDepth: 1) + "[returns]");
+                (Tracer.MethodHeader(stackFrameDepth: 1) + "[returns]").Log();
                 if(breakExecution)
                     Tracer.TraceBreak();
             }
@@ -207,10 +213,11 @@ namespace hw.DebugFormatter
         /// <returns> </returns>
         [DebuggerHidden]
         [PublicAPI]
+        [IsLoggingFunction]
         protected static void DumpDataWithBreak(string text, params object[] p)
         {
             var os = Tracer.DumpData(text, p, 1);
-            Tracer.Line(os);
+            os.Log();
             Tracer.TraceBreak();
         }
 
@@ -221,13 +228,14 @@ namespace hw.DebugFormatter
         /// <param name="p"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         protected void StartMethodDump(bool trace, params object[] p)
         {
             StartMethodDump(1, trace);
             if(!IsMethodDumpTraceActive)
                 return;
             var os = Tracer.DumpMethodWithData("", this, p, 1);
-            Tracer.Line(os);
+            os.Log();
             Tracer.IndentStart();
         }
 
@@ -247,10 +255,11 @@ namespace hw.DebugFormatter
         /// <returns> </returns>
         [DebuggerHidden]
         [PublicAPI]
+        [IsLoggingFunction]
         protected void DumpMethodWithBreak(string text, params object[] p)
         {
             var os = Tracer.DumpMethodWithData(text, this, p, 1);
-            Tracer.Line(os);
+            os.Log();
             Tracer.TraceBreak();
         }
 
@@ -260,13 +269,14 @@ namespace hw.DebugFormatter
         /// <param name="p"> </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         protected void NotImplementedMethod(params object[] p)
         {
             if(IsInDump)
                 throw new NotImplementedException();
 
             var os = Tracer.DumpMethodWithData("not implemented", this, p, 1);
-            Tracer.Line(os);
+            os.Log();
             Tracer.TraceBreak();
         }
 

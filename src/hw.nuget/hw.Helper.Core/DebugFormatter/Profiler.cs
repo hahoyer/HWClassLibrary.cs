@@ -130,7 +130,7 @@ namespace hw.DebugFormatter
         {
             Reset();
             _instance.InternalMeasure(action, "", 1);
-            Tracer.FlaggedLine(Format(count, hidden));
+            Format(count, hidden).FlaggedLine();
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace hw.DebugFormatter
         {
             Reset();
             var result = _instance.InternalMeasure(function, "", 1);
-            Tracer.FlaggedLine(Format(count, hidden));
+            Format(count, hidden).FlaggedLine();
             return result;
         }
 
@@ -196,7 +196,7 @@ namespace hw.DebugFormatter
         ///     Each line contains
         ///     <para>
         ///         - the file path, the line and the start column of the measured expression in the source file, (The
-        ///         information is formatted in a way, that within VisualStudio doubleclicking on such a line will open it.)
+        ///         information is formatted in a way, that within VisualStudio double clicking on such a line will open it.)
         ///     </para>
         ///     <para> - the flag, if provided, </para>
         ///     <para> - the ranking, </para>

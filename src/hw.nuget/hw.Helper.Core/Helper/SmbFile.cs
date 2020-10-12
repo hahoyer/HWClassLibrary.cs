@@ -176,7 +176,8 @@ namespace hw.Helper
         [DisableDump]
         public DateTime ModifiedDate => FileSystemInfo.LastWriteTime;
 
-        FileSystemInfo FileSystemInfo
+        [DisableDump]
+        public FileSystemInfo FileSystemInfo
         {
             get
             {
@@ -316,7 +317,7 @@ namespace hw.Helper
             if(!IsDirectory)
                 yield break;
 
-            Tracer.Line(FullName);
+            FullName.Log();
             IEnumerable<string> filePaths = new[] {FullName};
             while(true)
             {

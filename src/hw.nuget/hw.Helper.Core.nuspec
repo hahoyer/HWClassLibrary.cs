@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.6</version>
+    <version>20.0.7</version>
     <releaseNotes>
+      change: Trace: stack level detection
+      20.0.6
       change: Trace improved
       change: SmbFile now provides FileInfo
       20.0.5

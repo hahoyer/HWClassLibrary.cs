@@ -271,12 +271,14 @@ namespace hw.DebugFormatter
         ///     write a line to debug output
         /// </summary>
         /// <param name="text"> the text </param>
+        [Obsolete("Use Log")]
         public static void Line(string text) => Writer.ThreadSafeWrite(text, true);
 
         /// <summary>
         ///     write a line to debug output
         /// </summary>
         /// <param name="text"> the text </param>
+        [Obsolete("Use LogLinePart")]
         public static void LinePart(string text) => Writer.ThreadSafeWrite(text, false);
 
         /// <summary>
@@ -286,9 +288,10 @@ namespace hw.DebugFormatter
         /// <param name="flagText"> </param>
         /// <param name="showParam"></param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
+        [IsLoggingFunction]
         public static void FlaggedLine
         (
-            string text,
+            this string text,
             FilePositionTag flagText = FilePositionTag.Debug,
             bool showParam = false,
             int stackFrameDepth = 0
@@ -299,7 +302,24 @@ namespace hw.DebugFormatter
                 flagText,
                 stackFrameDepth: stackFrameDepth + 1,
                 showParam: showParam);
-            Line(methodHeader + " " + text);
+            Log(methodHeader + " " + text);
+        }
+
+        [IsLoggingFunction]
+        public static void Log
+        (
+            this string text,
+            FilePositionTag flagText,
+            bool showParam = false,
+            int stackFrameDepth = 0
+        )
+        {
+            var methodHeader = MethodHeader
+            (
+                flagText,
+                stackFrameDepth: stackFrameDepth + 1,
+                showParam: showParam);
+            Log(methodHeader + " " + text);
         }
 
         /// <summary>
@@ -334,7 +354,7 @@ namespace hw.DebugFormatter
         public static void DumpStaticMethodWithData(params object[] parameter)
         {
             var result = DumpMethodWithData("", null, parameter, 1);
-            Line(result);
+            Log(result);
         }
 
         /// <summary>
@@ -364,6 +384,7 @@ namespace hw.DebugFormatter
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         public static void ConditionalBreak(string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
             var result = "Conditional break: " + cond + "\nData: " + (getText == null? "" : getText());
@@ -408,6 +429,7 @@ namespace hw.DebugFormatter
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         /// <returns> </returns>
         [DebuggerHidden]
+        [IsLoggingFunction]
         public static string AssertionFailed(string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
             var result = "Assertion Failed: " + cond + "\nData: " + (getText == null? "" : getText());
@@ -456,14 +478,16 @@ namespace hw.DebugFormatter
         public static void IndentEnd() => Writer.IndentEnd();
 
         [Obsolete("Use Log")]
-        public static void WriteLine(this string value) => Line(value);
+        public static void WriteLine(this string value) => Log(value);
 
         [Obsolete("Use LogLinePart")]
-        public static void WriteLinePart(this string value) => LinePart(value);
+        public static void WriteLinePart(this string value) => LogLinePart(value);
 
-        public static void Log(this string value) => Line(value);
+        [IsLoggingFunction]
+        public static void Log(this string value) => Writer.ThreadSafeWrite(value, true);
 
-        public static void LogLinePart(this string value) => LinePart(value);
+        [IsLoggingFunction]
+        public static void LogLinePart(this string value) => Writer.ThreadSafeWrite(value, false);
 
         public static string DumpMethodWithData
             (string text, object thisObject, object[] parameter, int stackFrameDepth = 0)
@@ -533,4 +557,6 @@ namespace hw.DebugFormatter
     }
 
     public abstract class DumpAttributeBase : Attribute { }
+
+    public class IsLoggingFunction : Attribute { }
 }
