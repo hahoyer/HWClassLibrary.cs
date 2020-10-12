@@ -18,8 +18,11 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.5</version>
+    <version>20.0.6</version>
     <releaseNotes>
+      change: Trace improved
+      change: SmbFile now provides FileInfo
+      20.0.5
       new: Location provider attributes
       change: Attribute-constraint removed for GeAttribute-methods
       20.0.4

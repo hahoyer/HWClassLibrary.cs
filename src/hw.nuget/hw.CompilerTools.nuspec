@@ -18,8 +18,14 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2016 - 2020</copyright>
 
-    <version>20.0.4</version>
+    <version>20.0.5</version>
+    
+    <dependencies>
+      <dependency id="hw.Helper.Core" version="20.0.5" />
+    </dependencies>
+    
     <releaseNotes>
+      change: Trace improved
       20.0.4
       new: TextPart/TextPosition
       20.0.3.1
@@ -144,9 +150,6 @@
       Change: Customized debugger display for Token and WhiteSpaceToken
       Change: Introducing white space fine structure
     </releaseNotes>
-    <dependencies>
-      <dependency id="hw.Helper.Core" version="20.0.4" />
-    </dependencies>
 
   </metadata>
   <files>

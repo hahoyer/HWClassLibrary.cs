@@ -9,16 +9,16 @@ using JetBrains.Annotations;
 namespace hw.UnitTest
 {
     [PublicAPI]
-    sealed class TestMethod : Dumpable
+    sealed class TestMethod : DumpableObject
     {
         internal abstract class ActorBase : Dumpable
         {
             internal Type InstanceType;
             internal readonly MethodInfo MethodInfo;
 
-            protected ActorBase(MethodInfo methodInfo)
+            protected ActorBase(MethodInfo methodInfo, Type instanceType = null)
             {
-                InstanceType = methodInfo.DeclaringType;
+                InstanceType = instanceType ?? methodInfo.DeclaringType;
                 Tracer.Assert(InstanceType != null);
                 MethodInfo = methodInfo;
                 Tracer.Assert(!MethodInfo.IsStatic);
@@ -39,7 +39,7 @@ namespace hw.UnitTest
             internal override object Instance { get; }
 
             internal ActionActor(Action action)
-                : base(action.Method)
+                : base(action.Method, action.Target.GetType())
                 => Instance = action.Target;
         }
 
@@ -59,13 +59,16 @@ namespace hw.UnitTest
         internal readonly ActorBase Actor;
 
         public TestMethod(MethodInfo methodInfo) => Actor = new MethodActor(methodInfo);
+
         public TestMethod(Type type) => Actor = new InterfaceActor(type);
         public TestMethod(Action action) => Actor = new ActionActor(action);
 
-        public string LongName => Actor.InstanceType.PrettyName() + "." + Name;
+        public string LongName => InstanceTypeName + "." + Name;
+
+        string InstanceTypeName => Actor.InstanceType.CompleteName();
         public string ConfigurationString => Name + ",";
         public string Name => Actor.MethodInfo.Name;
-        public string RunString => $"TestRunner.RunTest(new {Actor.InstanceType.FullName}().{Name})";
+        public string RunString => $"TestRunner.RunTest(new {InstanceTypeName}().{Name})";
 
         internal IEnumerable<SourceFilePosition> FilePositions
         {
@@ -79,6 +82,8 @@ namespace hw.UnitTest
                     yield return a.Where;
             }
         }
+
+        protected override string GetNodeDump() => LongName;
 
         public void Run()
         {
@@ -106,7 +111,6 @@ namespace hw.UnitTest
                     {
                         Tracer.IsBreakDisabled = isBreakDisabled;
                     }
-
                 }
             }
             finally

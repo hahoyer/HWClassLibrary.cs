@@ -20,6 +20,7 @@ namespace hw.UnitTest
             public string TestsFileName;
         }
 
+
         public static readonly ConfigurationContainer Configuration = new ConfigurationContainer();
 
         public static readonly List<IFramework> RegisteredFrameworks = new List<IFramework>();
@@ -98,6 +99,16 @@ namespace hw.UnitTest
 
         string HeaderText => $"{DateTime.Now.Format()} {Status} {Complete} of {TestTypes.Length} {CurrentMethodName}";
 
+        public static bool IsModeErrorFocus
+        {
+            set
+            {
+                Configuration.IsBreakEnabled = value;
+                Configuration.SaveResults = !value;
+                Configuration.SkipSuccessfulMethods = value;
+            }
+        }
+
         string GeneratedTestCallsForMode(IGrouping<string, (TestType type, TestMethod method)> group)
             => $"\n// {group.Key} \n\n" +
                group
@@ -121,11 +132,17 @@ namespace hw.UnitTest
                 return new TestType[0];
             return
                 type.DependenceProviders.SelectMany
-                    (attribute => attribute.AsTestType(TestTypes).NullableToArray()).ToArray();
+                  (attribute => attribute.AsTestType(TestTypes).NullableToArray()).ToArray();
         }
 
         void Run()
         {
+            "".Log();
+            "".Log();
+            "======================================".Log();
+            "Test run started.".Log();
+            "======================================".Log();
+            "".Log();
             PendingTestsFile?.FilePosition(null, FilePositionTag.Test).Log();
             Status = "run";
             for(var index = 0; index < TestLevels.Length && AllIsFine; index++)
@@ -136,6 +153,10 @@ namespace hw.UnitTest
 
             Status = "ran";
             SaveConfiguration();
+            "".Log();
+            "======================================".Log();
+            "Test run completed.".Log();
+            "======================================".Log();
         }
 
         bool RunLevel(Func<Type, bool> isLevel)
@@ -200,7 +221,10 @@ namespace hw.UnitTest
                 if(PendingTestsFile != null)
                     PendingTestsFile.String = PendingTestsString;
             }
-            catch(Exception exception) { }
+            catch(Exception)
+            {
+                // ignored
+            }
         }
 
         void ConfigFileMessage(string flagText)

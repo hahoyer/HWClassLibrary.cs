@@ -19,7 +19,8 @@ namespace hw.Tests.CompilerTool
                     stackFrameDepth + 1);
         }
 
-        internal static Syntax Parse(string text) { return Parse(text, TestRunner.IsModeErrorFocus); }
+        internal static Syntax Parse(string text) 
+            => Parse(text, TestRunner.Configuration.IsBreakEnabled);
 
         internal static Syntax Parse(string text, bool trace)
         {
