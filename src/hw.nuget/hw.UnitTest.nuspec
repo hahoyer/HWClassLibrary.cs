@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2014-2020</copyright>
 
-    <version>20.0.5</version>
+    <version>20.0.6</version>
     <releaseNotes>
+      bug: Static test methods are disabled
+      20.0.5
       change: Trace improved
       change: TestRunner configuration
       20.0.4
