@@ -11,7 +11,7 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            TestRunner.IsModeErrorFocus = Debugger.IsAttached;
+            TestRunner.Configuration.IsBreakEnabled = Debugger.IsAttached;
             var result = TestRunner.RunTests(Assembly.GetExecutingAssembly());
             Tracer.Assert(result);
         }

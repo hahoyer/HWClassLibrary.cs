@@ -15,16 +15,16 @@ namespace hw.UnitTest
         {
             internal Type InstanceType;
             internal readonly MethodInfo MethodInfo;
+            bool IsStatic => MethodInfo.IsStatic;
 
             protected ActorBase(MethodInfo methodInfo, Type instanceType = null)
             {
                 InstanceType = instanceType ?? methodInfo.DeclaringType;
                 Tracer.Assert(InstanceType != null);
                 MethodInfo = methodInfo;
-                Tracer.Assert(!MethodInfo.IsStatic);
             }
 
-            internal virtual object Instance => Activator.CreateInstance(InstanceType);
+            internal virtual object Instance => IsStatic? null:Activator.CreateInstance(InstanceType);
             internal virtual void Run(object target) => MethodInfo.Invoke(target, new object[0]);
         }
 
