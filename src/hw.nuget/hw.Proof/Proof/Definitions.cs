@@ -2,6 +2,7 @@ using hw.DebugFormatter;
 using hw.Parser;
 using hw.Proof.TokenClasses;
 using hw.Scanner;
+// ReSharper disable CheckNamespace
 
 namespace hw.Proof
 {

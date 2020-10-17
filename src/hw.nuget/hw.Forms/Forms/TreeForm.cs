@@ -1,5 +1,6 @@
 using System.Windows.Forms;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.Forms
 {

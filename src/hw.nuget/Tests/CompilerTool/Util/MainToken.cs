@@ -1,4 +1,5 @@
 ﻿using hw.DebugFormatter;
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool.Util
 {

@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+// ReSharper disable CheckNamespace
 
 namespace hw.Forms
 {

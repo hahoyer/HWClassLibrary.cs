@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
 using hw.DebugFormatter;
+// ReSharper disable CheckNamespace
 
 namespace hw.Graphics
 {

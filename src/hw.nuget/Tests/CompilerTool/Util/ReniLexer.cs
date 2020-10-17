@@ -1,5 +1,6 @@
 ﻿using hw.Scanner;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool.Util
 {

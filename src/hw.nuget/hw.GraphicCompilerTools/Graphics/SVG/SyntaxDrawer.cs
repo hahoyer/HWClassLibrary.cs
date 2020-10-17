@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using hw.DebugFormatter;
+// ReSharper disable CheckNamespace
 
 namespace hw.Graphics.SVG
 {

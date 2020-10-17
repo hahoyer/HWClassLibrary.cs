@@ -24,6 +24,7 @@ using System;
 using System.Numerics;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.Helper
 {

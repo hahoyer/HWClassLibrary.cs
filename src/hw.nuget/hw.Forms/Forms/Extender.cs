@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using hw.DebugFormatter;
 using hw.Helper;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.Forms
 {

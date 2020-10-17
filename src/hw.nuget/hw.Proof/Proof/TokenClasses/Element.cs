@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using hw.Parser;
+// ReSharper disable CheckNamespace
 
 namespace hw.Proof.TokenClasses
 {

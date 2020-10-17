@@ -29,6 +29,7 @@ using EnvDTE;
 using hw.Debug;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TextTemplating;
+// ReSharper disable CheckNamespace
 
 namespace hw.Helper
 {

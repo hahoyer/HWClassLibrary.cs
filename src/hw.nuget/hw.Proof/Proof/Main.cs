@@ -21,6 +21,7 @@
 #endregion
 
 using hw.DebugFormatter;
+// ReSharper disable CheckNamespace
 
 namespace hw.Proof
 {

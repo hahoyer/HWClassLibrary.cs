@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.7</version>
+    <version>20.0.8</version>
     <releaseNotes>
+      new: Assertions as extension methods
+      20.0.7
       change: Trace: stack level detection
       new: log function with flagged line ability
       20.0.6

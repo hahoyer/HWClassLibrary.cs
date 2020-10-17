@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using hw.Helper;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.DebugFormatter
 {
@@ -448,7 +449,7 @@ namespace hw.DebugFormatter
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
         [ContractAnnotation("b: false => halt")]
-        public static void Assert(bool b, Func<string> getText = null, int stackFrameDepth = 0)
+        public static void Assert(this bool b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b)
                 return;
@@ -457,7 +458,7 @@ namespace hw.DebugFormatter
 
         [DebuggerHidden]
         [ContractAnnotation("b: false => halt")]
-        public static void Assert(bool b, string s) => Assert(b, () => s, 1);
+        public static void Assert(this bool b, string s) => Assert(b, () => s, 1);
 
         [DebuggerHidden]
         public static void TraceBreak()
@@ -467,6 +468,40 @@ namespace hw.DebugFormatter
             if(IsBreakDisabled)
                 throw new BreakException();
             Debugger.Break();
+        }
+
+        /// <summary>
+        ///     Check expression
+        /// </summary>
+        /// <param name="b">
+        ///     if not null.
+        /// </param>
+        /// <param name="getText"> Message in case of fail. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
+        [DebuggerHidden]
+        [ContractAnnotation("b: null => halt")]
+        public static void AssertNotEmpty(this object b, Func<string> getText = null, int stackFrameDepth = 0)
+        {
+            if(b!= null)
+                return;
+            AssertionFailed("", getText, stackFrameDepth + 1);
+        }
+
+        /// <summary>
+        ///     Check expression
+        /// </summary>
+        /// <param name="b">
+        ///     if null.
+        /// </param>
+        /// <param name="getText"> Message in case of fail. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
+        [DebuggerHidden]
+        [ContractAnnotation("b: null => halt")]
+        public static void AssertEmpty(this object b, Func<string> getText = null, int stackFrameDepth = 0)
+        {
+            if(b== null)
+                return;
+            AssertionFailed("", getText, stackFrameDepth + 1);
         }
 
         public static int CurrentFrameCount(int stackFrameDepth) => new StackTrace(true).FrameCount - stackFrameDepth;

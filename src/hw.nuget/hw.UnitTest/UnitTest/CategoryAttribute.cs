@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using hw.Helper;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.UnitTest
 {

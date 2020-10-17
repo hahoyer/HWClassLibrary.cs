@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
+// ReSharper disable CheckNamespace
 
 namespace hw.Scanner
 {

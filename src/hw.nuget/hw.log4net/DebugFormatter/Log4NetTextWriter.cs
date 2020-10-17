@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 using log4net;
 using log4net.Config;
 using log4net.Core;
+// ReSharper disable CheckNamespace
 
 namespace hw.DebugFormatter
 {

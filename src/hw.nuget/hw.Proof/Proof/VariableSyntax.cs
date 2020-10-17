@@ -3,6 +3,7 @@ using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using hw.Parser;
+// ReSharper disable CheckNamespace
 
 namespace hw.Proof
 {

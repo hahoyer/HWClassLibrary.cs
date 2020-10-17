@@ -2,6 +2,7 @@
 using hw.DebugFormatter;
 using hw.Parser;
 using hw.Scanner;
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool.Util
 {

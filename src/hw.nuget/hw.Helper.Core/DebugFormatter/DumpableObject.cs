@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using hw.Helper;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.DebugFormatter
 {

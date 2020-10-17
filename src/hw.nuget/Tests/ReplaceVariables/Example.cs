@@ -3,6 +3,7 @@ using System.Globalization;
 using hw.DebugFormatter;
 using hw.ReplaceVariables;
 using hw.UnitTest;
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.ReplaceVariables
 {

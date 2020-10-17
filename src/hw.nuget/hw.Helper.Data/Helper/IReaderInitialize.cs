@@ -1,4 +1,5 @@
 using System.Data.Common;
+// ReSharper disable CheckNamespace
 
 namespace hw.Helper
 {

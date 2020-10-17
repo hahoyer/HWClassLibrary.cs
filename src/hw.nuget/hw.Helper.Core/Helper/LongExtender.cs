@@ -1,5 +1,6 @@
 using System.Linq;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.Helper
 {

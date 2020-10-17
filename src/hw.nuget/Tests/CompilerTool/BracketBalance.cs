@@ -4,6 +4,7 @@ using hw.Helper;
 using hw.Parser;
 using hw.UnitTest;
 using NUnit.Framework;
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool
 {

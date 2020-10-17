@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Xml.Serialization;
+// ReSharper disable CheckNamespace
 
 namespace hw.Graphics.SVG
 {

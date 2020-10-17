@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using hw.Helper;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.DebugFormatter
 {

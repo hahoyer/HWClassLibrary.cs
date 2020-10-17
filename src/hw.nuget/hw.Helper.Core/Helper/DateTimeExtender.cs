@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 using JetBrains.Annotations;
+// ReSharper disable CheckNamespace
 
 namespace hw.Helper
 {

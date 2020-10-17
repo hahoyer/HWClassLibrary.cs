@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+// ReSharper disable CheckNamespace
 
 namespace hw.UnitTest
 {

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
 using SourcePosn = hw.Scanner.SourcePosition;
+// ReSharper disable CheckNamespace
 
 namespace hw.Scanner
 {

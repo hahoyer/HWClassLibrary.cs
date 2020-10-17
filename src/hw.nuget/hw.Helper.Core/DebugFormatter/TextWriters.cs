@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+// ReSharper disable CheckNamespace
 
 namespace hw.DebugFormatter
 {
