@@ -480,7 +480,7 @@ namespace hw.DebugFormatter
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
         [ContractAnnotation("b: null => halt")]
-        public static void AssertNotEmpty(this object b, Func<string> getText = null, int stackFrameDepth = 0)
+        public static void AssertIsNotNull(this object b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b!= null)
                 return;
@@ -497,7 +497,7 @@ namespace hw.DebugFormatter
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
         [ContractAnnotation("b: null => halt")]
-        public static void AssertEmpty(this object b, Func<string> getText = null, int stackFrameDepth = 0)
+        public static void AssertIsNull(this object b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b== null)
                 return;
