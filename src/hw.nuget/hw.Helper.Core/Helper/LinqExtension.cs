@@ -500,7 +500,7 @@ namespace hw.Helper
             while(enumerator.MoveNext());
         }
 
-        public static IEnumerable<T> Concat<T>(this IEnumerable<IEnumerable<T>> target) 
+        public static IEnumerable<T> ConcatMany<T>(this IEnumerable<IEnumerable<T>> target) 
             => target
                 .Where(i=>i != null)
                 .SelectMany(i => i);

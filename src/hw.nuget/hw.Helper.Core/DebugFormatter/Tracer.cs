@@ -496,7 +496,7 @@ namespace hw.DebugFormatter
         /// <param name="getText"> Message in case of fail. </param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
-        [ContractAnnotation("b: null => halt")]
+        [ContractAnnotation("b: notnull => halt")]
         public static void AssertIsNull(this object b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b== null)

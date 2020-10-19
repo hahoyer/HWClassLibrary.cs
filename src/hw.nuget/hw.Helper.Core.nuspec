@@ -20,6 +20,8 @@
 
     <version>20.0.8</version>
     <releaseNotes>
+      bug: Contract for not-null assertion is wrong
+      bug: LinqExtension.Concat causes conflicts
       new: Assertions as extension methods
       20.0.7
       change: Trace: stack level detection
