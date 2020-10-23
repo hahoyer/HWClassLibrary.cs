@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.8</version>
+    <version>20.0.9</version>
     <releaseNotes>
+      change: Split extension method extended by separator pasting option
+      20.0.8
       bug: Contract for not-null assertion is wrong
       bug: LinqExtension.Concat causes conflicts
       new: Assertions as extension methods
