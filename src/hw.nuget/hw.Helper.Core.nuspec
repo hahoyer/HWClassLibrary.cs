@@ -18,8 +18,10 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.9</version>
+    <version>20.0.10</version>
     <releaseNotes>
+      new: ability to provide order information for dump
+      20.0.9
       change: Split extension method extended by separator pasting option
       20.0.8
       bug: Contract for not-null assertion is wrong
@@ -54,7 +56,7 @@
       New: LinqExtension.Top, which incorporates First, Single, FirstOrDefault and SingleOrDefault and is provides custom exceptions
       New: minor extensions
       18.1.1
-      Refactor: remove old olsolete things
+      Refactor: remove old obsolete things
       18.1
       Change: hw.Helper.File is obsolete now
       18.0
@@ -67,7 +69,7 @@
       17.0.3
       Admin: Dependency to JetBrains.Annotations added
       17.0.2
-      New: SmfbFile like hw.Helper.File, but with the option to automatic create necessarry directories on write oprations.
+      New: SmbFile like hw.Helper.File, but with the option to automatic create necessary directories on write operations.
       17.0.1
       Change: License
       16.0.6
@@ -77,9 +79,9 @@
       16.0.4
       New: IUniqueIdProvider moved from compiler to core
       16.0.3
-      Change: TypeNameExtender: Loist of types is public now
+      Change: TypeNameExtender: List of types is public now
       16.0.2
-      Change: Publi
+      Change: Public
       16.0.1
       New: Nice shortcuts to use in debugger (2nd trial)
       16.0
@@ -107,7 +109,7 @@
       15.1.4
       New: Split function for everyone (thanks Koopakiller)
       15.1.3
-      Bug: Dumper: Key for recursivity check was not set
+      Bug: Dumper: Key for resistivity check was not set
       15.1.2
       Change: Dump support for enums
       Change: Better tag for recursive objects

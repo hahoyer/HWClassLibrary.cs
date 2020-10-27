@@ -78,10 +78,13 @@ namespace hw.DebugFormatter
                 .Concat(type.GetProperties(AnyBinding))
                 .Where(memberInfo => IsRelevant(memberInfo, type, data))
                 .Where(memberInfo => memberCheck(memberInfo, data))
+                .OrderBy(GetOrderPriority)
                 .Select(memberInfo => Format(memberInfo, data))
                 .ToArray();
             return FormatMemberDump(results);
         }
+
+        static int GetOrderPriority(MemberInfo memberInfo) => memberInfo.GetAttribute<EnableDumpAttribute>(true)?.Order?? default;
 
         static string FormatMemberDump(string[] results)
         {
