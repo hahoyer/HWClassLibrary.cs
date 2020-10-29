@@ -18,13 +18,15 @@
     <license type="expression">MIT</license>
     <copyright>Copyright Harald Hoyer 2016 - 2020</copyright>
 
-    <version>20.0.7</version>
+    <version>20.0.8</version>
     
     <dependencies>
       <dependency id="hw.Helper.Core" version="20.0.7" />
     </dependencies>
     
     <releaseNotes>
+      bug: GetDumpAroundCurrent is incorrect outside close to start or end of source.
+      20.0.7
       new: minus operator for position and number
       20.0.6
       change: Trace improved
