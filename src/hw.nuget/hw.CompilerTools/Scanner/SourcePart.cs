@@ -5,6 +5,7 @@ using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Scanner
@@ -165,20 +166,17 @@ namespace hw.Scanner
             if(Source.IsEnd(EndPosition))
                 return "";
 
-            var length = Math.Min(dumpWidth, Source.Length - EndPosition);
-            var result = Source.SubString(EndPosition, length);
-            if(length == dumpWidth)
-                result += "...";
-            return result;
+            if(dumpWidth + 3 < Source.Length - EndPosition)
+                return Source.SubString(EndPosition, dumpWidth) + "...";
+            return Source.SubString(EndPosition, Source.Length - EndPosition);
         }
 
         string GetDumpBeforeCurrent(int dumpWidth)
         {
-            var start = Math.Max(0, Position - dumpWidth);
-            var result = Source.SubString(start, Position - start);
-            if(Position >= dumpWidth)
-                result = "..." + result;
-            return result;
+            if(Position < dumpWidth + 3)
+                return Source.SubString(0, Position);
+
+            return "..." + Source.SubString(Position - dumpWidth, dumpWidth);
         }
 
         static IEnumerable<SourcePart> SaveCombineForSource(IEnumerable<SourcePart> values)
