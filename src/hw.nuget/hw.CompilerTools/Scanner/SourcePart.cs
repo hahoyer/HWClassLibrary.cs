@@ -54,7 +54,6 @@ namespace hw.Scanner
         [UsedImplicitly]
         string DumpCurrent => Id;
 
-
         SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
 
         public SourcePart Overlay(SourcePart other)
@@ -77,22 +76,27 @@ namespace hw.Scanner
             return end < start? null : new SourcePart(Source, start, end - start);
         }
 
-        public static SourcePart operator +(SourcePart left, SourcePart right) => left == null? right :
-            right == null? left : left.Overlay(right);
+        public static SourcePart operator +(SourcePart left, SourcePart right)
+            => left == null
+                ? right
+                : right == null
+                    ? left
+                    : left.Overlay(right);
 
         public string FileErrorPosition(string errorTag)
             => "\n" + Source.FilePosition(Position, EndPosition, Id.Quote(), "error " + errorTag);
 
-        public string GetDumpAroundCurrent(int dumpWidth) => GetDumpBeforeCurrent(dumpWidth)
-                                                             + "["
-                                                             + DumpCurrent
-                                                             + "]"
-                                                             + GetDumpAfterCurrent(dumpWidth);
+        public string GetDumpAroundCurrent(int dumpWidth)
+            => GetDumpBeforeCurrent(dumpWidth) +
+               "[" +
+               DumpCurrent +
+               "]" +
+               GetDumpAfterCurrent(dumpWidth);
 
         public SourcePart Combine(SourcePart other)
         {
-            Tracer.Assert(Source == other.Source);
-            Tracer.Assert(EndPosition <= other.Position);
+            (Source == other.Source).Assert();
+            (EndPosition <= other.Position).Assert();
             return new SourcePart(Source, Position, other.EndPosition - Position);
         }
 
@@ -105,13 +109,15 @@ namespace hw.Scanner
         public static SourcePart Span(SourcePosition first, int length)
             => new SourcePart(first.Source, first.Position, length);
 
-        public bool Contains(SourcePosition sourcePosition) => Source == sourcePosition.Source &&
-                                                           Position <= sourcePosition.Position &&
-                                                           EndPosition > sourcePosition.Position;
+        public bool Contains(SourcePosition sourcePosition)
+            => Source == sourcePosition.Source &&
+               Position <= sourcePosition.Position &&
+               EndPosition > sourcePosition.Position;
 
-        public bool Contains(SourcePart sourcePart) => Source == sourcePart.Source &&
-                                                       Position <= sourcePart.Position &&
-                                                       sourcePart.EndPosition <= EndPosition;
+        public bool Contains(SourcePart sourcePart)
+            => Source == sourcePart.Source &&
+               Position <= sourcePart.Position &&
+               sourcePart.EndPosition <= EndPosition;
 
         public bool IsMatch(SourcePart sourcePosition)
         {
@@ -123,9 +129,10 @@ namespace hw.Scanner
             return Position == sourcePosition.EndPosition;
         }
 
-        public static IEnumerable<SourcePart> SaveCombine(IEnumerable<SourcePart> values) => values
-            .GroupBy(item => item.Source)
-            .SelectMany(SaveCombineForSource);
+        public static IEnumerable<SourcePart> SaveCombine(IEnumerable<SourcePart> values)
+            => values
+                .GroupBy(item => item.Source)
+                .SelectMany(SaveCombineForSource);
 
         public static bool operator !=(SourcePart left, SourcePart right) => !(left == right);
 

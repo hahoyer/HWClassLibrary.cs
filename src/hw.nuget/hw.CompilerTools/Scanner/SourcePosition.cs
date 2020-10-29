@@ -68,6 +68,7 @@ namespace hw.Scanner
             (SourcePosition other) => !(other is null) && Equals(Source, other.Source) && Position == other.Position;
 
         public static SourcePosition operator +(SourcePosition target, int y) => target.Source + (target.Position + y);
+        public static SourcePosition operator -(SourcePosition target, int y) => target.Source + (target.Position - y);
 
         public static int operator -(SourcePosition target, SourcePosition y)
         {
