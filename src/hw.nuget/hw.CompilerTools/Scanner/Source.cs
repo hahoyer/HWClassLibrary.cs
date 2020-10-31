@@ -104,5 +104,23 @@ namespace hw.Scanner
 
             return Length;
         }
+
+        public string GetDumpBeforeCurrent(int position, int dumpWidth)
+        {
+            if(position < dumpWidth + 3)
+                return SubString(0, position);
+
+            return "..." + SubString(position - dumpWidth, dumpWidth);
+        }
+
+        public string GetDumpAfterCurrent(int position, int dumpWidth)
+        {
+            if(IsEnd(position))
+                return "";
+
+            if(dumpWidth + 3 < Length - position)
+                return SubString(position, dumpWidth) + "...";
+            return SubString(position, Length - position);
+        }
     }
 }

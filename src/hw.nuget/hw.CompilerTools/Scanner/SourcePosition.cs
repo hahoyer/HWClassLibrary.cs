@@ -3,6 +3,7 @@ using System.Diagnostics;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
 using SourcePosn = hw.Scanner.SourcePosition;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Scanner
@@ -72,7 +73,7 @@ namespace hw.Scanner
 
         public static int operator -(SourcePosition target, SourcePosition y)
         {
-            Tracer.Assert(target.Source == y.Source);
+            (target.Source == y.Source).Assert();
             return target.Position - y.Position;
         }
 
@@ -141,30 +142,13 @@ namespace hw.Scanner
             return GetDumpAroundCurrent(Source.DumpWidth);
         }
 
-        string GetDumpAfterCurrent(int dumpWidth)
-        {
-            if(IsEnd)
-                return "";
-            var length = Math.Min(dumpWidth, Source.Length - Position);
-            var result = Source.SubString(Position, length);
-            if(length == dumpWidth)
-                result += "...";
-            return result;
-        }
-
-        string GetDumpBeforeCurrent(int dumpWidth)
-        {
-            var start = Math.Max(0, Position - dumpWidth);
-            var result = Source.SubString(start, Position - start);
-            if(Position >= dumpWidth)
-                result = "..." + result;
-            return result;
-        }
-
         public string GetDumpAroundCurrent(int dumpWidth)
         {
             if(IsValid)
-                return GetDumpBeforeCurrent(dumpWidth) + "[]" + GetDumpAfterCurrent(dumpWidth);
+                return
+                    Source.GetDumpBeforeCurrent(Position, dumpWidth) +
+                    "[]" +
+                    Source.GetDumpAfterCurrent(Position, dumpWidth);
             return "<invalid>";
         }
 

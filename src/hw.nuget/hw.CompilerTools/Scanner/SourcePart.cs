@@ -88,11 +88,11 @@ namespace hw.Scanner
             => "\n" + Source.FilePosition(Position, EndPosition, Id.Quote(), "error " + errorTag);
 
         public string GetDumpAroundCurrent(int dumpWidth)
-            => GetDumpBeforeCurrent(dumpWidth) +
+            => Source.GetDumpBeforeCurrent(Position, dumpWidth) +
                "[" +
                DumpCurrent +
                "]" +
-               GetDumpAfterCurrent(dumpWidth);
+               Source.GetDumpAfterCurrent(EndPosition, dumpWidth);
 
         public SourcePart Combine(SourcePart other)
         {
@@ -159,24 +159,6 @@ namespace hw.Scanner
 
             return left.Start == right.Start &&
                    left.Length == right.Length;
-        }
-
-        string GetDumpAfterCurrent(int dumpWidth)
-        {
-            if(Source.IsEnd(EndPosition))
-                return "";
-
-            if(dumpWidth + 3 < Source.Length - EndPosition)
-                return Source.SubString(EndPosition, dumpWidth) + "...";
-            return Source.SubString(EndPosition, Source.Length - EndPosition);
-        }
-
-        string GetDumpBeforeCurrent(int dumpWidth)
-        {
-            if(Position < dumpWidth + 3)
-                return Source.SubString(0, Position);
-
-            return "..." + Source.SubString(Position - dumpWidth, dumpWidth);
         }
 
         static IEnumerable<SourcePart> SaveCombineForSource(IEnumerable<SourcePart> values)
