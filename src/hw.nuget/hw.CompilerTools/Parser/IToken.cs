@@ -17,9 +17,9 @@ namespace hw.Parser
         bool? IsBracketAndLeftBracket { get; }
     }
 
-    static class TokenExtension
+    public static class TokenExtension
     {
-        internal static SourcePart SourcePart(this IToken token)
+        public static SourcePart SourcePart(this IToken token)
             => token.PrecededWith.SourcePart() + token.Characters;
     }
 }

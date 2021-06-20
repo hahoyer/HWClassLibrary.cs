@@ -13,7 +13,7 @@ namespace Tester
         {
             TestRunner.Configuration.IsBreakEnabled = Debugger.IsAttached;
             var result = TestRunner.RunTests(Assembly.GetExecutingAssembly());
-            Tracer.Assert(result);
+            result.Assert();
         }
     }
 }

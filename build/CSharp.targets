@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <RequiredTargetFramework>4.7.2</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
 

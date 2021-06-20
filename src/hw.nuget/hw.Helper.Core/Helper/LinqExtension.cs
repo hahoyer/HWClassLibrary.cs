@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Helper
@@ -145,24 +146,24 @@ namespace hw.Helper
         /// <param name="target"> The target. </param>
         /// <param name="y"> The y. </param>
         /// <returns> </returns>
-        public static bool StartsWithAndNotEqual<T>(this IList<T> target, IList<T> y) 
+        public static bool StartsWithAndNotEqual<T>(this IList<T> target, IList<T> y)
             => target.Count != y.Count && target.StartsWith(y);
 
         public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
             where T : class
-            where TResult : class => target == default(T)? default(TResult) : function(target);
+            where TResult : class => target == default(T)? default : function(target);
 
         public static TResult AssertValue<TResult>(this TResult? target)
             where TResult : struct
         {
-            Tracer.Assert(target != null);
+            (target != null).Assert();
             return target.Value;
         }
 
         public static TResult AssertNotNull<TResult>(this TResult target)
             where TResult : class
         {
-            Tracer.Assert(target != null);
+            (target != null).Assert();
             return target;
         }
 
@@ -254,8 +255,7 @@ namespace hw.Helper
 
         public static FunctionCache<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>
             (this IEnumerable<T> list, Func<T, TKey> selector)
-            => new FunctionCache<TKey, IEnumerable<T>>
-                (key => list.Where(item => Equals(selector(item), key)));
+            => new(key => list.Where(item => Equals(selector(item), key)));
 
         public static void AddRange<TKey, TValue>
         (
@@ -305,7 +305,7 @@ namespace hw.Helper
             (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         {
             var xx = target.ToArray();
-            Tracer.Assert(xx.IsCircuitFree(immediateParents));
+            xx.IsCircuitFree(immediateParents).Assert();
             return null;
         }
 
@@ -377,7 +377,7 @@ namespace hw.Helper
                 {
                     if(emptyException != null)
                         throw emptyException();
-                    return enableEmpty? default(TTarget) : target.Single();
+                    return enableEmpty? default : target.Single();
                 }
 
                 var result = enumerator.Current;
@@ -390,7 +390,8 @@ namespace hw.Helper
             }
         }
 
-        internal static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> target, Func<T, bool> isSeparator, bool?assignSeparatorAtTopOfList = null)
+        public static IEnumerable<IEnumerable<T>> Split<T>
+            (this IEnumerable<T> target, Func<T, bool> isSeparator, bool? assignSeparatorAtTopOfList = null)
         {
             var part = new List<T>();
             foreach(var item in target)
@@ -405,12 +406,11 @@ namespace hw.Helper
 
                     if(assignSeparatorAtTopOfList == true)
                         part.Add(item);
-
                 }
                 else
                     part.Add(item);
 
-            if (part.Any())
+            if(part.Any())
                 yield return part.ToArray();
         }
 
@@ -440,16 +440,7 @@ namespace hw.Helper
             return result;
         }
 
-        [Obsolete("Use SelectHierarchical")]
-        // ReSharper disable once IdentifierTypo
-        internal static IEnumerable<T> SelectHierachical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
-        {
-            yield return root;
-            foreach(var item in getChildren(root).SelectMany(i => i.SelectHierachical(getChildren)))
-                yield return item;
-        }
-
-        internal static IEnumerable<T> SelectHierarchical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
+        public static IEnumerable<T> SelectHierarchical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
         {
             yield return root;
             foreach(var item in getChildren(root).SelectMany(i => i.SelectHierarchical(getChildren)))
@@ -502,9 +493,9 @@ namespace hw.Helper
             return true;
         }
 
-        public static IEnumerable<T> ConcatMany<T>(this IEnumerable<IEnumerable<T>> target) 
+        public static IEnumerable<T> ConcatMany<T>(this IEnumerable<IEnumerable<T>> target)
             => target
-                .Where(i=>i != null)
+                .Where(i => i != null)
                 .SelectMany(i => i);
     }
 

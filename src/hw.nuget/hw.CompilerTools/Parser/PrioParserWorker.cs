@@ -9,7 +9,7 @@ namespace hw.Parser
 {
     public sealed partial class PrioParser<TSourcePart>
     {
-        internal interface ISubParserProvider
+        public interface ISubParserProvider
         {
             ISubParser<TSourcePart> NextParser { get; }
         }

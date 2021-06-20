@@ -1,126 +1,126 @@
 <?xml
-  version="1.0"?>
+    version="1.0"?>
 
 <package>
-  <metadata>
-    <id>hw.Helper.Core</id>
-    <title>hw.Helper.Core</title>
-    <authors>hahoyer</authors>
-    <description>
-      Helper classes - provide some basic extensions for everyday programming.
-    </description>
-    <summary>
-      Helper classes.
-    </summary>
-    <language>en-US</language>
-    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">MIT</license>
-    <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
+    <metadata>
+        <id>hw.Helper.Core</id>
+        <title>hw.Helper.Core</title>
+        <authors>hahoyer</authors>
+        <description>
+            Helper classes - provide some basic extensions for everyday programming.
+        </description>
+        <summary>
+            Helper classes.
+        </summary>
+        <language>en-US</language>
+        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">MIT</license>
+        <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
 
-    <version>20.0.10</version>
-    <releaseNotes>
-      new: ability to provide order information for dump
-      20.0.9
-      change: Split extension method extended by separator pasting option
-      20.0.8
-      bug: Contract for not-null assertion is wrong
-      bug: LinqExtension.Concat causes conflicts
-      new: Assertions as extension methods
-      20.0.7
-      change: Trace: stack level detection
-      new: log function with flagged line ability
-      20.0.6
-      change: Trace improved
-      change: SmbFile now provides FileInfo
-      20.0.5
-      new: Location provider attributes
-      change: Attribute-constraint removed for GeAttribute-methods
-      20.0.4
-      new: TextPart/TextPosition
-      20.0.3
-      new: SmbFile.FilePosition
-      20.0.2
-      new: function cache introduced into common cache
-      new: concat: SelectMany without transformation
-      new: introducing T-operator 
-      bug: fixed EnableDumpExcept does not work for null
-      20.0.1.1
-      refactor: use new C# options
-      bug: fixed null pointer exception in DumpExceptAttribute
-      20.0.0.6
-      change: Upgrade to new style
-      change: log4net moved to extra package
-      18.1.2
-      New: StringExtender.Surround will guess closing parenthesis. Supported are angel, round, square and curly brackets
-      New: LinqExtension.Top, which incorporates First, Single, FirstOrDefault and SingleOrDefault and is provides custom exceptions
-      New: minor extensions
-      18.1.1
-      Refactor: remove old obsolete things
-      18.1
-      Change: hw.Helper.File is obsolete now
-      18.0
-      Change: New trace function
-      17.0.5
-      Change: New function "Substring"
-      Bug: Cannot read files that have write lock
-      17.0.4
-      Bug: EnsureDirectoryOfFileExists still uses FileHandle
-      17.0.3
-      Admin: Dependency to JetBrains.Annotations added
-      17.0.2
-      New: SmbFile like hw.Helper.File, but with the option to automatic create necessary directories on write operations.
-      17.0.1
-      Change: License
-      16.0.6
-      Bug: File.RecursiveItem does not return itself
-      16.0.5
-      New: File: some more functions
-      16.0.4
-      New: IUniqueIdProvider moved from compiler to core
-      16.0.3
-      Change: TypeNameExtender: List of types is public now
-      16.0.2
-      Change: Public
-      16.0.1
-      New: Nice shortcuts to use in debugger (2nd trial)
-      16.0
-      Change: FilePosn can get a position range
-      Refactor: C# 6.0 features used
-      15.2.6
-      Bug: T-Method must not return anything
-      15.2.5
-      New: Nice shortcuts to use in debugger
-      15.2.4
-      Bug: TypeNameExtender: lock object during materializing cache
-      Refactor: ValueCache: messages improved
-      15.2.3
-      Refactor: Dumpable: StopByObjectId-functions removed
-      Refactor: InlineFunctionCache: removed
-      15.2.2
-      Bug: Dumpable: Performance problem at methods that use method dump frame
-      15.2
-      Refactor: Debug subfolder renamed DebugFormatter
-      New: Inline ability for ValueCache
-      15.1.6
-      New: Dumpable: Dump function with smart argument
-      15.1.5
-      Bug: ValueCache: busy-flag remains in case of exception during obtaining value
-      15.1.4
-      New: Split function for everyone (thanks Koopakiller)
-      15.1.3
-      Bug: Dumper: Key for resistivity check was not set
-      15.1.2
-      Change: Dump support for enums
-      Change: Better tag for recursive objects
-      15.1.1
-      Change: ValueCache: is now public
-    </releaseNotes>
-    <dependencies>
-      <dependency id="JetBrains.Annotations" version="10.2" />
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="hw.Helper.Core\" target="content/hw" />
-  </files>
+        <releaseNotes>
+            new: ability to provide order information for dump
+            20.0.9
+            change: Split extension method extended by separator pasting option
+            20.0.8
+            bug: Contract for not-null assertion is wrong
+            bug: LinqExtension.Concat causes conflicts
+            new: Assertions as extension methods
+            20.0.7
+            change: Trace: stack level detection
+            new: log function with flagged line ability
+            20.0.6
+            change: Trace improved
+            change: SmbFile now provides FileInfo
+            20.0.5
+            new: Location provider attributes
+            change: Attribute-constraint removed for GeAttribute-methods
+            20.0.4
+            new: TextPart/TextPosition
+            20.0.3
+            new: SmbFile.FilePosition
+            20.0.2
+            new: function cache introduced into common cache
+            new: concat: SelectMany without transformation
+            new: introducing T-operator
+            bug: fixed EnableDumpExcept does not work for null
+            20.0.1.1
+            refactor: use new C# options
+            bug: fixed null pointer exception in DumpExceptAttribute
+            20.0.0.6
+            change: Upgrade to new style
+            change: log4net moved to extra package
+            18.1.2
+            New: StringExtender.Surround will guess closing parenthesis. Supported are angel, round, square and curly brackets
+            New: LinqExtension.Top, which incorporates First, Single, FirstOrDefault and SingleOrDefault and is provides custom exceptions
+            New: minor extensions
+            18.1.1
+            Refactor: remove old obsolete things
+            18.1
+            Change: hw.Helper.File is obsolete now
+            18.0
+            Change: New trace function
+            17.0.5
+            Change: New function "Substring"
+            Bug: Cannot read files that have write lock
+            17.0.4
+            Bug: EnsureDirectoryOfFileExists still uses FileHandle
+            17.0.3
+            Admin: Dependency to JetBrains.Annotations added
+            17.0.2
+            New: SmbFile like hw.Helper.File, but with the option to automatic create necessary directories on write operations.
+            17.0.1
+            Change: License
+            16.0.6
+            Bug: File.RecursiveItem does not return itself
+            16.0.5
+            New: File: some more functions
+            16.0.4
+            New: IUniqueIdProvider moved from compiler to core
+            16.0.3
+            Change: TypeNameExtender: List of types is public now
+            16.0.2
+            Change: Public
+            16.0.1
+            New: Nice shortcuts to use in debugger (2nd trial)
+            16.0
+            Change: FilePosn can get a position range
+            Refactor: C# 6.0 features used
+            15.2.6
+            Bug: T-Method must not return anything
+            15.2.5
+            New: Nice shortcuts to use in debugger
+            15.2.4
+            Bug: TypeNameExtender: lock object during materializing cache
+            Refactor: ValueCache: messages improved
+            15.2.3
+            Refactor: Dumpable: StopByObjectId-functions removed
+            Refactor: InlineFunctionCache: removed
+            15.2.2
+            Bug: Dumpable: Performance problem at methods that use method dump frame
+            15.2
+            Refactor: Debug subfolder renamed DebugFormatter
+            New: Inline ability for ValueCache
+            15.1.6
+            New: Dumpable: Dump function with smart argument
+            15.1.5
+            Bug: ValueCache: busy-flag remains in case of exception during obtaining value
+            15.1.4
+            New: Split function for everyone (thanks Koopakiller)
+            15.1.3
+            Bug: Dumper: Key for resistivity check was not set
+            15.1.2
+            Change: Dump support for enums
+            Change: Better tag for recursive objects
+            15.1.1
+            Change: ValueCache: is now public
+        </releaseNotes>
+        <version>20.0.10.4</version>
+        <dependencies>
+            <dependency id="JetBrains.Annotations" version="10.2" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="hw.Helper.Core\" target="content\hw" />
+    </files>
 </package>

@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
   <PropertyGroup>
     <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
     <AssemblyName>hw.nuget</AssemblyName>
@@ -87,20 +86,6 @@
     <Compile Include="hw.Proof\Proof\TokenClasses\ParserTokenType.cs" />
     <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
     <Compile Include="hw.UnitTest\UnitTest\DependenceProvider.cs" />
-    <Compile Include="Tests\CompilerTool\AdvancedParser.cs" />
-    <Compile Include="Tests\CompilerTool\BracketBalance.cs" />
-    <Compile Include="Tests\CompilerTool\NestedParser.cs" />
-    <Compile Include="Tests\CompilerTool\ParserUtil.cs" />
-    <Compile Include="Tests\CompilerTool\SourceTests.cs" />
-    <Compile Include="Tests\CompilerTool\UnmatchedBrackets.cs" />
-    <Compile Include="Tests\CompilerTool\Util\BeginOfText.cs" />
-    <Compile Include="Tests\CompilerTool\Util\EndOfText.cs" />
-    <Compile Include="Tests\CompilerTool\Util\ErrorSyntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\IssueId.cs" />
-    <Compile Include="Tests\CompilerTool\Util\LeftParenthesis.cs" />
-    <Compile Include="Tests\CompilerTool\Util\LeftParenthesisSyntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\MainToken.cs" />
-    <Compile Include="Tests\CompilerTool\Util\MainTokenFactory.cs" />
     <Compile Include="hw.UnitTest\UnitTest\ITestFixture.cs" />
     <Compile Include="TestDump.cs" />
     <Compile Include="hw.Helper.Core\DebugFormatter\Writer.cs" />
@@ -173,27 +158,6 @@
     <Compile Include="hw.CompilerTools\Parser\IParser.cs" />
     <Compile Include="hw.CompilerTools\Parser\IParserTokenType.cs" />
     <Compile Include="hw.CompilerTools\Parser\OpenItem.cs" />
-    <Compile Include="Tests\CompilerTool\SimpleParser.cs" />
-    <Compile Include="Tests\CompilerTool\Util\NamedToken.cs" />
-    <Compile Include="Tests\CompilerTool\Util\NamedTreeSyntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\NamelessSyntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\NestedToken.cs" />
-    <Compile Include="Tests\CompilerTool\Util\NestedTokenFactory.cs" />
-    <Compile Include="Tests\CompilerTool\Util\ParenthesisSyntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\ReniLexer.cs" />
-    <Compile Include="Tests\CompilerTool\Util\RightParenthesis.cs" />
-    <Compile Include="Tests\CompilerTool\Util\RightParenthesisSyntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\SwitchToken.cs" />
-    <Compile Include="Tests\CompilerTool\Util\Syntax.cs" />
-    <Compile Include="Tests\CompilerTool\Util\SyntaxError.cs" />
-    <Compile Include="Tests\CompilerTool\Util\TokenFactory.cs" />
-    <Compile Include="Tests\CompilerTool\Util\TreeSyntax.cs" />
-    <Compile Include="Tests\Helper\Core\HelperCore.cs" />
-    <Compile Include="Tests\Helper\Core\LongExtender.cs" />
-    <Compile Include="Tests\Helper\Core\TestEnumEx.cs" />
-    <Compile Include="Tests\Helper\Core\TypeNameExtender.cs" />
-    <Compile Include="Tests\Helper\Core\ValueCache.cs" />
-    <Compile Include="Tests\ReplaceVariables\Example.cs" />
     <None Include="hw.GraphicCompilerTools.snippet.nuspec">
     </None>
     <None Include="hw.log4net.snippet.nuspec" />
@@ -217,7 +181,9 @@
     <None Include="hw.T4Helper\Helper\T4Context.cs" />
     <Compile Include="hw.Forms\Forms\Extender.cs" />
     <Compile Include="hw.Forms\Forms\PositionConfig.cs" />
-    <Compile Include="hw.Forms\Forms\TreeForm.cs" />
+    <Compile Include="hw.Forms\Forms\TreeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="hw.Forms\Forms\TreeForm.Designer.cs">
       <DependentUpon>TreeForm.cs</DependentUpon>
     </Compile>
