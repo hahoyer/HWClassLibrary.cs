@@ -115,7 +115,7 @@
             15.1.1
             Change: ValueCache: is now public
         </releaseNotes>
-        <version>20.0.10.4</version>
+        <version>20.0.10.5</version>
         <dependencies>
             <dependency id="JetBrains.Annotations" version="10.2" />
         </dependencies>

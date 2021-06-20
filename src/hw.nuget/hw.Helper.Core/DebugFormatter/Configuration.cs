@@ -1,5 +1,4 @@
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,7 +113,6 @@ namespace hw.DebugFormatter
             Handlers.Add(typeof(IList), (type, o) => Dump(((IList)o).Cast<object>()));
             Handlers.Add(typeof(IDictionary), (type, o) => DumpIDictionary(o));
             Handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection)o).Cast<object>()));
-            Handlers.Add(typeof(CodeObject), (type, o) => Dump((CodeObject)o));
             Handlers.Add(typeof(Type), (type, o) => ((Type)o).PrettyName());
             Handlers.Add(typeof(string), (type, o) => ((string)o).Quote());
             Handlers.Add(t => t.IsEnum, DumpEnum);
@@ -139,14 +137,6 @@ namespace hw.DebugFormatter
                    || name == "Outlook.InspectorClass";
         }
  
-        static string Dump(CodeObject codeObject)
-        {
-            if(codeObject is CodeSnippetExpression cse)
-                return cse.Value;
-
-            throw new NotImplementedException();
-        }
-
         static string Dump(IEnumerable<object> target)
         {
             var enumerable = target.ToArray();
