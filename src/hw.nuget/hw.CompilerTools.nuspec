@@ -18,7 +18,7 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2016 - 2020</copyright>
 
-        <version>20.0.10.1</version>
+        <version>20.0.10.2</version>
 
         <dependencies>
             <dependency id="hw.Helper.Core" version="20.0.10" />

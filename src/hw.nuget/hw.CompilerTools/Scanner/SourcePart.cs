@@ -189,5 +189,20 @@ namespace hw.Scanner
 
             yield return currentValue;
         }
+
+        bool Equals(SourcePart other) => Length == other.Length && Position == other.Position && Equals(Source, other.Source);
+
+        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Length;
+                hashCode = (hashCode * 397) ^ Position;
+                hashCode = (hashCode * 397) ^ (Source != null? Source.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
     }
 }
