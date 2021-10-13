@@ -18,7 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2021</copyright>
 
+        <version>21.0.1</version>
         <releaseNotes>
+            new: LogDump extension method
+            21.0
             new: Type-check-assertion
             change: DumpExceptAttribute.IsException improved
             refactor: new language features
@@ -119,7 +122,6 @@
             15.1.1
             Change: ValueCache: is now public
         </releaseNotes>
-        <version>21.0</version>
         <dependencies>
             <dependency id="JetBrains.Annotations" version="10.2" />
         </dependencies>
