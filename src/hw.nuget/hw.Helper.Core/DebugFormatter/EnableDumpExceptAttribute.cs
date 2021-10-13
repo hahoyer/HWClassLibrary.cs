@@ -31,7 +31,7 @@ namespace hw.DebugFormatter
 
         protected DumpExceptAttribute(object exceptionValue) => ExceptionValue = exceptionValue;
 
-        protected bool IsException(object targetValue) => targetValue == ExceptionValue;
+        protected bool IsException(object targetValue) => Equals(targetValue, ExceptionValue);
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]

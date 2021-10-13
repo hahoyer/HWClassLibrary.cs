@@ -77,12 +77,12 @@
             <PackageFiles Include="$(PackageOutputDir)\*.nupkg" Exclude="$(PackageOutputDir)\*.symbols.nupkg" />
         </ItemGroup>
 
-        <Exec 
+        <Exec
             Condition="'$(Configuration)' == 'Release'"
-            Command="$(NuGetCommand) setApiKey $(ApiKey)" 
+            Command="$(NuGetCommand) setApiKey $(ApiKey)"
             />
-        
-        <Exec  
+
+        <Exec
             Condition="'$(Configuration)' == 'Release'"
             Command="$(NuGetCommand) push &quot;%(PackageFiles.Identity)&quot; -Source &quot;https://nuget.org&quot;"
             IgnoreExitCode="true"
@@ -92,9 +92,9 @@
             <Output TaskParameter="ConsoleOutput" PropertyName="ConsoleOutput" />
         </Exec>
 
-        <Error 
-            Condition="$(ExitCode) != 0 And '$(Configuration)' == 'Release'" 
-            Text="$(ConsoleOutput)" 
+        <Error
+            Condition="$(ExitCode) != 0 And '$(Configuration)' == 'Release'"
+            Text="$(ConsoleOutput)"
             File="%(PackageSpecs.Identity)"
             />
 

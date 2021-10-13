@@ -16,9 +16,13 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2013 - 2020</copyright>
+        <copyright>Copyright Harald Hoyer 2013 - 2021</copyright>
 
         <releaseNotes>
+            new: Type-check-assertion
+            change: DumpExceptAttribute.IsException improved
+            refactor: new language features
+            20.0.10.5
             new: ability to provide order information for dump
             20.0.9
             change: Split extension method extended by separator pasting option
@@ -115,7 +119,7 @@
             15.1.1
             Change: ValueCache: is now public
         </releaseNotes>
-        <version>20.0.10.5</version>
+        <version>21.0</version>
         <dependencies>
             <dependency id="JetBrains.Annotations" version="10.2" />
         </dependencies>

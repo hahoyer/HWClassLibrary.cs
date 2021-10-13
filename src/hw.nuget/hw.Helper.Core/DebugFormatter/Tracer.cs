@@ -504,6 +504,21 @@ namespace hw.DebugFormatter
             AssertionFailed("", getText, stackFrameDepth + 1);
         }
 
+        /// <summary>
+        ///     Check if expression has target type
+        /// </summary>
+        /// <param name="target">
+        /// </param>
+        /// <param name="getText"> Message in case of fail. </param>
+        /// <param name="stackFrameDepth"> The stack frame depth. </param>
+        [DebuggerHidden]
+        public static void Assert<TTargetType>(this object target, Func<string> getText = null, int stackFrameDepth = 0)
+        {
+            if(target is TTargetType)
+                return;
+            AssertionFailed($"is {typeof(TTargetType).PrettyName()}", getText, stackFrameDepth + 1);
+        }
+
         public static int CurrentFrameCount(int stackFrameDepth) => new StackTrace(true).FrameCount - stackFrameDepth;
 
         [DebuggerHidden]

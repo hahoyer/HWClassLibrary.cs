@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Helper
@@ -8,17 +9,20 @@ namespace hw.Helper
     public static class ValueCacheExtension
     {
         public static ValueCache<TValueType> NewValueCache<TValueType>(Func<TValueType> target)
-            => new ValueCache<TValueType>(target);
+            => new(target);
 
         public static TValueType CachedValue<TValueType>(this ValueCache.IContainer container, Func<TValueType> target)
-            => ((ValueCache<TValueType>)
-                    GetCache
-                    (
-                        container,
-                        target,
-                        () => new ValueCache<TValueType>(target)
-                    )
-                ).Value;
+            => CachedItem(container, target).Value;
+
+        public static ValueCache<TValueType> CachedItem<TValueType>
+            (this ValueCache.IContainer container, Func<TValueType> target)
+            => (ValueCache<TValueType>)
+                GetCache
+                (
+                    container,
+                    target,
+                    () => new ValueCache<TValueType>(target)
+                );
 
         public static TResult CachedFunction<TValueType, TResult>
             (this ValueCache.IContainer container, TValueType arg, Func<TValueType, TResult> target)
