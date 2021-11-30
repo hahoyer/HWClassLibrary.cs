@@ -137,7 +137,7 @@ namespace hw.Parser
 
         public static PrioTable BracketParallels(string[] leftBrackets, string[] rightBrackets)
         {
-            Tracer.Assert(leftBrackets.Length == rightBrackets.Length);
+            (leftBrackets.Length == rightBrackets.Length).Assert();
             return leftBrackets
                 .Select((item, index) => BracketPair(item, rightBrackets[index]))
                 .Aggregate(new PrioTable(), (c, n) => new PrioTable(c, n));
@@ -230,7 +230,7 @@ namespace hw.Parser
         int GetSubTypeIndex(ITargetItem target)
         {
             var parent = this;
-            Tracer.Assert(!string.IsNullOrWhiteSpace(target.Token));
+            (!string.IsNullOrWhiteSpace(target.Token)).Assert();
             var token = target.Token;
             return parent.Brackets.Any(item => item.Left == token)? 0 :
                 parent.Brackets.Any(item => item.Right == token)? 2 : 1;

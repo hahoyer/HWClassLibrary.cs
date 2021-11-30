@@ -31,7 +31,7 @@ namespace hw.Parser
         {
             if(Type != null)
                 return Type.Create(Left, Token, right);
-            Tracer.Assert(Left == null);
+            (Left == null).Assert();
             return right;
         }
     }
