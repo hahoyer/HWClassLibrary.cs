@@ -18,8 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2021</copyright>
 
-        <version>21.0.1</version>
+        <version>21.0.2</version>
         <releaseNotes>
+            refactor: Upgrade C#
+            21.0.1
             new: LogDump extension method
             21.0
             new: Type-check-assertion

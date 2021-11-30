@@ -40,10 +40,8 @@ namespace hw.UnitTest
         {
             TestLevels = new Func<Type, bool>[] {IsNormalPriority, IsLowPriority};
             TestTypes = testTypes.ToArray();
-            Tracer.Assert
-            (
-                TestTypes.IsCircuitFree(DependentTypes),
-                () => Tracer.Dump(TestTypes.Circuits(DependentTypes).ToArray()));
+            TestTypes.IsCircuitFree(DependentTypes).Assert
+            (() => Tracer.Dump(TestTypes.Circuits(DependentTypes).ToArray()));
             if(Configuration.SkipSuccessfulMethods)
                 LoadConfiguration();
         }

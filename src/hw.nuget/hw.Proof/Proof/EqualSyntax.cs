@@ -26,10 +26,10 @@ namespace hw.Proof
         {
             if(Left.Variables.Contains(variable))
             {
-                Tracer.Assert(!Right.Variables.Contains(variable));
+                (!Right.Variables.Contains(variable)).Assert();
                 return Left.IsolateFromEquation(variable, Right);
             }
-            Tracer.Assert(Right.Variables.Contains(variable));
+            Right.Variables.Contains(variable).Assert();
             return Right.IsolateFromEquation(variable, Left);
         }
     }

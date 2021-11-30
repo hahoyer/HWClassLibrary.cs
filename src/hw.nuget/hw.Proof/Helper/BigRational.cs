@@ -41,7 +41,7 @@ namespace hw.Helper
             var greatestCommonDivisor = GreatestCommonDivisor(nominator, denominator);
             Nominator = nominator / greatestCommonDivisor;
             Denominator = denominator / greatestCommonDivisor;
-            Tracer.Assert(Denominator > 0);
+            (Denominator > 0).Assert();
         }
 
         [DisableDump]

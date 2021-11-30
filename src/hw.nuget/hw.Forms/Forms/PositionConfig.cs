@@ -131,7 +131,7 @@ namespace hw.Forms
         void Save(Rectangle? position, FormWindowState state)
         {
             var fileHandle = FileHandle;
-            Tracer.Assert(fileHandle != null);
+            (fileHandle != null).Assert();
             fileHandle.String = "{0}\n{1}"
                 .ReplaceArgs
                 (
@@ -150,11 +150,11 @@ namespace hw.Forms
         void LoadPosition()
         {
             var fileHandle = FileHandle;
-            Tracer.Assert(fileHandle != null);
+            (fileHandle != null).Assert();
             if(fileHandle.String != null)
             {
                 var position = Position;
-                Tracer.Assert(position != null);
+                (position != null).Assert();
                 InternalTarget.SuspendLayout();
                 InternalTarget.StartPosition = FormStartPosition.Manual;
                 InternalTarget.Bounds = EnsureVisible(position.Value);
@@ -196,7 +196,7 @@ namespace hw.Forms
             if(topDistance > 0 && bottomDistance > 0)
                 result.Y += topDistance < bottomDistance? -(topDistance + 10) : bottomDistance + 10;
 
-            Tracer.Assert(closestScreen.Bounds.IntersectsWith(result));
+            closestScreen.Bounds.IntersectsWith(result).Assert();
             return result;
         }
     }

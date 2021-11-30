@@ -13,7 +13,7 @@ namespace hw.Proof
         public PlusSyntax(Plus @operator, IToken token, Set<ParsedSyntax> set)
             : base(@operator, token, set)
         {
-            Tracer.Assert(set.All(target => !(target is PlusSyntax)));
+            set.All(target => !(target is PlusSyntax)).Assert();
         }
 
         internal override ParsedSyntax IsolateFromEquation(string variable, ParsedSyntax otherSite)

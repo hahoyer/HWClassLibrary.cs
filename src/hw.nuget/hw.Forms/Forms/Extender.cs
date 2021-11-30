@@ -269,7 +269,7 @@ namespace hw.Forms
 
         public static bool SetEffectCopy(this DragEventArgs e, bool isValid)
         {
-            Tracer.Assert(e.AllowedEffect == DragDropEffects.Copy);
+            (e.AllowedEffect == DragDropEffects.Copy).Assert();
 
             e.Effect = isValid && e.KeyState.HasBitSet(ControlKey)? DragDropEffects.Copy : DragDropEffects.None;
             return e.Effect != DragDropEffects.None;

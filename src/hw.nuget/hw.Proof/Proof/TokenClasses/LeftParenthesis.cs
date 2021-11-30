@@ -11,7 +11,7 @@ namespace hw.Proof.TokenClasses
 
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
-            Tracer.Assert(left == null);
+            (left == null).Assert();
             return new LeftParenthesisSyntax(Level, token, right);
         }
 

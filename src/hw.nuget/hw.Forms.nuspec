@@ -24,9 +24,11 @@
       <frameworkAssembly assemblyName="System.Drawing" />
     </frameworkAssemblies>
 
-    <version>20.0.0.1</version>
+    <version>21.0</version>
     <releaseNotes>
-      change: Upgrade to new style
+        refactor: Upgrade C#
+        20.0.0.1
+        change: Upgrade to new style
       17.1
       Upgrade: File to SmbFile
       16.0

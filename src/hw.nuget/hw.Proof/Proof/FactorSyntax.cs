@@ -39,7 +39,7 @@ namespace hw.Proof
         {
             Target = target;
             Value = value;
-            Tracer.Assert(Target.SmartDumpText != "0");
+            (Target.SmartDumpText != "0").Assert();
         }
 
         int IComparableEx<FactorSyntax>.CompareToEx(FactorSyntax other)
@@ -72,9 +72,9 @@ namespace hw.Proof
 
         string SmartDumpFactor(ISmartDumpToken @operator)
         {
-            Tracer.Assert(Value.Nominator != 0);
-            Tracer.Assert(Value.Nominator != Value.Denominator);
-            Tracer.Assert(Value.Denominator > 0);
+            (Value.Nominator != 0).Assert();
+            (Value.Nominator != Value.Denominator).Assert();
+            (Value.Denominator > 0).Assert();
             if(Value.IsNegative && @operator != null && @operator.IsIgnoreSignSituation)
                 return Value == -1 ? "" : (-Value).ToString();
 

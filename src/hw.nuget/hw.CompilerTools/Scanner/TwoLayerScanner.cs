@@ -69,7 +69,7 @@ namespace hw.Scanner
 
             internal Worker(TwoLayerScanner parent, SourcePosition sourcePosition)
             {
-                Tracer.Assert(sourcePosition.IsValid);
+                sourcePosition.IsValid.Assert();
                 Parent = parent;
                 SourcePosition = sourcePosition;
             }

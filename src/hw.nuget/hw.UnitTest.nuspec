@@ -1,56 +1,57 @@
 <?xml
-  version="1.0"?>
+    version="1.0"?>
 
 <package>
-  <metadata>
-    <id>hw.UnitTest</id>
-    <title>hw.UnitTest</title>
-    <authors>hahoyer</authors>
-    <description>
-      Provide some basic extensions for everyday programming.
-    </description>
-    <summary>
-      Unit test support.
-    </summary>
-    <language>en-US</language>
-    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">MIT</license>
-    <copyright>Copyright Harald Hoyer 2014-2020</copyright>
+    <metadata>
+        <id>hw.UnitTest</id>
+        <title>hw.UnitTest</title>
+        <authors>hahoyer</authors>
+        <description>
+            Provide some basic extensions for everyday programming.
+        </description>
+        <summary>
+            Unit test support.
+        </summary>
+        <language>en-US</language>
+        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">MIT</license>
+        <copyright>Copyright Harald Hoyer 2014-2020</copyright>
+        <version>21.0</version>
+        <releaseNotes>
+            refactor: Upgrade C#
+            20.0.6
+            bug: Static test methods are disabled
+            20.0.5
+            change: Trace improved
+            change: TestRunner configuration
+            20.0.4
+            new: Sample test file generation improved
+            20.0.3
+            new: TextPart/TextPosition
+            20.0.2
+            new: Support generation of a cs file with sample tests
+            20.0.0.3
+            new: IsBreakDisabled: debug is more convenient
+            Upgrade: new style
+            17.1
+            Upgrade: File to SmbFile
+            15.1
+            Use Breaking changes of hw.Helper.Core
+            15.0.2
+            New: Ability to register other test frameworks
+            15.0.1
+            Change: Test runner returns false when any test has failed
+            15.0
+            Breaking Change: Attributes TestFixture and Test renamed to UnitTest
+        </releaseNotes>
+        <dependencies>
+            <dependency id="hw.Helper.Core" version="20.0.6" />
+        </dependencies>
 
-    <version>20.0.6</version>
-    <releaseNotes>
-      bug: Static test methods are disabled
-      20.0.5
-      change: Trace improved
-      change: TestRunner configuration
-      20.0.4
-      new: Sample test file generation improved
-      20.0.3
-      new: TextPart/TextPosition
-      20.0.2
-      new: Support generation of a cs file with sample tests
-      20.0.0.3
-      new: IsBreakDisabled: debug is more convenient
-      Upgrade: new style
-      17.1
-      Upgrade: File to SmbFile
-      15.1
-      Use Breaking changes of hw.Helper.Core
-      15.0.2
-      New: Ability to register other test frameworks
-      15.0.1
-      Change: Test runner returns false when any test has failed
-      15.0
-      Breaking Change: Attributes TestFixture and Test renamed to UnitTest
-    </releaseNotes>
-    <dependencies>
-      <dependency id="hw.Helper.Core" version="20.0.6" />
-    </dependencies>
+    </metadata>
+    <files>
 
-  </metadata>
-  <files>
-
-    <file src="hw.UnitTest\" target="content/hw" />
-  </files>
+        <file src="hw.UnitTest\" target="content/hw" />
+    </files>
 </package>

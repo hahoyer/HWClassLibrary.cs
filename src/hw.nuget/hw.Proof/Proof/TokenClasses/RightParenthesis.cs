@@ -11,11 +11,11 @@ namespace hw.Proof.TokenClasses
 
         protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
-            Tracer.Assert(right == null);
+            (right == null).Assert();
             var leftParenthesisSyntax = left as LeftParenthesisSyntax;
-            Tracer.Assert(leftParenthesisSyntax != null);
-            Tracer.Assert(leftParenthesisSyntax.Right != null);
-            Tracer.Assert(leftParenthesisSyntax.Level == Level);
+            (leftParenthesisSyntax != null).Assert();
+            (leftParenthesisSyntax.Right != null).Assert();
+            (leftParenthesisSyntax.Level == Level).Assert();
             return leftParenthesisSyntax.Right;
         }
 

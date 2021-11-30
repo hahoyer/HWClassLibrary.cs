@@ -40,8 +40,7 @@ namespace hw
 
             var xxx = new Bla();
             var s = Tracer.Dump(xxx);
-            Tracer.Assert(s == expectedTrace.Replace("\r", "")
-                , () => "\n--Expected--\n" + expectedTrace + "|----\n--Found--\n" + s + "|----\n");
+            (s == expectedTrace.Replace("\r", "")).Assert(() => "\n--Expected--\n" + expectedTrace + "|----\n--Found--\n" + s + "|----\n");
         }
     }
 }

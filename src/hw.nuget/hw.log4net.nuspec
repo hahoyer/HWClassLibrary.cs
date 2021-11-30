@@ -1,31 +1,33 @@
 <?xml version="1.0"?>
 
 <package>
-  <metadata>
-    <id>hw.log4net</id>
-    <title>hw.log4net</title>
-    <authors>hahoyer</authors>
-    <description>
-      log4net integration.
-    </description>
-    <language>en-US</language>
-    <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">MIT</license>
-    <copyright>Copyright Harald Hoyer 2020</copyright>
-    <version>20.0.1</version>
+    <metadata>
+        <id>hw.log4net</id>
+        <title>hw.log4net</title>
+        <authors>hahoyer</authors>
+        <description>
+            log4net integration.
+        </description>
+        <language>en-US</language>
+        <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">MIT</license>
+        <copyright>Copyright Harald Hoyer 2020</copyright>
 
-    <dependencies>
-      <dependency id="hw.Helper.Core" version="20.0.7" />
-      <dependency id="log4net" version="2.0.11" />
-    </dependencies>
-    <releaseNotes>
-      change: stack level detection
-    </releaseNotes>
-  </metadata>
+        <dependencies>
+            <dependency id="hw.Helper.Core" version="20.0.7" />
+            <dependency id="log4net" version="2.0.11" />
+        </dependencies>
+        <version>21.0</version>
+        <releaseNotes>
+            refactor: Upgrade C#
+            20.0.1
+            change: stack level detection
+        </releaseNotes>
+    </metadata>
 
 
-  <files>
-    <file src="hw.log4net\" target="content/hw" />
-  </files>
+    <files>
+        <file src="hw.log4net\" target="content/hw" />
+    </files>
 </package>

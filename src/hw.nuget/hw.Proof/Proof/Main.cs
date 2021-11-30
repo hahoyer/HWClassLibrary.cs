@@ -38,13 +38,13 @@ a gcd b = 1;
 c + a = target;
 c - a = y 
 ").Statement;
-            Tracer.FlaggedLine("Statement: " + statement.SmartDump(), FilePositionTag.Test);
+            ("Statement: " + statement.SmartDump()).FlaggedLine(FilePositionTag.Test);
             statement = statement.IsolateAndReplace(3);
-            Tracer.FlaggedLine("Statement: " + statement.SmartDump(), FilePositionTag.Test);
+            ("Statement: " + statement.SmartDump()).FlaggedLine(FilePositionTag.Test);
             statement = statement.IsolateAndReplace(3);
-            Tracer.FlaggedLine("Statement: " + statement.SmartDump(), FilePositionTag.Test);
+            ("Statement: " + statement.SmartDump()).FlaggedLine(FilePositionTag.Test);
             statement = statement.IsolateAndReplace(3);
-            Tracer.FlaggedLine("Statement: " + statement.SmartDump(), FilePositionTag.Test);
+            ("Statement: " + statement.SmartDump()).FlaggedLine(FilePositionTag.Test);
         }
 
         internal static readonly Definitions Definitions = Definitions.Instance;

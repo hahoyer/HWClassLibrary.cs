@@ -8,8 +8,8 @@ namespace hw.Proof.TokenClasses
     {
         protected override ParsedSyntax Syntax(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
-            Tracer.Assert(left != null);
-            Tracer.Assert(right != null);
+            (left != null).Assert();
+            (right != null).Assert();
             return left.Associative(this, token, right);
         }
 

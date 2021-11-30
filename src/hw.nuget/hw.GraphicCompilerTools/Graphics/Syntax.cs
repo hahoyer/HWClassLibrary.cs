@@ -36,7 +36,7 @@ namespace hw.Graphics
         {
             get
             {
-                Tracer.Assert(HasChildren);
+                HasChildren.Assert();
                 var height = NodeHeight + Drawer.Gap.Height;
                 var currentWidthOffset = ChildrenOffset;
                 foreach(var syntax in Children)
@@ -51,7 +51,7 @@ namespace hw.Graphics
         {
             get
             {
-                Tracer.Assert(HasChildren);
+                HasChildren.Assert();
                 var gapWidth = Drawer.Gap.Width * (Children.Length - 1);
                 var effectiveChildrenWidth = Children.Select(SaveWidth).Sum();
                 return gapWidth + effectiveChildrenWidth;
@@ -62,7 +62,7 @@ namespace hw.Graphics
         {
             get
             {
-                Tracer.Assert(HasChildren);
+                HasChildren.Assert();
                 return Children.Select(SaveHeight).Max();
             }
         }
@@ -101,7 +101,7 @@ namespace hw.Graphics
 
         void DrawNode(Point origin)
         {
-            Tracer.Assert(NodeOffset >= 0, () => NodeOffset.ToString());
+            (NodeOffset >= 0).Assert(() => NodeOffset.ToString());
             Drawer.DrawNode(origin + new Size(NodeOffset, 0), Name);
         }
 

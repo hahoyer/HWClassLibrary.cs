@@ -40,7 +40,7 @@ namespace hw.Scanner
             int? IMatch.Match(SourcePosition sourcePosition)
             {
                 var result = Data.Match(sourcePosition);
-                return result == null? 1 : (int?)null;
+                return result == null? 1 : null;
             }
         }
 
@@ -91,7 +91,7 @@ namespace hw.Scanner
             }
 
             int? IMatch.Match(SourcePosition sourcePosition)
-                => Func(sourcePosition.Current) != IsTrue? null : (int?)1;
+                => Func(sourcePosition.Current) != IsTrue? null : 1;
         }
 
         sealed class FindMatch
@@ -152,7 +152,7 @@ namespace hw.Scanner
             : Dumpable
                 , IMatch
         {
-            int? IMatch.Match(SourcePosition sourcePosition) => sourcePosition.IsEnd? 0 : (int?)null;
+            int? IMatch.Match(SourcePosition sourcePosition) => sourcePosition.IsEnd? 0 : null;
         }
 
         sealed class BreakMatch : IMatch
@@ -169,7 +169,7 @@ namespace hw.Scanner
 
         internal Match(IMatch data)
         {
-            Tracer.Assert(!(data is Match));
+            (!(data is Match)).Assert();
             Data = data;
         }
 

@@ -18,13 +18,16 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2016 - 2020</copyright>
 
-        <version>21.0</version>
+        <version>21.0.1</version>
 
         <dependencies>
             <dependency id="hw.Helper.Core" version="20.0.10" />
         </dependencies>
 
         <releaseNotes>
+            change: ensure each IToken is used exactly once in binary tree
+            refactor: better naming
+            21.0
             change: SourcePart improved
             20.0.10.2
             change: make some internals public
