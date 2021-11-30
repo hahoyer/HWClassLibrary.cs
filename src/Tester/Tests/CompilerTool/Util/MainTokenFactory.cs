@@ -21,7 +21,7 @@ namespace hw.Tests.CompilerTool.Util
                 target += PrioTable.Left("+");
                 target += PrioTable.Left(";");
                 target += PrioTable.BracketParallels(LeftBrackets, RightBrackets);
-                Tracer.FlaggedLine("\n" + target.Dump() + "\n");
+                ("\n" + target.Dump() + "\n").FlaggedLine();
                 target.Title = Tracer.MethodHeader();
                 return target;
             }

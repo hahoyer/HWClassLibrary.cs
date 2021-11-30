@@ -30,11 +30,11 @@ namespace hw.Tests.Helper.Core
         public void Test()
         {
             var all = MyEnum.All.ToArray();
-            Tracer.Assert(all.Length == 4);
+            (all.Length == 4).Assert();
 
-            Tracer.Assert(MyEnum.X4.Tag == "X4");
-            Tracer.Assert(new MyEnum().Tag == null);
-            Tracer.Assert(MyEnum.X1.Tag == "X1");
+            (MyEnum.X4.Tag == "X4").Assert();
+            (new MyEnum().Tag == null).Assert();
+            (MyEnum.X1.Tag == "X1").Assert();
         }
     }
 }

@@ -42,7 +42,7 @@ namespace hw.Helper
 
         void Ensure()
         {
-            Tracer.Assert(!IsBusy, "Recursive attempt to get value.");
+            (!IsBusy).Assert("Recursive attempt to get value.");
             if(ValidityState)
                 return;
 
@@ -60,7 +60,7 @@ namespace hw.Helper
 
         void Reset()
         {
-            Tracer.Assert(!IsBusy, "Attempt to reset value during getting value.");
+            (!IsBusy).Assert("Attempt to reset value during getting value.");
             if(!ValidityState)
                 return;
 

@@ -165,7 +165,7 @@ namespace hw.Helper
 
         static string HexDumpFiller(int i, int length)
         {
-            Tracer.Assert(length < 16);
+            (length < 16).Assert();
             if(0 == length)
                 return "target[]";
             if(i == 0)

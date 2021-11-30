@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Helper
@@ -59,17 +60,18 @@ namespace hw.Helper
                     return list[0];
             }
 
-            throw new MultipleAttributesException(typeof(TAttribute), target, inherit, list.Cast<Attribute>().ToArray());
+            throw new MultipleAttributesException(typeof(TAttribute), target, inherit
+                , list.Cast<Attribute>().ToArray());
         }
 
         [CanBeNull]
         public static TAttribute GetRecentAttribute<TAttribute>(this Type target)
             => GetAttribute<TAttribute>(target, false) ??
-                                            GetRecentAttributeBase<TAttribute>(target.BaseType);
+                GetRecentAttributeBase<TAttribute>(target.BaseType);
 
         [CanBeNull]
         public static TAttribute GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
-            
+
         {
             var list = GetAttributes<TAttribute>(target, inherit).ToArray();
             switch(list.Length)
@@ -80,7 +82,8 @@ namespace hw.Helper
                     return list[0];
             }
 
-            throw new MultipleAttributesException(typeof(TAttribute), target, inherit, list.Cast<Attribute>().ToArray());
+            throw new MultipleAttributesException(typeof(TAttribute), target, inherit
+                , list.Cast<Attribute>().ToArray());
         }
 
         public static IEnumerable<Assembly> GetAssemblies(this Assembly rootAssembly)
@@ -123,7 +126,7 @@ namespace hw.Helper
             return new Guid(target.ToString());
         }
 
-        public static T Convert<T>(this object target) => target is DBNull || target == null? default(T) : (T)target;
+        public static T Convert<T>(this object target) => target is DBNull || target == null? default : (T)target;
 
         public static bool ToBoolean(this object target, string[] values)
         {
@@ -231,7 +234,7 @@ namespace hw.Helper
             }
             catch(Exception exception)
             {
-                return onError == null? default(T) : onError(exception);
+                return onError == null? default : onError(exception);
             }
         }
 
@@ -266,7 +269,9 @@ namespace hw.Helper
                     tcs.SetException(e);
                 }
             });
+#pragma warning disable CA1416 //This call site is reachable on all platforms. 'Thread.SetApartmentState(ApartmentState)' is only supported on: 'windows'.
             thread.SetApartmentState(ApartmentState.STA);
+#pragma warning restore CA1416
             thread.Start();
             return tcs.Task;
         }
@@ -275,7 +280,11 @@ namespace hw.Helper
         {
             var result = new Task(func);
             var thread = new Thread(result.Start);
+#pragma warning disable CA1416  //This call site is reachable on all platforms. 'Thread.SetApartmentState(ApartmentState)' is only supported on: 'windows'.
             thread.SetApartmentState(ApartmentState.STA);
+#pragma warning restore CA1416
+
+
             thread.Start();
             return result;
         }
@@ -293,8 +302,10 @@ namespace hw.Helper
         }
 
         internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type) => type.ThisAndBias().SelectMany(t
-            => t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic |
-                           BindingFlags.DeclaredOnly));
+            => t.GetFields(BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.NonPublic |
+                BindingFlags.DeclaredOnly));
 
         [CanBeNull]
         static TAttribute GetRecentAttributeBase<TAttribute>(this Type target)

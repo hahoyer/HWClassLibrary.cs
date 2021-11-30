@@ -32,7 +32,7 @@ namespace hw.DebugFormatter
         {
             get
             {
-                Tracer.Assert(ObjectIdValue != null);
+                (ObjectIdValue != null).Assert();
                 return ObjectIdValue.Value;
             }
         }

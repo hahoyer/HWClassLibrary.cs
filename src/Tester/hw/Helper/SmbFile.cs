@@ -186,7 +186,7 @@ namespace hw.Helper
                     return FileInfoCache;
 
                 FileInfoCache = IsDirectory
-                    ? (FileSystemInfo)new DirectoryInfo(InternalName)
+                    ? new DirectoryInfo(InternalName)
                     : new FileInfo(InternalName);
 
                 return FileInfoCache;
@@ -248,7 +248,7 @@ namespace hw.Helper
         public void EnsureIsExistentDirectory()
         {
             if(Exists)
-                Tracer.Assert(IsDirectory);
+                IsDirectory.Assert();
             else
             {
                 EnsureDirectoryOfFileExists();

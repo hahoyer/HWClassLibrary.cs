@@ -42,9 +42,9 @@ namespace hw.Tests.CompilerTool
         {
             var result = ParserUtil.Parse("()");
 
-            Tracer.Assert(result.TokenClassName == "()", result.Dump);
-            Tracer.Assert(result.Left == null, result.Dump);
-            Tracer.Assert(result.Right == null, result.Dump);
+            (result.TokenClassName == "()").Assert(result.Dump);
+            (result.Left == null).Assert(result.Dump);
+            (result.Right == null).Assert(result.Dump);
         }
 
         [UnitTest]
@@ -52,13 +52,13 @@ namespace hw.Tests.CompilerTool
         {
             var result = ParserUtil.Parse("()berta");
 
-            Tracer.Assert(result.TokenClassName == "berta", result.Dump);
-            Tracer.Assert(result.Left != null, result.Dump);
-            Tracer.Assert(result.Right == null, result.Dump);
+            (result.TokenClassName == "berta").Assert(result.Dump);
+            (result.Left != null).Assert(result.Dump);
+            (result.Right == null).Assert(result.Dump);
 
-            Tracer.Assert(result.Left.TokenClassName == "()", result.Dump);
-            Tracer.Assert(result.Left.Left == null, result.Dump);
-            Tracer.Assert(result.Left.Right == null, result.Dump);
+            (result.Left.TokenClassName == "()").Assert(result.Dump);
+            (result.Left.Left == null).Assert(result.Dump);
+            (result.Left.Right == null).Assert(result.Dump);
         }
 
         [UnitTest]

@@ -31,8 +31,16 @@ namespace hw.Scanner
         SourcePart(Source source, int position, int length)
         {
             Source = source;
-            Length = length;
-            Position = position;
+            if(length >= 0)
+            {
+                Length = length;
+                Position = position;
+            }
+            else
+            {
+                Length = -length;
+                Position = position + length;
+            }
         }
 
         [DisableDump]
@@ -64,7 +72,7 @@ namespace hw.Scanner
 
             var start = Math.Min(Position, other.Position);
             var end = Math.Max(EndPosition, other.EndPosition);
-            return new SourcePart(Source, start, end - start);
+            return new(Source, start, end - start);
         }
 
         public SourcePart Intersect(SourcePart other)
@@ -98,17 +106,16 @@ namespace hw.Scanner
         {
             (Source == other.Source).Assert();
             (EndPosition <= other.Position).Assert();
-            return new SourcePart(Source, Position, other.EndPosition - Position);
+            return new(Source, Position, other.EndPosition - Position);
         }
 
         public static SourcePart Span(SourcePosition first, SourcePosition other)
         {
             var length = other - first;
-            return new SourcePart(first.Source, first.Position, length);
+            return new(first.Source, first.Position, length);
         }
 
-        public static SourcePart Span(SourcePosition first, int length)
-            => new SourcePart(first.Source, first.Position, length);
+        public static SourcePart Span(SourcePosition first, int length) => new(first.Source, first.Position, length);
 
         public bool Contains(SourcePosition sourcePosition)
             => Source == sourcePosition.Source &&
@@ -138,23 +145,23 @@ namespace hw.Scanner
         public static bool operator !=(SourcePart left, SourcePart right) => !(left == right);
 
         public static bool operator >(SourcePart left, SourcePosition right) => right < left;
+
         public static bool operator >(SourcePosition left, SourcePart right) => right < left;
+
         public static bool operator >(SourcePart left, SourcePart right) => right < left;
 
-        public static bool operator <(SourcePart left, SourcePosition right)
-            => left != null && left.End < right;
+        public static bool operator <(SourcePart left, SourcePosition right) => left != null && left.End < right;
 
-        public static bool operator <(SourcePosition left, SourcePart right)
-            => right != null && left < right.Start;
+        public static bool operator <(SourcePosition left, SourcePart right) => right != null && left < right.Start;
 
         public static bool operator <(SourcePart left, SourcePart right)
             => left != null && right != null && left.End <= right.Start;
 
         public static bool operator ==(SourcePart left, SourcePart right)
         {
-            if((object)left == null)
-                return (object)right == null;
-            if((object)right == null)
+            if((object) left == null)
+                return (object) right == null;
+            if((object) right == null)
                 return false;
 
             return left.Start == right.Start &&
@@ -178,7 +185,10 @@ namespace hw.Scanner
             var currentValue = sortedValues[0];
 
             foreach(var value in sortedValues.Skip(1))
-                if(currentValue.EndPosition == value.Position)
+            {
+                var end = currentValue.EndPosition;
+                var start = value.Position;
+                if(end == start)
                     currentValue = currentValue.Combine(value);
                 else
                 {
@@ -186,8 +196,26 @@ namespace hw.Scanner
 
                     currentValue = value;
                 }
+            }
 
             yield return currentValue;
+        }
+
+        bool Equals(SourcePart other)
+            => Length == other.Length && Position == other.Position && Equals(Source, other.Source);
+
+        public override bool Equals(object obj)
+            => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Length;
+                hashCode = (hashCode * 397) ^ Position;
+                hashCode = (hashCode * 397) ^ (Source != null? Source.GetHashCode() : 0);
+                return hashCode;
+            }
         }
     }
 }

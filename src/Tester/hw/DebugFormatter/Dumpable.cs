@@ -295,7 +295,7 @@ namespace hw.DebugFormatter
                 return;
             var top = MethodDumpTraceSwitches.Peek();
             if(top.Trace)
-                Tracer.Assert(top.FrameCount == Tracer.CurrentFrameCount(depth + 1));
+                (top.FrameCount == Tracer.CurrentFrameCount(depth + 1)).Assert();
         }
 
         static void StartMethodDump(int depth, bool trace)

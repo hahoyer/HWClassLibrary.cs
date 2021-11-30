@@ -11,10 +11,8 @@ namespace hw.Tests.CompilerTool
         internal static void ParseAndCheck(string text, string expectedResultDump, int stackFrameDepth = 0)
         {
             var result = Parse(text);
-            Tracer.Assert
-                (
-                    result.Dump() == expectedResultDump,
-                    () =>
+            (result.Dump() == expectedResultDump).Assert
+                (() =>
                         "\nResult: " + result.Dump() +
                             "\nXpcted: " + expectedResultDump,
                     stackFrameDepth + 1);

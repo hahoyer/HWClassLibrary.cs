@@ -44,7 +44,7 @@ namespace hw.Tests.CompilerTool
         public static void PreceededInvalidComment()
         {
             var result = ParserUtil.Parse("    #( \na");
-            Tracer.Assert(result.Token.PrecededWith.Any());
+            result.Token.PrecededWith.Any().Assert();
         }
 
         [UnitTest]

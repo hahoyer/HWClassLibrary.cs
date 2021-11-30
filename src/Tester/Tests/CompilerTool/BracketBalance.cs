@@ -21,10 +21,8 @@ namespace hw.Tests.CompilerTool
             var depth = 0;
             foreach(var syntax in items)
                 depth += syntax.BracketBalance();
-            Tracer.Assert
-                (
-                    depth == 0,
-                    () =>
+            (depth == 0).Assert
+                (() =>
                         items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
@@ -39,10 +37,8 @@ namespace hw.Tests.CompilerTool
             var depth = 0;
             foreach(var syntax in items)
                 depth += syntax.BracketBalance();
-            Tracer.Assert
-                (
-                    depth == 0,
-                    () =>
+            (depth == 0).Assert
+                (() =>
                         items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
@@ -57,10 +53,8 @@ namespace hw.Tests.CompilerTool
             var depth = 0;
             foreach(var syntax in items)
                 depth += syntax.BracketBalance();
-            Tracer.Assert
-                (
-                    depth == 0,
-                    () =>
+            (depth == 0).Assert
+                (() =>
                         items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
@@ -75,10 +69,8 @@ namespace hw.Tests.CompilerTool
             var depth = 0;
             foreach(var syntax in items)
                 depth += syntax.BracketBalance();
-            Tracer.Assert
-                (
-                    depth == 0,
-                    () =>
+            (depth == 0).Assert
+                (() =>
                         items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
@@ -93,10 +85,8 @@ namespace hw.Tests.CompilerTool
             var depth = 0;
             foreach(var syntax in items)
                 depth += syntax.BracketBalance();
-            Tracer.Assert
-                (
-                    depth == 0,
-                    () =>
+            (depth == 0).Assert
+                (() =>
                         items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
@@ -111,10 +101,8 @@ namespace hw.Tests.CompilerTool
             var depth = 0;
             foreach (var syntax in items)
                 depth += syntax.BracketBalance();
-            Tracer.Assert
-                (
-                    depth == 0,
-                    () =>
+            (depth == 0).Assert
+                (() =>
                         items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }
@@ -129,10 +117,8 @@ namespace hw.Tests.CompilerTool
             var depth = 0;
             foreach (var syntax in items)
                 depth += syntax.BracketBalance();
-            Tracer.Assert
-                (
-                    depth == 0,
-                    () =>
+            (depth == 0).Assert
+                (() =>
                         items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                             .Stringify(" "));
         }

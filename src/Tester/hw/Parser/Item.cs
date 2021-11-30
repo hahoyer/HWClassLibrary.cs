@@ -3,29 +3,33 @@ using System.Linq;
 using hw.DebugFormatter;
 using hw.Scanner;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
 {
     [PublicAPI]
-    public sealed class Item<TTreeItem>
+    public sealed class Item<TSourcePart>
         : DumpableObject
             , PrioTable.ITargetItem
             , IToken
-        where TTreeItem : class
+            , ILinked<TSourcePart>
+        where TSourcePart : class
     {
         [EnableDump]
         public readonly BracketContext Context;
 
         public readonly bool? IsBracketAndLeftBracket;
         public readonly IItem[] PrefixItems;
-        public readonly IParserTokenType<TTreeItem> Type;
+        public readonly IParserTokenType<TSourcePart> Type;
         internal readonly SourcePart Characters;
+
+        TSourcePart Container;
 
         Item
         (
             IEnumerable<IItem> prefixItems,
-            IParserTokenType<TTreeItem> type,
+            IParserTokenType<TSourcePart> type,
             SourcePart characters,
             BracketContext context,
             bool? isBracketAndLeftBracket
@@ -38,8 +42,17 @@ namespace hw.Parser
             IsBracketAndLeftBracket = isBracketAndLeftBracket;
         }
 
-        [EnableDump]
-        public int Depth => Context?.Depth ?? 0;
+        TSourcePart ILinked<TSourcePart>.Container
+        {
+            get => Container;
+            set
+            {
+                if(Container != null)
+                    (value == Container).Assert();
+
+                Container = value;
+            }
+        }
 
         BracketContext PrioTable.ITargetItem.LeftContext => Context;
 
@@ -49,72 +62,70 @@ namespace hw.Parser
 
         IEnumerable<IItem> IToken.PrecededWith => PrefixItems;
 
-        public static Item<TTreeItem> Create
-        (
-            IEnumerable<IItem> prefixItems,
-            IParserTokenType<TTreeItem> parserType,
-            SourcePart characters,
-            BracketContext context,
-            bool? isBracketAndLeftBracket
-        )
-            =>
-                new Item<TTreeItem>
-                (
-                    prefixItems,
-                    parserType,
-                    characters,
-                    context,
-                    isBracketAndLeftBracket);
+        [EnableDump]
+        public int Depth => Context?.Depth ?? 0;
 
-        public static Item<TTreeItem> Create(IItem[] items, BracketContext context)
+        public static Item<TSourcePart> Create(IItem[] items, BracketContext context)
         {
             var prefixItems = items.Take(items.Length - 1);
             var mainItem = items.Last();
-            var isBracketAndLeftBracket = context.IsBracketAndLeftBracket(mainItem.SourcePart.Id);
+            var isBracketAndLeftBracket = context.IsLeftBracket(mainItem.SourcePart.Id);
 
             var parserType = mainItem
                 .ScannerTokenType
                 .ParserTokenFactory
-                .GetTokenType<TTreeItem>(mainItem.SourcePart.Id);
+                .GetTokenType<TSourcePart>(mainItem.SourcePart.Id);
 
-            return new Item<TTreeItem>
+            return new
             (
                 prefixItems,
                 parserType,
                 mainItem.SourcePart,
                 context,
-                isBracketAndLeftBracket);
+                isBracketAndLeftBracket
+            );
         }
 
-        public static Item<TTreeItem> CreateStart
+        public static Item<TSourcePart> CreateStart
         (
             Source source,
             PrioTable prioTable,
-            IParserTokenType<TTreeItem> startParserType
+            IParserTokenType<TSourcePart> startParserType
         )
-            =>
-                new Item<TTreeItem>
-                (
-                    new IItem[0],
-                    startParserType,
-                    (source + 0).Span(0),
-                    prioTable.BracketContext,
-                    null);
+            => new
+            (
+                new IItem[0],
+                startParserType,
+                (source + 0).Span(0),
+                prioTable.BracketContext,
+                null
+            );
 
-        public Item<TTreeItem> RecreateWith
+        public Item<TSourcePart> RecreateWith
         (
             IEnumerable<IItem> newPrefixItems = null,
-            IParserTokenType<TTreeItem> newType = null,
+            IParserTokenType<TSourcePart> newType = null,
             BracketContext newContext = null
         )
-            => new Item<TTreeItem>
+            => new
             (
                 newPrefixItems ?? PrefixItems,
                 newType ?? Type,
                 Characters,
                 newContext ?? Context,
-                IsBracketAndLeftBracket);
+                IsBracketAndLeftBracket
+            );
 
-        public TTreeItem Create(TTreeItem left) => Type.Create(left, this, null);
+        public TSourcePart Create(TSourcePart left) => Type.Create(left, this, null);
+
+        public Item<TSourcePart> CreateMatch(OpenItem<TSourcePart> other)
+            => new
+            (
+                new IItem[0],
+                ((IBracketMatch<TSourcePart>)Type).Value,
+                Characters.End.Span(0),
+                other.BracketItem.LeftContext,
+                this.GetRightContext().IsLeftBracket("")
+            );
     }
 }

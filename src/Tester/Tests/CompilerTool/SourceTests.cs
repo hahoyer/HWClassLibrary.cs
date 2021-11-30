@@ -28,20 +28,20 @@ qwertz
             var source = new Source(Text);
 
             var s = source.FromLineAndColumn(0, 0);
-            Tracer.Assert(s.LineIndex == 0);
-            Tracer.Assert(s.ColumnIndex == 0);
+            (s.LineIndex == 0).Assert();
+            (s.ColumnIndex == 0).Assert();
 
             s = source.FromLineAndColumn(1, 2);
-            Tracer.Assert(s.LineIndex == 1);
-            Tracer.Assert(s.ColumnIndex == 2);
+            (s.LineIndex == 1).Assert();
+            (s.ColumnIndex == 2).Assert();
 
             s = source.FromLineAndColumn(2, 12);
-            Tracer.Assert(s.LineIndex == 2);
-            Tracer.Assert(s.ColumnIndex == 6);
+            (s.LineIndex == 2).Assert();
+            (s.ColumnIndex == 6).Assert();
 
             s = source.FromLineAndColumn(100, 12);
-            Tracer.Assert(s.LineIndex == 9);
-            Tracer.Assert(s.ColumnIndex == 0);
+            (s.LineIndex == 9).Assert();
+            (s.ColumnIndex == 0).Assert();
         }
     }
 }

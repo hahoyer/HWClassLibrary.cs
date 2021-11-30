@@ -20,7 +20,7 @@ namespace hw.DebugFormatter
             if(!Debugger.IsAttached)
                 return;
 
-            Console.SetOut(exclusive? (TextWriter)Instance : new TextWriters(Instance, Console.Out));
+            Console.SetOut(exclusive? Instance : new TextWriters(Instance, Console.Out));
         }
     }
 }

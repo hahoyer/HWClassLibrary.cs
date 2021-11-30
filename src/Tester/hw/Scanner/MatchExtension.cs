@@ -50,7 +50,7 @@ namespace hw.Scanner
             int? IMatch.Match(SourcePosition sourcePosition)
             {
                 var result = Data.Length;
-                return sourcePosition.StartsWith(Data, Type)? (int?)result : null;
+                return sourcePosition.StartsWith(Data, Type)? result : null;
             }
         }
 
@@ -87,7 +87,7 @@ namespace hw.Scanner
             static IEqualityComparer<char> UpperInvariant => new UpperInvariantComparer();
 
             int? IMatch.Match(SourcePosition sourcePosition)
-                => Data.Contains(sourcePosition.Current, Comparer)? (int?)1 : null;
+                => Data.Contains(sourcePosition.Current, Comparer)? 1 : null;
         }
 
         sealed class ElseMatch
@@ -125,9 +125,9 @@ namespace hw.Scanner
 
             public Repeater(IMatch data, int minCount, int? maxCount)
             {
-                Tracer.Assert(!(data is Match));
-                Tracer.Assert(minCount >= 0);
-                Tracer.Assert(maxCount == null || maxCount >= minCount);
+                (!(data is Match)).Assert();
+                (minCount >= 0).Assert();
+                (maxCount == null || maxCount >= minCount).Assert();
                 Data = data;
                 MinCount = minCount;
                 MaxCount = maxCount;
@@ -145,7 +145,7 @@ namespace hw.Scanner
 
                     var length = Data.Match(current);
                     if(length == null)
-                        return count < MinCount? null : (int?)result;
+                        return count < MinCount? null : result;
                     if(current.IsEnd)
                         return null;
 

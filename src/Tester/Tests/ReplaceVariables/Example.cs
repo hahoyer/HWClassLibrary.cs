@@ -52,8 +52,7 @@ namespace hw.Tests.ReplaceVariables
             var expectedResult =
                 "i: 04/22/2014 22:57:34 - n: 05/27/2014 22:57:34 - id: 22.04.2014 - in: 42 - asis: $(ImportantNumber) ";
             var result = format.ReplaceVariables(myData).ReplaceProtected();
-            Tracer.Assert(result == expectedResult, 
-                () => "\n--Expected--\n" + expectedResult + "|----\n--Found--\n" + result + "|----\n");
+            (result == expectedResult).Assert(() => "\n--Expected--\n" + expectedResult + "|----\n--Found--\n" + result + "|----\n");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace hw.Parser
     {
         protected sealed override IParserTokenType<TSourcePartTarget> GetParserTokenType<TSourcePartTarget>(string id)
         {
-            Tracer.Assert(typeof(TSourcePart) == typeof(TSourcePartTarget));
+            (typeof(TSourcePart) == typeof(TSourcePartTarget)).Assert();
             return (IParserTokenType<TSourcePartTarget>)GetParserTokenType(id);
         }
 

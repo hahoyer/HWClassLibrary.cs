@@ -19,7 +19,7 @@ namespace hw.Tests.CompilerTool.Util
                 var target = PrioTable.Left(PrioTable.Any);
                 target += PrioTable.BracketParallels
                     (LeftBrackets, RightBrackets);
-                Tracer.FlaggedLine("\n" + target.Dump() + "\n");
+                ("\n" + target.Dump() + "\n").FlaggedLine();
                 target.Title = Tracer.MethodHeader();
                 return target;
             }

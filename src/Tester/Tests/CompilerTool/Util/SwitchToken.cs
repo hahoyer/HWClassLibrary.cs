@@ -26,8 +26,8 @@ namespace hw.Tests.CompilerTool.Util
 
             protected override Syntax Create(Syntax left, IToken token, Syntax right)
             {
-                Tracer.Assert(left == null);
-                Tracer.Assert(right == null);
+                (left == null).Assert();
+                (right == null).Assert();
                 return Content;
             }
         }

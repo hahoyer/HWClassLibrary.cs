@@ -30,11 +30,11 @@ namespace hw.Tests.Helper.Core
         public static void Inline()
         {
             var target = new ClassWithCache();
-            Tracer.Assert(target.Get12Called == 0);
+            (target.Get12Called == 0).Assert();
             var y12 = target.Get12();
-            Tracer.Assert(target.Get12Called == 1);
+            (target.Get12Called == 1).Assert();
             var y12Again = target.Get12();
-            Tracer.Assert(target.Get12Called == 1);
+            (target.Get12Called == 1).Assert();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace hw.Parser
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     [MeansImplicitUse]
     [PublicAPI]
-    sealed class BelongsToAttribute : Attribute
+    public sealed class BelongsToAttribute : Attribute
     {
         public Type TokenFactory { get; }
 

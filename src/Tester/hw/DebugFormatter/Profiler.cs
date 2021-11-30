@@ -31,7 +31,7 @@ namespace hw.DebugFormatter
             [PublicAPI]
             public void End()
             {
-                Tracer.Assert(Profiler.Current == ProfileItem);
+                (Profiler.Current == ProfileItem).Assert();
                 Profiler.AfterAction();
             }
 
@@ -47,7 +47,7 @@ namespace hw.DebugFormatter
 
             void Start(string flag, int stackFrameDepth)
             {
-                _instance.BeforeAction(flag, stackFrameDepth + 1);
+                Instance.BeforeAction(flag, stackFrameDepth + 1);
                 ProfileItem = Profiler.Current;
             }
         }
@@ -104,7 +104,7 @@ namespace hw.DebugFormatter
             }
         }
 
-        static Profiler _instance = new Profiler();
+        static Profiler Instance = new Profiler();
         ProfileItem Current;
 
         readonly Dictionary<string, ProfileItem> ProfileItems = new Dictionary<string, ProfileItem>();
@@ -130,7 +130,7 @@ namespace hw.DebugFormatter
         public static void Frame(Action action, int? count = null, double hidden = 0.1)
         {
             Reset();
-            _instance.InternalMeasure(action, "", 1);
+            Instance.InternalMeasure(action, "", 1);
             Format(count, hidden).FlaggedLine();
         }
 
@@ -144,7 +144,7 @@ namespace hw.DebugFormatter
         public static TResult Frame<TResult>(Func<TResult> function, int? count = null, double hidden = 0.1)
         {
             Reset();
-            var result = _instance.InternalMeasure(function, "", 1);
+            var result = Instance.InternalMeasure(function, "", 1);
             Format(count, hidden).FlaggedLine();
             return result;
         }
@@ -154,7 +154,7 @@ namespace hw.DebugFormatter
         /// </summary>
         /// <param name="flag"> </param>
         /// <returns> an item, that represents the measurement.</returns>
-        public static Item Start(string flag = "") => new Item(_instance, flag, 1);
+        public static Item Start(string flag = "") => new Item(Instance, flag, 1);
 
         /// <summary>
         ///     Measures the specified expression.
@@ -164,26 +164,26 @@ namespace hw.DebugFormatter
         /// <param name="flag"> A flag that is used in dump. </param>
         /// <returns> the result of the invocation of the specified expression </returns>
         public static T Measure<T>
-            (Func<T> expression, string flag = "") => _instance.InternalMeasure(expression, flag, 1);
+            (Func<T> expression, string flag = "") => Instance.InternalMeasure(expression, flag, 1);
 
         /// <summary>
         ///     Measures the specified action.
         /// </summary>
         /// <param name="action"> The action. </param>
         /// <param name="flag"> A flag that is used in dump. </param>
-        public static void Measure(Action action, string flag = "") => _instance.InternalMeasure(action, flag, 1);
+        public static void Measure(Action action, string flag = "") => Instance.InternalMeasure(action, flag, 1);
 
         /// <summary>
         ///     Resets the profiler data.
         /// </summary>
         public static void Reset()
         {
-            lock(_instance)
+            lock(Instance)
             {
-                _instance.InternalReset();
+                Instance.InternalReset();
             }
 
-            _instance = new Profiler();
+            Instance = new Profiler();
         }
 
         /// <summary>
@@ -210,9 +210,9 @@ namespace hw.DebugFormatter
         /// </remarks>
         public static string Format(int? count = null, double hidden = 0.1)
         {
-            lock(_instance)
+            lock(Instance)
             {
-                return new Dumper(_instance, count, hidden).Format();
+                return new Dumper(Instance, count, hidden).Format();
             }
         }
 
@@ -268,7 +268,7 @@ namespace hw.DebugFormatter
         {
             lock(this)
             {
-                Tracer.Assert(Stack.Count == 0);
+                (Stack.Count == 0).Assert();
             }
         }
     }
@@ -291,7 +291,7 @@ namespace hw.DebugFormatter
             CountStart++;
             Duration -= duration;
             if(IsValid)
-                Tracer.Assert(Duration.Ticks >= 0);
+                (Duration.Ticks >= 0).Assert();
         }
 
         public void End(TimeSpan duration)
@@ -299,12 +299,12 @@ namespace hw.DebugFormatter
             CountEnd++;
             Duration += duration;
             if(IsValid)
-                Tracer.Assert(Duration.Ticks >= 0);
+                (Duration.Ticks >= 0).Assert();
         }
 
         public string Format(string tag)
         {
-            Tracer.Assert(IsValid);
+            IsValid.Assert();
             return Position
                    + " #"
                    + tag
@@ -322,7 +322,7 @@ namespace hw.DebugFormatter
             SuspendCount++;
             Duration += start;
             if(IsValid)
-                Tracer.Assert(Duration.Ticks >= 0);
+                (Duration.Ticks >= 0).Assert();
         }
 
         public void Resume(TimeSpan end)
@@ -330,7 +330,7 @@ namespace hw.DebugFormatter
             SuspendCount--;
             Duration -= end;
             if(IsValid)
-                Tracer.Assert(Duration.Ticks >= 0);
+                (Duration.Ticks >= 0).Assert();
         }
     }
 }

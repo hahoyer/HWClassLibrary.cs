@@ -12,9 +12,9 @@ namespace hw.Tests.Helper.Core
         [UnitTest]
         public static void SimpleTypes()
         {
-            Tracer.Assert(typeof(int).PrettyName() == "int");
-            Tracer.Assert(typeof(List<int>).PrettyName() == "List<int>", () => typeof(List<int>).PrettyName());
-            Tracer.Assert(typeof(TestClass).PrettyName() == "Core.TypeNameExtender.TestClass", () => typeof(TestClass).PrettyName());
+            (typeof(int).PrettyName() == "int").Assert();
+            (typeof(List<int>).PrettyName() == "List<int>").Assert(() => typeof(List<int>).PrettyName());
+            (typeof(TestClass).PrettyName() == "Core.TypeNameExtender.TestClass").Assert(() => typeof(TestClass).PrettyName());
         }
 
         class TestClass{}

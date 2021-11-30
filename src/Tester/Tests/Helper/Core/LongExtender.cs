@@ -52,6 +52,6 @@ namespace hw.Tests.Helper.Core
 
         }
 
-        static void InternalTest(long target, string y) { Tracer.Assert(target.Format3Digits() == y, () => target + " != " + y, stackFrameDepth: 1); }
+        static void InternalTest(long target, string y) { (target.Format3Digits() == y).Assert(() => target + " != " + y, stackFrameDepth: 1); }
     }
 }

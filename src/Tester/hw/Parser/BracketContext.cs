@@ -1,6 +1,7 @@
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
@@ -16,24 +17,23 @@ namespace hw.Parser
         BracketContext(int[] data, PrioTable.BracketPairItem[] brackets)
         {
             Data = data;
-            AddCache = new FunctionCache<string, BracketContext>(GetAddCache);
+            AddCache = new(GetAddCache);
             Brackets = brackets;
         }
 
-        internal int Depth => Data.Length;
-
         protected override string GetNodeDump() => Data.Stringify("/");
+
+        internal int Depth => Data.Length;
 
         internal BracketContext Add(string token) => AddCache[token];
 
-        internal bool? IsBracketAndLeftBracket(string token)
+        internal bool? IsLeftBracket(string token)
         {
             var delta = Depth - Add(token).Depth;
-            return delta == 0? (bool?)null : delta < 0;
+            return delta == 0? null : delta < 0;
         }
 
-        internal static BracketContext Instance(PrioTable.BracketPairItem[] brackets)
-            => new BracketContext(new int[0], brackets);
+        internal static BracketContext Instance(PrioTable.BracketPairItem[] brackets) => new(new int[0], brackets);
 
         BracketContext GetAddCache(string token)
         {
@@ -41,16 +41,15 @@ namespace hw.Parser
             if(index == 0)
                 return this;
 
-            var xx = Data
+            var tail = Data
                 .SkipWhile(item => item < 0 && item + index > 0)
                 .ToArray();
 
             if(index <= 0)
-                return new BracketContext
-                    (new[] {index}.Concat(xx).ToArray(), Brackets);
+                return new(new[] { index }.Concat(tail).ToArray(), Brackets);
 
-            if(xx.FirstOrDefault() + index == 0)
-                return new BracketContext(xx.Skip(1).ToArray(), Brackets);
+            if(tail.FirstOrDefault() + index == 0)
+                return new(tail.Skip(1).ToArray(), Brackets);
 
             return this;
         }
