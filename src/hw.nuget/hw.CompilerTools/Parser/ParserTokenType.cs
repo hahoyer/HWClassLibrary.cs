@@ -1,26 +1,36 @@
 using hw.Helper;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
 {
-    public abstract class ParserTokenType<TTreeItem>
-        : ScannerTokenType<TTreeItem>
+    public abstract class ParserTokenType<TSourcePart>
+        : ScannerTokenType<TSourcePart>
             , IUniqueIdProvider
-            , IParserTokenType<TTreeItem>
-        where TTreeItem : class
+            , IParserTokenType<TSourcePart>
+        where TSourcePart : class
     {
-        public abstract string Id { get; }
+        TSourcePart IParserTokenType<TSourcePart>.Create(TSourcePart left, IToken token, TSourcePart right)
+        {
+            var result = Create(left, token, right);
+            if(token is ILinked<TSourcePart> treeLinkedToken)
+                treeLinkedToken.Container = result;
+            return result;
+        }
 
-        TTreeItem IParserTokenType<TTreeItem>.Create(TTreeItem left, IToken token, TTreeItem right)
-            => Create(left, token, right);
-
-        string IParserTokenType<TTreeItem>.PrioTableId => Id;
+        string IParserTokenType<TSourcePart>.PrioTableId => Id;
 
         string IUniqueIdProvider.Value => Id;
+        public abstract string Id { get; }
+        protected abstract TSourcePart Create(TSourcePart left, IToken token, TSourcePart right);
 
         public override string ToString() => base.ToString() + " Id=" + Id.Quote();
-        protected abstract TTreeItem Create(TTreeItem left, IToken token, TTreeItem right);
 
-        protected override IParserTokenType<TTreeItem> GetParserTokenType(string id) => this;
+        protected override IParserTokenType<TSourcePart> GetParserTokenType(string id) => this;
+    }
+
+    interface ILinked<TSourcePart>
+    {
+        TSourcePart Container { get; set; }
     }
 }

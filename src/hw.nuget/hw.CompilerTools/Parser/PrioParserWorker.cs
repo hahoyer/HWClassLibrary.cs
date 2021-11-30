@@ -3,6 +3,7 @@ using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using hw.Scanner;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
@@ -16,12 +17,12 @@ namespace hw.Parser
 
         sealed class PrioParserWorker : DumpableObject
         {
-            Item<TSourcePart> Current;
-
-            TSourcePart Left;
             readonly PrioParser<TSourcePart> Parent;
             readonly Stack<OpenItem<TSourcePart>> Stack;
             readonly int StartLevel;
+            Item<TSourcePart> Current;
+
+            TSourcePart Left;
 
             public PrioParserWorker(PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack)
             {
@@ -49,7 +50,7 @@ namespace hw.Parser
                         TraceBeginPhase("inner loop");
                         Step();
                         TraceEndPhase("inner loop");
-                        Tracer.Assert(!IsBaseLevel);
+                        (!IsBaseLevel).Assert();
                     }
                     while(Left != null);
 
@@ -64,7 +65,7 @@ namespace hw.Parser
                     TraceEndPhase("end phase");
                 }
 
-                Tracer.Assert(IsBaseLevel);
+                IsBaseLevel.Assert();
 
                 if(Current.GetRightDepth() > 0)
                     NotImplementedMethod(sourcePosition);
@@ -106,13 +107,13 @@ namespace hw.Parser
 
                 TraceRelation(relation);
                 if(!canPush)
-                    Tracer.Assert(!relation.IsPush);
+                    (!relation.IsPush).Assert();
 
                 if(relation.IsPull)
                     Left = Stack.Pop().Create(Left);
                 if(relation.IsPush)
                 {
-                    Stack.Push(new OpenItem<TSourcePart>(Left, Current));
+                    Stack.Push(new(Left, Current));
                     Left = null;
                 }
 
@@ -121,19 +122,11 @@ namespace hw.Parser
 
                 Left = Current.Create(Left);
 
-                Tracer.Assert(other != null);
+                (other != null).Assert();
 
-                if(relation.IsMatch)
-                    Current = Item<TSourcePart>.Create
-                    (
-                        new IItem[0],
-                        ((IBracketMatch<TSourcePart>)Current.Type).Value,
-                        Current.Characters.End.Span(0),
-                        other.BracketItem.LeftContext,
-                        Current.GetRightContext().IsBracketAndLeftBracket("")
-                    );
-                else
-                    Current = Current.RecreateWith(newContext: other.BracketItem.LeftContext);
+                Current = relation.IsMatch
+                    ? Current.CreateMatch(other)
+                    : Current.RecreateWith(newContext: other.BracketItem.LeftContext);
 
                 TraceMatchPhase();
             }
@@ -254,7 +247,7 @@ namespace hw.Parser
                         .Stringify("\n");
                 if(isBig)
                     result += "\n...";
-                return "stack: " + stack.Count + " items" + ("\n" + result).Indent();
+                return $"stack: {stack.Count} items{("\n" + result).Indent()}";
             }
 
             void TraceItemLine(string title, Item<TSourcePart> item)
@@ -270,17 +263,16 @@ namespace hw.Parser
 
                 var typeDump = item.Type == null
                     ? "null"
-                    : item.Type.PrioTableId
-                      + " Type = "
-                      + item.Type.GetType().PrettyName();
-                (title + " = " + typeDump + " Depth=" + item.Context.Depth).Log();
+                    : $"{item.Type.PrioTableId} Type = {item.Type.GetType().PrettyName()}";
+                $"{title} = {typeDump} Depth={item.Context.Depth}".Log();
             }
 
             static string TreeDump(OpenItem<TSourcePart> value)
-                => Extension.TreeDump(value.Left) + " "
-                                                  + (value.Type == null
-                                                      ? "null"
-                                                      : value.Type.PrioTableId + " NextDepth=" + value.NextDepth);
+                => Extension.TreeDump(value.Left) +
+                    " " +
+                    (value.Type == null
+                        ? "null"
+                        : $"{value.Type.PrioTableId} NextDepth={value.NextDepth}");
         }
     }
 }
