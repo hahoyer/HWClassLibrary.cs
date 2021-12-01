@@ -24,7 +24,7 @@ namespace hw.DebugFormatter
             : this(NextObjectId++) { }
 
         [PublicAPI]
-        protected DumpableObject(int? nextObjectId) => ObjectIdValue = nextObjectId;
+        protected DumpableObject(int? nextObjectId) => ObjectIdValue = nextObjectId ?? NextObjectId++;
 
         [DisableDump]
         [PublicAPI]
