@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
+using hw.Parser;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Scanner
@@ -83,7 +85,7 @@ namespace hw.Scanner
                     var t = GetNextToken();
                     yield return t;
 
-                    if(t.ScannerTokenType.ParserTokenFactory != null)
+                    if(t.ScannerTokenType is ScannerTokenType)
                         yield break;
                 }
             }

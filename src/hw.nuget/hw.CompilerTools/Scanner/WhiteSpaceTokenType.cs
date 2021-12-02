@@ -12,7 +12,7 @@ namespace hw.Scanner
         public readonly string Id;
         public WhiteSpaceTokenType(string id) => Id = id;
         string IScannerTokenType.Id => Id;
-        public IParserTokenFactory ParserTokenFactory { get; }
+        IParserTokenFactory IScannerTokenType.ParserTokenFactory => null;
         protected override string GetNodeDump() => Id;
     }
 }
