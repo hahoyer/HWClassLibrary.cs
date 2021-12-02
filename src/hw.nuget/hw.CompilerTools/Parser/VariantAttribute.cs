@@ -2,10 +2,15 @@ using System;
 using System.Linq;
 using hw.Helper;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
 {
+    /// <summary>
+    /// Use this for classes with <see cref="BelongsToAttribute"/> to define variants of token types
+    /// For each variant there must be a constructor that takes the arguments of the variant attribute as parameters.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     [MeansImplicitUse]
     [PublicAPI]
