@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using hw.Scanner;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
@@ -24,8 +25,8 @@ namespace hw.Parser
             PrepareStack = prepareStack ?? (stack => null);
         }
 
-        IParserTokenType<TTreeItem> ISubParser<TTreeItem>.Execute
-            (SourcePosition sourcePosition, Stack<OpenItem<TTreeItem>> stack) =>
-            Converter(Parser.Execute(sourcePosition, PrepareStack(stack)));
+        IParserTokenType<TTreeItem>
+            ISubParser<TTreeItem>.Execute(SourcePosition sourcePosition, Stack<OpenItem<TTreeItem>> stack)
+            => Converter(Parser.Execute(sourcePosition, PrepareStack(stack)));
     }
 }

@@ -22,7 +22,7 @@ namespace hw.Parser
             BracketItem = current;
         }
 
-        internal int NextDepth => BracketItem.GetRightDepth();
+        internal int NextDepth => BracketContext.GetRightDepth(BracketItem);
 
         protected override string GetNodeDump()
             => Tracer.Dump(Left) + " " + Type.GetType().PrettyName();

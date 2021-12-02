@@ -17,15 +17,19 @@ namespace hw.Parser
 
         sealed class PrioParserWorker : DumpableObject
         {
-            readonly PrioParser<TSourcePart> Parent;
-            readonly Stack<OpenItem<TSourcePart>> Stack;
-            readonly int StartLevel;
-            Item<TSourcePart> Current;
+            SourcePosition SourcePosition{ get; }
+            int Start{ get; }
+            PrioParser<TSourcePart> Parent { get; }
+            Stack<OpenItem<TSourcePart>> Stack { get; }
+            int StartLevel { get; }
+            bool IsSubParser { get; }
+            Item<TSourcePart> Current { get; set; }
+            TSourcePart Left { get; set; }
 
-            TSourcePart Left;
-
-            public PrioParserWorker(PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack)
+            public PrioParserWorker
+                (PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack, bool isSubParser)
             {
+                IsSubParser = isSubParser;
                 Parent = parent;
                 Stack = stack ?? new Stack<OpenItem<TSourcePart>>();
                 StartLevel = Stack.Count;
@@ -33,16 +37,30 @@ namespace hw.Parser
                     (Parent.PrioTable.Title ?? "").Log();
             }
 
+            public PrioParserWorker
+                (PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack, SourcePosition sourcePosition, bool isSubParser)
+            {
+                SourcePosition = sourcePosition;
+                IsSubParser = isSubParser;
+                (IsSubParser || SourcePosition.Position == 0).Assert();
+                Parent = parent;
+                Stack = stack ?? new Stack<OpenItem<TSourcePart>>();
+                StartLevel = Stack.Count;
+                if(Trace)
+                    (Parent.PrioTable.Title ?? "").Log();
+
+            }
+
             bool Trace => Parent.Trace;
 
             bool IsBaseLevel => Stack.Count == StartLevel;
 
-            public TSourcePart Execute(SourcePosition sourcePosition)
+            public TSourcePart Execute()
             {
-                Current = CreateStartItem(sourcePosition, Parent.PrioTable);
-                TraceNewItem(sourcePosition);
+                Current = CreateStartItem(SourcePosition);
+                TraceNewItem(SourcePosition);
 
-                while(Current.GetRightDepth() > 0)
+                while(BracketContext.GetRightDepth(Current) > 0)
                 {
                     Left = null;
                     do
@@ -54,8 +72,8 @@ namespace hw.Parser
                     }
                     while(Left != null);
 
-                    Current = ReadNextToken(sourcePosition, Current.GetRightContext());
-                    TraceNewItem(sourcePosition);
+                    Current = ReadNextToken(SourcePosition, BracketContext.GetRightContext(Current));
+                    TraceNewItem(SourcePosition);
                 }
 
                 while(!IsBaseLevel)
@@ -67,26 +85,29 @@ namespace hw.Parser
 
                 IsBaseLevel.Assert();
 
-                if(Current.GetRightDepth() > 0)
-                    NotImplementedMethod(sourcePosition);
+                if(BracketContext.GetRightDepth(Current) > 0)
+                    NotImplementedMethod(SourcePosition);
 
                 return Current.Create(Left);
             }
 
-            Item<TSourcePart> CreateStartItem(SourcePosition sourcePosition, PrioTable prioTable)
-                =>
-                    sourcePosition.Position == 0
-                        ? Item<TSourcePart>.CreateStart
-                            (sourcePosition.Source, prioTable, Parent.StartParserType)
-                        : ReadNextToken(sourcePosition, prioTable.BracketContext);
+            Item<TSourcePart> CreateStartItem(SourcePosition sourcePosition)
+            {
+                var bracketContext = Parent.PrioTable.BracketContext;
+                if(IsSubParser)
+                    return ReadNextToken(sourcePosition, bracketContext);
+
+                (sourcePosition.Position == 0).Assert();
+                return Item<TSourcePart>.CreateStart(sourcePosition.Source, Parent.StartParserType, bracketContext);
+            }
 
             Item<TSourcePart> ReadNextToken(SourcePosition sourcePosition, BracketContext context)
             {
                 TraceNextToken(sourcePosition);
-                var result = Item<TSourcePart>.Create
-                    (Parent.Scanner.GetNextTokenGroup(sourcePosition), context);
+                var result = Item<TSourcePart>
+                    .Create(Parent.Scanner.GetNextTokenGroup(sourcePosition), context, IsSubParser);
 
-                var nextParser = (result.Type as ISubParserProvider)?.NextParser;
+                var nextParser = (result?.Type as ISubParserProvider)?.NextParser;
                 if(nextParser == null)
                     return result;
 
@@ -120,7 +141,8 @@ namespace hw.Parser
                 if(!relation.IsBracket)
                     return;
 
-                Left = Current.Create(Left);
+                if(relation.IsMatch)
+                    Left = Current.Create(Left);
 
                 (other != null).Assert();
 
