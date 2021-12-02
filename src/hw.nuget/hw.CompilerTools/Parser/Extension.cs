@@ -39,33 +39,11 @@ namespace hw.Parser
         public static SourcePart SourcePart(this IEnumerable<IItem> items)
             => items.Select(item => item.SourcePart).Aggregate();
 
-        public static int BracketBalance(this IToken token)
-        {
-            switch(token.IsBracketAndLeftBracket)
-            {
-                case true:
-                    return -1;
-                case false:
-                    return 1;
-                default:
-                    return 0;
-            }
-        }
-
         internal static string TreeDump<TTreeItem>(TTreeItem value)
             where TTreeItem : class
         {
             var t = value as IBinaryTreeItem;
             return t == null? Tracer.Dump(value) : TreeDump(t);
         }
-
-        internal static BracketContext GetRightContext(this PrioTable.ITargetItem item)
-            => item.LeftContext.Add(item.Token);
-
-        internal static int GetRightDepth(this PrioTable.ITargetItem item)
-            => item.GetRightContext().Depth;
-
-        internal static int GetLeftDepth(this PrioTable.ITargetItem item)
-            => item.LeftContext.Depth;
     }
 }
