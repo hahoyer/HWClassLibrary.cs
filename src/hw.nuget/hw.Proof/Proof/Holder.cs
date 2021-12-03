@@ -25,7 +25,7 @@ namespace hw.Proof
             IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>
                 (Definitions.PrioTable, Scanner, null);
             var parsedSyntax =
-                prioParser.Execute(new Source(file) + 0);
+                prioParser.Execute(new Source(file));
             Statement = (ClauseSyntax)parsedSyntax;
         }
 

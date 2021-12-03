@@ -29,12 +29,12 @@ namespace hw.DebugFormatter
 
         static readonly Writer Writer = new Writer();
 
-        [Obsolete("Use FilePosition")]
+        [Obsolete("Use FilePosition", true)]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn(this StackFrame sf, FilePositionTag tag)
             => FilePosition(sf, tag);
 
-        [Obsolete("Use FilePosition")]
+        [Obsolete("Use FilePosition", true)]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn(string fileName, int lineNumber, int columnNumber, FilePositionTag tag)
             => FilePosition(fileName, new TextPart
@@ -45,7 +45,7 @@ namespace hw.DebugFormatter
                 }
             }, tag);
 
-        [Obsolete("Use FilePosition")]
+        [Obsolete("Use FilePosition", true)]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn
         (
@@ -64,7 +64,7 @@ namespace hw.DebugFormatter
                 }
             }, tag);
 
-        [Obsolete("Use FilePosition")]
+        [Obsolete("Use FilePosition", true)]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn
         (
@@ -272,14 +272,14 @@ namespace hw.DebugFormatter
         ///     write a line to debug output
         /// </summary>
         /// <param name="text"> the text </param>
-        [Obsolete("Use Log")]
+        [Obsolete("Use Log", true)]
         public static void Line(string text) => Writer.ThreadSafeWrite(text, true);
 
         /// <summary>
         ///     write a line to debug output
         /// </summary>
         /// <param name="text"> the text </param>
-        [Obsolete("Use LogLinePart")]
+        [Obsolete("Use LogLinePart", true)]
         public static void LinePart(string text) => Writer.ThreadSafeWrite(text, false);
 
         /// <summary>
@@ -527,10 +527,10 @@ namespace hw.DebugFormatter
         public static void IndentStart() => Writer.IndentStart();
         public static void IndentEnd() => Writer.IndentEnd();
 
-        [Obsolete("Use Log")]
+        [Obsolete("Use Log", true)]
         public static void WriteLine(this string value) => Log(value);
 
-        [Obsolete("Use LogLinePart")]
+        [Obsolete("Use LogLinePart", true)]
         public static void WriteLinePart(this string value) => LogLinePart(value);
 
         [IsLoggingFunction]

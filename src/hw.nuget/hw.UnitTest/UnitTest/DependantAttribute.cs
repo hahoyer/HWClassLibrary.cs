@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace hw.UnitTest
 {
     [PublicAPI]
-    [Obsolete("Use DependenceProvider")]
+    [Obsolete("Use DependenceProvider", true)]
     // ReSharper disable once IdentifierTypo
     public abstract class DependantAttribute : DependenceProvider 
     {

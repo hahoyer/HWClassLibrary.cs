@@ -34,7 +34,7 @@ namespace hw.UnitTest
 
 
         [PublicAPI]
-        [Obsolete("Use IsSuccessful")]
+        [Obsolete("Use IsSuccessful", true)]
         // ReSharper disable once IdentifierTypo
         internal bool IsSuccessfull => IsSuccessful;
 
@@ -112,7 +112,7 @@ namespace hw.UnitTest
         ValueCache ValueCache.IContainer.Cache { get; } = new ValueCache();
 
         [PublicAPI]
-        [Obsolete("Use CanBeStarted")]
+        [Obsolete("Use CanBeStarted", true)]
         // ReSharper disable once IdentifierTypo
         public bool IsStartable(Func<Type, bool> isLevel) => CanBeStarted(isLevel);
 

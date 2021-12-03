@@ -17,8 +17,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2014-2020</copyright>
-        <version>21.0</version>
+        <version>21.1</version>
         <releaseNotes>
+            refactor: escalating statements of deprecation
+            21.0
             refactor: Upgrade C#
             20.0.6
             bug: Static test methods are disabled
