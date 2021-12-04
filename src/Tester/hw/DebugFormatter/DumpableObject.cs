@@ -84,7 +84,7 @@ namespace hw.DebugFormatter
             var isStopByObjectIdActive = IsStopByObjectIdActive;
             IsStopByObjectIdActive = true;
             if(ObjectId == objectId)
-                Tracer.ConditionalBreak
+                Tracer.Break
                     ("", () => @"ObjectId==" + ObjectId + "\n" + Dump(), stackFrameDepth + 1);
             IsStopByObjectIdActive = isStopByObjectIdActive;
         }

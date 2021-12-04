@@ -43,6 +43,22 @@ namespace hw.Scanner
             }
         }
 
+        SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
+
+        public override bool Equals(object obj)
+            => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Length;
+                hashCode = (hashCode * 397) ^ Position;
+                hashCode = (hashCode * 397) ^ (Source != null? Source.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+
         [DisableDump]
         public int EndPosition => Position + Length;
 
@@ -63,7 +79,8 @@ namespace hw.Scanner
         [UsedImplicitly]
         string DumpCurrent => Id;
 
-        SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
+        public(TextPosition start, TextPosition end) TextPosition
+            => (Source.GetTextPosition(Position), Source.GetTextPosition(EndPosition));
 
         public SourcePart Overlay(SourcePart other)
         {
@@ -97,10 +114,10 @@ namespace hw.Scanner
 
         public string GetDumpAroundCurrent(int dumpWidth)
             => Source.GetDumpBeforeCurrent(Position, dumpWidth) +
-               "[" +
-               DumpCurrent +
-               "]" +
-               Source.GetDumpAfterCurrent(EndPosition, dumpWidth);
+                "[" +
+                DumpCurrent +
+                "]" +
+                Source.GetDumpAfterCurrent(EndPosition, dumpWidth);
 
         public SourcePart Combine(SourcePart other)
         {
@@ -119,13 +136,13 @@ namespace hw.Scanner
 
         public bool Contains(SourcePosition sourcePosition)
             => Source == sourcePosition.Source &&
-               Position <= sourcePosition.Position &&
-               EndPosition > sourcePosition.Position;
+                Position <= sourcePosition.Position &&
+                EndPosition > sourcePosition.Position;
 
         public bool Contains(SourcePart sourcePart)
             => Source == sourcePart.Source &&
-               Position <= sourcePart.Position &&
-               sourcePart.EndPosition <= EndPosition;
+                Position <= sourcePart.Position &&
+                sourcePart.EndPosition <= EndPosition;
 
         public bool IsMatch(SourcePart sourcePosition)
         {
@@ -159,13 +176,13 @@ namespace hw.Scanner
 
         public static bool operator ==(SourcePart left, SourcePart right)
         {
-            if((object) left == null)
-                return (object) right == null;
-            if((object) right == null)
+            if((object)left == null)
+                return (object)right == null;
+            if((object)right == null)
                 return false;
 
             return left.Start == right.Start &&
-                   left.Length == right.Length;
+                left.Length == right.Length;
         }
 
         static IEnumerable<SourcePart> SaveCombineForSource(IEnumerable<SourcePart> values)
@@ -203,19 +220,5 @@ namespace hw.Scanner
 
         bool Equals(SourcePart other)
             => Length == other.Length && Position == other.Position && Equals(Source, other.Source);
-
-        public override bool Equals(object obj)
-            => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = Length;
-                hashCode = (hashCode * 397) ^ Position;
-                hashCode = (hashCode * 397) ^ (Source != null? Source.GetHashCode() : 0);
-                return hashCode;
-            }
-        }
     }
 }
