@@ -21,8 +21,10 @@
         <dependencies>
             <dependency id="hw.Helper.Core" version="20.0.10" />
         </dependencies>
-        <version>21.2</version>
+        <version>21.2.1</version>
         <releaseNotes>
+            new: helper function
+            21.2
             refactor: escalating statements of deprecation
             21.1
             refactor: upgrade C#
