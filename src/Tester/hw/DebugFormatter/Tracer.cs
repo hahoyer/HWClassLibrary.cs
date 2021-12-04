@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using hw.Helper;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.DebugFormatter
@@ -23,11 +24,11 @@ namespace hw.DebugFormatter
         public const string VisualStudioLineFormat =
             "{fileName}({lineNumber},{columnNumber},{lineNumberEnd},{columnNumberEnd}): {tagText}: ";
 
-        public static readonly Dumper Dumper = new Dumper();
+        public static readonly Dumper Dumper = new();
 
         public static bool IsBreakDisabled;
 
-        static readonly Writer Writer = new Writer();
+        static readonly Writer Writer = new();
 
         [Obsolete("Use FilePosition")]
         // ReSharper disable once IdentifierTypo
@@ -37,9 +38,9 @@ namespace hw.DebugFormatter
         [Obsolete("Use FilePosition")]
         // ReSharper disable once IdentifierTypo
         public static string FilePosn(string fileName, int lineNumber, int columnNumber, FilePositionTag tag)
-            => FilePosition(fileName, new TextPart
+            => FilePosition(fileName, new()
             {
-                Start = new TextPosition
+                Start = new()
                 {
                     LineNumber = lineNumber, ColumnNumber = columnNumber
                 }
@@ -52,13 +53,13 @@ namespace hw.DebugFormatter
             string fileName, int lineNumber, int columnNumber, int lineNumberEnd, int columnNumberEnd
             , FilePositionTag tag
         )
-            => FilePosition(fileName, new TextPart
+            => FilePosition(fileName, new()
             {
-                Start = new TextPosition
+                Start = new()
                 {
                     LineNumber = lineNumber, ColumnNumber = columnNumber
                 }
-                , End = new TextPosition
+                , End = new()
                 {
                     LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
                 }
@@ -75,13 +76,13 @@ namespace hw.DebugFormatter
             int columnNumberEnd,
             string tagText
         )
-            => FilePosition(fileName, new TextPart
+            => FilePosition(fileName, new()
                 {
-                    Start = new TextPosition
+                    Start = new()
                     {
                         LineNumber = lineNumber, ColumnNumber = columnNumber
                     }
-                    , End = new TextPosition
+                    , End = new()
                     {
                         LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
                     }
@@ -102,9 +103,9 @@ namespace hw.DebugFormatter
             return FilePosition
             (
                 stackFrame.GetFileName(),
-                new TextPart
+                new()
                 {
-                    Start = new TextPosition
+                    Start = new()
                     {
                         LineNumber = stackFrame.GetFileLineNumber() - 1, ColumnNumber = stackFrame.GetFileColumnNumber()
                     }
@@ -125,9 +126,9 @@ namespace hw.DebugFormatter
             FilePositionTag tag
         )
             => FilePosition(fileName
-                , new TextPart
+                , new()
                 {
-                    Start = new TextPosition
+                    Start = new()
                     {
                         LineNumber = lineNumber, ColumnNumber = columnNumber
                     }
@@ -147,13 +148,13 @@ namespace hw.DebugFormatter
             FilePositionTag tag
         )
             => FilePosition(fileName
-                , new TextPart
+                , new()
                 {
-                    Start = new TextPosition
+                    Start = new()
                     {
                         LineNumber = lineNumber, ColumnNumber = columnNumber
                     }
-                    , End = new TextPosition
+                    , End = new()
                     {
                         LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
                     }
@@ -173,10 +174,10 @@ namespace hw.DebugFormatter
             string tagText
         )
             => FilePosition(fileName
-                , new TextPart
+                , new()
                 {
-                    Start = new TextPosition {LineNumber = lineNumber, ColumnNumber = columnNumber}
-                    , End = new TextPosition {LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd}
+                    Start = new() { LineNumber = lineNumber, ColumnNumber = columnNumber }
+                    , End = new() { LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd }
                 }
                 , tagText);
 
@@ -185,7 +186,7 @@ namespace hw.DebugFormatter
 
         public static string FilePosition(string fileName, TextPart textPart, string tagText)
         {
-            var start = textPart?.Start ?? new TextPosition {LineNumber = 1, ColumnNumber = 1};
+            var start = textPart?.Start ?? new TextPosition { LineNumber = 1, ColumnNumber = 1 };
             var end = textPart?.End ?? start;
             return VisualStudioLineFormat
                 .Replace("{fileName}", fileName)
@@ -329,6 +330,7 @@ namespace hw.DebugFormatter
         /// <param name="target"> the object to dump </param>
         /// <returns> </returns>
         public static string Dump(object target) => Dumper.Dump(target);
+
         public static string LogDump(this object target) => Dumper.Dump(target);
 
         /// <summary>
@@ -346,7 +348,7 @@ namespace hw.DebugFormatter
         /// <returns>A string according to pattern $name$ = $value$</returns>
         [DebuggerHidden]
         public static string DumpValue(this string name, object value)
-            => DumpData("", new[] {name, value}, 1);
+            => DumpData("", new[] { name, value }, 1);
 
         /// <summary>
         ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
@@ -369,10 +371,10 @@ namespace hw.DebugFormatter
         {
             var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return FilePosition
-                       (stackFrame, FilePositionTag.Debug) +
-                   DumpMethod(stackFrame.GetMethod(), true) +
-                   text +
-                   DumpMethodWithData(null, data).Indent();
+                    (stackFrame, FilePositionTag.Debug) +
+                DumpMethod(stackFrame.GetMethod(), true) +
+                text +
+                DumpMethodWithData(null, data).Indent();
         }
 
         public static string IsSetTo(this string name, object value) => name + "=" + Dump(value);
@@ -386,7 +388,7 @@ namespace hw.DebugFormatter
         /// <returns> </returns>
         [DebuggerHidden]
         [IsLoggingFunction]
-        public static void ConditionalBreak(string cond, Func<string> getText = null, int stackFrameDepth = 0)
+        internal static void Break(string cond, Func<string> getText = null, int stackFrameDepth = 0)
         {
             var result = "Conditional break: " + cond + "\nData: " + (getText == null? "" : getText());
             FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
@@ -402,10 +404,10 @@ namespace hw.DebugFormatter
         /// <param name="getText"> The text. </param>
         /// <param name="stackFrameDepth"> The stack frame depth. </param>
         [DebuggerHidden]
-        public static void ConditionalBreak(bool b, Func<string> getText = null, int stackFrameDepth = 0)
+        public static void ConditionalBreak(this bool b, Func<string> getText = null, int stackFrameDepth = 0)
         {
             if(b)
-                ConditionalBreak("", getText, stackFrameDepth + 1);
+                Break("", getText, stackFrameDepth + 1);
         }
 
         /// <summary>
@@ -482,7 +484,7 @@ namespace hw.DebugFormatter
         [ContractAnnotation("b: null => halt")]
         public static void AssertIsNotNull(this object b, Func<string> getText = null, int stackFrameDepth = 0)
         {
-            if(b!= null)
+            if(b != null)
                 return;
             AssertionFailed("", getText, stackFrameDepth + 1);
         }
@@ -499,7 +501,7 @@ namespace hw.DebugFormatter
         [ContractAnnotation("b: notnull => halt")]
         public static void AssertIsNull(this object b, Func<string> getText = null, int stackFrameDepth = 0)
         {
-            if(b== null)
+            if(b == null)
                 return;
             AssertionFailed("", getText, stackFrameDepth + 1);
         }
@@ -544,10 +546,10 @@ namespace hw.DebugFormatter
         {
             var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
             return FilePosition
-                       (stackFrame, FilePositionTag.Debug) +
-                   DumpMethod(stackFrame.GetMethod(), true) +
-                   text +
-                   DumpMethodWithData(stackFrame.GetMethod(), thisObject, parameter).Indent();
+                    (stackFrame, FilePositionTag.Debug) +
+                DumpMethod(stackFrame.GetMethod(), true) +
+                text +
+                DumpMethodWithData(stackFrame.GetMethod(), thisObject, parameter).Indent();
         }
 
         static string DumpMethodWithData(MethodBase methodBase, object target, object[] parameters)
