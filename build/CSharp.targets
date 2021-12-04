@@ -14,17 +14,15 @@
   <!-- CSharp specific settings -->
 
   <PropertyGroup>
-    <LangVersion>preview</LangVersion>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
-    <NoWarn>660;661</NoWarn>
-    <RestorePackages>true</RestorePackages>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+      <LangVersion>default</LangVersion>
+      <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+      <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+      <AppDesignerFolder>Properties</AppDesignerFolder>
+      <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
+      <Prefer32Bit>false</Prefer32Bit>
+      <ErrorReport>prompt</ErrorReport>
+      <WarningLevel>4</WarningLevel>
+      <NoWarn>649;660;661</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
