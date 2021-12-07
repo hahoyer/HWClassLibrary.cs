@@ -18,8 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2021</copyright>
 
-        <version>21.1</version>
+        <version>21.1.1</version>
         <releaseNotes>
+            refactor: warnings fixed
+            21.1
             refactor: escalating statements of deprecation
             21.0.3
             bugfix: Always set ObjectId odf DumpableObject

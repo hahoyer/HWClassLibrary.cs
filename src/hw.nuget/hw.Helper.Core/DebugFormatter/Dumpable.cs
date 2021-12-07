@@ -57,7 +57,14 @@ namespace hw.DebugFormatter
         public string d => DebuggerDumpString;
 
         static bool IsMethodDumpTraceActive
-            => !IsMethodDumpTraceInhibited ?? Debugger.IsAttached && MethodDumpTraceSwitches.Peek().Trace;
+        {
+            get
+            {
+                if(IsMethodDumpTraceInhibited == null)
+                    return Debugger.IsAttached && MethodDumpTraceSwitches.Peek().Trace;
+                return !IsMethodDumpTraceInhibited.Value;
+            }
+        }
 
         /// <summary>
         ///     Method dump with break,

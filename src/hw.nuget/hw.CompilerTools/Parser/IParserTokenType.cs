@@ -1,4 +1,5 @@
-﻿namespace hw.Parser
+﻿// ReSharper disable CheckNamespace
+namespace hw.Parser
 {
     /// <summary>
     /// Interface to define token types for parser. 

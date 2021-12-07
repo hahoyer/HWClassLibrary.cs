@@ -46,6 +46,12 @@ namespace hw.Parser
 
         BracketContext Add(string token) => AddCache[token];
 
+        internal bool? IsLeftBracket(string token)
+        {
+            var delta = Depth - Add(token).Depth;
+            return delta == 0? null : delta < 0;
+        }
+
         BracketContext GetAddCache(string token)
         {
             var index = GetContextIndex(token);

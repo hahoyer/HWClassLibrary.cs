@@ -1,4 +1,5 @@
-﻿namespace hw.Scanner
+﻿// ReSharper disable CheckNamespace
+namespace hw.Scanner
 {
     public interface ISourceProvider
     {

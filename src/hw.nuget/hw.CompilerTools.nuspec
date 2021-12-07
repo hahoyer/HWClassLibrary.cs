@@ -21,8 +21,10 @@
         <dependencies>
             <dependency id="hw.Helper.Core" version="20.0.10" />
         </dependencies>
-        <version>21.2.1</version>
+        <version>21.2.2</version>
         <releaseNotes>
+            Bugfix: reintroducing BracketBalance
+            21.2.1
             new: helper function
             21.2
             refactor: escalating statements of deprecation

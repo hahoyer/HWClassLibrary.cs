@@ -39,6 +39,19 @@ namespace hw.Parser
         public static SourcePart SourcePart(this IEnumerable<IItem> items)
             => items.Select(item => item.SourcePart).Aggregate();
 
+        public static int BracketBalance(this IToken token)
+        {
+            switch(token.IsBracketAndLeftBracket)
+            {
+                case true:
+                    return -1;
+                case false:
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+
         internal static string TreeDump<TTreeItem>(TTreeItem value)
             where TTreeItem : class
         {

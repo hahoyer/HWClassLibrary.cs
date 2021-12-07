@@ -21,6 +21,13 @@ namespace hw.Parser
         /// </summary>
         [DisableDump]
         SourcePart Characters { get; }
+
+        /// <summary>
+        /// Will be null if it is not bracket, true for left bracket and false for right bracket
+        /// </summary>
+        [DisableDump]
+        bool? IsBracketAndLeftBracket { get; }
+
     }
 
     public static class TokenExtension
