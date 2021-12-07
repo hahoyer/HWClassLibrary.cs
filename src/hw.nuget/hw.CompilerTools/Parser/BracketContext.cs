@@ -65,6 +65,7 @@ namespace hw.Parser
             if(index < 0)
                 return new(new[] { index }.Concat(tail).ToArray(), Brackets);
 
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             (index > 0).Assert();
 
             if(tail.FirstOrDefault() + index == 0)

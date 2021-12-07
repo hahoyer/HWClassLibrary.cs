@@ -18,24 +18,12 @@ namespace hw.Parser
         sealed class PrioParserWorker : DumpableObject
         {
             SourcePosition SourcePosition{ get; }
-            int Start{ get; }
             PrioParser<TSourcePart> Parent { get; }
             Stack<OpenItem<TSourcePart>> Stack { get; }
             int StartLevel { get; }
             bool IsSubParser { get; }
             Item<TSourcePart> Current { get; set; }
             TSourcePart Left { get; set; }
-
-            public PrioParserWorker
-                (PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack, bool isSubParser)
-            {
-                IsSubParser = isSubParser;
-                Parent = parent;
-                Stack = stack ?? new Stack<OpenItem<TSourcePart>>();
-                StartLevel = Stack.Count;
-                if(Trace)
-                    (Parent.PrioTable.Title ?? "").Log();
-            }
 
             public PrioParserWorker
                 (PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack, SourcePosition sourcePosition, bool isSubParser)

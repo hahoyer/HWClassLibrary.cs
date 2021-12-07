@@ -23,7 +23,8 @@
         </dependencies>
         <version>21.2.2</version>
         <releaseNotes>
-            Bugfix: reintroducing BracketBalance
+            bugfix: reintroducing BracketBalance
+            refactor: warnings fixed
             21.2.1
             new: helper function
             21.2
