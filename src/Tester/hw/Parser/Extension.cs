@@ -58,14 +58,5 @@ namespace hw.Parser
             var t = value as IBinaryTreeItem;
             return t == null? Tracer.Dump(value) : TreeDump(t);
         }
-
-        internal static BracketContext GetRightContext(this PrioTable.ITargetItem item)
-            => item.LeftContext.Add(item.Token);
-
-        internal static int GetRightDepth(this PrioTable.ITargetItem item)
-            => item.GetRightContext().Depth;
-
-        internal static int GetLeftDepth(this PrioTable.ITargetItem item)
-            => item.LeftContext.Depth;
     }
 }

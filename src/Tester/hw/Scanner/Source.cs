@@ -38,7 +38,7 @@ namespace hw.Scanner
         public bool IsEnd(int position) => Length <= position;
         public string SubString(int start, int length) => Data.Substring(start, length);
 
-        [Obsolete("Use FilePosition")]
+        [Obsolete("Use FilePosition", true)]
         // ReSharper disable once IdentifierTypo
         public string FilePosn(int position, int positionEnd, string flagText, string tag = null)
             => Tracer.FilePosition

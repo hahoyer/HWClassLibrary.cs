@@ -26,7 +26,7 @@ namespace hw.Tests.CompilerTool
             var source = new Source(text);
             MainTokenFactory.Parser.Trace = trace;
             NestedTokenFactory.Parser.Trace = trace;
-            var result = MainTokenFactory.Parser.Execute(source + 0);
+            var result = MainTokenFactory.Parser.Execute(source);
             MainTokenFactory.Parser.Trace = false;
             NestedTokenFactory.Parser.Trace = false;
             return result;

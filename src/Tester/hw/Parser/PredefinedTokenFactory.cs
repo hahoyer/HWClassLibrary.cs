@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.Helper;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
@@ -10,11 +11,9 @@ namespace hw.Parser
     public abstract class PredefinedTokenFactory<TSourcePart> : ScannerTokenType<TSourcePart>
         where TSourcePart : class
     {
-        readonly ValueCache<FunctionCache<string, IParserTokenType<TSourcePart>>>
-            PredefinedTokenClassesCache;
+        readonly ValueCache<FunctionCache<string, IParserTokenType<TSourcePart>>> PredefinedTokenClassesCache;
 
-        protected PredefinedTokenFactory() => PredefinedTokenClassesCache =
-            new ValueCache<FunctionCache<string, IParserTokenType<TSourcePart>>>(GetDictionary);
+        protected PredefinedTokenFactory() => PredefinedTokenClassesCache = new(GetDictionary);
 
         protected sealed override IParserTokenType<TSourcePart> GetParserTokenType(string id)
         {
@@ -37,8 +36,8 @@ namespace hw.Parser
         protected abstract IParserTokenType<TSourcePart> GetTokenClass(string name);
 
         FunctionCache<string, IParserTokenType<TSourcePart>> GetDictionary()
-            => new FunctionCache<string, IParserTokenType<TSourcePart>>
-            (
+            => new
+           (
                 GetPredefinedTokenClasses().ToDictionary(item => GetTokenClassKeyFromToken(item.PrioTableId)),
                 GetTokenClass
             );

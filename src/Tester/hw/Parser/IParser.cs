@@ -10,7 +10,8 @@ namespace hw.Parser
         where TSourcePart : class
     {
         bool Trace { get; set; }
-        TSourcePart Execute(SourcePosition start, Stack<OpenItem<TSourcePart>> stack = null);
+        TSourcePart Execute(Source source );
+        TSourcePart Execute(SourcePosition source, Stack<OpenItem<TSourcePart>> stack);
     }
 
     public interface ISubParser<TSourcePart>

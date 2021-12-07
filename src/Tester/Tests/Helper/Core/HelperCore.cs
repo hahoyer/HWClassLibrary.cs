@@ -3,6 +3,7 @@ using hw.DebugFormatter;
 using hw.Helper;
 using hw.UnitTest;
 // ReSharper disable IdentifierTypo
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.Helper.Core
 {

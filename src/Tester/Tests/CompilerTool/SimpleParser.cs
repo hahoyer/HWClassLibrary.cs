@@ -3,6 +3,7 @@ using hw.DebugFormatter;
 using hw.UnitTest;
 using NUnit.Framework;
 // ReSharper disable UnusedVariable
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool
 {

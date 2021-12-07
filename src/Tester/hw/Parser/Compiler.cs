@@ -5,6 +5,7 @@ using hw.DebugFormatter;
 using hw.Helper;
 using hw.Scanner;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser
@@ -51,15 +52,12 @@ namespace hw.Parser
             public void Add<T>(T value) => Parent.Dictionary[Tag].Add(value, this);
         }
 
-        sealed class ComponentData : DumpableObject
+        sealed class ComponentData : DumpableObject, ValueCache.IContainer
         {
             static ComponentData() => Tracer.Dumper.Configuration.Handlers.Add(typeof(Delegate), (type, o) => "?");
 
             readonly IDictionary<Type, object> Components =
                 new Dictionary<Type, object>();
-
-            readonly ValueCache<IParser<TSourcePart>> ParserCache;
-            readonly ValueCache<ISubParser<TSourcePart>> SubParserCache;
 
             internal ComponentData
             (
@@ -72,17 +70,17 @@ namespace hw.Parser
                 Add(prioTable, component);
                 Add(tokenFactory, component);
                 Add(converter, component);
-                ParserCache = new ValueCache<IParser<TSourcePart>>(CreateParser);
-                SubParserCache = new ValueCache<ISubParser<TSourcePart>>(CreateSubParser);
             }
+
+            ValueCache ValueCache.IContainer.Cache { get; } = new();
 
             public string PrettyDump
                 => Components
                     .Select(p => PrettyDumpPair(p.Key, p.Value))
                     .Stringify("\n");
 
-            internal IParser<TSourcePart> Parser => ParserCache.Value;
-            internal ISubParser<TSourcePart> SubParser => SubParserCache.Value;
+            internal IParser<TSourcePart> Parser => this.CachedValue(CreateParser);
+            internal ISubParser<TSourcePart> SubParser => this.CachedValue(CreateSubParser);
 
             Func<TSourcePart, IParserTokenType<TSourcePart>> Converter =>
                 Get<Func<TSourcePart, IParserTokenType<TSourcePart>>>();
@@ -98,8 +96,7 @@ namespace hw.Parser
                 Component t
             )
                 =>
-                    new ComponentData
-                        (prioTable ?? PrioTable, tokenFactory ?? TokenFactory, converter ?? Converter, t);
+                    new(prioTable ?? PrioTable, tokenFactory ?? TokenFactory, converter ?? Converter, t);
 
             internal T Get<T>() => (T)Components[typeof(T)];
 
@@ -140,7 +137,7 @@ namespace hw.Parser
         readonly IDictionary<object, ComponentData> Dictionary =
             new Dictionary<object, ComponentData>();
 
-        public Component this[object tag] => new Component(this, tag);
+        public Component this[object tag] => new(this, tag);
 
         public string PrettyDump
             => Dictionary
@@ -157,7 +154,7 @@ namespace hw.Parser
             => Dictionary[tag] =
                 Dictionary.TryGetValue(tag, out var componentData)
                     ? componentData.ReCreate(prioTable, tokenFactory, converter, this[tag])
-                    : new ComponentData(prioTable, tokenFactory, converter, this[tag]);
+                    : new(prioTable, tokenFactory, converter, this[tag]);
 
         static string PrettyDumpPair(object key, ComponentData value) => key + "=" + ("\n" + value.PrettyDump).Indent();
     }

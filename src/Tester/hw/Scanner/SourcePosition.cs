@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using hw.DebugFormatter;
+using hw.Helper;
 using JetBrains.Annotations;
 using SourcePosn = hw.Scanner.SourcePosition;
 
@@ -8,11 +9,6 @@ using SourcePosn = hw.Scanner.SourcePosition;
 
 namespace hw.Scanner
 {
-    [Obsolete("Use SourcePosition or using SourcePosn = hw.Scanner.SourcePosition;", true)]
-    [PublicAPI]
-    // ReSharper disable once IdentifierTypo
-    public sealed class SourcePosn { }
-
     /// <summary>
     ///     Source and position for compilation process
     /// </summary>
@@ -61,6 +57,8 @@ namespace hw.Scanner
         string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
 
         public SourcePosition Clone => new SourcePosition(Source, Position);
+
+        public TextPosition TextPosition => Source.GetTextPosition(Position);
 
         public int LineIndex => Source.LineIndex(Position);
         public int ColumnIndex => Source.ColumnIndex(Position);
@@ -120,7 +118,7 @@ namespace hw.Scanner
         /// <returns></returns>
         public string SubString(int start, int length) => Source.SubString(Position + start, length);
 
-        [Obsolete("Use FilePosition")]
+        [Obsolete("Use FilePosition", true)]
         // ReSharper disable once IdentifierTypo
         public string FilePosn(string flagText) => Source.FilePosition(Position, Position, flagText);
 

@@ -24,7 +24,7 @@ namespace hw.DebugFormatter
             : this(NextObjectId++) { }
 
         [PublicAPI]
-        protected DumpableObject(int? nextObjectId) => ObjectIdValue = nextObjectId;
+        protected DumpableObject(int? nextObjectId) => ObjectIdValue = nextObjectId ?? NextObjectId++;
 
         [DisableDump]
         [PublicAPI]
@@ -84,7 +84,7 @@ namespace hw.DebugFormatter
             var isStopByObjectIdActive = IsStopByObjectIdActive;
             IsStopByObjectIdActive = true;
             if(ObjectId == objectId)
-                Tracer.Break
+                Tracer.ConditionalBreak
                     ("", () => @"ObjectId==" + ObjectId + "\n" + Dump(), stackFrameDepth + 1);
             IsStopByObjectIdActive = isStopByObjectIdActive;
         }

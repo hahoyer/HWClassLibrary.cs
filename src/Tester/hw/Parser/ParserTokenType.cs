@@ -4,6 +4,10 @@ using hw.Helper;
 
 namespace hw.Parser
 {
+    /// <summary>
+    /// Used as base for all token types. 
+    /// </summary>
+    /// <typeparam name="TSourcePart">Tree structure that is returned by the parser</typeparam>
     public abstract class ParserTokenType<TSourcePart>
         : ScannerTokenType<TSourcePart>
             , IUniqueIdProvider

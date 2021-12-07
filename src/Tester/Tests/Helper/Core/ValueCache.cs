@@ -2,6 +2,7 @@
 using hw.Helper;
 using hw.UnitTest;
 // ReSharper disable UnusedVariable
+// ReSharper disable CheckNamespace
 
 namespace hw.Tests.Helper.Core
 {

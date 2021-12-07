@@ -1,4 +1,5 @@
-﻿namespace hw.Tests.CompilerTool.Util
+﻿// ReSharper disable CheckNamespace
+namespace hw.Tests.CompilerTool.Util
 {
     sealed class NestedToken : NamedToken
     {

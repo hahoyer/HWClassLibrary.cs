@@ -1,4 +1,5 @@
-﻿namespace hw.Parser
+﻿// ReSharper disable CheckNamespace
+namespace hw.Parser
 {
     public interface IOperator<in TIn, out TOut>
     {
