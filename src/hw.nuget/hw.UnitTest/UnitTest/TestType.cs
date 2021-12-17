@@ -5,6 +5,7 @@ using System.Reflection;
 using hw.DebugFormatter;
 using hw.Helper;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.UnitTest
@@ -12,11 +13,19 @@ namespace hw.UnitTest
     sealed class TestType : DumpableObject, ValueCache.IContainer
     {
         public bool IsStarted { get; set; }
-        internal readonly List<TestMethod> FailedMethods = new List<TestMethod>();
-        internal bool IsComplete { get; set; }
+        internal readonly List<TestMethod> FailedMethods = new();
         internal readonly Type Type;
+        internal bool IsComplete { get; set; }
         bool IsSuspended;
+
+        TestMethod[] UnitTestMethodsCache;
         internal TestType(Type type) => Type = type;
+
+        ValueCache ValueCache.IContainer.Cache { get; } = new();
+
+        public override string ToString() => ConfigurationString;
+
+        protected override string GetNodeDump() => Type.PrettyName();
 
         public string ConfigurationString
         {
@@ -40,25 +49,14 @@ namespace hw.UnitTest
 
         internal bool IsSuccessful => IsComplete && FailedMethods.Count == 0;
 
-        TestMethod[] UnitTestMethodsCache;
-
         internal TestMethod[] UnitTestMethods => UnitTestMethodsCache ??= GetUnitTestMethods();
-        
-        TestMethod[] GetUnitTestMethods()
-        => Type
-                .GetMethods()
-                .Where(IsUnitTestMethod)
-                .Select(methodInfo => new TestMethod(methodInfo))
-                .Concat(DefaultTestMethods)
-                .Concat(InterfaceMethods)
-                .ToArray();
 
         IEnumerable<TestMethod> InterfaceMethods
         {
             get
             {
                 if(Type.Is<ITestFixture>())
-                    yield return new TestMethod(Type);
+                    yield return new(Type);
             }
         }
 
@@ -68,7 +66,7 @@ namespace hw.UnitTest
             {
                 var testAttribute = Type.GetAttribute<UnitTestAttribute>(true);
                 if(testAttribute?.DefaultMethod != null)
-                    yield return new TestMethod(Type.GetMethod(testAttribute.DefaultMethod));
+                    yield return new(Type.GetMethod(testAttribute.DefaultMethod));
             }
         }
 
@@ -90,26 +88,41 @@ namespace hw.UnitTest
         {
             get
             // ReSharper disable once StringLiteralTypo
-                => !IsStarted || IsSuspended? "notrun" :
-                    IsSuccessful? "success" :
-                    IsComplete? "error" :
-                    UnitTestMethods.Any(m=>m.IsActive)? "active":
-                    // ReSharper disable once StringLiteralTypo
-                    "dependanterror";
+                => !IsStarted || IsSuspended
+                    ? "notrun"
+                    : IsSuccessful
+                        ? "success"
+                        : IsComplete
+                            ? "error"
+                            : UnitTestMethods.Any(m => m.IsActive)
+                                ? "active"
+                                :
+                                // ReSharper disable once StringLiteralTypo
+                                "dependanterror";
             set
             {
-                if(value == "success" )
+                if(value == "success")
                     IsSuspended = true;
             }
         }
 
         internal int ConfigurationModePriority
-            => !IsStarted || IsSuspended? 4 :
-                IsSuccessful? 2 :
-                IsComplete? 1 :
-                3;
+            => !IsStarted || IsSuspended
+                ? 4
+                : IsSuccessful
+                    ? 2
+                    : IsComplete
+                        ? 1
+                        : 3;
 
-        ValueCache ValueCache.IContainer.Cache { get; } = new ValueCache();
+        TestMethod[] GetUnitTestMethods()
+            => Type
+                .GetMethods()
+                .Where(IsUnitTestMethod)
+                .Select(methodInfo => new TestMethod(methodInfo))
+                .Concat(DefaultTestMethods)
+                .Concat(InterfaceMethods)
+                .ToArray();
 
         [PublicAPI]
         [Obsolete("Use CanBeStarted", true)]
@@ -118,20 +131,20 @@ namespace hw.UnitTest
 
         public bool CanBeStarted(Func<Type, bool> isLevel) => !IsStarted && !IsSuspended && isLevel(Type);
 
-        public override string ToString() => ConfigurationString;
-
         static bool IsUnitTestMethod(MethodInfo methodInfo)
-            => methodInfo.GetAttribute<UnitTestAttribute>(true) != null
-               || TestRunner.RegisteredFrameworks.Any(item => item.IsUnitTestMethod(methodInfo));
+            => methodInfo.GetAttribute<UnitTestAttribute>(true) != null ||
+                TestRunner.RegisteredFrameworks.Any(item => item.IsUnitTestMethod(methodInfo));
 
         public int GetPriority(TestMethod method)
-            => method.IsActive? 0 :
-                !IsStarted || IsSuspended? 4 :
-                IsSuccessful? 2 :
-                IsComplete? 1 :
-                3;
-
-        protected override string GetNodeDump() => Type.PrettyName();
+            => method.IsActive
+                ? 0
+                : !IsStarted || IsSuspended
+                    ? 4
+                    : IsSuccessful
+                        ? 2
+                        : IsComplete
+                            ? 1
+                            : 3;
 
         public string GetMode(TestMethod method) => method.IsActive? "active" : ConfigurationMode;
     }
