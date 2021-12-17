@@ -17,8 +17,12 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2014-2020</copyright>
-        <version>21.1.1</version>
+        <version>21.1.2</version>
         <releaseNotes>
+            change: IsSuccessful for methods introduced
+            change: PendingTests: No line is generated under error tag for successful methods
+            refactor: upgrade C#
+            21.1.1
             refactor: warnings fixed
             21.1
             refactor: escalating statements of deprecation

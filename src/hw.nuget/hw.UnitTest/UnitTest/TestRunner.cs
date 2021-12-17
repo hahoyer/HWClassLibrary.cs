@@ -5,6 +5,7 @@ using System.Reflection;
 using hw.DebugFormatter;
 using hw.Helper;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.UnitTest
@@ -22,26 +23,26 @@ namespace hw.UnitTest
         }
 
 
-        public static readonly ConfigurationContainer Configuration = new ConfigurationContainer();
+        public static readonly ConfigurationContainer Configuration = new();
 
-        public static readonly List<IFramework> RegisteredFrameworks = new List<IFramework>();
-        int Complete;
+        public static readonly List<IFramework> RegisteredFrameworks = new();
 
         // ReSharper disable once StringLiteralTypo
         readonly SmbFile ConfigFile = "Test.HW.config".ToSmbFile();
-        string CurrentMethodName = "";
         readonly SmbFile PendingTestsFile = Configuration.TestsFileName?.ToSmbFile();
-        string Status = "Start";
 
         readonly Func<Type, bool>[] TestLevels;
         readonly TestType[] TestTypes;
+        int Complete;
+        string CurrentMethodName = "";
+        string Status = "Start";
 
         TestRunner(IEnumerable<TestType> testTypes)
         {
-            TestLevels = new Func<Type, bool>[] {IsNormalPriority, IsLowPriority};
+            TestLevels = new Func<Type, bool>[] { IsNormalPriority, IsLowPriority };
             TestTypes = testTypes.ToArray();
             TestTypes.IsCircuitFree(DependentTypes).Assert
-            (() => Tracer.Dump(TestTypes.Circuits(DependentTypes).ToArray()));
+                (() => Tracer.Dump(TestTypes.Circuits(DependentTypes).ToArray()));
             if(Configuration.SkipSuccessfulMethods)
                 LoadConfiguration();
         }
@@ -50,10 +51,10 @@ namespace hw.UnitTest
 
         string ConfigurationString
         {
-            get => HeaderText
-                   + "\n"
-                   + TestTypes.OrderBy(testType => testType.ConfigurationModePriority)
-                       .Aggregate("", (current, testType) => current + testType.ConfigurationString);
+            get => HeaderText +
+                "\n" +
+                TestTypes.OrderBy(testType => testType.ConfigurationModePriority)
+                    .Aggregate("", (current, testType) => current + testType.ConfigurationString);
             set
             {
                 if(value == null)
@@ -77,6 +78,7 @@ namespace hw.UnitTest
         string PendingTestsString
             => $@"//{HeaderText}
 
+// ReSharper disable once CheckNamespace
 namespace hw.UnitTest
 {{
     public static class PendingTests
@@ -89,7 +91,7 @@ namespace hw.UnitTest
 
         string GeneratedTestCalls
             => TestTypes
-                .SelectMany(type => type.UnitTestMethods.Select(method => (type, method)).ToArray())
+                .SelectMany(type => type.PendingTestsMethods.Select(method => (type, method)))
                 .Where(item => !item.type.IsSuccessful)
                 .OrderBy(item => item.type.GetPriority(item.method))
                 .GroupBy(item => item.type.GetMode(item.method))
@@ -110,9 +112,9 @@ namespace hw.UnitTest
 
         string GeneratedTestCallsForMode(IGrouping<string, (TestType type, TestMethod method)> group)
             => $"\n// {group.Key} \n\n" +
-               group
-                   .Select(testType => $"{testType.method.RunString};")
-                   .Stringify("\n");
+                group
+                    .Select(testType => $"{testType.method.RunString};")
+                    .Stringify("\n");
 
         public static bool RunTests(Assembly rootAssembly)
         {
@@ -131,7 +133,7 @@ namespace hw.UnitTest
                 return new TestType[0];
             return
                 type.DependenceProviders.SelectMany
-                  (attribute => attribute.AsTestType(TestTypes).NullableToArray()).ToArray();
+                    (attribute => attribute.AsTestType(TestTypes).NullableToArray()).ToArray();
         }
 
         void Run()
@@ -194,10 +196,12 @@ namespace hw.UnitTest
                     CurrentMethodName = "";
 
                     method.Run();
+                    method.IsSuccessful = true;
                 }
                 catch(TestFailedException)
                 {
                     type.FailedMethods.Add(method);
+                    method.IsSuccessful = false;
                 }
                 finally
                 {

@@ -84,6 +84,8 @@ namespace hw.UnitTest
             }
         }
 
+        bool IsError => IsStarted && !IsSuspended && !IsSuccessful && IsComplete;
+
         string ConfigurationMode
         {
             get
@@ -114,6 +116,11 @@ namespace hw.UnitTest
                     : IsComplete
                         ? 1
                         : 3;
+
+        internal TestMethod[] PendingTestsMethods
+            => IsError
+                ? FailedMethods.ToArray()
+                : UnitTestMethods;
 
         TestMethod[] GetUnitTestMethods()
             => Type

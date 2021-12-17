@@ -5,6 +5,7 @@ using System.Reflection;
 using hw.DebugFormatter;
 using hw.Helper;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.UnitTest
@@ -16,7 +17,6 @@ namespace hw.UnitTest
         {
             internal Type InstanceType;
             internal readonly MethodInfo MethodInfo;
-            bool IsStatic => MethodInfo.IsStatic;
 
             protected ActorBase(MethodInfo methodInfo, Type instanceType = null)
             {
@@ -25,8 +25,9 @@ namespace hw.UnitTest
                 MethodInfo = methodInfo;
             }
 
-            internal virtual object Instance => IsStatic? null:Activator.CreateInstance(InstanceType);
+            internal virtual object Instance => IsStatic? null : Activator.CreateInstance(InstanceType);
             internal virtual void Run(object target) => MethodInfo.Invoke(target, new object[0]);
+            bool IsStatic => MethodInfo.IsStatic;
         }
 
         sealed class MethodActor : ActorBase
@@ -54,8 +55,8 @@ namespace hw.UnitTest
         }
 
         public bool IsActive;
-
         public bool IsSuspended;
+        public bool? IsSuccessful;
 
         internal readonly ActorBase Actor;
 
@@ -63,6 +64,8 @@ namespace hw.UnitTest
 
         public TestMethod(Type type) => Actor = new InterfaceActor(type);
         public TestMethod(Action action) => Actor = new ActionActor(action);
+
+        protected override string GetNodeDump() => LongName;
 
         public string LongName => InstanceTypeName + "." + Name;
 
@@ -83,8 +86,6 @@ namespace hw.UnitTest
                     yield return a.Where;
             }
         }
-
-        protected override string GetNodeDump() => LongName;
 
         public void Run()
         {
