@@ -18,8 +18,12 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2021</copyright>
 
-        <version>21.1.1</version>
+        <version>21.1.2</version>
         <releaseNotes>
+            new: CSharpQuote, plus usage of it in Dumper
+            refactor: upgrade C#
+            docu
+            21.1.1
             refactor: warnings fixed
             21.1
             refactor: escalating statements of deprecation
