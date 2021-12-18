@@ -29,7 +29,7 @@ namespace hw.Helper
                     if(subResult.Count > 0)
                     {
                         yield return subResult.ToArray();
-                        subResult = new List<T>();
+                        subResult = new();
                     }
 
                 subResult.Add(xx);
@@ -242,11 +242,9 @@ namespace hw.Helper
                     return list[0];
                 case 2:
                     if(list[0].Item2 == null && list[1].Item3 == null)
-                        return new Tuple<TKey, TLeft, TRight>
-                            (grouping.Key, list[1].Item2, list[0].Item3);
+                        return new(grouping.Key, list[1].Item2, list[0].Item3);
                     if(list[1].Item2 == null && list[0].Item3 == null)
-                        return new Tuple<TKey, TLeft, TRight>
-                            (grouping.Key, list[0].Item2, list[1].Item3);
+                        return new(grouping.Key, list[0].Item2, list[1].Item3);
                     break;
             }
 
@@ -353,10 +351,10 @@ namespace hw.Helper
             => target.Where(item => !item.IsCircuitFree(immediateParents));
 
         public static IEnumerable<T> NullableToArray<T>(this T target)
-            where T : class => target == null? new T[0] : new[] {target};
+            where T : class => target == null? new T[0] : new[] { target };
 
         public static IEnumerable<T> NullableToArray<T>(this T? target)
-            where T : struct => target == null? new T[0] : new[] {target.Value};
+            where T : struct => target == null? new T[0] : new[] { target.Value };
 
         public static TTarget Top<TTarget>
         (
@@ -390,6 +388,32 @@ namespace hw.Helper
             }
         }
 
+        /// <summary>
+        ///     Splits an enumeration at positions where <see cref="isSeparator" /> returns true.
+        ///     The resulting enumeration of enumerations may contain the the separator item
+        ///     depending of <see cref="assignSeparatorAtTopOfList" /> parameter
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="isSeparator"></param>
+        /// <param name="assignSeparatorAtTopOfList">
+        ///     The separator item are treated as follows if value is ...:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>Null: they are dropped.</description>
+        ///         </item>
+        ///         <item>
+        ///             <description>true: they are put at the top of sub-enumeration that follows the separator.</description>
+        ///         </item>
+        ///         <item>
+        ///             <description>false: they are put at the tail of sub-enumeration that precedes the separator.</description>
+        ///         </item>
+        ///     </list>
+        /// </param>
+        /// <returns>
+        ///     Enumeration of arrays of <see cref="target" /> items
+        ///     split at points where <see cref="isSeparator" /> returns true.
+        /// </returns>
         public static IEnumerable<IEnumerable<T>> Split<T>
             (this IEnumerable<T> target, Func<T, bool> isSeparator, bool? assignSeparatorAtTopOfList = null)
         {
@@ -402,7 +426,7 @@ namespace hw.Helper
 
                     if(part.Any())
                         yield return part.ToArray();
-                    part = new List<T>();
+                    part = new();
 
                     if(assignSeparatorAtTopOfList == true)
                         part.Add(item);

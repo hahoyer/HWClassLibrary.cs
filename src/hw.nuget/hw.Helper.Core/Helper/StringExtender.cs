@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Helper
@@ -67,8 +68,8 @@ namespace hw.Helper
             return "\n" + left + Indent("\n" + data) + "\n" + right;
         }
 
-        public static string SaveConcat
-            (this string delimiter, params string[] data) => data.Where(d => !string.IsNullOrEmpty(d)).Stringify(delimiter);
+        public static string SaveConcat(this string delimiter, params string[] data)
+            => data.Where(d => !string.IsNullOrEmpty(d)).Stringify(delimiter);
 
         /// <summary>
         ///     Converts string to a string literal.
@@ -82,6 +83,36 @@ namespace hw.Helper
                 return "null";
             return "\"" + target.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
         }
+
+        static string CharacterQuote(char character)
+        {
+            switch(character)
+            {
+                case '\\':
+                case '"':
+                    return "\\" + character;
+                case '\n':
+                    return "\\n";
+                case '\t':
+                    return "\\t";
+                case '\r':
+                    return "\\r";
+                case '\f':
+                    return "\\f";
+                default:
+                    if(character < 32 || character >= 127)
+                        return $"\\0x{(int)character:x2}";
+                    return "" + character;
+            }
+        }
+
+        /// <summary>
+        ///     Converts string to a string literal suitable for languages like c#.
+        /// </summary>
+        /// <param name="target"> The target. </param>
+        /// <returns> </returns>
+        public static string CSharpQuote(this string target)
+            => target.Aggregate("\"", (head, next) => head + CharacterQuote(next)) + "\"";
 
         /// <summary>
         ///     Dumps the bytes as hex string.

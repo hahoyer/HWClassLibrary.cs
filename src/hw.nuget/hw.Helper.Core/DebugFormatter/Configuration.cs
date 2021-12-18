@@ -114,7 +114,7 @@ namespace hw.DebugFormatter
             Handlers.Add(typeof(IDictionary), (type, o) => DumpIDictionary(o));
             Handlers.Add(typeof(ICollection), (type, o) => Dump(((ICollection)o).Cast<object>()));
             Handlers.Add(typeof(Type), (type, o) => ((Type)o).PrettyName());
-            Handlers.Add(typeof(string), (type, o) => ((string)o).Quote());
+            Handlers.Add(typeof(string), (type, o) => ((string)o).CSharpQuote());
             Handlers.Add(t => t.IsEnum, DumpEnum);
             Handlers.Add(t => t.IsPrimitive, (type, o) => o.ToString());
             Handlers.Add(IsOutlookClass, (type, o) => o.ToString());
