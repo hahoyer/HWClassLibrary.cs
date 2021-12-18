@@ -37,7 +37,7 @@ namespace hw.Scanner
         /// <summary>
         ///     Source position and length of the item.
         /// </summary>
-        SourcePart SourcePart { get; }
+        int Length { get; }
     }
 
     /// <summary>

@@ -51,17 +51,17 @@ namespace hw.Scanner
                 : DumpableObject
                     , IItem
             {
-                readonly SourcePart SourcePart;
+                readonly int Length;
                 readonly IScannerTokenType Type;
 
-                public Item(SourcePart sourcePart, IScannerTokenType type)
+                public Item(int length, IScannerTokenType type)
                 {
-                    SourcePart = sourcePart;
+                    Length = length;
                     Type = type;
                 }
 
                 IScannerTokenType IItem.ScannerTokenType => Type;
-                SourcePart IItem.SourcePart => SourcePart;
+                int IItem.Length => Length;
 
                 protected override string GetNodeDump() => base.GetNodeDump() + "(" + Type.Id + ")";
             }
@@ -125,7 +125,7 @@ namespace hw.Scanner
 
             IItem CreateAndAdvance(int length, IScannerTokenType type)
             {
-                var result = new Item(SourcePart.Span(SourcePosition, length), type);
+                var result = new Item(length, type);
                 Advance(length);
                 return result;
             }

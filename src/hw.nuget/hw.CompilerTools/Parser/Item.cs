@@ -66,29 +66,29 @@ namespace hw.Parser
         string PrioTable.ITargetItem.Token => Type?.PrioTableId ?? PrioTable.BeginOfText;
         SourcePart IToken.Characters => Characters;
         bool? IToken.IsBracketAndLeftBracket => IsBracketAndLeftBracket;
-        IEnumerable<IItem> IToken.PrecededWith => PrefixItems;
+        int IToken.PrecededWith => PrefixItems.Sum(item => item.Length);
 
         [EnableDump]
         public int Depth => Context?.Depth ?? 0;
 
-        public static Item<TSourcePart> Create(IItem[] items, BracketContext context, bool isSubParser)
+        public static Item<TSourcePart> Create(IItem[] items, SourcePosition end, BracketContext context, bool isSubParser)
         {
             var prefixItems = items.Take(items.Length - 1);
             var mainItem = items.Last();
-            var isBracketAndLeftBracket = context.IsLeftBracket(mainItem.SourcePart.Id);
+            var token = end.Span(-mainItem.Length);
+            var isBracketAndLeftBracket = context.IsLeftBracket(token.Id);
 
-            var mainItemScannerTokenType = mainItem
-                .ScannerTokenType;
+            var mainItemScannerTokenType = mainItem.ScannerTokenType;
             var parserTokenFactory = mainItemScannerTokenType
                 .ParserTokenFactory;
             var parserType = parserTokenFactory
-                .GetTokenType<TSourcePart>(mainItem.SourcePart.Id);
+                .GetTokenType<TSourcePart>(token.Id);
 
             return new
             (
                 prefixItems,
                 parserType,
-                mainItem.SourcePart,
+                token,
                 context,
                 isBracketAndLeftBracket
             );
@@ -97,7 +97,7 @@ namespace hw.Parser
         public static Item<TSourcePart> CreateStart
         (
             Source source,
-            IParserTokenType<TSourcePart> startParserType, 
+            IParserTokenType<TSourcePart> startParserType,
             BracketContext bracketContext
         )
             => new

@@ -92,8 +92,9 @@ namespace hw.Parser
             Item<TSourcePart> ReadNextToken(SourcePosition sourcePosition, BracketContext context)
             {
                 TraceNextToken(sourcePosition);
+                var nextTokenGroup = Parent.Scanner.GetNextTokenGroup(sourcePosition);
                 var result = Item<TSourcePart>
-                    .Create(Parent.Scanner.GetNextTokenGroup(sourcePosition), context, IsSubParser);
+                    .Create(nextTokenGroup, sourcePosition, context, IsSubParser);
 
                 var nextParser = (result?.Type as ISubParserProvider)?.NextParser;
                 if(nextParser == null)

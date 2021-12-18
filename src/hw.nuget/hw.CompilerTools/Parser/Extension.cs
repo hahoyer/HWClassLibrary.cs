@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using hw.DebugFormatter;
-using hw.Helper;
-using hw.Scanner;
 using JetBrains.Annotations;
 // ReSharper disable CheckNamespace
 
@@ -35,9 +31,6 @@ namespace hw.Parser
             result += ")";
             return result;
         }
-
-        public static SourcePart SourcePart(this IEnumerable<IItem> items)
-            => items.Select(item => item.SourcePart).Aggregate();
 
         public static int BracketBalance(this IToken token)
         {

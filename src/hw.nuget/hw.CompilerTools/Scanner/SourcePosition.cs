@@ -16,9 +16,8 @@ namespace hw.Scanner
     [PublicAPI]
     public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     {
-        public int Position;
-
         public readonly Source Source;
+        public int Position;
 
         /// <summary>
         ///     ctor from source and position
@@ -29,6 +28,31 @@ namespace hw.Scanner
         {
             Position = position;
             Source = source;
+        }
+
+        public bool Equals(SourcePosition other)
+            => !(other is null) && Equals(Source, other.Source) && Position == other.Position;
+
+        public override bool Equals(object target)
+        {
+            if(ReferenceEquals(null, target))
+                return false;
+            if(ReferenceEquals(this, target))
+                return true;
+            return target is SourcePosition position && Equals(position);
+        }
+
+        public override int GetHashCode() => 0;
+
+        /// <summary>
+        ///     Default dump behaviour
+        /// </summary>
+        /// <returns>The file position of source file</returns>
+        protected override string Dump(bool isRecursion)
+        {
+            if(Source.IsPersistent)
+                return "\n" + FilePosition("see there");
+            return GetDumpAroundCurrent(Source.DumpWidth);
         }
 
         public bool IsValid
@@ -56,18 +80,18 @@ namespace hw.Scanner
         [UsedImplicitly]
         string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
 
-        public SourcePosition Clone => new SourcePosition(Source, Position);
+        public SourcePosition Clone => new(Source, Position);
 
         public TextPosition TextPosition => Source.GetTextPosition(Position);
 
         public int LineIndex => Source.LineIndex(Position);
         public int ColumnIndex => Source.ColumnIndex(Position);
 
-        public bool Equals
-            (SourcePosition other) => !(other is null) && Equals(Source, other.Source) && Position == other.Position;
+        public static SourcePosition operator +(SourcePosition target, int y)
+            => target.Source + (target.Position + y);
 
-        public static SourcePosition operator +(SourcePosition target, int y) => target.Source + (target.Position + y);
-        public static SourcePosition operator -(SourcePosition target, int y) => target.Source + (target.Position - y);
+        public static SourcePosition operator -(SourcePosition target, int y)
+            => target.Source + (target.Position - y);
 
         public static int operator -(SourcePosition target, SourcePosition y)
         {
@@ -77,9 +101,9 @@ namespace hw.Scanner
 
         public static bool operator <(SourcePosition left, SourcePosition right)
             => left != null &&
-               right != null &&
-               left.Source == right.Source &&
-               left.Position < right.Position;
+                right != null &&
+                left.Source == right.Source &&
+                left.Position < right.Position;
 
         public static bool operator <=(SourcePosition left, SourcePosition right) => left < right || left == right;
 
@@ -94,21 +118,10 @@ namespace hw.Scanner
             if((object)right == null)
                 return false;
             return left.Source == right.Source &&
-                   left.Position == right.Position;
+                left.Position == right.Position;
         }
 
         public bool Equals(SourcePosition target, SourcePosition y) => target.Equals(y);
-
-        public override bool Equals(object target)
-        {
-            if(ReferenceEquals(null, target))
-                return false;
-            if(ReferenceEquals(this, target))
-                return true;
-            return target is SourcePosition position && Equals(position);
-        }
-
-        public override int GetHashCode() => 0;
 
         /// <summary>
         ///     Obtains a piece
@@ -129,17 +142,6 @@ namespace hw.Scanner
         /// <returns>the "FileName(lineNumber,ColNr): tag: " string</returns>
         public string FilePosition(string flagText) => Source.FilePosition(Position, Position, flagText);
 
-        /// <summary>
-        ///     Default dump behaviour
-        /// </summary>
-        /// <returns>The file position of source file</returns>
-        protected override string Dump(bool isRecursion)
-        {
-            if(Source.IsPersistent)
-                return "\n" + FilePosition("see there");
-            return GetDumpAroundCurrent(Source.DumpWidth);
-        }
-
         public string GetDumpAroundCurrent(int dumpWidth)
         {
             if(IsValid)
@@ -150,7 +152,11 @@ namespace hw.Scanner
             return "<invalid>";
         }
 
-        public int? Match(IMatch automaton) => automaton.Match(new SourcePosition(Source, Position));
+        public int? Match(IMatch automaton, bool isForward = true)
+        {
+            var span = Span(Source + (isForward? Source.Length : 0));
+            return automaton.Match(span, isForward);
+        }
 
         public bool StartsWith(string data, StringComparison type = StringComparison.InvariantCulture)
         {
@@ -158,7 +164,7 @@ namespace hw.Scanner
             return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length).Equals(data, type);
         }
 
-        public SourcePart Span(SourcePosition other) => SourcePart.Span(new SourcePosition(Source, Position), other);
-        public SourcePart Span(int length) => SourcePart.Span(new SourcePosition(Source, Position), length);
+        public SourcePart Span(SourcePosition other) => SourcePart.Span(new(Source, Position), other);
+        public SourcePart Span(int length) => SourcePart.Span(new(Source, Position), length);
     }
 }

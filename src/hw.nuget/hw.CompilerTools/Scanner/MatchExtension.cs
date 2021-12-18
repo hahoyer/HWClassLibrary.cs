@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Scanner
@@ -16,47 +17,52 @@ namespace hw.Scanner
             Exception Create(SourcePosition sourcePosition);
         }
 
-        sealed class ErrorMatch
-            : Dumpable
-                , IMatch
+        sealed class ErrorMatch : DumpableObject, IMatch
         {
             readonly Match.IError Error;
             public ErrorMatch(Match.IError error) => Error = error;
 
-            int? IMatch.Match(SourcePosition sourcePosition)
+            int? IMatch.Match(SourcePart span, bool isForward)
             {
                 if(Error is IPositionExceptionFactory positionFactory)
-                    throw positionFactory.Create(sourcePosition);
+                    throw positionFactory.Create(span.GetStart(isForward));
 
-                throw new Match.Exception(sourcePosition, Error);
+                throw new Match.Exception(span.GetStart(isForward), Error);
             }
         }
 
-        sealed class CharMatch
-            : Dumpable
-                , IMatch
+        sealed class CharMatch : DumpableObject, IMatch
         {
             [EnableDump]
             readonly string Data;
 
             readonly StringComparison Type;
 
-            public CharMatch(string data, bool isCaseSenitive)
+            public CharMatch(string data, bool isCaseSensitive)
             {
                 Data = data;
-                Type = isCaseSenitive? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+                Type = isCaseSensitive? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
             }
 
-            int? IMatch.Match(SourcePosition sourcePosition)
+            int? IMatch.Match(SourcePart span, bool isForward)
             {
-                var result = Data.Length;
-                return sourcePosition.StartsWith(Data, Type)? result : null;
+                if(span.Length < Data.Length)
+                    return null;
+
+                if(isForward)
+                {
+                    var startPosition = span.Start;
+                    return startPosition.StartsWith(Data, Type)? Data.Length : null;
+                }
+                else
+                {
+                    var startPosition = span.End - Data.Length;
+                    return startPosition.StartsWith(Data, Type)? -Data.Length : null;
+                }
             }
         }
 
-        sealed class AnyCharMatch
-            : Dumpable
-                , IMatch
+        sealed class AnyCharMatch : DumpableObject, IMatch
         {
             sealed class DefaultComparer : IEqualityComparer<char>
             {
@@ -77,22 +83,22 @@ namespace hw.Scanner
 
             readonly IEqualityComparer<char> Comparer;
 
-            public AnyCharMatch(string data, bool isCaseSenitive = true)
+            public AnyCharMatch(string data, bool isCaseSensitive = true)
             {
                 Data = data;
-                Comparer = isCaseSenitive? Default : UpperInvariant;
+                Comparer = isCaseSensitive? Default : UpperInvariant;
             }
+
+            int? IMatch.Match(SourcePart span, bool isForward)
+                => span.Length > 0 && Data.Contains((span.GetStart(isForward) - (isForward? 0 : 1)).Current, Comparer)
+                    ? 1
+                    : null;
 
             static IEqualityComparer<char> Default => new DefaultComparer();
             static IEqualityComparer<char> UpperInvariant => new UpperInvariantComparer();
-
-            int? IMatch.Match(SourcePosition sourcePosition)
-                => Data.Contains(sourcePosition.Current, Comparer)? 1 : null;
         }
 
-        sealed class ElseMatch
-            : Dumpable
-                , IMatch
+        sealed class ElseMatch : DumpableObject, IMatch
         {
             [EnableDump]
             readonly IMatch Data;
@@ -106,13 +112,11 @@ namespace hw.Scanner
                 Other = other;
             }
 
-            int? IMatch.Match(SourcePosition sourcePosition)
-                => Data.Match(sourcePosition) ?? Other.Match(sourcePosition);
+            int? IMatch.Match(SourcePart span, bool isForward)
+                => Data.Match(span, isForward) ?? Other.Match(span, isForward);
         }
 
-        sealed class Repeater
-            : Dumpable
-                , IMatch
+        sealed class Repeater : DumpableObject, IMatch
         {
             [EnableDump]
             readonly IMatch Data;
@@ -133,49 +137,58 @@ namespace hw.Scanner
                 MaxCount = maxCount;
             }
 
-            int? IMatch.Match(SourcePosition sourcePosition)
+            int? IMatch.Match(SourcePart span, bool isForward)
             {
                 var count = 0;
-                var current = sourcePosition;
+                var start = span.GetStart(isForward);
+                var end = span.GetEnd(isForward);
+                var current = start.Clone;
+
                 while(true)
                 {
-                    var result = current - sourcePosition;
+                    var result = current - start;
                     if(count == MaxCount)
                         return result;
 
-                    var length = Data.Match(current);
+                    var length = Data.Match(current.Span(end), isForward);
                     if(length == null)
                         return count < MinCount? null : result;
-                    if(current.IsEnd)
-                        return null;
+
+                    count++;
+
+                    if(length == 0)
+                        return count < MinCount? null : result;
+
+                    if(isForward)
+                        (current < end).Assert();
+                    else
+                        (current > end).Assert();
 
                     current += length.Value;
-                    count++;
                 }
             }
         }
 
         public static IMatch UnBox(this IMatch data) => data is Match box? box.UnBox : data;
 
-        public static Match AnyChar(this string data, bool isCaseSenitive = true)
-            => new Match(new AnyCharMatch(data, isCaseSenitive));
+        public static Match AnyChar(this string data, bool isCaseSensitive = true)
+            => new(new AnyCharMatch(data, isCaseSensitive));
 
-        public static Match Box(this Match.IError error) => new Match(new ErrorMatch(error));
+        public static Match Box(this Match.IError error) => new(new ErrorMatch(error));
 
-        public static Match Box
-            (this string data, bool isCaseSenitive = true) => new Match(new CharMatch(data, isCaseSenitive));
+        public static Match Box(this string data, bool isCaseSensitive = true)
+            => new(new CharMatch(data, isCaseSensitive));
 
         public static Match Box(this IMatch data) => data as Match ?? new Match(data);
 
         public static Match Repeat(this IMatch data, int minCount = 0, int? maxCount = null)
-            => new Match(new Repeater(data.UnBox(), minCount, maxCount));
+            => new(new Repeater(data.UnBox(), minCount, maxCount));
 
         public static Match Else(this string data, IMatch other) => data.Box().Else(other);
         public static Match Else(this IMatch data, string other) => data.Else(other.Box());
         public static Match Else(this Match.IError data, IMatch other) => data.Box().Else(other);
         public static Match Else(this IMatch data, Match.IError other) => data.Else(other.Box());
 
-        public static Match Else(this IMatch data, IMatch other)
-            => new Match(new ElseMatch(data.UnBox(), other.UnBox()));
+        public static Match Else(this IMatch data, IMatch other) => new(new ElseMatch(data.UnBox(), other.UnBox()));
     }
 }
