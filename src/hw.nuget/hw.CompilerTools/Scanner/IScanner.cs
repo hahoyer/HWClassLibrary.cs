@@ -2,73 +2,72 @@
 
 // ReSharper disable CheckNamespace
 
-namespace hw.Scanner
+namespace hw.Scanner;
+
+/// <summary>
+///     Scanner interface that is used by <see cref="PrioParser{TSourcePart}" /> to split source into tokens.
+/// </summary>
+public interface IScanner
 {
     /// <summary>
-    ///     Scanner interface that is used by <see cref="PrioParser{TSourcePart}" /> to split source into tokens.
+    ///     Get the next group of tokens, that belongs together,
+    ///     like the actual token and leading whitespaces.
     /// </summary>
-    public interface IScanner
-    {
-        /// <summary>
-        ///     Get the next group of tokens, that belongs together,
-        ///     like the actual token and leading whitespaces.
-        /// </summary>
-        /// <param name="sourcePosition">
-        ///     The position in the source, where to start. The position is advanced to the end of the token
-        ///     group.
-        /// </param>
-        /// <returns>
-        ///     A list of tokens that are taken from source position given. All items except the last (or only) items are
-        ///     whitespaces.
-        /// </returns>
-        IItem[] GetNextTokenGroup(SourcePosition sourcePosition);
-    }
+    /// <param name="sourcePosition">
+    ///     The position in the source, where to start. The position is advanced to the end of the token
+    ///     group.
+    /// </param>
+    /// <returns>
+    ///     A list of tokens that are taken from source position given. All items except the last (or only) items are
+    ///     whitespaces.
+    /// </returns>
+    IItem[] GetNextTokenGroup(SourcePosition sourcePosition);
+}
+
+/// <summary>
+///     Tokens that are returned by <see cref="IScanner" />.
+/// </summary>
+public interface IItem
+{
+    /// <summary>
+    ///     General classification of the item returned
+    /// </summary>
+    IScannerTokenType ScannerTokenType { get; }
 
     /// <summary>
-    ///     Tokens that are returned by <see cref="IScanner" />.
+    ///     Source position and length of the item.
     /// </summary>
-    public interface IItem
-    {
-        /// <summary>
-        ///     General classification of the item returned
-        /// </summary>
-        IScannerTokenType ScannerTokenType { get; }
+    int Length { get; }
+}
 
-        /// <summary>
-        ///     Source position and length of the item.
-        /// </summary>
-        int Length { get; }
-    }
+/// <summary>
+///     There are two general cases: <see cref="WhiteSpaceTokenType" /> and <see cref="hw.Parser.ScannerTokenType" />
+/// </summary>
+public interface IScannerTokenType
+{
+    /// <summary>
+    ///     Use this to link to the <see cref="IParserTokenFactory" /> if desired.
+    ///     Returning null will classify this token type as whitespace.
+    /// </summary>
+    IParserTokenFactory ParserTokenFactory { get; }
 
     /// <summary>
-    ///     There are two general cases: <see cref="WhiteSpaceTokenType" /> and <see cref="hw.Parser.ScannerTokenType" />
+    ///     Identifier used for debugging purposes
     /// </summary>
-    public interface IScannerTokenType
-    {
-        /// <summary>
-        ///     Use this to link to the <see cref="IParserTokenFactory" /> if desired.
-        ///     Returning null will classify this token type as whitespace.
-        /// </summary>
-        IParserTokenFactory ParserTokenFactory { get; }
+    string Id { get; }
+}
 
-        /// <summary>
-        ///     Identifier used for debugging purposes
-        /// </summary>
-        string Id { get; }
-    }
-
+/// <summary>
+///     Interface to get the <see cref="IParserTokenType{TSourcePart}" />
+/// </summary>
+public interface IParserTokenFactory
+{
     /// <summary>
-    /// Interface to get the <see cref="IParserTokenType{TSourcePart}"/>
+    ///     Create the parser token type from characters found by the scanner (stripped by whitespaces).
     /// </summary>
-    public interface IParserTokenFactory
-    {
-        /// <summary>
-        /// Create the parser token type from characters found by the scanner (stripped by whitespaces).
-        /// </summary>
-        /// <typeparam name="TSourcePart"></typeparam>
-        /// <param name="id">characters without whitespaces</param>
-        /// <returns></returns>
-        IParserTokenType<TSourcePart> GetTokenType<TSourcePart>(string id)
-            where TSourcePart : class;
-    }
+    /// <typeparam name="TSourcePart"></typeparam>
+    /// <param name="id">characters without whitespaces</param>
+    /// <returns></returns>
+    IParserTokenType<TSourcePart> GetTokenType<TSourcePart>(string id)
+        where TSourcePart : class;
 }

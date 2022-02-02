@@ -1,10 +1,10 @@
 ﻿// ReSharper disable CheckNamespace
-namespace hw.Parser
+
+namespace hw.Parser;
+
+public interface IBinaryTreeItem
 {
-    public interface IBinaryTreeItem
-    {
-        IBinaryTreeItem Right { get; }
-        string TokenId { get; }
-        IBinaryTreeItem Left { get; }
-    }
+    IBinaryTreeItem Right { get; }
+    string TokenId { get; }
+    IBinaryTreeItem Left { get; }
 }
