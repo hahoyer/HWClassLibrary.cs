@@ -2,80 +2,80 @@ using System;
 using System.Collections.Generic;
 using hw.DebugFormatter;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
-namespace hw.Helper
+namespace hw.Helper;
+
+[PublicAPI]
+[Serializable]
+public sealed class ValueCache<TValueType>
 {
-    [PublicAPI]
-    [Serializable]
-    public sealed class ValueCache<TValueType>
+    [EnableDumpExcept(false)]
+    public bool IsBusy { get; private set; }
+
+    readonly Func<TValueType> CreateValue;
+    TValueType Data;
+    bool ValidityState;
+
+    public ValueCache(Func<TValueType> createValue) => CreateValue = createValue;
+
+    public TValueType Value
     {
-        [EnableDumpExcept(false)]
-        public bool IsBusy { get; private set; }
-
-        readonly Func<TValueType> CreateValue;
-        TValueType Data;
-        bool ValidityState;
-
-        public ValueCache(Func<TValueType> createValue) => CreateValue = createValue;
-
-        public TValueType Value
+        get
         {
-            get
-            {
+            Ensure();
+            return Data;
+        }
+    }
+
+    public bool IsValid
+    {
+        get => ValidityState;
+        set
+        {
+            if(value)
                 Ensure();
-                return Data;
-            }
+            else
+                Reset();
         }
+    }
 
-        public bool IsValid
+    void Ensure()
+    {
+        (!IsBusy).Assert("Recursive attempt to get value.");
+        if(ValidityState)
+            return;
+
+        IsBusy = true;
+        try
         {
-            get => ValidityState;
-            set
-            {
-                if(value)
-                    Ensure();
-                else
-                    Reset();
-            }
+            Data = CreateValue();
+            ValidityState = true;
         }
-
-        void Ensure()
+        finally
         {
-            (!IsBusy).Assert("Recursive attempt to get value.");
-            if(ValidityState)
-                return;
-
-            IsBusy = true;
-            try
-            {
-                Data = CreateValue();
-                ValidityState = true;
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        void Reset()
-        {
-            (!IsBusy).Assert("Attempt to reset value during getting value.");
-            if(!ValidityState)
-                return;
-
-            IsBusy = true;
-            Data = default(TValueType);
-            ValidityState = false;
             IsBusy = false;
         }
     }
 
-    public sealed class ValueCache : Dictionary<object, object>
+    void Reset()
     {
-        public interface IContainer
-        {
-            ValueCache Cache { get; }
-        }
+        (!IsBusy).Assert("Attempt to reset value during getting value.");
+        if(!ValidityState)
+            return;
+
+        IsBusy = true;
+        Data = default;
+        ValidityState = false;
+        IsBusy = false;
+    }
+}
+
+public sealed class ValueCache : Dictionary<object, object>
+{
+    public interface IContainer
+    {
+        ValueCache Cache { get; }
     }
 }
