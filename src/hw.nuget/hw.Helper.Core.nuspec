@@ -16,10 +16,18 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2013 - 2021</copyright>
+        <copyright>Copyright Harald Hoyer 2013 - 2022</copyright>
 
-        <version>21.1.2</version>
+        <version>22.0</version>
         <releaseNotes>
+            refactor: escalating statements of deprecation
+            change: Split function: bool? parameter changed to enum
+            change: order for dump is now double
+            change: additional option for debug formatter configuration
+            refactor: better documentation
+            refactor: warnings fixed
+            refactor: upgrade C#
+            21.1.2
             new: CSharpQuote, plus usage of it in Dumper
             refactor: upgrade C#
             docu
