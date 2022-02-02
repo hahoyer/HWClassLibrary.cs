@@ -323,24 +323,6 @@ public static class LinqExtension
         }
     }
 
-    [Obsolete("Use IsCircuitFree", true)]
-    // ReSharper disable once IdentifierTypo
-    public static bool IsCircuidFree<TType>(this TType target, Func<TType, IEnumerable<TType>> immediateParents)
-        => immediateParents(target).Closure(immediateParents).All(type => !type.Equals(target));
-
-    [Obsolete("Use IsCircuitFree", true)]
-    // ReSharper disable once IdentifierTypo
-    public static bool IsCircuidFree<TType>
-        (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
-        => target.All(type => type.IsCircuitFree(immediateParents));
-
-    [Obsolete("Use Circuits", true)]
-    // ReSharper disable once IdentifierTypo
-    public static IEnumerable<TType> Circuids<TType>
-        (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
-        => target.Where(type => !type.IsCircuitFree(immediateParents));
-
-
     public static bool IsCircuitFree<TType>(this TType target, Func<TType, IEnumerable<TType>> immediateParents)
         => immediateParents(target).Closure(immediateParents).All(item => !item.Equals(target));
 

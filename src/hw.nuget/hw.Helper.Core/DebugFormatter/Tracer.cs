@@ -30,65 +30,6 @@ public static class Tracer
 
     static readonly Writer Writer = new();
 
-    [Obsolete("Use FilePosition", true)]
-    // ReSharper disable once IdentifierTypo
-    public static string FilePosn(this StackFrame sf, FilePositionTag tag)
-        => FilePosition(sf, tag);
-
-    [Obsolete("Use FilePosition", true)]
-    // ReSharper disable once IdentifierTypo
-    public static string FilePosn(string fileName, int lineNumber, int columnNumber, FilePositionTag tag)
-        => FilePosition(fileName, new()
-        {
-            Start = new()
-            {
-                LineNumber = lineNumber, ColumnNumber = columnNumber
-            }
-        }, tag);
-
-    [Obsolete("Use FilePosition", true)]
-    // ReSharper disable once IdentifierTypo
-    public static string FilePosn
-    (
-        string fileName, int lineNumber, int columnNumber, int lineNumberEnd, int columnNumberEnd
-        , FilePositionTag tag
-    )
-        => FilePosition(fileName, new()
-        {
-            Start = new()
-            {
-                LineNumber = lineNumber, ColumnNumber = columnNumber
-            }
-            , End = new()
-            {
-                LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
-            }
-        }, tag);
-
-    [Obsolete("Use FilePosition", true)]
-    // ReSharper disable once IdentifierTypo
-    public static string FilePosn
-    (
-        string fileName,
-        int lineNumber,
-        int columnNumber,
-        int lineNumberEnd,
-        int columnNumberEnd,
-        string tagText
-    )
-        => FilePosition(fileName, new()
-            {
-                Start = new()
-                {
-                    LineNumber = lineNumber, ColumnNumber = columnNumber
-                }
-                , End = new()
-                {
-                    LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
-                }
-            }
-            , tagText);
-
     /// <summary>
     ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
     /// </summary>
@@ -268,20 +209,6 @@ public static class Tracer
 
         return result;
     }
-
-    /// <summary>
-    ///     write a line to debug output
-    /// </summary>
-    /// <param name="text"> the text </param>
-    [Obsolete("Use Log", true)]
-    public static void Line(string text) => Writer.ThreadSafeWrite(text, true);
-
-    /// <summary>
-    ///     write a line to debug output
-    /// </summary>
-    /// <param name="text"> the text </param>
-    [Obsolete("Use LogLinePart", true)]
-    public static void LinePart(string text) => Writer.ThreadSafeWrite(text, false);
 
     /// <summary>
     ///     write a line to debug output, flagged with FileName(lineNumber,ColNr): Method (without parameter list)
@@ -528,12 +455,6 @@ public static class Tracer
 
     public static void IndentStart() => Writer.IndentStart();
     public static void IndentEnd() => Writer.IndentEnd();
-
-    [Obsolete("Use Log", true)]
-    public static void WriteLine(this string value) => Log(value);
-
-    [Obsolete("Use LogLinePart", true)]
-    public static void WriteLinePart(this string value) => LogLinePart(value);
 
     [IsLoggingFunction]
     public static void Log(this string value) => Writer.ThreadSafeWrite(value, true);
