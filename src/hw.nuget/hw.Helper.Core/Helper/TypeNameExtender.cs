@@ -1,56 +1,51 @@
 using System;
 using System.Reflection;
 using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
-namespace hw.Helper
+namespace hw.Helper;
+
+[PublicAPI]
+public static class TypeNameExtender
 {
-    [PublicAPI]
-    public static class TypeNameExtender
+    static readonly ValueCache<TypeLibrary> ReferencedTypesCache = new(ObtainReferencedTypes);
+
+    public static Type[] Types => ReferencedTypes.Types;
+
+    static TypeLibrary ReferencedTypes
     {
-        static readonly ValueCache<TypeLibrary> ReferencedTypesCache
-            = new ValueCache<TypeLibrary>(ObtainReferencedTypes);
-
-        public static Type[] Types => ReferencedTypes.Types;
-
-        static TypeLibrary ReferencedTypes
-        {
-            get
-            {
-                lock(ReferencedTypesCache)
-                {
-                    return ReferencedTypesCache.Value;
-                }
-            }
-        }
-
-        public static void OnModuleLoaded()
+        get
         {
             lock(ReferencedTypesCache)
-            {
-                ReferencedTypesCache.IsValid = false;
-            }
+                return ReferencedTypesCache.Value;
         }
+    }
 
-        public static Type[] ResolveType(this string typeName) => ReferencedTypes.ByNamePartMulti[typeName];
+    public static void OnModuleLoaded()
+    {
+        lock(ReferencedTypesCache)
+            ReferencedTypesCache.IsValid = false;
+    }
 
-        public static Type ResolveUniqueType(this string typeName) => ReferencedTypes.ByNamePart[typeName];
+    public static Type[] ResolveType(this string typeName) => ReferencedTypes.ByNamePartMulti[typeName];
 
-        public static string PrettyName(this Type type) => ReferencedTypes.PrettyName[type];
+    public static Type ResolveUniqueType(this string typeName) => ReferencedTypes.ByNamePart[typeName];
 
-        public static string CompleteName(this Type type) => ReferencedTypes.CompleteName[type];
+    public static string PrettyName(this Type type) => ReferencedTypes.PrettyName[type];
 
-        public static string NullableName(this Type type)
-        {
-            if(type.IsClass)
-                return type.PrettyName();
-            return type.PrettyName() + "?";
-        }
+    public static string CompleteName(this Type type) => ReferencedTypes.CompleteName[type];
 
-        static TypeLibrary ObtainReferencedTypes()
-        {
-            var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
-            return new TypeLibrary(assembly.GetReferencedTypes());
-        }
+    public static string NullableName(this Type type)
+    {
+        if(type.IsClass)
+            return type.PrettyName();
+        return type.PrettyName() + "?";
+    }
+
+    static TypeLibrary ObtainReferencedTypes()
+    {
+        var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+        return new(assembly.GetReferencedTypes());
     }
 }

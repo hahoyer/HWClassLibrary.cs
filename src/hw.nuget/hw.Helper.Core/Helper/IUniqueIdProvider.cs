@@ -1,9 +1,8 @@
 // ReSharper disable CheckNamespace
 
-namespace hw.Helper
+namespace hw.Helper;
+
+public interface IUniqueIdProvider
 {
-    public interface IUniqueIdProvider
-    {
-        string Value { get; }
-    }
+    string Value { get; }
 }
