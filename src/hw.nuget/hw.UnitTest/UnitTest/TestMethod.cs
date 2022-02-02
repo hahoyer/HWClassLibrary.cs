@@ -78,12 +78,12 @@ namespace hw.UnitTest
         {
             get
             {
-                var b = Actor.InstanceType.GetAttributes<ILocationProvider>(true).FirstOrDefault();
-                if(b != null)
-                    yield return b.Where;
-                var a = Actor.MethodInfo?.GetAttributes<ILocationProvider>(true).FirstOrDefault();
-                if(a != null)
-                    yield return a.Where;
+                var instance = Actor.InstanceType.GetAttributes<ILocationProvider>(true).FirstOrDefault();
+                if(instance != null)
+                    yield return instance.Where;
+                var method = Actor.MethodInfo?.GetAttributes<ILocationProvider>(true).FirstOrDefault();
+                if(method != null)
+                    yield return method.Where;
             }
         }
 
