@@ -16,13 +16,16 @@
         <language>en-US</language>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2016 - 2020</copyright>
+        <copyright>Copyright Harald Hoyer 2016 - 2022</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="21.1" />
+            <dependency id="hw.Helper.Core" version="22.0" />
         </dependencies>
-        <version>21.3</version>
+        <version>22.0</version>
         <releaseNotes>
+            refactor: escalating statements of deprecation
+            refactor: upgrade C#
+            21.3
             change: White-spaces of IToken are now given by a count only
             new: Match feature: Matching backward option
             new: Match feature: Matching with bounds option
