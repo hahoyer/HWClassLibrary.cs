@@ -188,7 +188,6 @@
     <Compile Include="hw.Forms\Forms\IAdditionalNodeInfoProvider.cs">
     </Compile>
     <Compile Include="hw.UnitTest\UnitTest\CategoryAttribute.cs" />
-    <Compile Include="hw.UnitTest\UnitTest\DependantAttribute.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestExtender.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestRunner.cs" />
