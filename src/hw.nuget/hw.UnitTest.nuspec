@@ -16,9 +16,12 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2014-2020</copyright>
-        <version>21.1.2</version>
+        <copyright>Copyright Harald Hoyer 2014-2022</copyright>
+        <version>22.0</version>
         <releaseNotes>
+            refactor: escalating statements of deprecation
+            refactor: upgrade C#
+            21.1.2
             change: IsSuccessful for methods introduced
             change: PendingTests: No line is generated under error tag for successful methods
             refactor: upgrade C#
