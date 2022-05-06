@@ -1,27 +1,27 @@
 using System;
 using hw.DebugFormatter;
+
 // ReSharper disable CheckNamespace
 
-namespace hw.Scanner
+namespace hw.Scanner;
+
+/// <summary>
+///     Pair of a token class and a match function
+/// </summary>
+public sealed class LexerItem : DumpableObject
 {
     /// <summary>
-    ///     Pair of a token class and a match function
+    ///     The match function will get the current source position
+    ///     and should return the number of characters that are accepted
+    ///     or null if there is no match.
     /// </summary>
-    public sealed class LexerItem : DumpableObject
+    public readonly Func<SourcePosition, int?> Match;
+
+    public readonly IScannerTokenType ScannerTokenType;
+
+    public LexerItem(IScannerTokenType scannerTokenType, Func<SourcePosition, int?> match)
     {
-        /// <summary>
-        ///     The match function will get the current source position
-        ///     and should return the number of characters that are accepted
-        ///     or null if there is no match.
-        /// </summary>
-        public readonly Func<SourcePosition, int?> Match;
-
-        public readonly IScannerTokenType ScannerTokenType;
-
-        public LexerItem(IScannerTokenType scannerTokenType, Func<SourcePosition, int?> match)
-        {
-            ScannerTokenType = scannerTokenType;
-            Match = match;
-        }
+        ScannerTokenType = scannerTokenType;
+        Match = match;
     }
 }
