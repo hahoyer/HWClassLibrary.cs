@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30523.141
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{74DE59EF-1FD7-49C7-AA7D-072C03150508}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6CF995B9-16A2-45C2-9EB2-0275F8314824}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\ApiKey.targets = ..\build\ApiKey.targets
+		..\build\ApiKey.targets.sample = ..\build\ApiKey.targets.sample
 		..\build\CSharp.Exe.targets = ..\build\CSharp.Exe.targets
 		..\build\CSharp.Library.targets = ..\build\CSharp.Library.targets
 		..\build\CSharp.Library.UnitTest.targets = ..\build\CSharp.Library.UnitTest.targets

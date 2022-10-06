@@ -1,0 +1,6 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ApiKey>apikey-value</ApiKey>
+        <!--see email "Your API key is about to expire" -->
+    </PropertyGroup>
+</Project>
