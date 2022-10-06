@@ -18,8 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2022</copyright>
 
-        <version>22.0</version>
+        <version>22.0.1</version>
         <releaseNotes>
+            new: Path-operator for SmbFile
+            22.0
             refactor: escalating statements of deprecation
             change: Split function: bool? parameter changed to enum
             change: order for dump is now double
