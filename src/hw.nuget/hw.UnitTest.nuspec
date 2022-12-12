@@ -19,7 +19,7 @@
         <copyright>Copyright Harald Hoyer 2014-2022</copyright>
         <version>22.0.2</version>
         <releaseNotes>
-            Refactor
+            refactor: Upgrade C#
             22.0.1
             Wrong version of dependency
             22.0
