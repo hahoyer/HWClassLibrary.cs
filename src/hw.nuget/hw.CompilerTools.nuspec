@@ -21,7 +21,7 @@
         <dependencies>
             <dependency id="hw.Helper.Core" version="22.0.2" />
         </dependencies>
-        <version>22.0.2</version>
+        <version>22.0.3</version>
         <releaseNotes>
             refactor: Default parameter
             22.0.1

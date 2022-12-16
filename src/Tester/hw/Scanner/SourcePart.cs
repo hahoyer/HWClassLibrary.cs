@@ -28,6 +28,30 @@ public sealed class SourcePart
     [DisableDump]
     public Source Source { get; }
 
+    [DisableDump]
+    public int EndPosition => Position + Length;
+
+    public string Id => Source.SubString(Position, Length);
+
+    [DisableDump]
+    public string FilePosition => "\n" + Source.FilePosition(Position, EndPosition, Id);
+
+    [UsedImplicitly]
+    public string NodeDump => GetDumpAroundCurrent().LogDump();
+
+    [DisableDump]
+    public SourcePosition Start => Source + Position;
+
+    [DisableDump]
+    public SourcePosition End => Source + EndPosition;
+
+    [UsedImplicitly]
+    string DumpCurrent => Id;
+
+    [DisableDump]
+    public(TextPosition start, TextPosition end) TextPosition
+        => (Source.GetTextPosition(Position), Source.GetTextPosition(EndPosition));
+
     SourcePart(Source source, int position, int length)
     {
         Source = source;
@@ -46,7 +70,7 @@ public sealed class SourcePart
     SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
 
     public override bool Equals(object obj)
-        => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
+        => ReferenceEquals(this, obj) || (obj is SourcePart other && Equals(other));
 
     public override int GetHashCode()
     {
@@ -58,30 +82,6 @@ public sealed class SourcePart
             return hashCode;
         }
     }
-
-    [DisableDump]
-    public int EndPosition => Position + Length;
-
-    public string Id => Source.SubString(Position, Length);
-
-    [DisableDump]
-    public string FilePosition => "\n" + Source.FilePosition(Position, EndPosition, Id);
-
-    [UsedImplicitly]
-    public string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth).LogDump();
-
-    [DisableDump]
-    public SourcePosition Start => Source + Position;
-
-    [DisableDump]
-    public SourcePosition End => Source + EndPosition;
-
-    [UsedImplicitly]
-    string DumpCurrent => Id;
-
-    [DisableDump]
-    public(TextPosition start, TextPosition end) TextPosition
-        => (Source.GetTextPosition(Position), Source.GetTextPosition(EndPosition));
 
     public SourcePart Overlay(SourcePart other)
     {
@@ -113,7 +113,7 @@ public sealed class SourcePart
     public string FileErrorPosition(string errorTag)
         => "\n" + Source.FilePosition(Position, EndPosition, Id.Quote(), "error " + errorTag);
 
-    public string GetDumpAroundCurrent(int dumpWidth)
+    public string GetDumpAroundCurrent(int dumpWidth = Source.NodeDumpWidth)
         => Source.GetDumpBeforeCurrent(Position, dumpWidth) +
             "[" +
             DumpCurrent +
