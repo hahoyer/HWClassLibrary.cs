@@ -37,7 +37,7 @@ public sealed class SourcePart
     public string FilePosition => "\n" + Source.FilePosition(Position, EndPosition, Id);
 
     [UsedImplicitly]
-    public string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth).LogDump();
+    public string NodeDump => GetDumpAroundCurrent().LogDump();
 
     [DisableDump]
     public SourcePosition Start => Source + Position;
@@ -113,7 +113,7 @@ public sealed class SourcePart
     public string FileErrorPosition(string errorTag)
         => "\n" + Source.FilePosition(Position, EndPosition, Id.Quote(), "error " + errorTag);
 
-    public string GetDumpAroundCurrent(int dumpWidth)
+    public string GetDumpAroundCurrent(int dumpWidth = Source.NodeDumpWidth)
         => Source.GetDumpBeforeCurrent(Position, dumpWidth) +
             "[" +
             DumpCurrent +
