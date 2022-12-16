@@ -21,8 +21,10 @@
         <dependencies>
             <dependency id="hw.Helper.Core" version="22.0.2" />
         </dependencies>
-        <version>22.0.1</version>
+        <version>22.0.2</version>
         <releaseNotes>
+            refactor: Default parameter
+            22.0.1
             new: SourcePart.Split
             22.0
             refactor: escalating statements of deprecation

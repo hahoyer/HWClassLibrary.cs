@@ -19,6 +19,38 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     public readonly Source Source;
     public int Position;
 
+    public bool IsValid
+    {
+        get => 0 <= Position && Position <= Source.Length;
+        set => Position = value? 0 : -1;
+    }
+
+    /// <summary>
+    ///     The current character
+    /// </summary>
+    public char Current => Source[Position];
+
+    /// <summary>
+    ///     Natural indexer
+    /// </summary>
+    public char this[int index] => Source[Position + index];
+
+    /// <summary>
+    ///     Checks if at or beyond end of source
+    /// </summary>
+    /// <value> </value>
+    public bool IsEnd => Source.IsEnd(Position);
+
+    [UsedImplicitly]
+    string NodeDump => GetDumpAroundCurrent();
+
+    public SourcePosition Clone => new(Source, Position);
+
+    public TextPosition TextPosition => Source.GetTextPosition(Position);
+
+    public int LineIndex => Source.LineIndex(Position);
+    public int ColumnIndex => Source.ColumnIndex(Position);
+
     /// <summary>
     ///     ctor from source and position
     /// </summary>
@@ -52,40 +84,8 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     {
         if(Source.IsPersistent)
             return "\n" + FilePosition("see there");
-        return GetDumpAroundCurrent(Source.DumpWidth);
+        return GetDumpAroundCurrent();
     }
-
-    public bool IsValid
-    {
-        get => 0 <= Position && Position <= Source.Length;
-        set => Position = value? 0 : -1;
-    }
-
-    /// <summary>
-    ///     The current character
-    /// </summary>
-    public char Current => Source[Position];
-
-    /// <summary>
-    ///     Natural indexer
-    /// </summary>
-    public char this[int index] => Source[Position + index];
-
-    /// <summary>
-    ///     Checks if at or beyond end of source
-    /// </summary>
-    /// <value> </value>
-    public bool IsEnd => Source.IsEnd(Position);
-
-    [UsedImplicitly]
-    string NodeDump => GetDumpAroundCurrent(Source.NodeDumpWidth);
-
-    public SourcePosition Clone => new(Source, Position);
-
-    public TextPosition TextPosition => Source.GetTextPosition(Position);
-
-    public int LineIndex => Source.LineIndex(Position);
-    public int ColumnIndex => Source.ColumnIndex(Position);
 
     public static SourcePosition operator +(SourcePosition target, int y)
         => target.Source + (target.Position + y);
@@ -138,7 +138,7 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     /// <returns>the "FileName(lineNumber,ColNr): tag: " string</returns>
     public string FilePosition(string flagText) => Source.FilePosition(Position, Position, flagText);
 
-    public string GetDumpAroundCurrent(int dumpWidth)
+    public string GetDumpAroundCurrent(int dumpWidth = Source.NodeDumpWidth)
     {
         if(IsValid)
             return
