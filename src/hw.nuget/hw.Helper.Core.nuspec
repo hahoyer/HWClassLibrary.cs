@@ -18,8 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2022</copyright>
 
-        <version>22.0.1</version>
+        <version>22.0.2</version>
         <releaseNotes>
+            change: TextPosition.ColumnNumber is replaced by ColumnNumber1 since it is actually ColumnNUmber+1  
+            22.0.1
             new: Path-operator for SmbFile
             22.0
             refactor: escalating statements of deprecation

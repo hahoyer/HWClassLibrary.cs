@@ -28,37 +28,6 @@ public sealed class SourcePart
     [DisableDump]
     public Source Source { get; }
 
-    SourcePart(Source source, int position, int length)
-    {
-        Source = source;
-        if(length >= 0)
-        {
-            Length = length;
-            Position = position;
-        }
-        else
-        {
-            Length = -length;
-            Position = position + length;
-        }
-    }
-
-    SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
-
-    public override bool Equals(object obj)
-        => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Length;
-            hashCode = (hashCode * 397) ^ Position;
-            hashCode = (hashCode * 397) ^ (Source != null? Source.GetHashCode() : 0);
-            return hashCode;
-        }
-    }
-
     [DisableDump]
     public int EndPosition => Position + Length;
 
@@ -82,6 +51,37 @@ public sealed class SourcePart
     [DisableDump]
     public(TextPosition start, TextPosition end) TextPosition
         => (Source.GetTextPosition(Position), Source.GetTextPosition(EndPosition));
+
+    SourcePart(Source source, int position, int length)
+    {
+        Source = source;
+        if(length >= 0)
+        {
+            Length = length;
+            Position = position;
+        }
+        else
+        {
+            Length = -length;
+            Position = position + length;
+        }
+    }
+
+    SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
+
+    public override bool Equals(object obj)
+        => ReferenceEquals(this, obj) || (obj is SourcePart other && Equals(other));
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Length;
+            hashCode = (hashCode * 397) ^ Position;
+            hashCode = (hashCode * 397) ^ (Source != null? Source.GetHashCode() : 0);
+            return hashCode;
+        }
+    }
 
     public SourcePart Overlay(SourcePart other)
     {
@@ -226,4 +226,20 @@ public sealed class SourcePart
     public SourcePosition GetStart(bool isForward) => isForward? Start : End;
     public SourcePosition GetEnd(bool isForward) => isForward? End : Start;
     public int? Match(IMatch automaton, bool isForward = true) => automaton.Match(this, isForward);
+
+    public IEnumerable<SourcePart> Split(string delimiter)
+    {
+        var start = Start;
+        for(var current = Start; current < End;)
+            if(current.Span(delimiter.Length).Id == delimiter)
+            {
+                yield return start.Span(current);
+                current += delimiter.Length;
+                start = current;
+            }
+            else
+                current += 1;
+
+        yield return start.Span(End);
+    }
 }

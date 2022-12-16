@@ -19,10 +19,12 @@
         <copyright>Copyright Harald Hoyer 2016 - 2022</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="22.0" />
+            <dependency id="hw.Helper.Core" version="22.0.2" />
         </dependencies>
-        <version>22.0</version>
+        <version>22.0.1</version>
         <releaseNotes>
+            new: SourcePart.Split
+            22.0
             refactor: escalating statements of deprecation
             refactor: upgrade C#
             21.3

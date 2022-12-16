@@ -19,6 +19,7 @@
         <copyright>Copyright Harald Hoyer 2014-2022</copyright>
         <version>22.0.2</version>
         <releaseNotes>
+            admin: dependency fixed
             refactor: Upgrade C#
             22.0.1
             Wrong version of dependency
@@ -61,7 +62,7 @@
             Breaking Change: Attributes TestFixture and Test renamed to UnitTest
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="22.0.1" />
+            <dependency id="hw.Helper.Core" version="22.0.2" />
         </dependencies>
 
     </metadata>
