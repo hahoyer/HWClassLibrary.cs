@@ -22,7 +22,7 @@
             <dependency id="hw.Helper.Core" version="22.0.2" />
         </dependencies>
         <version>22.0.5</version>
-        <releaseNotes>
+        <releaseNotes>                                         
             refactor: Default parameter
             22.0.1
             new: SourcePart.Split

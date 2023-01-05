@@ -18,8 +18,12 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2022</copyright>
 
-        <version>22.0.2</version>
+        <version>22.1.0-alpha</version>
         <releaseNotes>
+            change: assertion function behaviour improved
+            change: enable line-continuation in case of thread change
+            change: force usages of TextPosition.ColumnNumber to be removed
+            22.0.2
             change: TextPosition.ColumnNumber is replaced by ColumnNumber1 since it is actually ColumnNUmber+1  
             22.0.1
             new: Path-operator for SmbFile
