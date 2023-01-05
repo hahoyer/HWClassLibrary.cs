@@ -298,10 +298,10 @@ public static class Tracer
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
-                (stackFrame, FilePositionTag.Debug) +
-            DumpMethod(stackFrame.GetMethod(), true) +
-            text +
-            DumpMethodWithData(null, data).Indent();
+                (stackFrame, FilePositionTag.Debug)
+            + DumpMethod(stackFrame.GetMethod(), true)
+            + text
+            + DumpMethodWithData(null, data).Indent();
     }
 
     public static string IsSetTo(this string name, object value) => name + "=" + Dump(value);
@@ -331,7 +331,7 @@ public static class Tracer
     /// <param name="getText"> The text. </param>
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
     [DebuggerHidden]
-    public static void ConditionalBreak(bool b, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void ConditionalBreak(this bool b, Func<string> getText = null, int stackFrameDepth = 0)
     {
         if(b)
             ConditionalBreak("", getText, stackFrameDepth + 1);
@@ -467,10 +467,10 @@ public static class Tracer
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
-                (stackFrame, FilePositionTag.Debug) +
-            DumpMethod(stackFrame.GetMethod(), true) +
-            text +
-            DumpMethodWithData(stackFrame.GetMethod(), thisObject, parameter).Indent();
+                (stackFrame, FilePositionTag.Debug)
+            + DumpMethod(stackFrame.GetMethod(), true)
+            + text
+            + DumpMethodWithData(stackFrame.GetMethod(), thisObject, parameter).Indent();
     }
 
     static string DumpMethodWithData(MethodBase methodBase, object target, object[] parameters)
