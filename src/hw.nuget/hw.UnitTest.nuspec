@@ -16,9 +16,11 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2014-2022</copyright>
-        <version>22.0.2</version>
+        <copyright>Copyright Harald Hoyer 2014-2023</copyright>
+        <version>23.0.1</version>
         <releaseNotes>
+            Readme added
+            22.0.2
             admin: dependency fixed
             refactor: Upgrade C#
             22.0.1
@@ -64,10 +66,10 @@
         <dependencies>
             <dependency id="hw.Helper.Core" version="22.0.2" />
         </dependencies>
-
+        <readme>docs\UnitTest.md</readme>
     </metadata>
     <files>
-
+        <file src="hw.UnitTest\UnitTest.md" target="docs\" />
         <file src="hw.UnitTest\" target="content/hw" />
     </files>
 </package>
