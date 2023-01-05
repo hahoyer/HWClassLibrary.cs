@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using hw.DebugFormatter;
@@ -162,10 +163,12 @@ public static class LinqExtension
         return target.Value;
     }
 
-    public static TResult AssertNotNull<TResult>(this TResult target)
+    [DebuggerHidden]
+    [ContractAnnotation("target: null => halt")]
+    public static TResult AssertNotNull<TResult>(this TResult target, int stackFrameDepth = 0)
         where TResult : class
     {
-        (target != null).Assert();
+        (target != null).Assert(stackFrameDepth: stackFrameDepth + 1);
         return target;
     }
 
