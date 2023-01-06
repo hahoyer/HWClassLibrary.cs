@@ -16,13 +16,15 @@
         <language>en-US</language>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2016 - 2022</copyright>
+        <copyright>Copyright Harald Hoyer 2016 - 2023</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="22.0.2" />
+            <dependency id="hw.Helper.Core" version="23.0.0" />
         </dependencies>
-        <version>22.0.5</version>
-        <releaseNotes>                                         
+        <version>23.0.0</version>
+        <releaseNotes>
+            admin: Fix for use with .net6
+            22.0.5                                         
             refactor: Default parameter
             22.0.1
             new: SourcePart.Split
@@ -193,6 +195,7 @@
 
     </metadata>
     <files>
+        <file src="hw.CompilerTools\" target="contentFiles/any/any/hw" />
         <file src="hw.CompilerTools\" target="content\hw" />
     </files>
 </package>

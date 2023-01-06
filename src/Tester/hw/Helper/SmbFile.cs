@@ -396,4 +396,6 @@ public sealed class SmbFile
         string tag
     )
         => Tracer.FilePosition(FullName, textPart, tag);
+
+    public static SmbFile operator /(SmbFile file, string tail) => file.PathCombine(tail);
 }

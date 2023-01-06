@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 
 // ReSharper disable CheckNamespace
@@ -15,5 +16,12 @@ public class TextPart
 public sealed class TextPosition
 {
     public int LineNumber;
-    public int ColumnNumber;
+    public int ColumnNumber1;
+
+    [Obsolete("Use ColumnNumber1 since it is actually ColumnNUmber+1")]
+    public int ColumnNumber
+    {
+        get => ColumnNumber1 - 1;
+        set => ColumnNumber1 = value + 1;
+    }
 }

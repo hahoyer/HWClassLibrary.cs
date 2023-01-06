@@ -48,7 +48,7 @@ public static class Tracer
             {
                 Start = new()
                 {
-                    LineNumber = stackFrame.GetFileLineNumber() - 1, ColumnNumber = stackFrame.GetFileColumnNumber()
+                    LineNumber = stackFrame.GetFileLineNumber() - 1, ColumnNumber1 = stackFrame.GetFileColumnNumber()
                 }
             }
             ,
@@ -71,7 +71,7 @@ public static class Tracer
             {
                 Start = new()
                 {
-                    LineNumber = lineNumber, ColumnNumber = columnNumber
+                    LineNumber = lineNumber, ColumnNumber1 = columnNumber
                 }
             }
             , tag);
@@ -93,11 +93,11 @@ public static class Tracer
             {
                 Start = new()
                 {
-                    LineNumber = lineNumber, ColumnNumber = columnNumber
+                    LineNumber = lineNumber, ColumnNumber1 = columnNumber
                 }
                 , End = new()
                 {
-                    LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd
+                    LineNumber = lineNumberEnd, ColumnNumber1 = columnNumberEnd
                 }
             }
             , tag);
@@ -117,8 +117,8 @@ public static class Tracer
         => FilePosition(fileName
             , new()
             {
-                Start = new() { LineNumber = lineNumber, ColumnNumber = columnNumber }
-                , End = new() { LineNumber = lineNumberEnd, ColumnNumber = columnNumberEnd }
+                Start = new() { LineNumber = lineNumber, ColumnNumber1 = columnNumber }
+                , End = new() { LineNumber = lineNumberEnd, ColumnNumber1 = columnNumberEnd }
             }
             , tagText);
 
@@ -127,14 +127,14 @@ public static class Tracer
 
     public static string FilePosition(string fileName, TextPart textPart, string tagText)
     {
-        var start = textPart?.Start ?? new TextPosition { LineNumber = 1, ColumnNumber = 1 };
+        var start = textPart?.Start ?? new TextPosition { LineNumber = 1, ColumnNumber1 = 1 };
         var end = textPart?.End ?? start;
         return VisualStudioLineFormat
             .Replace("{fileName}", fileName)
             .Replace("{lineNumber}", (start.LineNumber + 1).ToString())
-            .Replace("{columnNumber}", start.ColumnNumber.ToString())
+            .Replace("{columnNumber}", start.ColumnNumber1.ToString())
             .Replace("{lineNumberEnd}", (end.LineNumber + 1).ToString())
-            .Replace("{columnNumberEnd}", end.ColumnNumber.ToString())
+            .Replace("{columnNumberEnd}", end.ColumnNumber1.ToString())
             .Replace("{tagText}", tagText);
     }
 

@@ -12,14 +12,17 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2020</copyright>
+        <copyright>Copyright Harald Hoyer 2020-2023</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="20.0.7" />
-            <dependency id="log4net" version="2.0.11" />
+            <dependency id="hw.Helper.Core" version="23.0.0" />
+            <dependency id="log4net" version="2.0.15" />
         </dependencies>
-        <version>21.0</version>
+        <version>23.0</version>
         <releaseNotes>
+            admin: Fix for use with .net6
+            refactor: Upgrade C#
+            21.0
             refactor: Upgrade C#
             20.0.1
             change: stack level detection
@@ -28,6 +31,7 @@
 
 
     <files>
+        <file src="hw.log4net\" target="contentFiles/any/any/hw" />
         <file src="hw.log4net\" target="content/hw" />
     </files>
 </package>

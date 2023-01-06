@@ -162,7 +162,6 @@ public static class LinqExtension
         return target.Value;
     }
 
-    [ContractAnnotation("=> notnull")]
     public static TResult AssertNotNull<TResult>(this TResult target)
         where TResult : class
     {

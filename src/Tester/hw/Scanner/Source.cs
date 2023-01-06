@@ -15,6 +15,13 @@ public sealed class Source : Dumpable
     public readonly string Identifier;
     readonly ISourceProvider SourceProvider;
 
+    public string Data => SourceProvider.Data;
+
+    public char this[int index] => IsEnd(index)? '\0' : Data[index];
+    public int Length => Data.Length;
+    public bool IsPersistent => SourceProvider.IsPersistent;
+    public SourcePart All => (this + 0).Span(Length);
+
     public Source(ISourceProvider sourceProvider, string identifier = null)
     {
         SourceProvider = sourceProvider;
@@ -29,19 +36,12 @@ public sealed class Source : Dumpable
 
     protected override string Dump(bool isRecursion) => FilePosition(0, Length, "see there");
 
-    public string Data => SourceProvider.Data;
-
-    public char this[int index] => IsEnd(index)? '\0' : Data[index];
-    public int Length => Data.Length;
-    public bool IsPersistent => SourceProvider.IsPersistent;
-    public SourcePart All => (this + 0).Span(Length);
-
     public static SourcePosition operator +(Source target, int y) => new(target, y);
     public bool IsEnd(int position) => Length <= position;
     public string SubString(int start, int length) => Data.Substring(start, length);
 
     public TextPosition GetTextPosition(int position)
-        => new() { LineNumber = LineIndex(position), ColumnNumber = ColumnIndex(position) + 1 };
+        => new() { LineNumber = LineIndex(position), ColumnNumber1 = ColumnIndex(position) + 1 };
 
     public string FilePosition(int position, int positionEnd, string flagText, string tag = null)
         => Tracer.FilePosition

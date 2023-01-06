@@ -226,4 +226,20 @@ public sealed class SourcePart
     public SourcePosition GetStart(bool isForward) => isForward? Start : End;
     public SourcePosition GetEnd(bool isForward) => isForward? End : Start;
     public int? Match(IMatch automaton, bool isForward = true) => automaton.Match(this, isForward);
+
+    public IEnumerable<SourcePart> Split(string delimiter)
+    {
+        var start = Start;
+        for(var current = Start; current < End;)
+            if(current.Span(delimiter.Length).Id == delimiter)
+            {
+                yield return start.Span(current);
+                current += delimiter.Length;
+                start = current;
+            }
+            else
+                current += 1;
+
+        yield return start.Span(End);
+    }
 }

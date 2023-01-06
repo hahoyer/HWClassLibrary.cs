@@ -16,10 +16,12 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2013 - 2022</copyright>
+        <copyright>Copyright Harald Hoyer 2013 - 2023</copyright>
 
-        <version>22.1.0-alpha</version>
+        <version>23.0.0-alpha</version>
         <releaseNotes>
+            admin: Fix for use with .net6
+            22.1.0-alpha
             change: assertion function behaviour improved
             change: enable line-continuation in case of thread change
             change: force usages of TextPosition.ColumnNumber to be removed
@@ -151,10 +153,11 @@
             Change: ValueCache: is now public
         </releaseNotes>
         <dependencies>
-            <dependency id="JetBrains.Annotations" version="10.2" />
+            <dependency id="JetBrains.Annotations" version="2022.3.1" />
         </dependencies>
     </metadata>
     <files>
+        <file src="hw.Helper.Core\" target="contentFiles/any/any/hw" />
         <file src="hw.Helper.Core\" target="content\hw" />
     </files>
 </package>
