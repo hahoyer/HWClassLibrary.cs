@@ -17,7 +17,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2014-2023</copyright>
-        <version>23.0.1</version>
+        <version>23.0.2</version>
         <releaseNotes>
             Readme added
             22.0.2

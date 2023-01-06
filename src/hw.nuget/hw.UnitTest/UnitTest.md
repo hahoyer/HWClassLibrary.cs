@@ -14,7 +14,7 @@ It is comapatible to nunit and MSTest although is provides some more features.
 
 # Getting started
 
-- Mark classes their methods with the attribute `UnitTest` to define them as unit test.
+- Mark classes and their methods with the attribute `UnitTest` to define them as unit test.
 - classes must be:
   - public
   - static or sealed
@@ -22,7 +22,7 @@ It is comapatible to nunit and MSTest although is provides some more features.
   - classes can be toplevel or nested
 - methods must be
   - public
-  - non-abstract and possibly static
+  - non-abstract
   - static or not
   - without parameters and return values
 - include at least `Assembly.GetExecutingAssembly().RunTests()` in Main-function of your test-executable
@@ -38,7 +38,7 @@ The testrunner is responsible for selecting the test to execute.
 It is done at different stages. 
 1. For starting it accepts a list of assemblies.
 2. For each assembly it searches all public classes that are marked as test.
-3. For each such class it searches for public methods the are marked as test.
+3. For each such class it searches for public methods that are marked as test.
 4. For any such method it checks if all run-conditions are met (see below)
 
 **Run-conditions** are:
@@ -102,7 +102,8 @@ Here is an example (AttributedFramework is implementing IFramework):
     }
 
 The registration should take place before running any test.
-This registers all tests from the ever-famous NUnit test suite.
+
+The above example registers all tests from the ever-famous NUnit test suite.
 To implement even more advanced test selection you can implement the `IFramework`-interface. 
 Look at the source code if you need to achieve this. It should be easy.
 
@@ -136,8 +137,12 @@ It has no effect on `TestRunner.RunTest`.
 This boolean controlls if `Test.HW.config` is used to skip tests that have already been successful in a previous run.
 Affects only `TestRunner.RunTests`.
 ### TestsFileName
-This string may contain a path to a C# file. `TestRunner.RunTests` will write this file between each excution of a test-method.
-This file will be a valid C\#-file. It will contain a line for each method to execute. Thus it will shrink (hopefully) during test run whenever a test method executed successfully.
+This string may contain a path to a C# file. 
+`TestRunner.RunTests` will write this file between each excution of a test-method.
+This file will be a valid C\#-file. 
+It will contain a line for each method that has not been executed successfully. 
+
+Thus it will shrink (hopefully) during test run whenever a test method executed successfully.
 
 The file is looking like this example: 
     
@@ -192,5 +197,5 @@ In your executable you should call a function that is looking like the following
 # Issues and Co.
 - Report to project website on github (https://github.com/hahoyer/HWClassLibrary.cs)
 - issues and feedback: https://github.com/hahoyer/HWClassLibrary.cs/issues
-- [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G4BH6WX)
+- [![Support me on ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G4BH6WX)
 
