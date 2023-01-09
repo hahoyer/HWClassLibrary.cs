@@ -146,18 +146,18 @@ public sealed class Configuration
     static bool IsOutlookClass(Type t)
     {
         var name = t.ToString();
-        return name == "Outlook.ApplicationClass" ||
-            name == "Outlook.NameSpaceClass" ||
-            name == "Outlook.InspectorClass";
+        return name == "Outlook.ApplicationClass"
+            || name == "Outlook.NameSpaceClass"
+            || name == "Outlook.InspectorClass";
     }
 
     static string Dump(IEnumerable<object> target)
     {
         var enumerable = target.ToArray();
         return
-            "Count=" +
-            enumerable.Length +
-            enumerable
+            "Count="
+            + enumerable.Length
+            + enumerable
                 .Select(Tracer.Dump)
                 .Stringify("\n", true)
                 .Surround("{", "}");
@@ -168,7 +168,7 @@ public sealed class Configuration
         var result = target
             .ToString()
             .Split(',')
-            .Select(item => type.PrettyName() + "." + item)
+            .Select(item => type.PrettyName() + "." + item.Trim())
             .Stringify(", ");
         return result.Contains(",")? "(" + result + ")" : result;
     }
