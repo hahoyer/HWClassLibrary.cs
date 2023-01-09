@@ -195,7 +195,7 @@
     <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestRunner.cs" />
     <Compile Include="hw.UnitTest\UnitTest\TestType.cs" />
-    <None Include="hw.UnitTest\UnitTest.md">
+    <None Include="hw.UnitTest.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

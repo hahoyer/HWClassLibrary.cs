@@ -21,26 +21,6 @@ public abstract class DumpableObject : Dumpable
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     readonly int? ObjectIdValue;
 
-    protected DumpableObject()
-        : this(NextObjectId++) { }
-
-    [PublicAPI]
-    protected DumpableObject(int? nextObjectId) => ObjectIdValue = nextObjectId ?? NextObjectId++;
-
-    protected virtual string GetNodeDump() => GetType().PrettyName();
-
-    public override string ToString() => base.ToString() + " ObjectId=" + ObjectId;
-
-    public override string DebuggerDump() => base.DebuggerDump() + " ObjectId=" + ObjectId;
-
-    protected override string Dump(bool isRecursion)
-    {
-        var result = NodeDump;
-        if(!isRecursion)
-            result += DumpData().Surround("{", "}");
-        return result;
-    }
-
     [DisableDump]
     [PublicAPI]
     public int ObjectId
@@ -68,6 +48,26 @@ public abstract class DumpableObject : Dumpable
     protected static string CallingMethodName
         => Debugger.IsAttached? Tracer.CallingMethodName(2) : "";
 
+    protected DumpableObject()
+        : this(NextObjectId++) { }
+
+    [PublicAPI]
+    protected DumpableObject(int? nextObjectId) => ObjectIdValue = nextObjectId ?? NextObjectId++;
+
+    protected virtual string GetNodeDump() => GetType().PrettyName();
+
+    public override string ToString() => base.ToString() + " ObjectId=" + ObjectId;
+
+    public override string DebuggerDump() => base.DebuggerDump() + " ObjectId=" + ObjectId;
+
+    protected override string Dump(bool isRecursion)
+    {
+        var result = NodeDump;
+        if(!isRecursion)
+            result += DumpData().Surround("{", "}");
+        return result;
+    }
+
     [PublicAPI]
     public string NodeDumpForDebug() => Debugger.IsAttached? GetNodeDump() : "";
 
@@ -85,7 +85,7 @@ public abstract class DumpableObject : Dumpable
         var isStopByObjectIdActive = IsStopByObjectIdActive;
         IsStopByObjectIdActive = true;
         if(ObjectId == objectId)
-            Tracer.ConditionalBreak
+            Tracer.UnconditionalBreak
                 ("", () => @"ObjectId==" + ObjectId + "\n" + Dump(), stackFrameDepth + 1);
         IsStopByObjectIdActive = isStopByObjectIdActive;
     }

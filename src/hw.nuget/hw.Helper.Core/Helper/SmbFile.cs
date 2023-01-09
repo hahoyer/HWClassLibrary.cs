@@ -27,16 +27,6 @@ public sealed class SmbFile
 
     FileSystemInfo FileInfoCache;
 
-    public SmbFile() => InternalName = "";
-
-    SmbFile(string internalName, bool autoCreateDirectories)
-    {
-        InternalName = internalName;
-        AutoCreateDirectories = autoCreateDirectories;
-    }
-
-    public override string ToString() => FullName;
-
     /// <summary>
     ///     considers the file as a string. If file exists it should be a text file
     /// </summary>
@@ -200,21 +190,77 @@ public sealed class SmbFile
     /// <summary>
     ///     Gets the directory of the source file that called this function
     /// </summary>
+    /// <returns> </returns>
+    [PublicAPI]
+    public static string SourcePath => GetSourcePath(1);
+
+    /// <summary>
+    ///     Gets the name of the source file that called this function
+    /// </summary>
+    /// <returns> </returns>
+    [PublicAPI]
+    public static string SourceFileName => GetSourceFileName(1);
+
+    /// <summary>
+    ///     Gets the source file that called this function
+    /// </summary>
+    [PublicAPI]
+    public static SmbFile SourceFile => GetSourceFile(1);
+
+    /// <summary>
+    ///     Gets the folder of the source file that called this function
+    /// </summary>
+    [PublicAPI]
+    public static SmbFile SourceFolder => GetSourceFolder(1);
+
+    public SmbFile() => InternalName = "";
+
+    SmbFile(string internalName, bool autoCreateDirectories)
+    {
+        InternalName = internalName;
+        AutoCreateDirectories = autoCreateDirectories;
+    }
+
+    public override string ToString() => FullName;
+
+    /// <summary>
+    ///     Gets the directory of the source file that called this function
+    /// </summary>
     /// <param name="depth"> The depth. </param>
     /// <returns> </returns>
-    public static string SourcePath(int depth = 0)
-        => new FileInfo(SourceFileName(depth + 1)).DirectoryName;
+    [PublicAPI]
+    public static string GetSourcePath(int depth = 0)
+        => new FileInfo(GetSourceFileName(depth + 1)).DirectoryName;
 
     /// <summary>
     ///     Gets the name of the source file that called this function
     /// </summary>
     /// <param name="depth"> stack depths of the function used. </param>
     /// <returns> </returns>
-    public static string SourceFileName(int depth = 0)
+    [PublicAPI]
+    public static string GetSourceFileName(int depth = 0)
     {
         var sf = new StackTrace(true).GetFrame(depth + 1);
         return sf.GetFileName();
     }
+
+    /// <summary>
+    ///     Gets the source file that called this function
+    /// </summary>
+    /// <param name="depth"> stack depths of the function used. </param>
+    /// <returns> </returns>
+    [PublicAPI]
+    public static SmbFile GetSourceFile(int depth = 0)
+        => GetSourceFileName(depth + 1).ToSmbFile();
+
+    /// <summary>
+    ///     Gets the folder of the source file that called this function
+    /// </summary>
+    /// <param name="depth"> stack depths of the function used. </param>
+    /// <returns> </returns>
+    [PublicAPI]
+    public static SmbFile GetSourceFolder(int depth = 0)
+        => GetSourcePath(depth + 1).ToSmbFile();
 
     /// <summary>
     ///     Gets list of files that match given path and pattern

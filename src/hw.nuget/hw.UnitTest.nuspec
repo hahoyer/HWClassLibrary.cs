@@ -17,7 +17,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2014-2023</copyright>
-        <version>23.0.0</version>
+        <version>23.0.2</version>
         <releaseNotes>
             admin: Fix for use with .net6
             23.0.2
@@ -68,11 +68,11 @@
         <dependencies>
             <dependency id="hw.Helper.Core" version="23.0.0" />
         </dependencies>
-        <readme>docs\UnitTest.md</readme>
+        <readme>docs\hw.UnitTest.md</readme>
     </metadata>
     <files>
-        <file src="hw.UnitTest\" target="contentFiles/any/any/hw" />
-        <file src="hw.UnitTest\UnitTest.md" target="docs\" />
+        <file src="hw.UnitTest.md" target="docs\" />
+        <file src="hw.UnitTest\" target="contentFiles/any/any/hw/UnitTest" />
         <file src="hw.UnitTest\" target="content/hw" />
     </files>
 </package>

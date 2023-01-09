@@ -315,7 +315,7 @@ public static class Tracer
     /// <returns> </returns>
     [DebuggerHidden]
     [IsLoggingFunction]
-    public static void ConditionalBreak(string cond, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void UnconditionalBreak(string cond, Func<string> getText = null, int stackFrameDepth = 0)
     {
         var result = "Conditional break: " + cond + "\nData: " + (getText == null? "" : getText());
         FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
@@ -334,7 +334,7 @@ public static class Tracer
     public static void ConditionalBreak(this bool b, Func<string> getText = null, int stackFrameDepth = 0)
     {
         if(b)
-            ConditionalBreak("", getText, stackFrameDepth + 1);
+            UnconditionalBreak("", getText, stackFrameDepth + 1);
     }
 
     /// <summary>
