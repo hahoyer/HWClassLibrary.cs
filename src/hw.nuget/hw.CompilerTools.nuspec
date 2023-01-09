@@ -195,7 +195,7 @@
 
     </metadata>
     <files>
-        <file src="hw.CompilerTools\" target="contentFiles/any/any/hw" />
+        <file src="hw.CompilerTools\" target="contentFiles/any/any/hw/CompilerTools" />
         <file src="hw.CompilerTools\" target="content\hw" />
     </files>
 </package>

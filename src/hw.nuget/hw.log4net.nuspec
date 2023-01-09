@@ -31,7 +31,7 @@
 
 
     <files>
-        <file src="hw.log4net\" target="contentFiles/any/any/hw" />
+        <file src="hw.log4net\" target="contentFiles/any/any/hw/log4net" />
         <file src="hw.log4net\" target="content/hw" />
     </files>
 </package>
