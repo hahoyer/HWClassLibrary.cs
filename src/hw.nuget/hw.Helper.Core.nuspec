@@ -18,7 +18,7 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2023</copyright>
 
-        <version>23.0.4</version>
+        <version>23.0.6</version>
         <releaseNotes>
             admin: Fix for use with .net6
             new: Get callel position as SmbFile

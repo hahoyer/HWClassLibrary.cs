@@ -230,7 +230,10 @@ public sealed class SmbFile
     /// <returns> </returns>
     [PublicAPI]
     public static string GetSourcePath(int depth = 0)
-        => new FileInfo(GetSourceFileName(depth + 1)).DirectoryName;
+    {
+        var sourceFileName = GetSourceFileName(depth + 1);
+        return sourceFileName == null? null : new FileInfo(sourceFileName).DirectoryName;
+    }
 
     /// <summary>
     ///     Gets the name of the source file that called this function
@@ -251,7 +254,7 @@ public sealed class SmbFile
     /// <returns> </returns>
     [PublicAPI]
     public static SmbFile GetSourceFile(int depth = 0)
-        => GetSourceFileName(depth + 1).ToSmbFile();
+        => GetSourceFileName(depth + 1)?.ToSmbFile();
 
     /// <summary>
     ///     Gets the folder of the source file that called this function
@@ -260,7 +263,7 @@ public sealed class SmbFile
     /// <returns> </returns>
     [PublicAPI]
     public static SmbFile GetSourceFolder(int depth = 0)
-        => GetSourcePath(depth + 1).ToSmbFile();
+        => GetSourcePath(depth + 1)?.ToSmbFile();
 
     /// <summary>
     ///     Gets list of files that match given path and pattern
