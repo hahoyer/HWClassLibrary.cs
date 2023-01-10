@@ -188,7 +188,7 @@ In your executable you should call a function that is looking like the following
             configuration.IsBreakEnabled = false;
             configuration.SkipSuccessfulMethods = false;
             configuration.SaveResults = true;
-            configuration.TestsFileName = SmbFile.SourcePath().PathCombine("PendingTests.cs");
+            configuration.TestsFileName = SmbFile.SourcePath.PathCombine("PendingTests.cs");
             Assembly.GetExecutingAssembly().RunTests();
         }
     }

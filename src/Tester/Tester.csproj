@@ -5,8 +5,6 @@
     <ProjectGuid>{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}</ProjectGuid>
     <AssemblyName>Tester</AssemblyName>
     <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="JetBrains.Annotations, Version=4242.42.42.42, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">

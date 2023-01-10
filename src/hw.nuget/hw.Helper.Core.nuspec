@@ -27,7 +27,7 @@
             change: enable line-continuation in case of thread change
             change: force usages of TextPosition.ColumnNumber to be removed
             22.0.2
-            change: TextPosition.ColumnNumber is replaced by ColumnNumber1 since it is actually ColumnNUmber+1  
+            change: TextPosition.ColumnNumber is replaced by ColumnNumber1 since it is actually ColumnNUmber+1
             22.0.1
             new: Path-operator for SmbFile
             22.0
