@@ -15,7 +15,7 @@
         <copyright>Copyright Harald Hoyer 2020-2023</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="23.0.0" />
+            <dependency id="hw.Helper.Core" version="23.0.6" />
             <dependency id="log4net" version="2.0.15" />
         </dependencies>
         <version>23.0</version>
