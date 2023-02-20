@@ -54,7 +54,7 @@ public static class ReflectionExtender
 
     [NotNull]
     public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo target, bool inherit)
-        => target.GetCustomAttributes(inherit).OfType<TAttribu te>();
+        => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
     [CanBeNull]
     public static TAttribute GetAttribute<TAttribute>(this Type target, bool inherit)
