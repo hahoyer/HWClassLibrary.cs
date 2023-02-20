@@ -18,10 +18,12 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2023</copyright>
 
-        <version>23.0.6</version>
+        <version>23.0.7</version>
         <releaseNotes>
+            new: enum attributes
+            23.0.6
             admin: Fix for use with .net6
-            new: Get callel position as SmbFile
+            new: Get caller position as SmbFile
             22.1.0-alpha
             change: assertion function behaviour improved
             change: enable line-continuation in case of thread change

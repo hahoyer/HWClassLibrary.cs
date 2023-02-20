@@ -45,8 +45,16 @@ public static class ReflectionExtender
         => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
     [NotNull]
+    public static IEnumerable<T> GetAttributes<T>(this Enum target)
+        => target
+            .GetType()
+            .GetMember(target.ToString())[0]
+            .GetCustomAttributes(false)
+            .OfType<T>();
+
+    [NotNull]
     public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo target, bool inherit)
-        => target.GetCustomAttributes(inherit).OfType<TAttribute>();
+        => target.GetCustomAttributes(inherit).OfType<TAttribu te>();
 
     [CanBeNull]
     public static TAttribute GetAttribute<TAttribute>(this Type target, bool inherit)
@@ -65,9 +73,12 @@ public static class ReflectionExtender
     }
 
     [CanBeNull]
+    public static TAttribute GetAttribute<TAttribute>(this Enum target)
+        => GetAttributes<TAttribute>(target).SingleOrDefault();
+
+    [CanBeNull]
     public static TAttribute GetRecentAttribute<TAttribute>(this Type target)
-        => GetAttribute<TAttribute>(target, false) ??
-            GetRecentAttributeBase<TAttribute>(target.BaseType);
+        => GetAttribute<TAttribute>(target, false) ?? GetRecentAttributeBase<TAttribute>(target.BaseType);
 
     [CanBeNull]
     public static TAttribute GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
@@ -304,10 +315,10 @@ public static class ReflectionExtender
     }
 
     internal static IEnumerable<FieldInfo> GetFieldInfos(this Type type) => type.ThisAndBias().SelectMany(t
-        => t.GetFields(BindingFlags.Public |
-            BindingFlags.Instance |
-            BindingFlags.NonPublic |
-            BindingFlags.DeclaredOnly));
+        => t.GetFields(BindingFlags.Public
+            | BindingFlags.Instance
+            | BindingFlags.NonPublic
+            | BindingFlags.DeclaredOnly));
 
     [CanBeNull]
     static TAttribute GetRecentAttributeBase<TAttribute>(this Type target)
