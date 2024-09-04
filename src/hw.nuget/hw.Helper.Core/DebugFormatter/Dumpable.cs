@@ -108,8 +108,8 @@ public class Dumpable
     [PublicAPI]
     public static void NotImplementedFunction(params object[] p)
     {
-        var os = Tracer.DumpMethodWithData("not implemented", null, p, 1);
-        os.Log();
+        var os = Tracer.DumpMethodWithData("not implemented", thisObject: null, p, 1);
+        os.Log(LogLevel.Debug);
         Tracer.TraceBreak();
     }
 
@@ -127,7 +127,7 @@ public class Dumpable
         if(IsMethodDumpTraceActive)
         {
             var os = Tracer.DumpData("", new[] { name, value }, 1);
-            os.Log();
+            os.Log(LogLevel.Debug);
         }
     }
 
@@ -145,14 +145,14 @@ public class Dumpable
         if(IsMethodDumpTraceActive)
         {
             var os = Tracer.DumpData("", new[] { name, getValue() }, 1);
-            os.Log();
+            os.Log(LogLevel.Debug);
         }
     }
 
     // ReSharper disable once InconsistentNaming
     [PublicAPI]
     [IsLoggingFunction]
-    public void t() => DebuggerDumpString.Log();
+    public void t() => DebuggerDumpString.Log(LogLevel.Debug);
 
     public string Dump()
     {
@@ -184,7 +184,7 @@ public class Dumpable
         if(IsMethodDumpTraceActive)
         {
             Tracer.IndentEnd();
-            (Tracer.MethodHeader(stackFrameDepth: 1) + "[returns] " + Tracer.Dump(rv)).Log();
+            (Tracer.MethodHeader(stackFrameDepth: 1) + "[returns] " + Tracer.Dump(rv)).Log(LogLevel.Debug);
             if(breakExecution)
                 Tracer.TraceBreak();
         }
@@ -203,7 +203,7 @@ public class Dumpable
         if(IsMethodDumpTraceActive)
         {
             Tracer.IndentEnd();
-            (Tracer.MethodHeader(stackFrameDepth: 1) + "[returns]").Log();
+            (Tracer.MethodHeader(stackFrameDepth: 1) + "[returns]").Log(LogLevel.Debug);
             if(breakExecution)
                 Tracer.TraceBreak();
         }
@@ -234,7 +234,7 @@ public class Dumpable
     protected static void DumpDataWithBreak(string text, params object[] p)
     {
         var os = Tracer.DumpData(text, p, 1);
-        os.Log();
+        os.Log(LogLevel.Debug);
         Tracer.TraceBreak();
     }
 
@@ -252,7 +252,7 @@ public class Dumpable
         if(!IsMethodDumpTraceActive)
             return;
         var os = Tracer.DumpMethodWithData("", this, p, 1);
-        os.Log();
+        os.Log(LogLevel.Debug);
         Tracer.IndentStart();
     }
 
@@ -276,7 +276,7 @@ public class Dumpable
     protected void DumpMethodWithBreak(string text, params object[] p)
     {
         var os = Tracer.DumpMethodWithData(text, this, p, 1);
-        os.Log();
+        os.Log(LogLevel.Debug);
         Tracer.TraceBreak();
     }
 
@@ -293,7 +293,7 @@ public class Dumpable
             throw new NotImplementedException();
 
         var os = Tracer.DumpMethodWithData("not implemented", this, p, 1);
-        os.Log();
+        os.Log(LogLevel.Debug);
         Tracer.TraceBreak();
     }
 

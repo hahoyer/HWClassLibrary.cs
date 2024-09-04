@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -19,7 +20,7 @@ public static class Tracer
             : base(result) { }
     }
 
-    sealed class BreakException : Exception { }
+    sealed class BreakException : Exception;
 
     public const string VisualStudioLineFormat =
         "{fileName}({lineNumber},{columnNumber},{lineNumberEnd},{columnNumberEnd}): {tagText}: ";
@@ -61,7 +62,7 @@ public static class Tracer
     /// </summary>
     public static string FilePosition
     (
-        string fileName,
+        string? fileName,
         int lineNumber,
         int columnNumber,
         FilePositionTag tag
@@ -81,7 +82,7 @@ public static class Tracer
     /// </summary>
     public static string FilePosition
     (
-        string fileName,
+        string? fileName,
         int lineNumber,
         int columnNumber,
         int lineNumberEnd,
@@ -107,7 +108,7 @@ public static class Tracer
     /// </summary>
     public static string FilePosition
     (
-        string fileName,
+        string? fileName,
         int lineNumber,
         int columnNumber,
         int lineNumberEnd,
@@ -122,10 +123,10 @@ public static class Tracer
             }
             , tagText);
 
-    public static string FilePosition(string fileName, TextPart textPart, FilePositionTag tag)
+    public static string FilePosition(string? fileName, TextPart? textPart, FilePositionTag tag)
         => FilePosition(fileName, textPart, tag.ToString());
 
-    public static string FilePosition(string fileName, TextPart textPart, string tagText)
+    public static string FilePosition(string? fileName, TextPart? textPart, string tagText)
     {
         var start = textPart?.Start ?? new TextPosition { LineNumber = 1, ColumnNumber1 = 1 };
         var end = textPart?.End ?? start;
@@ -217,13 +218,15 @@ public static class Tracer
     /// <param name="flagText"> </param>
     /// <param name="showParam"></param>
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
+    /// <param name="level"></param>
     [IsLoggingFunction]
     public static void FlaggedLine
     (
         this string text,
         FilePositionTag flagText = FilePositionTag.Debug,
         bool showParam = false,
-        int stackFrameDepth = 0
+        int stackFrameDepth = 0,
+        LogLevel level = LogLevel.Debug
     )
     {
         var methodHeader = MethodHeader
@@ -231,7 +234,7 @@ public static class Tracer
             flagText,
             stackFrameDepth: stackFrameDepth + 1,
             showParam: showParam);
-        Log(methodHeader + " " + text);
+        Log(methodHeader + " " + text, level);
     }
 
     [IsLoggingFunction]
@@ -240,7 +243,8 @@ public static class Tracer
         this string text,
         FilePositionTag flagText,
         bool showParam = false,
-        int stackFrameDepth = 0
+        int stackFrameDepth = 0,
+        LogLevel level = LogLevel.Debug
     )
     {
         var methodHeader = MethodHeader
@@ -248,7 +252,7 @@ public static class Tracer
             flagText,
             stackFrameDepth: stackFrameDepth + 1,
             showParam: showParam);
-        Log(methodHeader + " " + text);
+        Log(methodHeader + " " + text, level);
     }
 
     /// <summary>
@@ -256,7 +260,7 @@ public static class Tracer
     /// </summary>
     /// <param name="target"> the object to dump </param>
     /// <returns> </returns>
-    public static string Dump(object target) => Dumper.Dump(target);
+    public static string Dump(object? target) => Dumper.Dump(target);
 
     public static string LogDump(this object target) => Dumper.Dump(target);
 
@@ -265,17 +269,17 @@ public static class Tracer
     /// </summary>
     /// <param name="target"> the object to dump </param>
     /// <returns> </returns>
-    public static string DumpData(object target) => target == null? "" : Dumper.DumpData(target);
+    public static string DumpData(object? target) => target == null? "" : Dumper.DumpData(target);
 
     /// <summary>
     ///     Generic dump function by use of reflection.
     /// </summary>
-    /// <param name="name">Identifies the the value in result. Recommended use is nameof($value$), but any string is possible.</param>
+    /// <param name="name">Identifies the value in result. Recommended use is nameof($value$), but any string is possible.</param>
     /// <param name="value">The object, that will be dumped, by use of <see cref="DumpData(object)" />.</param>
     /// <returns>A string according to pattern $name$ = $value$</returns>
     [DebuggerHidden]
     public static string DumpValue(this string name, object value)
-        => DumpData("", new[] { name, value }, 1);
+        => DumpData("", [name, value], 1);
 
     /// <summary>
     ///     creates a string to inspect the method call contained in stack. Runtime parameters are dumped too.
@@ -304,7 +308,7 @@ public static class Tracer
             + DumpMethodWithData(null, data).Indent();
     }
 
-    public static string IsSetTo(this string name, object value) => name + "=" + Dump(value);
+    public static string IsSetTo(this string name, object? value) => name + "=" + Dump(value);
 
     /// <summary>
     ///     Function used for condition al break
@@ -315,7 +319,7 @@ public static class Tracer
     /// <returns> </returns>
     [DebuggerHidden]
     [IsLoggingFunction]
-    public static void UnconditionalBreak(string cond, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void UnconditionalBreak(string cond, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         var result = "Conditional break: " + cond + "\nData: " + (getText == null? "" : getText());
         FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
@@ -331,7 +335,7 @@ public static class Tracer
     /// <param name="getText"> The text. </param>
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
     [DebuggerHidden]
-    public static void ConditionalBreak(this bool b, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void ConditionalBreak(this bool b, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         if(b)
             UnconditionalBreak("", getText, stackFrameDepth + 1);
@@ -345,7 +349,7 @@ public static class Tracer
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
     /// created 15.10.2006 18:04
     [DebuggerHidden]
-    public static void ThrowAssertionFailed(string cond, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void ThrowAssertionFailed(string cond, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         var result = AssertionFailed(cond, getText, stackFrameDepth + 1);
         throw new AssertionFailedException(result);
@@ -360,7 +364,7 @@ public static class Tracer
     /// <returns> </returns>
     [DebuggerHidden]
     [IsLoggingFunction]
-    public static string AssertionFailed(string cond, Func<string> getText = null, int stackFrameDepth = 0)
+    public static string AssertionFailed(string cond, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         var result = "Assertion Failed: " + cond + "\nData: " + (getText == null? "" : getText());
         FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
@@ -378,7 +382,7 @@ public static class Tracer
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
     [DebuggerHidden]
     [ContractAnnotation("b: false => halt")]
-    public static void Assert(this bool b, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void Assert(this bool b, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         if(b)
             return;
@@ -409,7 +413,7 @@ public static class Tracer
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
     [DebuggerHidden]
     [ContractAnnotation("b: null => halt")]
-    public static void AssertIsNotNull(this object b, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void AssertIsNotNull(this object? b, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         if(b != null)
             return;
@@ -426,7 +430,7 @@ public static class Tracer
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
     [DebuggerHidden]
     [ContractAnnotation("b: notnull => halt")]
-    public static void AssertIsNull(this object b, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void AssertIsNull(this object? b, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         if(b == null)
             return;
@@ -441,7 +445,7 @@ public static class Tracer
     /// <param name="getText"> Message in case of fail. </param>
     /// <param name="stackFrameDepth"> The stack frame depth. </param>
     [DebuggerHidden]
-    public static void Assert<TTargetType>(this object target, Func<string> getText = null, int stackFrameDepth = 0)
+    public static void Assert<TTargetType>(this object target, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         if(target is TTargetType)
             return;
@@ -457,13 +461,15 @@ public static class Tracer
     public static void IndentEnd() => Writer.IndentEnd();
 
     [IsLoggingFunction]
-    public static void Log(this string value) => Writer.ThreadSafeWrite(value, true);
+    public static void Log(this string? value, LogLevel level = LogLevel.Information)
+        => Writer.ThreadSafeWrite(value, true, level);
 
     [IsLoggingFunction]
-    public static void LogLinePart(this string value) => Writer.ThreadSafeWrite(value, false);
+    public static void LogLinePart(this string value, LogLevel level = LogLevel.Information)
+        => Writer.ThreadSafeWrite(value, false, level);
 
     public static string DumpMethodWithData
-        (string text, object thisObject, object[] parameter, int stackFrameDepth = 0)
+        (string text, object? thisObject, object[] parameter, int stackFrameDepth = 0)
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
@@ -473,7 +479,7 @@ public static class Tracer
             + DumpMethodWithData(stackFrame.GetMethod(), thisObject, parameter).Indent();
     }
 
-    static string DumpMethodWithData(MethodBase methodBase, object target, object[] parameters)
+    static string DumpMethodWithData(MethodBase methodBase, object? target, object[] parameters)
     {
         var result = "\n";
         result += IsSetTo("this", target);
@@ -482,21 +488,19 @@ public static class Tracer
         return result;
     }
 
-    static string DumpMethodWithData(ParameterInfo[] parameterInfos, object[] parameters)
+    static string DumpMethodWithData(ParameterInfo[]? parameterInfos, object[] parameters)
     {
+        parameterInfos ??= [];
         var result = "";
-        var parameterCount = parameterInfos?.Length ?? 0;
 
-        for(var index = 0; index < parameterCount; index++)
+        for(var index = 0; index < parameterInfos.Length; index++)
         {
             if(index > 0)
                 result += "\n";
-            Assert(parameterInfos != null);
-            Assert(parameterInfos[index] != null);
             result += IsSetTo(parameterInfos[index].Name, parameters[index]);
         }
 
-        for(var index = parameterCount; index < parameters.Length; index += 2)
+        for(var index = parameterInfos.Length; index < parameters.Length; index += 2)
         {
             result += "\n";
             result += IsSetTo((string)parameters[index], parameters[index + 1]);
@@ -529,5 +533,5 @@ interface IDumpExceptAttribute
     bool IsException(object target);
 }
 
-public abstract class DumpAttributeBase : Attribute { }
-public class IsLoggingFunction : Attribute { }
+public abstract class DumpAttributeBase : Attribute;
+public sealed class IsLoggingFunction : Attribute;

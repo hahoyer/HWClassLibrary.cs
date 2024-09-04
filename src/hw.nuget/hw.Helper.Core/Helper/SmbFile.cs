@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,14 +26,14 @@ public sealed class SmbFile
 
     readonly string InternalName;
 
-    FileSystemInfo FileInfoCache;
+    FileSystemInfo? FileInfoCache;
 
     /// <summary>
     ///     considers the file as a string. If file exists it should be a text file
     /// </summary>
     /// <value> the content of the file if existing else null. </value>
     [DisableDump]
-    public string String
+    public string? String
     {
         get
         {
@@ -94,7 +95,7 @@ public sealed class SmbFile
     public SmbFile Directory => DirectoryName.ToSmbFile();
 
     [DisableDump]
-    public string DirectoryName => Path.GetDirectoryName(FullName);
+    public string? DirectoryName => Path.GetDirectoryName(FullName);
 
     [DisableDump]
     public string Extension => Path.GetExtension(FullName);
@@ -192,26 +193,26 @@ public sealed class SmbFile
     /// </summary>
     /// <returns> </returns>
     [PublicAPI]
-    public static string SourcePath => GetSourcePath(1);
+    public static string? SourcePath => GetSourcePath(1);
 
     /// <summary>
     ///     Gets the name of the source file that called this function
     /// </summary>
     /// <returns> </returns>
     [PublicAPI]
-    public static string SourceFileName => GetSourceFileName(1);
+    public static string? SourceFileName => GetSourceFileName(1);
 
     /// <summary>
     ///     Gets the source file that called this function
     /// </summary>
     [PublicAPI]
-    public static SmbFile SourceFile => GetSourceFile(1);
+    public static SmbFile? SourceFile => GetSourceFile(1);
 
     /// <summary>
     ///     Gets the folder of the source file that called this function
     /// </summary>
     [PublicAPI]
-    public static SmbFile SourceFolder => GetSourceFolder(1);
+    public static SmbFile? SourceFolder => GetSourceFolder(1);
 
     public SmbFile() => InternalName = "";
 
@@ -229,7 +230,7 @@ public sealed class SmbFile
     /// <param name="depth"> The depth. </param>
     /// <returns> </returns>
     [PublicAPI]
-    public static string GetSourcePath(int depth = 0)
+    public static string? GetSourcePath(int depth = 0)
     {
         var sourceFileName = GetSourceFileName(depth + 1);
         return sourceFileName == null? null : new FileInfo(sourceFileName).DirectoryName;
@@ -241,7 +242,7 @@ public sealed class SmbFile
     /// <param name="depth"> stack depths of the function used. </param>
     /// <returns> </returns>
     [PublicAPI]
-    public static string GetSourceFileName(int depth = 0)
+    public static string? GetSourceFileName(int depth = 0)
     {
         var sf = new StackTrace(true).GetFrame(depth + 1);
         return sf.GetFileName();
@@ -253,7 +254,7 @@ public sealed class SmbFile
     /// <param name="depth"> stack depths of the function used. </param>
     /// <returns> </returns>
     [PublicAPI]
-    public static SmbFile GetSourceFile(int depth = 0)
+    public static SmbFile? GetSourceFile(int depth = 0)
         => GetSourceFileName(depth + 1)?.ToSmbFile();
 
     /// <summary>
@@ -262,7 +263,7 @@ public sealed class SmbFile
     /// <param name="depth"> stack depths of the function used. </param>
     /// <returns> </returns>
     [PublicAPI]
-    public static SmbFile GetSourceFolder(int depth = 0)
+    public static SmbFile? GetSourceFolder(int depth = 0)
         => GetSourcePath(depth + 1)?.ToSmbFile();
 
     /// <summary>
@@ -277,7 +278,7 @@ public sealed class SmbFile
         return System.IO.Directory.GetFiles(path, namePattern);
     }
 
-    public string SubString(long start, int size)
+    public string? SubString(long start, int size)
     {
         if(!File.Exists(InternalName))
             return null;
@@ -360,7 +361,7 @@ public sealed class SmbFile
             // ignored
         }
 
-        return new SmbFile[0];
+        return [];
     }
 
     public IEnumerable<SmbFile> RecursiveItems()
@@ -370,11 +371,11 @@ public sealed class SmbFile
         if(!IsDirectory)
             yield break;
 
-        FullName.Log();
-        IEnumerable<string> filePaths = new[] { FullName };
+        FullName.Log(LogLevel.Trace);
+        IEnumerable<string?> filePaths = [FullName];
         while(true)
         {
-            var newList = new List<string>();
+            var newList = new List<string?>();
             var items =
                 filePaths.SelectMany(s => s.ToSmbFile(AutoCreateDirectories).GuardedItems())
                     .ToArray();
@@ -434,7 +435,7 @@ public sealed class SmbFile
 
     public string FilePosition
     (
-        TextPart textPart,
+        TextPart? textPart,
         FilePositionTag tag
     )
         => Tracer.FilePosition(FullName, textPart, tag);

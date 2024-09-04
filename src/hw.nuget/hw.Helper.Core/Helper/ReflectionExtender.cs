@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,13 +39,11 @@ public static class ReflectionExtender
         }
     }
 
-    static readonly bool[] Boolean = { false, true };
+    static readonly bool[] Boolean = [false, true];
 
-    [NotNull]
     public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type target, bool inherit)
         => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
-    [NotNull]
     public static IEnumerable<T> GetAttributes<T>(this Enum target)
         => target
             .GetType()
@@ -52,12 +51,10 @@ public static class ReflectionExtender
             .GetCustomAttributes(false)
             .OfType<T>();
 
-    [NotNull]
     public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo target, bool inherit)
         => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
-    [CanBeNull]
-    public static TAttribute GetAttribute<TAttribute>(this Type target, bool inherit)
+    public static TAttribute? GetAttribute<TAttribute>(this Type target, bool inherit)
     {
         var list = GetAttributes<TAttribute>(target, inherit).ToArray();
         switch(list.Length)
@@ -72,16 +69,13 @@ public static class ReflectionExtender
             , list.Cast<Attribute>().ToArray());
     }
 
-    [CanBeNull]
-    public static TAttribute GetAttribute<TAttribute>(this Enum target)
+    public static TAttribute? GetAttribute<TAttribute>(this Enum target)
         => GetAttributes<TAttribute>(target).SingleOrDefault();
 
-    [CanBeNull]
-    public static TAttribute GetRecentAttribute<TAttribute>(this Type target)
-        => GetAttribute<TAttribute>(target, false) ?? GetRecentAttributeBase<TAttribute>(target.BaseType);
+    public static TAttribute? GetRecentAttribute<TAttribute>(this Type target)
+        => GetAttribute<TAttribute>(target, false) ?? GetRecentAttributeBase<TAttribute>(target.BaseType!);
 
-    [CanBeNull]
-    public static TAttribute GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
+    public static TAttribute? GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
 
     {
         var list = GetAttributes<TAttribute>(target, inherit).ToArray();
@@ -100,17 +94,16 @@ public static class ReflectionExtender
     public static IEnumerable<Assembly> GetAssemblies(this Assembly rootAssembly)
     {
         var result = new[] { rootAssembly };
-        for(IEnumerable<Assembly> referencedAssemblies = result
-            ; referencedAssemblies.GetEnumerator().MoveNext()
-            ; result = result.Concat(referencedAssemblies).ToArray())
+
+        for(var referencedAssemblies = result; referencedAssemblies.Any();)
         {
-            var assemblyNames = referencedAssemblies
-                //.Where(assembly => !assembly.GetName().Name.Contains("nunit.framework"))
+            referencedAssemblies = referencedAssemblies
                 .SelectMany(assembly => assembly.GetReferencedAssemblies())
+                .Select(AssemblyLoad)
+                .Distinct()
+                .Where(assembly => !result.Contains(assembly))
                 .ToArray();
-            var assemblies = assemblyNames.Select(AssemblyLoad).ToArray();
-            var enumerable = assemblies.Distinct().ToArray();
-            referencedAssemblies = enumerable.Where(assembly => !result.Contains(assembly)).ToArray();
+            result = result.Concat(referencedAssemblies).ToArray();
         }
 
         return result;
@@ -132,14 +125,9 @@ public static class ReflectionExtender
         }
     }
 
-    public static Guid ToGuid(this object target)
-    {
-        if(target is DBNull || target == null)
-            return Guid.Empty;
-        return new(target.ToString());
-    }
+    public static Guid ToGuid(this object target) => target is DBNull? Guid.Empty : new(target.ToString());
 
-    public static T Convert<T>(this object target) => target is DBNull || target == null? default : (T)target;
+    public static T? Convert<T>(this object target) => target is DBNull? default : (T)target;
 
     public static bool ToBoolean(this object target, string[] values)
     {
@@ -155,7 +143,7 @@ public static class ReflectionExtender
     public static int ToInt32(this object target) => Convert<int>(target);
     public static long ToInt64(this object target) => Convert<long>(target);
     public static bool ToBoolean(this object target) => Convert<bool>(target);
-    public static Type ToType(this object target) => Convert<Type>(target);
+    public static Type? ToType(this object target) => Convert<Type>(target);
 
     public static string ToSingular(this object target)
     {
@@ -171,7 +159,7 @@ public static class ReflectionExtender
         return "OneOf" + plural;
     }
 
-    public static bool Is(this Type type, Type otherType)
+    public static bool Is(this Type? type, Type otherType)
     {
         if(type == null)
             return false;
@@ -188,7 +176,7 @@ public static class ReflectionExtender
         (this Type type)
         => type.GetInterfaces().Except((type.BaseType ?? typeof(object)).GetInterfaces()).ToArray();
 
-    public static Type GetGenericType(this Type type) => type.IsGenericType? type.GetGenericTypeDefinition() : null;
+    public static Type? GetGenericType(this Type type) => type.IsGenericType? type.GetGenericTypeDefinition() : null;
 
     public static IEnumerable<Type> ThisAndBias(this Type type)
     {
@@ -228,18 +216,18 @@ public static class ReflectionExtender
     /// <param name="method"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static T Invoke<T>
+    public static T? Invoke<T>
         (this Type type, string method, params object[] args) => ExceptionGuard(()
         => (T)type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args));
 
     /// <summary>
-    ///     Calls a function. In case of exceptions, onError is called, if provided. Otherwise default value is returned
+    ///     Calls a function. In case of exceptions, onError is called, if provided. Otherwise, default value is returned
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="function"></param>
     /// <param name="onError"></param>
     /// <returns></returns>
-    public static T ExceptionGuard<T>(this Func<T> function, Func<Exception, T> onError = null)
+    public static T? ExceptionGuard<T>(this Func<T> function, Func<Exception, T>? onError = null)
     {
         try
         {
@@ -256,7 +244,7 @@ public static class ReflectionExtender
     /// </summary>
     /// <param name="action"></param>
     /// <param name="onError"></param>
-    public static void ExceptionGuard(this Action action, Action<Exception> onError = null)
+    public static void ExceptionGuard(this Action action, Action<Exception>? onError = null)
     {
         try
         {
@@ -320,9 +308,8 @@ public static class ReflectionExtender
             | BindingFlags.NonPublic
             | BindingFlags.DeclaredOnly));
 
-    [CanBeNull]
-    static TAttribute GetRecentAttributeBase<TAttribute>(this Type target)
-        => target == null? default : target.GetRecentAttribute<TAttribute>();
+    static TAttribute? GetRecentAttributeBase<TAttribute>(this Type target)
+        => target.GetRecentAttribute<TAttribute>();
 
     static Type[] GetTypes(Assembly assembly)
     {

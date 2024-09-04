@@ -25,8 +25,9 @@ sealed class Writer
         }
     }
 
-    readonly WriteInitiator Instance = new();
+    internal static LogLevel LogLevel = LogLevel.Information;
 
+    readonly WriteInitiator Instance = new();
     int IndentCount;
     bool IsLineStart = true;
 
@@ -35,8 +36,10 @@ sealed class Writer
     internal void IndentStart() => IndentCount++;
     internal void IndentEnd() => IndentCount--;
 
-    internal void ThreadSafeWrite(string text, bool isLine)
+    internal void ThreadSafeWrite(string text, bool isLine, LogLevel level)
     {
+        if(level == LogLevel.None)
+            return;
         lock(Instance)
         {
             Instance.NewThread();
@@ -56,14 +59,15 @@ sealed class Writer
                 Debug.Write(threadFlagString);
             }
 
-            Write(text, isLine);
+            Write(text, isLine, level);
 
             IsLineStart = isLine;
         }
     }
 
-    static void Write(string text, bool isLine)
+    static void Write(string text, bool isLine, LogLevel level)
     {
+        LogLevel = level;
         if(isLine)
             Console.WriteLine(text);
         else

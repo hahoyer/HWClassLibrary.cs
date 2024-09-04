@@ -16,10 +16,13 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2013 - 2023</copyright>
+        <copyright>Copyright Harald Hoyer 2013 - 2024</copyright>
 
-        <version>23.0.7</version>
+        <version>24.0.1</version>
         <releaseNotes>
+            refactor: upgrade C# 
+            change: log-levels
+            23.0.7
             new: enum attributes
             23.0.6
             admin: Fix for use with .net6

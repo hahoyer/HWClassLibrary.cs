@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ public sealed class Dumper
 
     static BindingFlags AnyBinding => BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
 
-    internal string Dump(object target)
+    internal string Dump(object? target)
     {
         if(target == null)
             return "null";
@@ -108,10 +109,10 @@ public sealed class Dumper
         return baseDump;
     }
 
-    static DumpClassAttribute DumpClassAttribute(Type type)
+    static DumpClassAttribute? DumpClassAttribute(Type type)
         => type.GetRecentAttribute<DumpClassAttribute>() ?? DumpClassAttributeInterfaces(type);
 
-    static DumpClassAttribute DumpClassAttributeInterfaces(Type type) => type
+    static DumpClassAttribute? DumpClassAttributeInterfaces(Type type) => type
         .SelectHierarchical(interfaceType => interfaceType.GetInterfaces())
         .SelectMany(interfaceType => interfaceType.GetAttributes<DumpClassAttribute>(false))
         .SingleOrDefault();
@@ -166,7 +167,7 @@ public sealed class Dumper
                 .Where(attribute => attribute != null))
         {
             var value = target.InvokeValue(memberInfo);
-            return !attribute.IsException(value);
+            return attribute!.IsException(value);
         }
 
         return true;
