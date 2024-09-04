@@ -16,13 +16,18 @@
         <language>en-US</language>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2016 - 2023</copyright>
+        <copyright>Copyright Harald Hoyer 2016 - 2024</copyright>
 
         <dependencies>
             <dependency id="hw.Helper.Core" version="23.0.6" />
         </dependencies>
-        <version>23.0.0</version>
+        <version>24.0.0</version>
         <releaseNotes>
+            refactor: upgrade C#            
+            breaking change: use BracketSide-enum instead of bool?
+            breaking change: type SourcePosn removed
+			bugfix: wrong assertion removed
+	        23.0.0
             admin: Fix for use with .net6
             22.0.5                                         
             refactor: Default parameter
