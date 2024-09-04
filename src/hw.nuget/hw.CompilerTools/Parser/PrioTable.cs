@@ -20,28 +20,16 @@ public sealed class PrioTable : DumpableObject
         BracketContext LeftContext { get; }
     }
 
-    public sealed class RelationDefinitionItem
+    public sealed class RelationDefinitionItem(bool isRight, string[] token)
     {
-        public readonly string[] Token;
-        internal readonly bool IsRight;
-
-        public RelationDefinitionItem(bool isRight, string[] token)
-        {
-            IsRight = isRight;
-            Token = token;
-        }
+        public readonly string[] Token = token;
+        internal readonly bool IsRight = isRight;
     }
 
-    public sealed class BracketPairItem
+    public sealed class BracketPairItem(string left, string right)
     {
-        public readonly string Left;
-        public readonly string Right;
-
-        public BracketPairItem(string left, string right)
-        {
-            Left = left;
-            Right = right;
-        }
+        public readonly string Left = left;
+        public readonly string Right = right;
     }
 
     public sealed class Relation : EnumEx
@@ -85,11 +73,11 @@ public sealed class PrioTable : DumpableObject
     public const string Bracket = "(bracket)";
 
     static readonly FunctionType[][] SameDepth =
-    {
-        new[] { FunctionType.Push, FunctionType.Push, FunctionType.Push }
-        , new[] { FunctionType.Push, FunctionType.Relation, FunctionType.Relation }
-        , new[] { FunctionType.Match, FunctionType.Pull, FunctionType.Pull }
-    };
+    [
+        [FunctionType.Push, FunctionType.Push, FunctionType.Push]
+        , [FunctionType.Push, FunctionType.Relation, FunctionType.Relation]
+        , [FunctionType.Match, FunctionType.Pull, FunctionType.Pull]
+    ];
 
     public string Title;
 
@@ -97,14 +85,18 @@ public sealed class PrioTable : DumpableObject
     readonly BracketPairItem[] Brackets;
     BracketContext BracketContextValue;
 
+    [DisableDump]
+    public BracketContext BracketContext
+        => BracketContextValue ??= BracketContext.Start(Brackets);
+
     PrioTable()
     {
-        BaseRelation = new RelationDefinitionItem[] { };
-        Brackets = new BracketPairItem[] { };
+        BaseRelation = [];
+        Brackets = [];
     }
 
     PrioTable(bool isRight, string[] token)
-        : this() => BaseRelation = new[] { new RelationDefinitionItem(isRight, token) };
+        : this() => BaseRelation = [new(isRight, token)];
 
     PrioTable(PrioTable target, PrioTable y)
         : this()
@@ -114,7 +106,7 @@ public sealed class PrioTable : DumpableObject
     }
 
     PrioTable(BracketPairItem bracketPairItem)
-        : this() => Brackets = new[] { bracketPairItem };
+        : this() => Brackets = [bracketPairItem];
 
     public override bool Equals(object obj)
     {
@@ -127,10 +119,6 @@ public sealed class PrioTable : DumpableObject
     public override int GetHashCode() => BaseRelation.GetHashCode() + Brackets.GetHashCode();
 
     public override string ToString() => Title ?? Dump();
-
-    [DisableDump]
-    public BracketContext BracketContext
-        => BracketContextValue ??= BracketContext.Start(Brackets);
 
     /// <summary>
     ///     Define a prio table with tokens that have the same priority and are left associative
@@ -219,7 +207,7 @@ public sealed class PrioTable : DumpableObject
             }
         }
 
-        result += BracketParallels(new[] { BeginOfText }, new[] { EndOfText });
+        result += BracketParallels([BeginOfText], [EndOfText]);
         return result;
     }
 
@@ -230,11 +218,8 @@ public sealed class PrioTable : DumpableObject
         var parent = this;
         (!string.IsNullOrWhiteSpace(target.Token)).Assert();
         var token = target.Token;
-        return parent.Brackets.Any(item => item.Left == token)
-            ? 0
-            : parent.Brackets.Any(item => item.Right == token)
-                ? 2
-                : 1;
+        return parent.Brackets.Any(item => item.Left == token)? 0 :
+            parent.Brackets.Any(item => item.Right == token)? 2 : 1;
     }
 
     Relation NotImplemented(string newToken, string recentToken)
@@ -244,33 +229,22 @@ public sealed class PrioTable : DumpableObject
     }
 
     Relation GetRelationOnSameDepth(int newIndex, int otherIndex, string newToken, string otherToken)
-    {
-        switch(SameDepth[newIndex][otherIndex])
+        => SameDepth[newIndex][otherIndex] switch
         {
-            case FunctionType.Unknown:
-                return NotImplemented(newToken, otherToken);
-            case FunctionType.Push:
-                return Relation.Push;
-            case FunctionType.Relation:
-                return GetRelation(newIndex, otherIndex, newToken, otherToken);
-            case FunctionType.Pull:
-                return Relation.Pull;
-            case FunctionType.Match:
-                return GetBracketMatch(newToken, otherToken);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+            FunctionType.Unknown => NotImplemented(newToken, otherToken)
+            , FunctionType.Push => Relation.Push
+            , FunctionType.Relation => GetRelation(newIndex, otherIndex, newToken, otherToken)
+            , FunctionType.Pull => Relation.Pull
+            , FunctionType.Match => GetBracketMatch(newToken, otherToken)
+            , var _ => throw new ArgumentOutOfRangeException()
+        };
 
     Relation GetBracketMatch(string newToken, string otherToken)
     {
         var newIndex = GetRightBracketIndex(newToken);
         var otherIndex = GetLeftBracketIndex(otherToken);
-        return newIndex == otherIndex
-            ? Relation.Match
-            : newIndex > otherIndex
-                ? Relation.Mismatch
-                : Relation.Push;
+        return newIndex == otherIndex? Relation.Match :
+            newIndex > otherIndex? Relation.Mismatch : Relation.Push;
     }
 
     int GetLeftBracketIndex(string token)
@@ -296,13 +270,19 @@ public sealed class PrioTable : DumpableObject
     int GetRelationIndex(string token, int type)
     {
         var result = BaseRelationIndex(token);
-        if(type == 0)
-            result = result ?? BaseRelationIndex(LeftBracket);
-        if(type == 2)
-            result = result ?? BaseRelationIndex(RightBracket);
+        switch(type)
+        {
+            case 0:
+                result ??= BaseRelationIndex(LeftBracket);
+                break;
+            case 2:
+                result ??= BaseRelationIndex(RightBracket);
+                break;
+        }
+
         if(type != 1)
-            result = result ?? BaseRelationIndex(Bracket);
-        result = result ?? BaseRelationIndex(Any);
+            result ??= BaseRelationIndex(Bracket);
+        result ??= BaseRelationIndex(Any);
         return result.AssertValue();
     }
 }

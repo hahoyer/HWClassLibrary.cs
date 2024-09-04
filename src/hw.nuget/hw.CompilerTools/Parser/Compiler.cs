@@ -54,7 +54,7 @@ public class Compiler<TSourcePart> : DumpableObject
 
     sealed class ComponentData : DumpableObject, ValueCache.IContainer
     {
-        static ComponentData() => Tracer.Dumper.Configuration.Handlers.Add(typeof(Delegate), (type, o) => "?");
+        static ComponentData() => Tracer.Dumper.Configuration.Handlers.Add(typeof(Delegate), (_, _) => "?");
 
         readonly IDictionary<Type, object> Components =
             new Dictionary<Type, object>();

@@ -3,11 +3,13 @@ using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using hw.Scanner;
+using JetBrains.Annotations;
 
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser;
 
+[PublicAPI]
 public sealed partial class PrioParser<TSourcePart>
 {
     public interface ISubParserProvider
@@ -97,6 +99,7 @@ public sealed partial class PrioParser<TSourcePart>
             var result = Item<TSourcePart>
                 .Create(nextTokenGroup, sourcePosition, context, IsSubParser);
 
+            // ReSharper disable once SuspiciousTypeConversion.Global
             var nextParser = (result?.Type as ISubParserProvider)?.NextParser;
             if(nextParser == null)
                 return result;

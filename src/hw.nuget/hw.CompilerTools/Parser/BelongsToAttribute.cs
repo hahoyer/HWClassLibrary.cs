@@ -12,9 +12,7 @@ namespace hw.Parser;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 [MeansImplicitUse]
 [PublicAPI]
-public sealed class BelongsToAttribute : Attribute
+public sealed class BelongsToAttribute(Type tokenFactory) : Attribute
 {
-    public Type TokenFactory { get; }
-
-    public BelongsToAttribute(Type tokenFactory) => TokenFactory = tokenFactory;
+    public Type TokenFactory { get; } = tokenFactory;
 }

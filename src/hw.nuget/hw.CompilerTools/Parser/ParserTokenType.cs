@@ -1,4 +1,5 @@
 using hw.Helper;
+using JetBrains.Annotations;
 
 // ReSharper disable CheckNamespace
 
@@ -25,6 +26,7 @@ public abstract class ParserTokenType<TSourcePart>
     string IParserTokenType<TSourcePart>.PrioTableId => Id;
 
     string IUniqueIdProvider.Value => Id;
+    [PublicAPI]
     public abstract string Id { get; }
     protected abstract TSourcePart Create(TSourcePart left, IToken token, TSourcePart right);
 
@@ -35,5 +37,6 @@ public abstract class ParserTokenType<TSourcePart>
 
 interface ILinked<TSourcePart>
 {
+    [PublicAPI]
     TSourcePart Container { get; set; }
 }

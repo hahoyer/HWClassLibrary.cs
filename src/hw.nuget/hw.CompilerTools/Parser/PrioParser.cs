@@ -7,20 +7,18 @@ using hw.Scanner;
 namespace hw.Parser;
 
 public sealed partial class PrioParser<TSourcePart>
+(
+    PrioTable prioTable
+    , IScanner scanner
+    , IParserTokenType<TSourcePart> startParserType
+)
     : DumpableObject
         , IParser<TSourcePart>
     where TSourcePart : class
 {
-    PrioTable PrioTable { get; }
-    IScanner Scanner { get; }
-    IParserTokenType<TSourcePart> StartParserType { get; }
-
-    public PrioParser(PrioTable prioTable, IScanner scanner, IParserTokenType<TSourcePart> startParserType)
-    {
-        PrioTable = prioTable;
-        Scanner = scanner;
-        StartParserType = startParserType;
-    }
+    PrioTable PrioTable { get; } = prioTable;
+    IScanner Scanner { get; } = scanner;
+    IParserTokenType<TSourcePart> StartParserType { get; } = startParserType;
 
     TSourcePart IParser<TSourcePart>
         .Execute(SourcePosition start, Stack<OpenItem<TSourcePart>> initialStack)

@@ -20,17 +20,19 @@ public abstract class PredefinedTokenFactory<TSourcePart> : ScannerTokenType<TSo
 
     /// <summary>
     ///     Override this method, when the dictionary requires a key different from occurrence found in source,
-    ///     for instance, when your language is not case sensitive or for names only some first characters are significant.
+    ///     for instance, when your language is not case-sensitive or for names only some first characters are significant.
     ///     To register the names actually used, <see cref="IAliasKeeper" />.
     /// </summary>
     /// <param name="id"></param>
     /// <returns>Default implementation returns the id.</returns>
     protected virtual string GetTokenClassKeyFromToken(string id) => id;
 
+    [PublicAPI]
     protected sealed override IParserTokenType<TSourcePart> GetParserTokenType(string id)
     {
         var key = GetTokenClassKeyFromToken(id);
         var result = PredefinedTokenClassesCache.Value[key];
+        // ReSharper disable SuspiciousTypeConversion.Global
         (result as IAliasKeeper)?.Add(id);
         return result;
     }

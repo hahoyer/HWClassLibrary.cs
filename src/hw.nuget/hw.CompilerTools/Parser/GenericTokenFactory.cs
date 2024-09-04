@@ -64,7 +64,7 @@ public abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<
             return variants
                 .Select(variant => variant.CreateInstance<TSourcePart>(type));
 
-        return new[] { SpecialTokenClass(type) };
+        return [SpecialTokenClass(type)];
     }
 
     bool BelongsToFactory(Type type)

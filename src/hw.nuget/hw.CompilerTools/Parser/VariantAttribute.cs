@@ -14,11 +14,9 @@ namespace hw.Parser;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 [MeansImplicitUse]
 [PublicAPI]
-public sealed class VariantAttribute : Attribute
+public sealed class VariantAttribute(params object[] creationParameter) : Attribute
 {
-    public object[] CreationParameter { get; }
-
-    public VariantAttribute(params object[] creationParameter) => CreationParameter = creationParameter;
+    public object[] CreationParameter { get; } = creationParameter;
 
     public IParserTokenType<TTreeItem> CreateInstance<TTreeItem>(Type type)
         where TTreeItem : class => (IParserTokenType<TTreeItem>)type

@@ -13,7 +13,7 @@ namespace hw.Forms
         public TreeForm()
         {
             InitializeComponent();
-            PositionConfig = new PositionConfig {Target = this};
+            PositionConfig = new() {Target = this};
         }
 
         public object Target

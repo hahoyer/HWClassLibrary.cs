@@ -138,7 +138,7 @@ namespace hw.Forms
         public static TreeNode[] CreateNodes(this object target)
         {
             if(target == null)
-                return new TreeNode[0];
+                return [];
 
             if(target is ITreeNodeSupport xn)
                 return xn.CreateNodes().ToArray();
@@ -184,7 +184,7 @@ namespace hw.Forms
         ///     <para>Default: Target.Name</para>
         /// </param>
         public static PositionConfig InstallPositionConfig
-            (this Form target, Func<string> getFileName = null) => new PositionConfig(getFileName) {Target = target};
+            (this Form target, Func<string> getFileName = null) => new(getFileName) {Target = target};
 
         /// <summary>
         ///     Turns collection into IEnumerable
@@ -278,7 +278,7 @@ namespace hw.Forms
         public static Bitmap AsBitmap(this Control c)
         {
             var result = new Bitmap(c.Width, c.Height);
-            c.DrawToBitmap(result, new Rectangle(0, 0, c.Width, c.Height));
+            c.DrawToBitmap(result, new(0, 0, c.Width, c.Height));
             return result;
         }
 
@@ -300,7 +300,7 @@ namespace hw.Forms
             var attr = nodeData.GetType().GetAttribute<NodeNameAttribute>(true);
             if(attr != null)
                 return nodeData.GetType()
-                    .InvokeMember(attr.Property, BindingFlags.Default, null, nodeData, new object[] {name}).ToString();
+                    .InvokeMember(attr.Property, BindingFlags.Default, null, nodeData, [name]).ToString();
 
             return name;
         }
@@ -370,10 +370,10 @@ namespace hw.Forms
             return result.ToArray();
         }
 
-        static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry) => new[]
-        {
+        static TreeNode[] InternalCreateNodes(DictionaryEntry dictionaryEntry) =>
+        [
             dictionaryEntry.Key.CreateTaggedNode("key", "Key", true), dictionaryEntry.Value.CreateTaggedNode("value")
-        };
+        ];
 
         static TreeNode[] InternalCreateNodes(object target)
         {

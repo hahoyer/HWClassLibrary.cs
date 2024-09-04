@@ -37,7 +37,7 @@ namespace hw.Forms
 
             internal Point HotSpot
             {
-                get => new Point(xHotspot, yHotspot);
+                get => new(xHotspot, yHotspot);
                 set
                 {
                     xHotspot = value.X;
@@ -66,7 +66,7 @@ namespace hw.Forms
                     if(hbmMask != IntPtr.Zero)
                         DeleteObject(hbmMask);
 
-                    return new Cursor(cursorPtr);
+                    return new(cursorPtr);
                 }
             }
         }
