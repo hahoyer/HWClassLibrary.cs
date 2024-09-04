@@ -16,7 +16,7 @@ public sealed class DebugTextWriter : TextWriter
     public override void Write(string value) => Debug.Write(value);
     public override void WriteLine(string value) => Debug.WriteLine(value);
 
-    public static void Register(bool exclusive = true)
+    public static void Register(bool exclusive = false)
     {
         if(!Debugger.IsAttached)
             return;
