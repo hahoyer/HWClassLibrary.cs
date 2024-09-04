@@ -58,7 +58,6 @@ public sealed partial class PrioParser<TSourcePart>
                     TraceBeginPhase("inner loop");
                     Step();
                     TraceEndPhase("inner loop");
-                    (!IsBaseLevel).Assert();
                 }
                 while(Left != null);
 
