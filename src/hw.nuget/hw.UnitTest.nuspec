@@ -16,9 +16,11 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2014-2023</copyright>
-        <version>23.0.3</version>
+        <copyright>Copyright Harald Hoyer 2014-2024</copyright>
+        <version>24.0</version>
         <releaseNotes>
+            refactor: upgrade C#
+            23.0.3
             admin: Fix for use with .net6
             23.0.2
             Readme added
@@ -66,7 +68,7 @@
             Breaking Change: Attributes TestFixture and Test renamed to UnitTest
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="23.0.6" />
+            <dependency id="hw.Helper.Core" version="24.0.0" />
         </dependencies>
         <readme>docs\hw.UnitTest.md</readme>
     </metadata>

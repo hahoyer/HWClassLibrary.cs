@@ -26,7 +26,7 @@ sealed class TestMethod : DumpableObject
         }
 
         internal virtual object Instance => IsStatic? null : Activator.CreateInstance(InstanceType);
-        internal virtual void Run(object target) => MethodInfo.Invoke(target, new object[0]);
+        internal virtual void Run(object target) => MethodInfo.Invoke(target, []);
         bool IsStatic => MethodInfo.IsStatic;
     }
 

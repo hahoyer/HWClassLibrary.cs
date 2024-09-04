@@ -25,7 +25,7 @@ public sealed class TestRunner : Dumpable
 
     public static readonly ConfigurationContainer Configuration = new();
 
-    public static readonly List<IFramework> RegisteredFrameworks = new();
+    public static readonly List<IFramework> RegisteredFrameworks = [];
 
     // ReSharper disable once StringLiteralTypo
     readonly SmbFile ConfigFile = "Test.HW.config".ToSmbFile();
@@ -101,7 +101,7 @@ public static class PendingTests
 
     TestRunner(IEnumerable<TestType> testTypes)
     {
-        TestLevels = new[] { IsNormalPriority, IsLowPriority };
+        TestLevels = [IsNormalPriority, IsLowPriority];
         TestTypes = testTypes.ToArray();
         TestTypes.IsCircuitFree(DependentTypes).Assert
             (() => Tracer.Dump(TestTypes.Circuits(DependentTypes).ToArray()));
@@ -129,7 +129,7 @@ public static class PendingTests
     TestType[] DependentTypes(TestType type)
     {
         if(Configuration.SkipSuccessfulMethods)
-            return new TestType[0];
+            return [];
         return
             type.DependenceProviders.SelectMany
                 (attribute => attribute.AsTestType(TestTypes).NullableToArray()).ToArray();
