@@ -6,8 +6,8 @@ _ReSharper.*
 *.user
 obj/
 /src/*/bin
-/src/.vs
 .sync
 .idea
 /bin/packages
 /build/ApiKey.targets
+.vs
