@@ -10,10 +10,10 @@ namespace hw.DebugFormatter;
 
 public sealed class DebugTextWriter : TextWriter
 {
-    static readonly DebugTextWriter Instance = new();
-
     [PublicAPI]
-    public bool Enabled = true;
+    public static bool Enabled = true;
+
+    static readonly DebugTextWriter Instance = new();
 
     public override Encoding Encoding => Encoding.UTF8;
 
