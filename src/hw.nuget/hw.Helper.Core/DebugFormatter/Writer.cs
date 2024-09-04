@@ -67,10 +67,12 @@ sealed class Writer
 
     static void Write(string text, bool isLine, LogLevel level)
     {
+        var lastLevel = LogLevel;
         LogLevel = level;
         if(isLine)
             Console.WriteLine(text);
         else
             Console.Write(text);
+        LogLevel = lastLevel;
     }
 }
