@@ -32,7 +32,7 @@ sealed class TypeLibrary
     Type[] ConflictingTypes(Type type)
         => ByName.TryGetValue(type.Name, out var result)
             ? result.Where(definedType => definedType.Namespace != type.Namespace).ToArray()
-            : new Type[0];
+            : [];
 
     string ObtainTypeName(Type type, bool shortenNamespace)
     {

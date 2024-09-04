@@ -126,7 +126,7 @@ public class Dumpable
     {
         if(IsMethodDumpTraceActive)
         {
-            var os = Tracer.DumpData("", new[] { name, value }, 1);
+            var os = Tracer.DumpData("", [name, value], 1);
             os.Log(LogLevel.Debug);
         }
     }
@@ -144,7 +144,7 @@ public class Dumpable
     {
         if(IsMethodDumpTraceActive)
         {
-            var os = Tracer.DumpData("", new[] { name, getValue() }, 1);
+            var os = Tracer.DumpData("", [name, getValue()], 1);
             os.Log(LogLevel.Debug);
         }
     }

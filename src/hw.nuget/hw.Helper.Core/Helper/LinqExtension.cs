@@ -32,7 +32,7 @@ public static class LinqExtension
                 if(subResult.Count > 0)
                 {
                     yield return subResult.ToArray();
-                    subResult = new();
+                    subResult = [];
                 }
 
             subResult.Add(xx);
@@ -338,10 +338,10 @@ public static class LinqExtension
         => target.Where(item => !item.IsCircuitFree(immediateParents));
 
     public static IEnumerable<T> NullableToArray<T>(this T target)
-        where T : class => target == null? new T[0] : new[] { target };
+        where T : class => target == null? [] : new[] { target };
 
     public static IEnumerable<T> NullableToArray<T>(this T? target)
-        where T : struct => target == null? new T[0] : new[] { target.Value };
+        where T : struct => target == null? [] : new[] { target.Value };
 
     public static TTarget Top<TTarget>
     (
@@ -403,7 +403,7 @@ public static class LinqExtension
 
                 if(part.Any())
                     yield return part.ToArray();
-                part = new();
+                part = [];
 
                 if(separatorTreatment == SeparatorTreatmentForSplit.BeginOfSubList)
                     part.Add(item);

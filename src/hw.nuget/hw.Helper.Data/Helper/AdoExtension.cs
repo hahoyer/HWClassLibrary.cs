@@ -51,6 +51,7 @@ namespace hw.Helper
         {
             var result = new List<T>();
             var e = reader.GetEnumerator();
+            using var e1 = e as IDisposable;
             while(e.MoveNext())
                 result.Add(converter((DbDataRecord)e.Current));
             return result.ToArray();
@@ -81,7 +82,7 @@ namespace hw.Helper
         }
 
         static SqlConnectionStringBuilder ConnectionString
-            (string serverName, string dataBase) => new SqlConnectionStringBuilder
+            (string serverName, string dataBase) => new()
         {
             DataSource = serverName, IntegratedSecurity = true, MultipleActiveResultSets = true
             , InitialCatalog = dataBase
