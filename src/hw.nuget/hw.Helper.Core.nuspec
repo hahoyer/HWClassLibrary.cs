@@ -20,7 +20,7 @@
 
         <version>24.0.2</version>
         <releaseNotes>
-            changes: 
+            change: ability to disable DebugTextWriter
             24.0.1
             refactor: upgrade C# 
             change: log-levels

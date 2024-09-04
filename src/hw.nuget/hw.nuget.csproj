@@ -163,6 +163,9 @@
     <Compile Include="hw.CompilerTools\Parser\IParserTokenType.cs" />
     <Compile Include="hw.CompilerTools\Parser\OpenItem.cs" />
     <None Include="hw.log4net.nuspec" />
+    <None Include="hw.log4net.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="hw.nuget.csproj.DotSettings" />
     <None Include="hw.ReplaceVariables.nuspec">
     </None>

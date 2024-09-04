@@ -15,11 +15,13 @@
         <copyright>Copyright Harald Hoyer 2020-2023</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="24.0.0" />
+            <dependency id="hw.Helper.Core" version="24.0.2" />
             <dependency id="log4net" version="2.0.15" />
         </dependencies>
-        <version>24.0</version>
+        <version>24.0.1</version>
         <releaseNotes>
+            new: documentation
+            24.0.1
             refactor: upgrade C# 
             change: log-levels
             23.0
@@ -30,10 +32,10 @@
             20.0.1
             change: stack level detection
         </releaseNotes>
+        <readme>docs\hw.UnitTest.md</readme>
     </metadata>
-
-
     <files>
+        <file src="hw.log4net.md" target="docs\" />
         <file src="hw.log4net\" target="contentFiles/any/any/hw/log4net" />
         <file src="hw.log4net\" target="content/hw" />
     </files>
