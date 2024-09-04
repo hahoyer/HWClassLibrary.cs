@@ -23,6 +23,11 @@ public sealed class BracketContext : DumpableObject
     [EnableDump]
     readonly int[] Data;
 
+    /// <summary>
+    ///     Actually the number of open brackets
+    /// </summary>
+    internal int Depth => Data.Length;
+
     BracketContext(int[] data, PrioTable.BracketPairItem[] brackets)
     {
         Data = data;
@@ -33,23 +38,19 @@ public sealed class BracketContext : DumpableObject
     protected override string GetNodeDump() => Data.Stringify("/");
 
     /// <summary>
-    ///     Actually the number of open brackets
-    /// </summary>
-    internal int Depth => Data.Length;
-
-    /// <summary>
     ///     Create the starting context from priority table
     /// </summary>
     /// <param name="brackets"></param>
     /// <returns></returns>
-    internal static BracketContext Start(PrioTable.BracketPairItem[] brackets) => new(new int[0], brackets);
+    internal static BracketContext Start(PrioTable.BracketPairItem[] brackets) => new([], brackets);
 
     BracketContext Add(string token) => AddCache[token];
 
-    internal bool? IsLeftBracket(string token)
+    internal BracketSide IsLeftBracket(string token)
     {
         var delta = Depth - Add(token).Depth;
-        return delta == 0? null : delta < 0;
+        return delta == 0? BracketSide.None :
+            delta < 0? BracketSide.Left : BracketSide.Right;
     }
 
     BracketContext GetAddCache(string token)
@@ -68,10 +69,9 @@ public sealed class BracketContext : DumpableObject
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         (index > 0).Assert();
 
-        if(tail.FirstOrDefault() + index == 0)
-            return new(tail.Skip(1).ToArray(), Brackets);
-
-        return this;
+        return tail.FirstOrDefault() + index == 0
+            ? new(tail.Skip(1).ToArray(), Brackets)
+            : this;
     }
 
     int GetContextIndex(string token)

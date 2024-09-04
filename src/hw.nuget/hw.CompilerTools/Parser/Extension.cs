@@ -10,13 +10,10 @@ namespace hw.Parser;
 public static class Extension
 {
     public static TOut Operation<TIn, TOut>(this IOperator<TIn, TOut> @operator, TIn left, IToken token, TIn right)
-        where TIn : class => left == null
-        ? right == null
+        where TIn : class => left == null? right == null
             ? @operator.Terminal(token)
-            : @operator.Prefix(token, right)
-        : right == null
-            ? @operator.Suffix(left, token)
-            : @operator.Infix(left, token, right);
+            : @operator.Prefix(token, right) :
+        right == null? @operator.Suffix(left, token) : @operator.Infix(left, token, right);
 
     public static ISubParser<TTreeItem> Convert<TTreeItem>
         (this IParser<TTreeItem> parser, Func<TTreeItem, IParserTokenType<TTreeItem>> converter)
@@ -38,22 +35,17 @@ public static class Extension
     }
 
     public static int BracketBalance(this IToken token)
-    {
-        switch(token.IsBracketAndLeftBracket)
+        => token.BracketSide switch
         {
-            case true:
-                return -1;
-            case false:
-                return 1;
-            default:
-                return 0;
-        }
-    }
+            BracketSide.Left=> -1
+            , BracketSide.Right=> 1
+            , BracketSide.None => 0
+            , var _ => throw new ArgumentOutOfRangeException()
+        };
 
     internal static string TreeDump<TTreeItem>(TTreeItem value)
         where TTreeItem : class
-    {
-        var t = value as IBinaryTreeItem;
-        return t == null? Tracer.Dump(value) : TreeDump(t);
-    }
+        => value is IBinaryTreeItem t
+            ? TreeDump(t) 
+            : Tracer.Dump(value);
 }

@@ -1,9 +1,13 @@
 using hw.DebugFormatter;
 using hw.Scanner;
+using JetBrains.Annotations;
 
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser;
+
+public enum BracketSide {Left, None, Right}
+
 
 /// <summary>
 ///     Complete token obtained by the scanner, including preceding whitespaces
@@ -26,9 +30,10 @@ public interface IToken
     ///     Will be null if it is not bracket, true for left bracket and false for right bracket
     /// </summary>
     [DisableDump]
-    bool? IsBracketAndLeftBracket { get; }
+    BracketSide BracketSide { get; }
 }
 
+[PublicAPI]
 public static class TokenExtension
 {
     public static SourcePart GetSourcePart(this IToken token)
