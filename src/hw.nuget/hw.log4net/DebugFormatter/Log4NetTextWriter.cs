@@ -22,18 +22,31 @@ public sealed class Log4NetTextWriter : TextWriter
         public string Caller;
 
         [PublicAPI]
-        public Level Level;
+        public LogLevel LogLevel;
 
         public void Write(string value)
         {
             var log = LogManager.GetLogger(Caller);
-            log.Logger.Log(typeof(Log4NetTextWriter), Level, value, null);
+
+            var level =
+                LogLevel switch
+                {
+                    LogLevel.Information => Level.Info
+                    , LogLevel.Warning => Level.Warn
+                    , LogLevel.Trace => Level.Trace
+                    , LogLevel.Debug => Level.Debug
+                    , LogLevel.Error => Level.Error
+                    , LogLevel.Critical => Level.Critical
+                    , _ => throw new ArgumentOutOfRangeException()
+                };
+
+            log.Logger.Log(typeof(Log4NetTextWriter), level, value, null);
         }
 
         public static Information AutoCreate()
             => new()
             {
-                Caller = FindStackFrame().GetMethod().ReflectedType.CompleteName(), Level = Level.Info
+                Caller = FindStackFrame().GetMethod().ReflectedType.CompleteName(), LogLevel = Writer.LogLevel
             };
 
         static StackFrame FindStackFrame()

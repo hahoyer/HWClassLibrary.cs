@@ -15,11 +15,14 @@
         <copyright>Copyright Harald Hoyer 2020-2023</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="23.0.6" />
+            <dependency id="hw.Helper.Core" version="24.0.1" />
             <dependency id="log4net" version="2.0.15" />
         </dependencies>
-        <version>23.0</version>
+        <version>24.0</version>
         <releaseNotes>
+            refactor: upgrade C# 
+            change: log-levels
+            23.0
             admin: Fix for use with .net6
             refactor: Upgrade C#
             21.0
