@@ -1,0 +1,53 @@
+<Project>
+    <Import
+        Condition=" $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')) != '' "
+        Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    <PropertyGroup>
+        <Copyright>Copyright Harald Hoyer © 2024</Copyright>
+        <Authors>Harald Hoyer</Authors>
+        <LangVersion>preview</LangVersion>
+        <Features>strict</Features>
+        <AnalysisMode>None</AnalysisMode>
+        <EnableNETAnalyzers>false</EnableNETAnalyzers>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <ProductDir>$(MSBuildThisFileDirectory)</ProductDir>
+        <BinDir>$(ProductDir)bin\</BinDir>
+        <OutputPath>$(ProductDir)out\$(Configuration)\</OutputPath>
+        <IntermediateOutputPath>$(ProductDir)intermediate\$(MSBuildProjectName)\$(Configuration)\</IntermediateOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Prefer32Bit>false</Prefer32Bit>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <NoWarn>649;660;661;1717</NoWarn>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EnableNETAnalyzers>False</EnableNETAnalyzers>
+        <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <RestorePackages>true</RestorePackages>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <DefineConstants>TRACE</DefineConstants>
+    </PropertyGroup>
+
+    
+    <ItemGroup>
+        <Using Include="JetBrains.Annotations" />
+    </ItemGroup>
+</Project>
