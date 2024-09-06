@@ -28,7 +28,7 @@ namespace hw.Graphics
         int NodeHeight => Drawer.NodeHeight(Name);
         int NodeWidth => Drawer.NodeWidth(Name);
 
-        Size Anchor => new Size(AnchorOffset, NodeHeight / 2);
+        Size Anchor => new(AnchorOffset, NodeHeight / 2);
         int NodeOffset => AnchorOffset - NodeWidth / 2;
         int ChildrenOffset => Math.Max(0, (NodeWidth - ChildrenWidth) / 2);
 
@@ -41,7 +41,7 @@ namespace hw.Graphics
                 var currentWidthOffset = ChildrenOffset;
                 foreach(var syntax in Children)
                 {
-                    yield return new Size(currentWidthOffset, height);
+                    yield return new(currentWidthOffset, height);
                     currentWidthOffset += SaveWidth(syntax) + Drawer.Gap.Width;
                 }
             }

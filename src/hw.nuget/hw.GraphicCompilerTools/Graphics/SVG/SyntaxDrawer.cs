@@ -24,9 +24,9 @@ namespace hw.Graphics.SVG
             Stroke = "Black";
             Tick = 1;
             FillColor = "LightBlue";
-            Font = new Font(FontFamily.Families.Single(f1 => f1.Name == fontFamily), Tick * 10);
+            Font = new(FontFamily.Families.Single(f1 => f1.Name == fontFamily), Tick * 10);
             Graphics = System.Drawing.Graphics.FromImage(new Bitmap(1, 1));
-            Root = new Root {Svg = new SVG()};
+            Root = new() {Svg = new()};
             Syntax = Syntax.Create(target, this);
         }
 
@@ -42,15 +42,15 @@ namespace hw.Graphics.SVG
             Root.Svg.Items.Add(new Path
             {
                 PathData = (origin + new Size(SizeBase, 0)).CloseAndFormat(bodyWidth.HorizontalLine()
-                    , SizeBase.Arc(new Size(0, SizeBase * 2), false, true), (-bodyWidth).HorizontalLine()
-                    , SizeBase.Arc(new Size(0, -SizeBase * 2), false, true))
+                    , SizeBase.Arc(new(0, SizeBase * 2), false, true), (-bodyWidth).HorizontalLine()
+                    , SizeBase.Arc(new(0, -SizeBase * 2), false, true))
                 , Fill = FillColor, Stroke = Stroke, StrokeWidth = Tick
             });
 
             Root.Svg.Items.Add(CreateText(nodeName, origin + new Size(size.Width / 2, size.Height / 2)));
         }
 
-        Size ISyntaxDrawer.Gap => new Size(SizeBase, SizeBase);
+        Size ISyntaxDrawer.Gap => new(SizeBase, SizeBase);
         int ISyntaxDrawer.NodeHeight(string nodeName) => Math.Max(TextSize(nodeName).Height, SizeBase) + SizeBase;
         int ISyntaxDrawer.NodeWidth(string nodeName) => Math.Max(TextSize(nodeName).Width, SizeBase) + SizeBase;
 
@@ -59,7 +59,7 @@ namespace hw.Graphics.SVG
             if(Syntax == null)
                 return Root;
 
-            Syntax.Draw(new Point(SizeBase / 2, SizeBase / 2));
+            Syntax.Draw(new(SizeBase / 2, SizeBase / 2));
 
             Root.Svg.Width = Syntax.Width + SizeBase + "px";
             Root.Svg.Height = Syntax.Height + SizeBase + "px";
@@ -89,13 +89,13 @@ namespace hw.Graphics.SVG
         Size TextSize(string nodeName)
         {
             var result = Graphics.MeasureString(nodeName, Font);
-            return new Size((int)result.Width, (int)result.Height);
+            return new((int)result.Width, (int)result.Height);
         }
 
         Size NodeSize(string nodeName)
         {
             var textSize = TextSize(nodeName);
-            return new Size(Math.Max(textSize.Width, SizeBase) + SizeBase, SizeBase * 2);
+            return new(Math.Max(textSize.Width, SizeBase) + SizeBase, SizeBase * 2);
         }
     }
 }

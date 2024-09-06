@@ -24,18 +24,18 @@ namespace hw.Graphics
 
         SyntaxDrawer(IGraphTarget target)
         {
-            StringFormat = new StringFormat(StringFormatFlags.NoWrap);
-            Font = new Font(FontFamily.Families.Single(f1 => f1.Name == "Arial"), 10);
-            LineBrush = new SolidBrush(Color.Black);
-            LinePen = new Pen(LineBrush, 1);
-            NodeBrush = new SolidBrush(Color.LightBlue);
+            StringFormat = new(StringFormatFlags.NoWrap);
+            Font = new(FontFamily.Families.Single(f1 => f1.Name == "Arial"), 10);
+            LineBrush = new(Color.Black);
+            LinePen = new(LineBrush, 1);
+            NodeBrush = new(Color.LightBlue);
             Graphics = System.Drawing.Graphics.FromImage(new Bitmap(1, 1));
             SizeBase = Font.Height * 8 / 10;
 
             Syntax = Syntax.Create(target, this);
             var width = Syntax.Width + SizeBase + 1;
             var height = Syntax.Height + SizeBase + 1;
-            Bitmap = new Bitmap(width, height);
+            Bitmap = new(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             var frame = new Rectangle(0, 0, width, height);
             Graphics.FillRectangle(new SolidBrush(Color.Transparent), frame);
@@ -52,9 +52,9 @@ namespace hw.Graphics
             var lineOrigin = origin + new Size(SizeBase, 0);
 
             var r = new GraphicsPath();
-            r.AddArc(new Rectangle(origin, arcSize), 90, 180);
+            r.AddArc(new(origin, arcSize), 90, 180);
             r.AddLine(lineOrigin, lineOrigin + bodyWidth);
-            r.AddArc(new Rectangle(origin + bodyWidth, arcSize), 270, 180);
+            r.AddArc(new(origin + bodyWidth, arcSize), 270, 180);
             r.AddLine(lineOrigin + bodyWidth + new Size(0, SizeBase * 2), lineOrigin + new Size(0, SizeBase * 2));
             Graphics.FillPath(NodeBrush, r);
             Graphics.DrawPath(LinePen, r);
@@ -63,7 +63,7 @@ namespace hw.Graphics
             Graphics.DrawString(nodeName, Font, LineBrush, new Rectangle(origin, size), s);
         }
 
-        Size ISyntaxDrawer.Gap => new Size(SizeBase, SizeBase);
+        Size ISyntaxDrawer.Gap => new(SizeBase, SizeBase);
         int ISyntaxDrawer.NodeHeight(string nodeName) => SizeBase * 2;
         int ISyntaxDrawer.NodeWidth(string nodeName) => Math.Max(TextWidth(nodeName), SizeBase) + SizeBase;
 
@@ -71,7 +71,7 @@ namespace hw.Graphics
 
         Image Draw()
         {
-            Syntax.Draw(new Point(SizeBase / 2, SizeBase / 2));
+            Syntax.Draw(new(SizeBase / 2, SizeBase / 2));
             return Bitmap;
         }
 
@@ -79,7 +79,7 @@ namespace hw.Graphics
             (string nodeName) => (int)Graphics.MeasureString(nodeName, Font, new PointF(0, 0), StringFormat).Width;
 
         Size NodeSize
-            (string nodeName) => new Size(((ISyntaxDrawer)this).NodeWidth(nodeName)
+            (string nodeName) => new(((ISyntaxDrawer)this).NodeWidth(nodeName)
             , ((ISyntaxDrawer)this).NodeHeight(nodeName));
     }
 }
