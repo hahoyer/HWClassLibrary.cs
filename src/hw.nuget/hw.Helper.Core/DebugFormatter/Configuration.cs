@@ -166,7 +166,7 @@ public sealed class Configuration
     static string DumpEnum(Type type, object target)
     {
         var result = target
-            .ToString()
+            .ToString()!
             .Split(',')
             .Select(item => type.PrettyName() + "." + item.Trim())
             .Stringify(", ");

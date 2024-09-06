@@ -143,7 +143,7 @@ public sealed class Dumper
         if(memberInfo is FieldInfo fieldInfo)
             return fieldInfo.IsPrivate;
 
-        return !((PropertyInfo)memberInfo).CanRead || ((PropertyInfo)memberInfo).GetGetMethod(true).IsPrivate;
+        return !((PropertyInfo)memberInfo).CanRead || ((PropertyInfo)memberInfo).GetGetMethod(true)!.IsPrivate;
     }
 
     static string Format(MemberInfo memberInfo, object target)
