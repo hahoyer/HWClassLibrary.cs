@@ -15,7 +15,7 @@
         <projectUrl>https://github.com/hahoyer/HWClassLibrary.cs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
-        <copyright>Copyright Harald Hoyer 2013-2020</copyright>
+        <copyright>Copyright Harald Hoyer 2013-2024</copyright>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="EnvDTE.dll" />
             <frameworkAssembly assemblyName="Microsoft.VisualStudio.TextTemplating.10.0" />
@@ -23,12 +23,12 @@
 
         <version>24.0</version>
         <releaseNotes>
-            
+            refactor: upgrade C#
             20.0.0.1
         </releaseNotes>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="20.0" />
+            <dependency id="hw.Helper.Core" version="24.1" />
         </dependencies>
 
     </metadata>
