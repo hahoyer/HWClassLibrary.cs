@@ -2,18 +2,16 @@
 using System.Reflection;
 using hw.DebugFormatter;
 using hw.UnitTest;
-using JetBrains.Annotations;
 
-namespace Tester
+namespace Tester;
+
+[PublicAPI]
+static class Program
 {
-    [PublicAPI]
-    static class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            TestRunner.Configuration.IsBreakEnabled = Debugger.IsAttached;
-            var result = TestRunner.RunTests(Assembly.GetExecutingAssembly());
-            result.Assert();
-        }
+        TestRunner.Configuration.IsBreakEnabled = Debugger.IsAttached;
+        var result = TestRunner.RunTests(Assembly.GetExecutingAssembly());
+        result.Assert();
     }
 }
