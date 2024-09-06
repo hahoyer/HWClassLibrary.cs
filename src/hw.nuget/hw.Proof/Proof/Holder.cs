@@ -12,8 +12,7 @@ namespace hw.Proof
     {
         internal ClauseSyntax Statement { get; }
 
-        readonly TwoLayerScanner Scanner
-            = new TwoLayerScanner(Main.Definitions.ScannerTokenFactory);
+        readonly TwoLayerScanner Scanner = new(Main.Definitions.ScannerTokenFactory);
 
         readonly string Text;
 
@@ -25,7 +24,7 @@ namespace hw.Proof
             IParser<ParsedSyntax> prioParser = new PrioParser<ParsedSyntax>
                 (Definitions.PrioTable, Scanner, null);
             var parsedSyntax =
-                prioParser.Execute(new Source(file));
+                prioParser.Execute(new(file));
             Statement = (ClauseSyntax)parsedSyntax;
         }
 

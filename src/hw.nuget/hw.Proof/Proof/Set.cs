@@ -16,9 +16,9 @@ namespace hw.Proof
         readonly List<T> Data;
 
         public Set()
-            : this(new T[0]) { }
+            : this([]) { }
 
-        Set(T[] ts) => Data = new List<T>(ts);
+        Set(T[] ts) => Data = [..ts];
 
         /// <summary>
         ///     Returns true if the instance is empty.
@@ -28,7 +28,7 @@ namespace hw.Proof
         [DisableDump]
         public bool IsEmpty => Count == 0;
 
-        public static Set<T> Empty => new Set<T>();
+        public static Set<T> Empty => [];
 
         int Count => Data.Count;
 
@@ -84,6 +84,6 @@ namespace hw.Proof
             where T : IComparable<T> => Set<T>.Create(target);
 
         public static Set<T> ToSet<T>(this T target)
-            where T : IComparable<T> => Set<T>.Create(new[] {target});
+            where T : IComparable<T> => Set<T>.Create([target]);
     }
 }

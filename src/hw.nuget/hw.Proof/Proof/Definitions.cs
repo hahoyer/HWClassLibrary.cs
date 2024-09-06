@@ -8,19 +8,19 @@ namespace hw.Proof
 {
     sealed class Definitions : DumpableObject
     {
-        internal static Definitions Instance => new Definitions();
+        internal static Definitions Instance => new();
 
-        static readonly Lexer Lexer = new Lexer();
-        internal static readonly string[] LeftBrackets = {"(", "[", "{", PrioTable.BeginOfText};
-        internal static readonly string[] RightBrackets = {")", "]", "}", PrioTable.EndOfText};
-        internal static readonly Equal Equal = new Equal();
-        internal static readonly Plus Plus = new Plus();
+        static readonly Lexer Lexer = new();
+        internal static readonly string[] LeftBrackets = ["(", "[", "{", PrioTable.BeginOfText];
+        internal static readonly string[] RightBrackets = [")", "]", "}", PrioTable.EndOfText];
+        internal static readonly Equal Equal = new();
+        internal static readonly Plus Plus = new();
 
-        internal static UserSymbol GetTokenClass(string name) => new UserSymbol(name);
+        internal static UserSymbol GetTokenClass(string name) => new(name);
 
         internal static IParserTokenType<ParsedSyntax>[] PredefinedTokenClasses
-            => new IParserTokenType<ParsedSyntax>[]
-            {
+            =>
+            [
                 new LeftParenthesis(1),
                 new LeftParenthesis(2),
                 new LeftParenthesis(3),
@@ -37,7 +37,7 @@ namespace hw.Proof
                 new Integer(),
                 new GreatesCommonDenominator(),
                 new Element()
-            };
+            ];
 
         internal static PrioTable PrioTable
         {
@@ -74,12 +74,12 @@ namespace hw.Proof
             IScannerTokenType ITokenFactory.InvalidCharacterError
                 => new SyntaxError(IssueId.UnexpectedSyntaxError);
             LexerItem[] ITokenFactory.Classes
-                => new[]
-                {
-                    new LexerItem(new WhiteSpaceTokenType("Space"), Lexer.Space),
-                    new LexerItem(new Number(), Lexer.Number),
-                    new LexerItem(new Any(), Lexer.Any)
-                };
+                =>
+                [
+                    new(new WhiteSpaceTokenType("Space"), Lexer.Space),
+                    new(new Number(), Lexer.Number),
+                    new(new Any(), Lexer.Any)
+                ];
         }
 
         internal readonly ITokenFactory<ParsedSyntax> ScannerTokenFactory

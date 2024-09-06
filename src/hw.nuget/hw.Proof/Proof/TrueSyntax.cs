@@ -7,7 +7,7 @@ namespace hw.Proof
         : ParsedSyntax
             , IComparableEx<TrueSyntax>
     {
-        static readonly ValueCache<ParsedSyntax> InstanceCache = new ValueCache<ParsedSyntax>(Create);
+        static readonly ValueCache<ParsedSyntax> InstanceCache = new(Create);
 
         TrueSyntax()
             : base(null) { }
