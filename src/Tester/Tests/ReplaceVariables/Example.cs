@@ -25,7 +25,7 @@ namespace hw.Tests.ReplaceVariables
 
         sealed class DateTimeSpecial
         {
-            DateTime Value;
+            readonly DateTime Value;
             public DateTimeSpecial(DateTime value) => Value = value;
 
             [Visible]
