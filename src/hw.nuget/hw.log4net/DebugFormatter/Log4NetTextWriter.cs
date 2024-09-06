@@ -46,7 +46,7 @@ public sealed class Log4NetTextWriter : TextWriter
         public static Information AutoCreate()
             => new()
             {
-                Caller = FindStackFrame().GetMethod().ReflectedType.CompleteName(), LogLevel = Writer.LogLevel
+                Caller = FindStackFrame().GetMethod()?.ReflectedType.CompleteName(), LogLevel = Writer.LogLevel
             };
 
         static StackFrame FindStackFrame()
@@ -57,8 +57,8 @@ public sealed class Log4NetTextWriter : TextWriter
             for(var frameDepth = 0; frameDepth < stackTrace.FrameCount - 1; frameDepth++)
             {
                 var stackFrame = stackTrace.GetFrame(frameDepth);
-                var methodBase = stackFrame.GetMethod();
-                if(methodBase.GetAttribute<IsLoggingFunction>(true) != null)
+                var methodBase = stackFrame?.GetMethod();
+                if(methodBase?.GetAttribute<IsLoggingFunction>(true) != null)
                     isLoggingLevel = true;
                 else if(isLoggingLevel)
                     return stackTrace.GetFrame(frameDepth);
