@@ -1,6 +1,6 @@
+#nullable enable
 using System;
 using hw.Helper;
-using JetBrains.Annotations;
 
 // ReSharper disable CheckNamespace
 
@@ -19,15 +19,15 @@ public sealed class EnableDumpWithExceptionPredicateAttribute
         : base(true)
         => Predicate = predicate == ""? "IsDumpException" : predicate;
 
-    bool IDumpExceptAttribute.IsException(object target)
+    bool IDumpExceptAttribute.IsException(object? target)
     {
         try
         {
-            return Equals(target.GetType().GetMethod(Predicate)?.Invoke(target, null), true);
+            return Equals(target?.GetType().GetMethod(Predicate)?.Invoke(target, null), true);
         }
         catch(Exception e)
         {
-            Tracer.AssertionFailed("Exception when calling " + target.GetType().PrettyName() + Predicate
+            Tracer.AssertionFailed("Exception when calling " + target?.GetType().PrettyName() + Predicate
                 , () => e.Message);
             return false;
         }

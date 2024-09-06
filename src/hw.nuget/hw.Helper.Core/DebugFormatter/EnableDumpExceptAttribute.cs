@@ -1,5 +1,5 @@
+#nullable enable
 using System;
-using JetBrains.Annotations;
 
 // ReSharper disable CheckNamespace
 
@@ -21,7 +21,7 @@ public sealed class EnableDumpExceptAttribute
     public EnableDumpExceptAttribute(object exceptionValue)
         : base(exceptionValue) { }
 
-    bool IDumpExceptAttribute.IsException(object v) => IsException(v);
+    bool IDumpExceptAttribute.IsException(object? value) => IsException(value);
 }
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
@@ -32,7 +32,7 @@ public abstract class DumpExceptAttribute : DumpAttributeBase
 
     protected DumpExceptAttribute(object exceptionValue) => ExceptionValue = exceptionValue;
 
-    protected bool IsException(object targetValue) => Equals(targetValue, ExceptionValue);
+    protected bool IsException(object? targetValue) => Equals(targetValue, ExceptionValue);
 }
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
@@ -48,5 +48,5 @@ public sealed class DisableDumpExceptAttribute
     public DisableDumpExceptAttribute(object exceptionValue)
         : base(exceptionValue) { }
 
-    bool IDumpExceptAttribute.IsException(object targetValue) => !IsException(targetValue);
+    bool IDumpExceptAttribute.IsException(object? targetValue) => !IsException(targetValue);
 }
