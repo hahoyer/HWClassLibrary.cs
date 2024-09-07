@@ -245,7 +245,7 @@ public sealed class SmbFile
     public static string? GetSourceFileName(int depth = 0)
     {
         var sf = new StackTrace(true).GetFrame(depth + 1);
-        return sf.GetFileName();
+        return sf?.GetFileName();
     }
 
     /// <summary>

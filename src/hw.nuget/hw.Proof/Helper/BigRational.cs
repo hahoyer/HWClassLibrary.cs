@@ -63,12 +63,12 @@ namespace hw.Helper
             return result;
         }
 
-        public static BigRational operator *(BigRational target, BigRational y) { return new BigRational(target.Nominator * y.Nominator, target.Denominator * y.Denominator); }
-        public static BigRational operator /(BigRational target, BigRational y) { return new BigRational(target.Nominator * y.Denominator, target.Denominator * y.Nominator); }
-        public static BigRational operator /(int target, BigRational y) { return new BigRational(target * y.Denominator, y.Nominator); }
-        public static BigRational operator -(BigRational target) { return new BigRational(-target.Nominator, target.Denominator); }
-        public static BigRational operator +(BigRational target, int y) { return new BigRational(target.Nominator + y * target.Denominator, target.Denominator); }
-        public static BigRational operator +(BigRational target, BigRational y) { return new BigRational(target.Nominator * y.Denominator + y.Nominator * target.Denominator, target.Denominator * y.Denominator); }
+        public static BigRational operator *(BigRational target, BigRational y) { return new(target.Nominator * y.Nominator, target.Denominator * y.Denominator); }
+        public static BigRational operator /(BigRational target, BigRational y) { return new(target.Nominator * y.Denominator, target.Denominator * y.Nominator); }
+        public static BigRational operator /(int target, BigRational y) { return new(target * y.Denominator, y.Nominator); }
+        public static BigRational operator -(BigRational target) { return new(-target.Nominator, target.Denominator); }
+        public static BigRational operator +(BigRational target, int y) { return new(target.Nominator + y * target.Denominator, target.Denominator); }
+        public static BigRational operator +(BigRational target, BigRational y) { return new(target.Nominator * y.Denominator + y.Nominator * target.Denominator, target.Denominator * y.Denominator); }
 
         public override string ToString()
         {
@@ -110,8 +110,8 @@ namespace hw.Helper
         public static bool operator !=(BigRational left, BigRational right) { return !Equals(left, right); }
         public static bool operator ==([NotNull] BigRational left, int right) { return left.Nominator == right && left.Denominator == 1; }
         public static bool operator !=([NotNull] BigRational left, int right) { return !(left == right); }
-        static BigRational Create(int value) { return new BigRational(value, 1); }
-        static BigRational Create(BigInteger value) { return new BigRational(value, 1); }
+        static BigRational Create(int value) { return new(value, 1); }
+        static BigRational Create(BigInteger value) { return new(value, 1); }
         public static implicit operator BigRational(int value) { return Create(value); }
         public static implicit operator BigRational(BigInteger value) { return Create(value); }
     }

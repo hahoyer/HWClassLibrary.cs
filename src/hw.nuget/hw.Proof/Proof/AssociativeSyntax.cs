@@ -24,7 +24,7 @@ namespace hw.Proof
             {
                 if(Operator.IsVariablesProvider)
                     return Set<string>.Create(Set.SelectMany(target => target.Variables).ToArray());
-                return new Set<string>();
+                return new();
             }
         }
 

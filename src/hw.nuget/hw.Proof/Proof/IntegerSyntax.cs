@@ -10,7 +10,7 @@ namespace hw.Proof
             : base(token) { }
 
         [DisableDump]
-        internal override Set<string> Variables => new Set<string>();
+        internal override Set<string> Variables => new();
 
         internal override string SmartDump(ISmartDumpToken @operator) => Token.Characters.Id;
         public int CompareToEx(IntegerSyntax other) => 0;

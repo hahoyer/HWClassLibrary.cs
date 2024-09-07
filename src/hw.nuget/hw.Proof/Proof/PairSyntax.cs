@@ -27,7 +27,7 @@ namespace hw.Proof
             {
                 if(Operator.IsVariablesProvider)
                     return Left.Variables | Right.Variables;
-                return new Set<string>();
+                return new();
             }
         }
 

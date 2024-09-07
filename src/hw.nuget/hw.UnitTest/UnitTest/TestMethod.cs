@@ -41,7 +41,7 @@ sealed class TestMethod : DumpableObject
         internal override object Instance { get; }
 
         internal ActionActor(Action action)
-            : base(action.Method, action.Target.GetType())
+            : base(action.Method, action.Target.AssertNotNull().GetType())
             => Instance = action.Target;
     }
 

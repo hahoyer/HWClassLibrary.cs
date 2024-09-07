@@ -18,8 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2024</copyright>
 
-        <version>24.0.3</version>
+        <version>24.1.0.1</version>
         <releaseNotes>
+            refactor: upgrade C# 
+            24.0.3
             bugfix: ability to disable DebugTextWriter
             24.0.2
             change: ability to disable DebugTextWriter

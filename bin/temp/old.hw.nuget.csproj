@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <Import Project="..\..\bin\packages\NUnit.4.2.2\build\NUnit.props" Condition="Exists('..\..\bin\packages\NUnit.4.2.2\build\NUnit.props')" />
+  <PropertyGroup>
+    <ProjectGuid>{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}</ProjectGuid>
+    <AssemblyName>hw.nuget</AssemblyName>
+    <TargetTypeEx>NuGetPackages</TargetTypeEx>
+    <RootNamespace>hw</RootNamespace>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Assembly.cs" />
+    <Compile Include="hw.CompilerTools\Parser\BelongsToAttribute.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Compiler.cs" />
+    <Compile Include="hw.CompilerTools\Parser\GenericTokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\ITokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\VariantAttribute.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\Match2TwoLayerScannerGuard.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\LogLevel.cs" />
+    <Compile Include="hw.Helper.Core\Helper\IUniqueIdProvider.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\LexerItem.cs" />
+    <Compile Include="hw.CompilerTools\Parser\PredefinedTokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\ParserTokenType.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\WhiteSpaceTokenType.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\FileSourceProvider.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\ISourceProvider.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\StringSourceProvider.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\IGraphTarget.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Circle.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Content.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Path.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Rect.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Root.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\SVG.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\SyntaxDrawer.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SVG\Text.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\Syntax.cs" />
+    <Compile Include="hw.GraphicCompilerTools\Graphics\SyntaxDrawer.cs" />
+    <Compile Include="hw.CompilerTools\Parser\BracketContext.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Extension.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IBinaryTreeItem.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IToken.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\ITokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Parser\PrioParserWorker.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\TwoLayerScanner.cs" />
+    <Compile Include="hw.CompilerTools\Parser\Item.cs" />
+    <Compile Include="hw.CompilerTools\Parser\SubParser.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\SourcePart.cs" />
+    <Compile Include="hw.CompilerTools\Parser\ScannerTokenType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\CachingTokenFactory.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\IScanner.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\Match.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\MatchExtension.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\Source.cs" />
+    <Compile Include="hw.CompilerTools\Scanner\SourcePosition.cs" />
+    <Compile Include="hw.Forms\Forms\CursorUtil.cs" />
+    <Compile Include="hw.Forms\Forms\IIconKeyProvider.cs" />
+    <Compile Include="hw.Forms\Forms\ITreeNodeSupport.cs" />
+    <Compile Include="hw.Forms\Forms\NodeAttribute.cs" />
+    <Compile Include="hw.Forms\Forms\NodeNameAttribute.cs" />
+    <Compile Include="hw.Forms\Forms\SmartNodeAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\Configuration.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DebugTextWriter.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DumpableObject.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\Dumper.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\TextWriters.cs" />
+    <Compile Include="hw.Helper.Core\Helper\DateRange.cs" />
+    <Compile Include="hw.Helper.Core\Helper\LocationProviderAttribute.cs" />
+    <Compile Include="hw.Helper.Core\Helper\SmbFile.cs" />
+    <Compile Include="hw.Helper.Core\Helper\TextPart.cs" />
+    <Compile Include="hw.Helper.Core\Helper\TypeLibrary.cs" />
+    <Compile Include="hw.Helper.Core\Helper\ValueCacheExtension.cs" />
+    <Compile Include="hw.log4net\DebugFormatter\Log4NetTextWriter.cs" />
+    <Compile Include="hw.Proof\Proof\Any.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\ParserTokenType.cs" />
+    <Compile Include="hw.ReplaceVariables\ReplaceVariables\ReplaceVariablesExtension.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\DependenceProvider.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\ITestFixture.cs" />
+    <Compile Include="TestDump.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\Writer.cs" />
+    <Compile Include="hw.Helper.Data\Helper\AdoExtension.cs" />
+    <Compile Include="hw.Helper.Data\Helper\IReaderInitialize.cs" />
+    <Compile Include="hw.Proof\Helper\BigRational.cs" />
+    <Compile Include="hw.Proof\Proof\AndSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\AssociativeSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\ClauseSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\EqualSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\FactorSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\Holder.cs" />
+    <Compile Include="hw.Proof\Proof\IntegerSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\IsolateAndReplaceStrategy.cs" />
+    <Compile Include="hw.Proof\Proof\IssueId.cs" />
+    <Compile Include="hw.Proof\Proof\IStrategy.cs" />
+    <Compile Include="hw.Proof\Proof\LeftParenthesisSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\Main.cs" />
+    <Compile Include="hw.Proof\Proof\NumberSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\PairSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\ParsedSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\ParsedSyntaxExtender.cs" />
+    <Compile Include="hw.Proof\Proof\PlusSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\Lexer.cs" />
+    <Compile Include="hw.Proof\Proof\SyntaxError.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\And.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Caret.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Element.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Equal.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\GreatesCommonDenominator.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Integer.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\LeftParenthesis.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\List.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Minus.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Number.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\PairToken.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\Plus.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\RightParenthesis.cs" />
+    <Compile Include="hw.Proof\Proof\TokenClasses\UserSymbol.cs" />
+    <Compile Include="hw.Proof\Proof\Definitions.cs" />
+    <Compile Include="hw.Proof\Proof\TrueSyntax.cs" />
+    <Compile Include="hw.Proof\Proof\VariableSyntax.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DisableDumpAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\Dumpable.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DumpClassAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DumpDataClassAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DumpEnabledAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\EnableDumpExceptAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DumpAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\DumpToStringAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\EnableDumpAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\EnableDumpWithExceptionPredicateAttribute.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\Profiler.cs" />
+    <Compile Include="hw.Helper.Core\DebugFormatter\Tracer.cs" />
+    <Compile Include="hw.Helper.Core\Helper\Box.cs" />
+    <Compile Include="hw.Helper.Core\Helper\DateTimeExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\FunctionCache.cs" />
+    <Compile Include="hw.Helper.Core\Helper\EnumEx.cs" />
+    <Compile Include="hw.Helper.Core\Helper\LinqExtension.cs" />
+    <Compile Include="hw.Helper.Core\Helper\LongExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\ReflectionExtender.cs" />
+    <Compile Include="hw.Helper.Core\Helper\StringExtender.cs" />
+    <Compile Include="hw.Proof\Proof\Set.cs" />
+    <Compile Include="hw.Helper.Core\Helper\ValueCache.cs" />
+    <Compile Include="hw.Helper.Core\Helper\StringAligner.cs" />
+    <Compile Include="hw.Helper.Core\Helper\TypeNameExtender.cs" />
+    <Compile Include="hw.CompilerTools\Parser\PrioTable.cs" />
+    <Compile Include="hw.CompilerTools\Parser\PrioParser.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IOperator.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IParser.cs" />
+    <Compile Include="hw.CompilerTools\Parser\IParserTokenType.cs" />
+    <Compile Include="hw.CompilerTools\Parser\OpenItem.cs" />
+    <None Include="hw.log4net.nuspec" />
+    <None Include="hw.log4net.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="hw.nuget.csproj.DotSettings" />
+    <None Include="hw.ReplaceVariables.nuspec">
+    </None>
+    <None Include="hw.CompilerTools.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="hw.Helper.Core.nuspec">
+    </None>
+    <None Include="hw.Helper.Data.nuspec">
+    </None>
+    <None Include="hw.T4Helper.nuspec">
+    </None>
+    <None Include="hw.Forms.nuspec">
+    </None>
+    <None Include="hw.UnitTest.nuspec">
+    </None>
+    <None Include="hw.T4Helper\Helper\T4Extender.cs" />
+    <None Include="hw.T4Helper\Helper\T4Context.cs" />
+    <Compile Include="hw.Forms\Forms\Extender.cs" />
+    <Compile Include="hw.Forms\Forms\PositionConfig.cs" />
+    <Compile Include="hw.Forms\Forms\TreeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="hw.Forms\Forms\TreeForm.Designer.cs">
+      <DependentUpon>TreeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="hw.Forms\Forms\IAdditionalNodeInfoProvider.cs">
+    </Compile>
+    <Compile Include="hw.UnitTest\UnitTest\CategoryAttribute.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\TestExtender.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\TestMethod.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\TestRunner.cs" />
+    <Compile Include="hw.UnitTest\UnitTest\TestType.cs" />
+    <None Include="hw.UnitTest.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <None Include="sys.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=4242.42.42.42, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\..\bin\packages\JetBrains.Annotations.2024.2.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.17.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\bin\packages\log4net.2.0.17\lib\net40\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="hw.Forms\Forms\TreeForm.resx">
+      <DependentUpon>TreeForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+  </ItemGroup>
+  <Import Project="sys.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\bin\packages\NUnit.4.2.2\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\bin\packages\NUnit.4.2.2\build\NUnit.props'))" />
+  </Target>
+</Project>

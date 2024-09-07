@@ -64,7 +64,7 @@ namespace hw.Proof
 
         internal ParsedSyntax Associative<TOperation>(TOperation operation, IToken token, ParsedSyntax other)
             where TOperation : IAssociative
-            => operation.CombineAssosiative(token, new[] {this, other});
+            => operation.CombineAssosiative(token, [this, other]);
 
         internal virtual bool IsDistinct(ParsedSyntax other)
         {
@@ -210,9 +210,10 @@ namespace hw.Proof
         }
 
         internal KeyValuePair<string, ParsedSyntax> GetDefinition
-            (string variable) => new KeyValuePair<string, ParsedSyntax>(variable, IsolateClause(variable));
+            (string variable)
+            => new(variable, IsolateClause(variable));
 
-        EqualSyntax DefaultEqual(IToken token, ParsedSyntax other) => new EqualSyntax(this, token, other);
+        EqualSyntax DefaultEqual(IToken token, ParsedSyntax other) => new(this, token, other);
 
         int? GenericCompareTo<T>(ParsedSyntax other)
             where T : ParsedSyntax, IComparableEx<T>

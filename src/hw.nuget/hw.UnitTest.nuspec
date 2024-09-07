@@ -17,7 +17,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2014-2024</copyright>
-        <version>24.0</version>
+        <version>24.0.1</version>
         <releaseNotes>
             refactor: upgrade C#
             23.0.3
@@ -68,7 +68,7 @@
             Breaking Change: Attributes TestFixture and Test renamed to UnitTest
         </releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="24.0.0" />
+            <dependency id="hw.Helper.Core" version="24.1" />
         </dependencies>
         <readme>docs\hw.UnitTest.md</readme>
     </metadata>

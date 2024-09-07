@@ -37,10 +37,10 @@ public static class Tracer
     /// <param name="stackFrame"> the stack frame where the location is stored </param>
     /// <param name="tag"> </param>
     /// <returns> the "FileName(lineNumber,ColNr): tag: " string </returns>
-    public static string FilePosition(StackFrame stackFrame, FilePositionTag tag)
+    public static string FilePosition(StackFrame? stackFrame, FilePositionTag tag)
     {
         // ReSharper disable once StringLiteralTypo
-        if(stackFrame.GetFileLineNumber() == 0)
+        if(stackFrame == null || stackFrame.GetFileLineNumber() == 0)
             return "<nofile> " + tag;
         return FilePosition
         (
@@ -145,8 +145,11 @@ public static class Tracer
     /// <param name="methodBase"> the method </param>
     /// <param name="showParam"> controls if parameter list is appended </param>
     /// <returns> string to inspect a method </returns>
-    public static string DumpMethod(this MethodBase methodBase, bool showParam)
+    public static string DumpMethod(this MethodBase? methodBase, bool showParam)
     {
+        if(methodBase == null)
+            return "<nomethod>";
+
         var result = methodBase.DeclaringType.PrettyName() + ".";
         result += methodBase.Name;
         if(!showParam)
@@ -188,13 +191,15 @@ public static class Tracer
     )
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
+        if(stackFrame == null)
+            return "";
         return FilePosition(stackFrame, tag) + DumpMethod(stackFrame.GetMethod(), showParam);
     }
 
     public static string CallingMethodName(int stackFrameDepth = 0)
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-        return DumpMethod(stackFrame.GetMethod(), false);
+        return DumpMethod(stackFrame?.GetMethod(), false);
     }
 
     public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0)
@@ -204,7 +209,7 @@ public static class Tracer
         for(var frameDepth = stackFrameDepth + 1; frameDepth < stackTrace.FrameCount; frameDepth++)
         {
             var stackFrame = stackTrace.GetFrame(frameDepth);
-            var filePosition = FilePosition(stackFrame, tag) + DumpMethod(stackFrame.GetMethod(), false);
+            var filePosition = FilePosition(stackFrame, tag) + DumpMethod(stackFrame?.GetMethod(), false);
             result += "\n" + filePosition;
         }
 
@@ -303,7 +308,7 @@ public static class Tracer
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
                 (stackFrame, FilePositionTag.Debug)
-            + DumpMethod(stackFrame.GetMethod(), true)
+            + DumpMethod(stackFrame?.GetMethod(), true)
             + text
             + DumpMethodWithData(null, data).Indent();
     }
@@ -474,17 +479,17 @@ public static class Tracer
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
                 (stackFrame, FilePositionTag.Debug)
-            + DumpMethod(stackFrame.GetMethod(), true)
+            + DumpMethod(stackFrame?.GetMethod(), true)
             + text
-            + DumpMethodWithData(stackFrame.GetMethod(), thisObject, parameter).Indent();
+            + DumpMethodWithData(stackFrame?.GetMethod(), thisObject, parameter).Indent();
     }
 
-    static string DumpMethodWithData(MethodBase methodBase, object? target, object[] parameters)
+    static string DumpMethodWithData(MethodBase? methodBase, object? target, object[] parameters)
     {
         var result = "\n";
         result += IsSetTo("this", target);
         result += "\n";
-        result += DumpMethodWithData(methodBase.GetParameters(), parameters);
+        result += DumpMethodWithData(methodBase?.GetParameters(), parameters);
         return result;
     }
 
@@ -497,7 +502,7 @@ public static class Tracer
         {
             if(index > 0)
                 result += "\n";
-            result += IsSetTo(parameterInfos[index].Name, parameters[index]);
+            result += IsSetTo(parameterInfos[index].Name??"_", parameters[index]);
         }
 
         for(var index = parameterInfos.Length; index < parameters.Length; index += 2)
@@ -530,7 +535,7 @@ public enum FilePositionTag
 
 interface IDumpExceptAttribute
 {
-    bool IsException(object target);
+    bool IsException(object? target);
 }
 
 public abstract class DumpAttributeBase : Attribute;

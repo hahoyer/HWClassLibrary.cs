@@ -44,17 +44,19 @@ public static class ReflectionExtender
     public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Type target, bool inherit)
         => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
-    public static IEnumerable<T> GetAttributes<T>(this Enum target)
+    public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Enum target)
+        where TAttribute : Attribute
         => target
             .GetType()
             .GetMember(target.ToString())[0]
             .GetCustomAttributes(false)
-            .OfType<T>();
+            .OfType<TAttribute>();
 
     public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this MemberInfo target, bool inherit)
         => target.GetCustomAttributes(inherit).OfType<TAttribute>();
 
     public static TAttribute? GetAttribute<TAttribute>(this Type target, bool inherit)
+        where TAttribute : Attribute
     {
         var list = GetAttributes<TAttribute>(target, inherit).ToArray();
         switch(list.Length)
@@ -70,13 +72,15 @@ public static class ReflectionExtender
     }
 
     public static TAttribute? GetAttribute<TAttribute>(this Enum target)
+        where TAttribute : Attribute
         => GetAttributes<TAttribute>(target).SingleOrDefault();
 
     public static TAttribute? GetRecentAttribute<TAttribute>(this Type target)
-        => GetAttribute<TAttribute>(target, false) ?? GetRecentAttributeBase<TAttribute>(target.BaseType!);
+        where TAttribute : Attribute
+        => target.GetAttribute<TAttribute>(false) ?? target.BaseType?.GetRecentAttributeBase<TAttribute>();
 
     public static TAttribute? GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
-
+        where TAttribute : Attribute
     {
         var list = GetAttributes<TAttribute>(target, inherit).ToArray();
         switch(list.Length)
@@ -125,7 +129,7 @@ public static class ReflectionExtender
         }
     }
 
-    public static Guid ToGuid(this object target) => target is DBNull? Guid.Empty : new(target.ToString());
+    public static Guid ToGuid(this object target) => target is DBNull? Guid.Empty : new(target.ToString()!);
 
     public static T? Convert<T>(this object target) => target is DBNull? default : (T)target;
 
@@ -147,7 +151,7 @@ public static class ReflectionExtender
 
     public static string ToSingular(this object target)
     {
-        var plural = target.ToString();
+        var plural = target.ToString()!;
         if(plural.EndsWith("Tables"))
             return plural.Substring(0, plural.Length - 1);
         if(plural.EndsWith("Types"))
@@ -194,7 +198,7 @@ public static class ReflectionExtender
 
     public static T Eval<T>(this Expression target) => (T)Expression.Lambda(target)
         .Compile()
-        .DynamicInvoke();
+        .DynamicInvoke()!;
 
     /// <summary>
     ///     Invoke a member method
@@ -204,9 +208,8 @@ public static class ReflectionExtender
     /// <param name="method"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static T Invoke<T>
-        (this object target, string method, params object[] args) => (T)target.GetType()
-        .InvokeMember(method, BindingFlags.InvokeMethod, null, target, args);
+    public static T Invoke<T>(this object target, string method, params object[] args) => (T)target.GetType()
+        .InvokeMember(method, BindingFlags.InvokeMethod, null, target, args)!;
 
     /// <summary>
     ///     Invoke a static method
@@ -216,9 +219,11 @@ public static class ReflectionExtender
     /// <param name="method"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static T? Invoke<T>
-        (this Type type, string method, params object[] args) => ExceptionGuard(()
-        => (T)type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args));
+    public static T? Invoke<T>(this Type type, string method, params object[] args)
+        => ExceptionGuard(
+            ()
+                => (T)type.InvokeMember(method, BindingFlags.InvokeMethod, null, null, args)!
+        );
 
     /// <summary>
     ///     Calls a function. In case of exceptions, onError is called, if provided. Otherwise, default value is returned
@@ -290,7 +295,7 @@ public static class ReflectionExtender
         return result;
     }
 
-    public static object InvokeValue(this object target, MemberInfo info)
+    public static object? InvokeValue(this object target, MemberInfo info)
     {
         var fi = info as FieldInfo;
         if(fi != null)
@@ -309,6 +314,7 @@ public static class ReflectionExtender
             | BindingFlags.DeclaredOnly));
 
     static TAttribute? GetRecentAttributeBase<TAttribute>(this Type target)
+        where TAttribute : Attribute
         => target.GetRecentAttribute<TAttribute>();
 
     static Type[] GetTypes(Assembly assembly)

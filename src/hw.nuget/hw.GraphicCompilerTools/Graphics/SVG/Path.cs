@@ -65,7 +65,7 @@ namespace hw.Graphics.SVG
                 : base(isVisible)
                 => Length = length;
 
-            internal override Size Size => new Size(Length, 0);
+            internal override Size Size => new(Length, 0);
             internal override string FormatElement => IsVisible? "h" + Length : "m" + FormatSize;
         }
 
@@ -78,7 +78,7 @@ namespace hw.Graphics.SVG
                 : base(isVisible)
                 => Length = length;
 
-            internal override Size Size => new Size(0, Length);
+            internal override Size Size => new(0, Length);
             internal override string FormatElement => IsVisible? "v" + Length : "m" + FormatSize;
         }
 
@@ -99,7 +99,7 @@ namespace hw.Graphics.SVG
             public Home()
                 : base(false) { }
 
-            internal override Size Size => new Size(0, 0);
+            internal override Size Size => new(0, 0);
 
             internal override string FormatElement => "M" + FormatSize;
         }
@@ -111,7 +111,7 @@ namespace hw.Graphics.SVG
     static class PathExtension
     {
         internal static Path.Element MoveTo(this Size end) => new Path.Line(end, false);
-        internal static Path.Element MoveTo(this Point end) => new Path.Line(new Size(end.X, end.Y), false);
+        internal static Path.Element MoveTo(this Point end) => new Path.Line(new(end.X, end.Y), false);
         internal static Path.Element LineTo(this Size end) => new Path.Line(end);
         internal static Path.Element HorizontalLine(this int length) => new Path.HorizontalLine(length);
         internal static Path.Element VerticalLine(this int length) => new Path.VerticalLine(length);
@@ -122,7 +122,7 @@ namespace hw.Graphics.SVG
 
         internal static Path.Element Arc
             (this int radius, Size end, bool largeArcFlag, bool sweepFlag, int xAxisRotation = 0)
-            => new Path.Arc(new Size(radius, radius), end, largeArcFlag, sweepFlag, xAxisRotation);
+            => new Path.Arc(new(radius, radius), end, largeArcFlag, sweepFlag, xAxisRotation);
 
         internal static string Format(this Point start, params Path.Element[] path)
         {

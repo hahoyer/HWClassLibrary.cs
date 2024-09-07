@@ -19,6 +19,6 @@ namespace hw.Graphics.SVG
         [XmlElement("circle", typeof(Circle))]
         [XmlElement("path", typeof(Path))]
         [XmlElement("text", typeof(Text))]
-        public List<Content> Items { get; } = new List<Content>();
+        public List<Content> Items { get; } = new();
     }
 }

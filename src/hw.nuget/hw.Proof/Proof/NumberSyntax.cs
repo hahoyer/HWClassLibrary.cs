@@ -25,7 +25,7 @@ namespace hw.Proof
         }
 
         [DisableDump]
-        internal override Set<string> Variables { get { return new Set<string>(); } }
+        internal override Set<string> Variables { get { return new(); } }
 
         internal override bool IsDistinct(ParsedSyntax other)
         {

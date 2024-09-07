@@ -18,10 +18,7 @@ namespace hw.Proof
             => Name = name;
 
         [DisableDump]
-        internal override Set<string> Variables => new Set<string>
-        {
-            Name
-        };
+        internal override Set<string> Variables => [Name];
 
         int IComparableEx<VariableSyntax>.CompareToEx(VariableSyntax other) => string.CompareOrdinal(Name, other.Name);
 
