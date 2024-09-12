@@ -23,8 +23,6 @@
         </dependencies>
         <version>24.0.2</version>
         <releaseNotes>
-            change: SmbFile now provides version information
-            24.0.2
             refactor: nullability
             24.0.0
             refactor: upgrade C#            

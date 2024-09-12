@@ -18,8 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2024</copyright>
 
-        <version>24.1.2</version>
+        <version>24.1.3</version>
         <releaseNotes>
+            change: SmbFile now provides version information
+            24.1.2
             refactor: nullability  
             refactor: upgrade C# 
             24.0.3
