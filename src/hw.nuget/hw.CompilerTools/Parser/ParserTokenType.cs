@@ -1,3 +1,4 @@
+#nullable enable
 using hw.Helper;
 using JetBrains.Annotations;
 
@@ -15,7 +16,7 @@ public abstract class ParserTokenType<TSourcePart>
         , IParserTokenType<TSourcePart>
     where TSourcePart : class
 {
-    TSourcePart IParserTokenType<TSourcePart>.Create(TSourcePart left, IToken token, TSourcePart right)
+    TSourcePart? IParserTokenType<TSourcePart>.Create(TSourcePart? left, IToken token, TSourcePart? right)
     {
         var result = Create(left, token, right);
         if(token is ILinked<TSourcePart> treeLinkedToken)
@@ -28,7 +29,7 @@ public abstract class ParserTokenType<TSourcePart>
     string IUniqueIdProvider.Value => Id;
     [PublicAPI]
     public abstract string Id { get; }
-    protected abstract TSourcePart Create(TSourcePart left, IToken token, TSourcePart right);
+    protected abstract TSourcePart? Create(TSourcePart? left, IToken token, TSourcePart? right);
 
     public override string ToString() => base.ToString() + " Id=" + Id.Quote();
 
@@ -38,5 +39,5 @@ public abstract class ParserTokenType<TSourcePart>
 interface ILinked<TSourcePart>
 {
     [PublicAPI]
-    TSourcePart Container { get; set; }
+    TSourcePart? Container { get; set; }
 }

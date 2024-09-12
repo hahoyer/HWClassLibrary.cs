@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#nullable enable
+using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ public sealed class Source : Dumpable
 {
     public const int NodeDumpWidth = 10;
     public const int DumpWidth = 20;
-    public readonly string Identifier;
+    public readonly string? Identifier;
     readonly ISourceProvider SourceProvider;
 
     public string Data => SourceProvider.Data;
@@ -22,16 +23,16 @@ public sealed class Source : Dumpable
     public bool IsPersistent => SourceProvider.IsPersistent;
     public SourcePart All => (this + 0).Span(Length);
 
-    public Source(ISourceProvider sourceProvider, string identifier = null)
+    public Source(ISourceProvider sourceProvider, string? identifier = null)
     {
         SourceProvider = sourceProvider;
         Identifier = identifier;
     }
 
-    public Source(SmbFile file, string identifier = null)
+    public Source(SmbFile file, string? identifier = null)
         : this(new FileSourceProvider(file), identifier ?? file.FullName) { }
 
-    public Source(string data, string identifier = null)
+    public Source(string data, string? identifier = null)
         : this(new StringSourceProvider(data), identifier ?? "????") { }
 
     protected override string Dump(bool isRecursion) => FilePosition(0, Length, "see there");
@@ -43,7 +44,7 @@ public sealed class Source : Dumpable
     public TextPosition GetTextPosition(int position)
         => new() { LineNumber = LineIndex(position), ColumnNumber1 = ColumnIndex(position) + 1 };
 
-    public string FilePosition(int position, int positionEnd, string flagText, string tag = null)
+    public string FilePosition(int position, int positionEnd, string flagText, string? tag = null)
         => Tracer.FilePosition
             (
                 Identifier,

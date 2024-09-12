@@ -1,4 +1,5 @@
-﻿using hw.Helper;
+﻿#nullable enable
+using hw.Helper;
 
 // ReSharper disable CheckNamespace
 
@@ -6,7 +7,7 @@ namespace hw.Scanner;
 
 public sealed class FileSourceProvider : ISourceProvider
 {
-    readonly ValueCache<string> DataCache;
+    readonly ValueCache<string?>? DataCache;
     readonly SmbFile File;
 
     public FileSourceProvider(SmbFile file, bool useCache = true)
@@ -16,6 +17,6 @@ public sealed class FileSourceProvider : ISourceProvider
             DataCache = new(() => File.String);
     }
 
-    string ISourceProvider.Data => DataCache?.Value ?? File.String;
+    string ISourceProvider.Data => DataCache?.Value ?? File.String ?? "";
     bool ISourceProvider.IsPersistent => false;
 }

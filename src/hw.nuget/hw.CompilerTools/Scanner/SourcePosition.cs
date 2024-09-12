@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Diagnostics;
 using hw.DebugFormatter;
 using hw.Helper;
@@ -61,10 +62,10 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
         Source = source;
     }
 
-    public bool Equals(SourcePosition other)
+    public bool Equals(SourcePosition? other)
         => !(other is null) && Equals(Source, other.Source) && Position == other.Position;
 
-    public override bool Equals(object target)
+    public override bool Equals(object? target)
     {
         if(ReferenceEquals(null, target))
             return false;
@@ -98,29 +99,26 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
         return target.Position - y.Position;
     }
 
-    public static bool operator <(SourcePosition left, SourcePosition right)
-        => left != null &&
-            right != null &&
-            left.Source == right.Source &&
-            left.Position < right.Position;
+    public static bool operator <(SourcePosition? left, SourcePosition? right)
+        => left != null && right != null && left.Source == right.Source && left.Position < right.Position;
 
-    public static bool operator <=(SourcePosition left, SourcePosition right) => left < right || left == right;
+    public static bool operator <=(SourcePosition? left, SourcePosition? right) => left < right || left == right;
 
-    public static bool operator >(SourcePosition left, SourcePosition right) => right < left;
-    public static bool operator >=(SourcePosition left, SourcePosition right) => right <= left;
-    public static bool operator !=(SourcePosition left, SourcePosition right) => !(left == right);
+    public static bool operator >(SourcePosition? left, SourcePosition? right) => right < left;
+    public static bool operator >=(SourcePosition left, SourcePosition? right) => right <= left;
+    public static bool operator !=(SourcePosition? left, SourcePosition? right) => !(left == right);
 
-    public static bool operator ==(SourcePosition left, SourcePosition right)
+    public static bool operator ==(SourcePosition? left, SourcePosition? right)
     {
-        if((object)left == null)
-            return (object)right == null;
-        if((object)right == null)
+        if((object?)left == null)
+            return (object?)right == null;
+        if((object?)right == null)
             return false;
-        return left.Source == right.Source &&
-            left.Position == right.Position;
+        return left.Source == right.Source && left.Position == right.Position;
     }
 
-    public bool Equals(SourcePosition target, SourcePosition y) => target.Equals(y);
+    public bool Equals(SourcePosition? target, SourcePosition? y) 
+        => ReferenceEquals(target, y) || !ReferenceEquals(target, null) && target.Equals(y);
 
     /// <summary>
     ///     Obtains a piece
@@ -141,9 +139,9 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     {
         if(IsValid)
             return
-                Source.GetDumpBeforeCurrent(Position, dumpWidth) +
-                "[]" +
-                Source.GetDumpAfterCurrent(Position, dumpWidth);
+                Source.GetDumpBeforeCurrent(Position, dumpWidth)
+                + "[]"
+                + Source.GetDumpAfterCurrent(Position, dumpWidth);
         return "<invalid>";
     }
 

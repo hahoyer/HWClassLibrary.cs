@@ -19,10 +19,12 @@
         <copyright>Copyright Harald Hoyer 2016 - 2024</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="23.0.6" />
+            <dependency id="hw.Helper.Core" version="24.1.1" />
         </dependencies>
-        <version>24.0.0</version>
+        <version>24.0.1</version>
         <releaseNotes>
+            refactor: nullability
+            24.0.0
             refactor: upgrade C#            
             breaking change: use BracketSide-enum instead of bool?
             breaking change: type SourcePosn removed

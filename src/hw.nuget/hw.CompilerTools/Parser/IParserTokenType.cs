@@ -1,4 +1,5 @@
-﻿// ReSharper disable CheckNamespace
+﻿#nullable enable
+// // ReSharper disable CheckNamespace
 
 namespace hw.Parser;
 
@@ -21,7 +22,7 @@ public interface IParserTokenType<TSourcePart>
     /// <param name="token"></param>
     /// <param name="right"></param>
     /// <returns></returns>
-    TSourcePart Create(TSourcePart left, IToken token, TSourcePart right);
+    TSourcePart? Create(TSourcePart? left, IToken token, TSourcePart? right);
 }
 
 public interface IBracketMatch<TSourcePart>

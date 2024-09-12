@@ -1,11 +1,11 @@
-﻿// ReSharper disable CheckNamespace
+﻿#nullable enable
+
+// ReSharper disable CheckNamespace
 
 namespace hw.Scanner;
 
-public sealed class StringSourceProvider : ISourceProvider
+public sealed class StringSourceProvider(string data) : ISourceProvider
 {
-    readonly string Data;
-    public StringSourceProvider(string data) => Data = data;
-    string ISourceProvider.Data => Data;
+    string ISourceProvider.Data => data;
     bool ISourceProvider.IsPersistent => false;
 }

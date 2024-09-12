@@ -100,7 +100,7 @@ public sealed partial class PrioParser<TSourcePart>
                 .Create(nextTokenGroup, sourcePosition, context, IsSubParser);
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-            var nextParser = (result?.Type as ISubParserProvider)?.NextParser;
+            var nextParser = (result.Type as ISubParserProvider)?.NextParser;
             if(nextParser == null)
                 return result;
 
@@ -276,9 +276,7 @@ public sealed partial class PrioParser<TSourcePart>
                 return;
             }
 
-            var typeDump = item.Type == null
-                ? "null"
-                : $"{item.Type.PrioTableId} Type = {item.Type.GetType().PrettyName()}";
+            var typeDump = $"{item.Type.PrioTableId} Type = {item.Type.GetType().PrettyName()}";
             $"{title} = {typeDump} Depth={item.Context.Depth}".Log();
         }
 

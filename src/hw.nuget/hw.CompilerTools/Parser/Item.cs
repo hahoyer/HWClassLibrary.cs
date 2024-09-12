@@ -1,6 +1,8 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using hw.DebugFormatter;
+using hw.Helper;
 using hw.Scanner;
 using JetBrains.Annotations;
 
@@ -24,7 +26,10 @@ public sealed class Item<TSourcePart>
     public readonly IParserTokenType<TSourcePart> Type;
     internal readonly SourcePart Characters;
 
-    TSourcePart Container;
+    TSourcePart? Container;
+
+    [EnableDump]
+    public int Depth => Context.Depth;
 
     Item
     (
@@ -42,14 +47,7 @@ public sealed class Item<TSourcePart>
         BracketSide = bracketSide;
     }
 
-    Item(SourcePosition sourcePosition, BracketContext context)
-    {
-        PrefixItems = [];
-        Characters = sourcePosition.Span(0);
-        Context = context;
-    }
-
-    TSourcePart ILinked<TSourcePart>.Container
+    TSourcePart? ILinked<TSourcePart>.Container
     {
         get => Container;
         set
@@ -63,15 +61,18 @@ public sealed class Item<TSourcePart>
 
     BracketContext PrioTable.ITargetItem.LeftContext => Context;
 
-    string PrioTable.ITargetItem.Token => Type?.PrioTableId ?? PrioTable.BeginOfText;
-    SourcePart IToken.Characters => Characters;
+    string PrioTable.ITargetItem.Token => Type.PrioTableId;
     BracketSide IToken.BracketSide => BracketSide;
+    SourcePart IToken.Characters => Characters;
     int IToken.PrecededWith => PrefixItems.Sum(item => item.Length);
 
-    [EnableDump]
-    public int Depth => Context?.Depth ?? 0;
-
-    public static Item<TSourcePart> Create(IItem[] items, SourcePosition end, BracketContext context, bool isSubParser)
+    public static Item<TSourcePart> Create
+    (
+        IItem[] items
+        , SourcePosition end
+        , BracketContext context
+        , bool isSubParser
+    )
     {
         var prefixItems = items.Take(items.Length - 1);
         var mainItem = items.Last();
@@ -82,6 +83,7 @@ public sealed class Item<TSourcePart>
         var parserTokenFactory = mainItemScannerTokenType
             .ParserTokenFactory;
         var parserType = parserTokenFactory
+            .AssertNotNull()
             .GetTokenType<TSourcePart>(token.Id);
 
         return new
@@ -111,9 +113,9 @@ public sealed class Item<TSourcePart>
 
     public Item<TSourcePart> RecreateWith
     (
-        IEnumerable<IItem> newPrefixItems = null,
-        IParserTokenType<TSourcePart> newType = null,
-        BracketContext newContext = null
+        IEnumerable<IItem>? newPrefixItems = null,
+        IParserTokenType<TSourcePart>? newType = null,
+        BracketContext? newContext = null
     )
         => new
         (
@@ -124,7 +126,7 @@ public sealed class Item<TSourcePart>
             BracketSide
         );
 
-    public TSourcePart Create(TSourcePart left) => Type.Create(left, this, null);
+    public TSourcePart? Create(TSourcePart? left) => Type.Create(left, this, null);
 
     public Item<TSourcePart> CreateMatch(OpenItem<TSourcePart> other)
         => new

@@ -1,3 +1,4 @@
+#nullable enable
 using hw.DebugFormatter;
 using JetBrains.Annotations;
 
@@ -13,6 +14,6 @@ public sealed class WhiteSpaceTokenType
     public readonly string Id;
     public WhiteSpaceTokenType(string id) => Id = id;
     string IScannerTokenType.Id => Id;
-    IParserTokenFactory IScannerTokenType.ParserTokenFactory => null;
+    IParserTokenFactory? IScannerTokenType.ParserTokenFactory => null;
     protected override string GetNodeDump() => Id;
 }

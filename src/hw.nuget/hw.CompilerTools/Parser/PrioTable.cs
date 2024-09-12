@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Linq;
 using hw.DebugFormatter;
 using hw.Helper;
@@ -79,11 +80,11 @@ public sealed class PrioTable : DumpableObject
         , [FunctionType.Match, FunctionType.Pull, FunctionType.Pull]
     ];
 
-    public string Title;
+    public string? Title;
 
     readonly RelationDefinitionItem[] BaseRelation;
     readonly BracketPairItem[] Brackets;
-    BracketContext BracketContextValue;
+    BracketContext? BracketContextValue;
 
     [DisableDump]
     public BracketContext BracketContext
@@ -108,10 +109,10 @@ public sealed class PrioTable : DumpableObject
     PrioTable(BracketPairItem bracketPairItem)
         : this() => Brackets = [bracketPairItem];
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         var target = obj as PrioTable;
-        if(target == null)
+        if(ReferenceEquals(target,null))
             return false;
         return BaseRelation == target.BaseRelation && Brackets == target.Brackets;
     }
@@ -148,10 +149,10 @@ public sealed class PrioTable : DumpableObject
 
     public static PrioTable operator +(PrioTable target, PrioTable y) => new(target, y);
 
-    public static bool operator ==(PrioTable target, PrioTable y)
+    public static bool operator ==(PrioTable? target, PrioTable? y)
         => target?.Equals(y) ?? ReferenceEquals(y, null);
 
-    public static bool operator !=(PrioTable target, PrioTable y)
+    public static bool operator !=(PrioTable? target, PrioTable? y)
         => !target?.Equals(y) ?? !ReferenceEquals(y, null);
 
     public Relation GetRelation(ITargetItem newItem, ITargetItem recentItem)
@@ -171,7 +172,7 @@ public sealed class PrioTable : DumpableObject
                 return Relation.Push;
             default:
                 NotImplementedMethod(newItem, recentItem, nameof(delta), delta);
-                return null;
+                return default!;
         }
     }
 
@@ -225,7 +226,7 @@ public sealed class PrioTable : DumpableObject
     Relation NotImplemented(string newToken, string recentToken)
     {
         NotImplementedMethod(newToken, recentToken);
-        return null;
+        return default!;
     }
 
     Relation GetRelationOnSameDepth(int newIndex, int otherIndex, string newToken, string otherToken)

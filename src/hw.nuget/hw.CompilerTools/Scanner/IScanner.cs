@@ -1,4 +1,5 @@
-﻿using hw.Parser;
+﻿#nullable enable
+using hw.Parser;
 
 // ReSharper disable CheckNamespace
 
@@ -47,9 +48,9 @@ public interface IScannerTokenType
 {
     /// <summary>
     ///     Use this to link to the <see cref="IParserTokenFactory" /> if desired.
-    ///     Returning null will classify this token type as whitespace.
+    ///     If zero is returned, this token type is categorised as a blank character with no further meaning.
     /// </summary>
-    IParserTokenFactory ParserTokenFactory { get; }
+    IParserTokenFactory? ParserTokenFactory { get; }
 
     /// <summary>
     ///     Identifier used for debugging purposes

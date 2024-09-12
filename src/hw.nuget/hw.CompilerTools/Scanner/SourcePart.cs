@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,7 +70,7 @@ public sealed class SourcePart
 
     SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
         => ReferenceEquals(this, obj) || (obj is SourcePart other && Equals(other));
 
     public override int GetHashCode()
@@ -78,7 +79,7 @@ public sealed class SourcePart
         {
             var hashCode = Length;
             hashCode = (hashCode * 397) ^ Position;
-            hashCode = (hashCode * 397) ^ (Source != null? Source.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ Source.GetHashCode();
             return hashCode;
         }
     }
@@ -93,7 +94,7 @@ public sealed class SourcePart
         return new(Source, start, end - start);
     }
 
-    public SourcePart Intersect(SourcePart other)
+    public SourcePart? Intersect(SourcePart other)
     {
         if(Source != other.Source)
             return null;
@@ -103,7 +104,7 @@ public sealed class SourcePart
         return end < start? null : new SourcePart(Source, start, end - start);
     }
 
-    public static SourcePart operator +(SourcePart left, SourcePart right)
+    public static SourcePart? operator +(SourcePart? left, SourcePart? right)
         => left == null
             ? right
             : right == null
@@ -161,26 +162,26 @@ public sealed class SourcePart
             .GroupBy(item => item.Source)
             .SelectMany(SaveCombineForSource);
 
-    public static bool operator !=(SourcePart left, SourcePart right) => !(left == right);
+    public static bool operator !=(SourcePart? left, SourcePart? right) => !(left == right);
 
-    public static bool operator >(SourcePart left, SourcePosition right) => right < left;
+    public static bool operator >(SourcePart? left, SourcePosition? right) => right < left;
 
-    public static bool operator >(SourcePosition left, SourcePart right) => right < left;
+    public static bool operator >(SourcePosition? left, SourcePart? right) => right < left;
 
-    public static bool operator >(SourcePart left, SourcePart right) => right < left;
+    public static bool operator >(SourcePart? left, SourcePart? right) => right < left;
 
-    public static bool operator <(SourcePart left, SourcePosition right) => left != null && left.End < right;
+    public static bool operator <(SourcePart? left, SourcePosition? right) => left != null && left.End < right;
 
-    public static bool operator <(SourcePosition left, SourcePart right) => right != null && left < right.Start;
+    public static bool operator <(SourcePosition? left, SourcePart? right) => right != null && left < right.Start;
 
-    public static bool operator <(SourcePart left, SourcePart right)
+    public static bool operator <(SourcePart? left, SourcePart? right)
         => left != null && right != null && left.End <= right.Start;
 
-    public static bool operator ==(SourcePart left, SourcePart right)
+    public static bool operator ==(SourcePart? left, SourcePart? right)
     {
-        if((object)left == null)
-            return (object)right == null;
-        if((object)right == null)
+        if((object?)left == null)
+            return (object?)right == null;
+        if((object?)right == null)
             return false;
 
         return left.Start == right.Start &&
