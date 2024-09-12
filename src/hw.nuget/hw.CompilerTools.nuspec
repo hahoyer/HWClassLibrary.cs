@@ -19,10 +19,12 @@
         <copyright>Copyright Harald Hoyer 2016 - 2024</copyright>
 
         <dependencies>
-            <dependency id="hw.Helper.Core" version="24.1.2" />
+            <dependency id="hw.Helper.Core" version="24.1.3" />
         </dependencies>
         <version>24.0.2</version>
         <releaseNotes>
+            change: SmbFile now provides version information
+            24.0.2
             refactor: nullability
             24.0.0
             refactor: upgrade C#            

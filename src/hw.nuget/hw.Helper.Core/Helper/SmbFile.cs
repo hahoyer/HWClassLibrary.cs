@@ -27,6 +27,7 @@ public sealed class SmbFile
     readonly string InternalName;
 
     FileSystemInfo? FileInfoCache;
+    FileVersionInfo? FileVersionInfoCache;
 
     /// <summary>
     ///     considers the file as a string. If file exists it should be a text file
@@ -173,6 +174,18 @@ public sealed class SmbFile
     public DateTime ModifiedDate => FileSystemInfo.LastWriteTime;
 
     [DisableDump]
+    public Version? FileVersion 
+        => FileVersionInfo.FileVersion == null? null : new(FileVersionInfo.FileVersion);
+
+    [DisableDump]
+    public Version? ProductVersion
+        => FileVersionInfo.ProductVersion == null? null : new(FileVersionInfo.ProductVersion);
+
+    [DisableDump]
+    public FileVersionInfo FileVersionInfo 
+        => FileVersionInfoCache ??= FileVersionInfo.GetVersionInfo(InternalName);
+
+    [DisableDump]
     public FileSystemInfo FileSystemInfo
     {
         get
@@ -245,7 +258,7 @@ public sealed class SmbFile
     public static string? GetSourceFileName(int depth = 0)
     {
         var sf = new StackTrace(true).GetFrame(depth + 1);
-        return sf?.GetFileName();
+        return sf.GetFileName();
     }
 
     /// <summary>
