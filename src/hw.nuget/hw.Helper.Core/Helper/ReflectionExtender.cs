@@ -129,7 +129,7 @@ public static class ReflectionExtender
         }
     }
 
-    public static Guid ToGuid(this object target) => target is DBNull? Guid.Empty : new(target.ToString()!);
+    public static Guid ToGuid(this object target) => target is DBNull? Guid.Empty : new(target.ToString());
 
     public static T? Convert<T>(this object target) => target is DBNull? default : (T)target;
 
@@ -151,7 +151,7 @@ public static class ReflectionExtender
 
     public static string ToSingular(this object target)
     {
-        var plural = target.ToString()!;
+        var plural = target.ToString();
         if(plural.EndsWith("Tables"))
             return plural.Substring(0, plural.Length - 1);
         if(plural.EndsWith("Types"))

@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,8 +43,7 @@ public static class LinqExtension
             yield return subResult.ToArray();
     }
 
-    [CanBeNull]
-    public static T Aggregate<T>(this IEnumerable<T> target, Func<T> getDefault = null)
+    public static T? Aggregate<T>(this IEnumerable<T> target, Func<T>? getDefault = null)
         where T : class, IAggregateable<T>
     {
         var xx = target.ToArray();
@@ -152,42 +152,40 @@ public static class LinqExtension
     public static bool StartsWithAndNotEqual<T>(this IList<T> target, IList<T> y)
         => target.Count != y.Count && target.StartsWith(y);
 
-    public static TResult CheckedApply<T, TResult>(this T target, Func<T, TResult> function)
+    public static TResult? CheckedApply<T, TResult>(this T? target, Func<T, TResult> function)
         where T : class
-        where TResult : class => target == default(T)? default : function(target);
+        where TResult : class
+        => target == default(T)? default : function(target);
 
     public static TResult AssertValue<TResult>(this TResult? target)
         where TResult : struct
     {
-        (target != null).Assert();
-        return target.Value;
+        (target != null).Assert(stackFrameDepth: 1);
+        return target!.Value;
     }
 
     [DebuggerHidden]
     [ContractAnnotation("target: null => halt")]
-    public static TResult AssertNotNull<TResult>(this TResult target, int stackFrameDepth = 0)
+    public static TResult AssertNotNull<TResult>(this TResult? target, int stackFrameDepth = 0)
         where TResult : class
     {
         (target != null).Assert(stackFrameDepth: stackFrameDepth + 1);
-        return target;
+        return target!;
     }
 
 
-    [NotNull]
     public static IEnumerable<int> Select(this int count)
     {
         for(var i = 0; i < count; i++)
             yield return i;
     }
 
-    [NotNull]
     public static IEnumerable<long> Select(this long count)
     {
         for(long i = 0; i < count; i++)
             yield return i;
     }
 
-    [NotNull]
     public static IEnumerable<int> Where(Func<int, bool> getValue)
     {
         for(var i = 0; getValue(i); i++)
@@ -195,21 +193,19 @@ public static class LinqExtension
     }
 
 
-    [NotNull]
     public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue)
     {
         for(var i = 0; i < count; i++)
             yield return getValue(i);
     }
 
-    [NotNull]
     public static IEnumerable<T> Select<T>(this long count, Func<long, T> getValue)
     {
         for(long i = 0; i < count; i++)
             yield return getValue(i);
     }
 
-    public static IEnumerable<Tuple<TKey, TLeft, TRight>> Merge<TKey, TLeft, TRight>
+    public static IEnumerable<Tuple<TKey, TLeft?, TRight?>> Merge<TKey, TLeft, TRight>
     (
         this IEnumerable<TLeft> left,
         IEnumerable<TRight> right,
@@ -220,23 +216,22 @@ public static class LinqExtension
         where TRight : class
     {
         var leftCommon = left.Select
-            (l => new Tuple<TKey, TLeft, TRight>(getLeftKey(l), l, null));
+            (l => new Tuple<TKey, TLeft?, TRight?>(getLeftKey(l), l, null));
         var rightCommon = right.Select
-            (r => new Tuple<TKey, TLeft, TRight>(getRightKey(r), null, r));
+            (r => new Tuple<TKey, TLeft?, TRight?>(getRightKey(r), null, r));
         return
             leftCommon.Union(rightCommon)
                 .GroupBy(t => t.Item1)
-                .Select
-                    (Merge);
+                .Select(Merge);
     }
 
-    public static IEnumerable<Tuple<TKey, T, T>> Merge<TKey, T>
+    public static IEnumerable<Tuple<TKey, T?, T?>> Merge<TKey, T>
         (this IEnumerable<T> left, IEnumerable<T> right, Func<T, TKey> getKey)
         where T : class
         => Merge(left, right, getKey, getKey);
 
-    public static Tuple<TKey, TLeft, TRight> Merge<TKey, TLeft, TRight>
-        (IGrouping<TKey, Tuple<TKey, TLeft, TRight>> grouping)
+    public static Tuple<TKey, TLeft?, TRight?> Merge<TKey, TLeft, TRight>
+        (IGrouping<TKey, Tuple<TKey, TLeft?, TRight?>> grouping)
         where TLeft : class
         where TRight : class
     {
@@ -304,7 +299,7 @@ public static class LinqExtension
 
     public static bool In<T>(this T a, params T[] b) => b.Contains(a);
 
-    public static IEnumerable<TType> Sort<TType>
+    public static IEnumerable<TType>? Sort<TType>
         (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
     {
         var xx = target.ToArray();
@@ -327,7 +322,7 @@ public static class LinqExtension
     }
 
     public static bool IsCircuitFree<TType>(this TType target, Func<TType, IEnumerable<TType>> immediateParents)
-        => immediateParents(target).Closure(immediateParents).All(item => !item.Equals(target));
+        => immediateParents(target).Closure(immediateParents).All(item => !Equals(item, target));
 
     public static bool IsCircuitFree<TType>
         (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
@@ -337,18 +332,20 @@ public static class LinqExtension
         (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
         => target.Where(item => !item.IsCircuitFree(immediateParents));
 
-    public static IEnumerable<T> NullableToArray<T>(this T target)
-        where T : class => target == null? [] : new[] { target };
+    public static IEnumerable<T> NullableToArray<T>(this T? target)
+        where T : class 
+        => target == null? [] : new[] { target };
 
     public static IEnumerable<T> NullableToArray<T>(this T? target)
-        where T : struct => target == null? [] : new[] { target.Value };
+        where T : struct 
+        => target == null? [] : new[] { target.Value };
 
-    public static TTarget Top<TTarget>
+    public static TTarget? Top<TTarget>
     (
         this IEnumerable<TTarget> target,
-        Func<TTarget, bool> selector = null,
-        Func<Exception> emptyException = null,
-        Func<IEnumerable<TTarget>, Exception> multipleException = null,
+        Func<TTarget, bool>? selector = null,
+        Func<Exception>? emptyException = null,
+        Func<IEnumerable<TTarget>, Exception>? multipleException = null,
         bool enableEmpty = true,
         bool enableMultiple = true
     )
@@ -356,29 +353,28 @@ public static class LinqExtension
         if(selector != null)
             target = target.Where(selector);
 
-        using(var enumerator = target.GetEnumerator())
+        using var enumerator = target.GetEnumerator();
+        
+        if(!enumerator.MoveNext())
         {
-            if(!enumerator.MoveNext())
-            {
-                if(emptyException != null)
-                    throw emptyException();
-                return enableEmpty? default : target.Single();
-            }
-
-            var result = enumerator.Current;
-            if(!enumerator.MoveNext())
-                return result;
-
-            if(multipleException != null)
-                throw multipleException(target);
-            return enableMultiple? result : target.Single();
+            if(emptyException != null)
+                throw emptyException();
+            return enableEmpty? default : target.Single();
         }
+
+        var result = enumerator.Current;
+        if(!enumerator.MoveNext())
+            return result;
+
+        if(multipleException != null)
+            throw multipleException(target);
+        return enableMultiple? result : target.Single();
     }
 
     /// <summary>
     ///     Splits an enumeration at positions where <see cref="isSeparator" /> returns true.
-    ///     The resulting enumeration of enumerations may contain the the separator item
-    ///     depending of <see cref="separatorTreatment" /> parameter
+    ///     The resulting enumeration of enumerations may contain the separator item
+    ///     depending on <see cref="separatorTreatment" /> parameter
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="target"></param>
@@ -506,4 +502,4 @@ public interface IAggregateable<T>
     T Aggregate(T other);
 }
 
-sealed class DuplicateKeyException : Exception { }
+sealed class DuplicateKeyException : Exception;
