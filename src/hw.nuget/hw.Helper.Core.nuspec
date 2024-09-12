@@ -18,7 +18,7 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2024</copyright>
 
-        <version>24.1.1</version>
+        <version>24.1.2</version>
         <releaseNotes>
             refactor: nullability  
             refactor: upgrade C# 

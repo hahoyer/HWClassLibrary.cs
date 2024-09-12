@@ -18,25 +18,27 @@
     <language>en-US</language>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
-    <copyright>Copyright Harald Hoyer 2013-2020</copyright>
+    <copyright>Copyright Harald Hoyer 2013-2024</copyright>
 
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Drawing" />
     </frameworkAssemblies>
 
-    <version>21.0</version>
+    <version>24.0</version>
     <releaseNotes>
+        refactor: Upgrade C#
+        21.0
         refactor: Upgrade C#
         20.0.0.1
         change: Upgrade to new style
       17.1
       Upgrade: File to SmbFile
       16.0
-      Automatic dependeny to core removed
+      Automatic dependency to core removed
       15.1
       Use Breaking changes of hw.Helper.Core
       15.0.0.0
-      Bugfix: PositionConfig: Catch position when it moved completetly out of sight
+      Bugfix: PositionConfig: Catch position when it moved completely out of sight
     </releaseNotes>
     <dependencies />
 

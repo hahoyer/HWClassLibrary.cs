@@ -68,7 +68,7 @@ public sealed class SourcePart
         }
     }
 
-    SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart other) => Overlay(other);
+    SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart? other) => Overlay(other);
 
     public override bool Equals(object? obj)
         => ReferenceEquals(this, obj) || (obj is SourcePart other && Equals(other));
@@ -84,9 +84,9 @@ public sealed class SourcePart
         }
     }
 
-    public SourcePart Overlay(SourcePart other)
+    public SourcePart Overlay(SourcePart? other)
     {
-        if(Source != other.Source)
+        if(other == null || Source != other.Source)
             return this;
 
         var start = Math.Min(Position, other.Position);

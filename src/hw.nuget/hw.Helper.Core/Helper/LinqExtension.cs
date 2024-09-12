@@ -43,15 +43,19 @@ public static class LinqExtension
             yield return subResult.ToArray();
     }
 
-    public static T? Aggregate<T>(this IEnumerable<T> target, Func<T>? getDefault = null)
+    public static T? Aggregate<T>(this IEnumerable<T?> target, Func<T>? getDefault = null)
         where T : class, IAggregateable<T>
     {
-        var xx = target.ToArray();
-        if(!xx.Any())
+        var targetArray = target.ToArray();
+        if(!targetArray.Any())
             return getDefault?.Invoke();
-        var result = xx[0];
-        for(var i = 1; i < xx.Length; i++)
-            result = result.Aggregate(xx[i]);
+        var result = targetArray[0];
+        for(var i = 1; i < targetArray.Length; i++)
+        {
+            var item = targetArray[i];
+                result = result?.Aggregate(item) ?? item;
+        }
+
         return result;
     }
 
@@ -333,11 +337,11 @@ public static class LinqExtension
         => target.Where(item => !item.IsCircuitFree(immediateParents));
 
     public static IEnumerable<T> NullableToArray<T>(this T? target)
-        where T : class 
+        where T : class
         => target == null? [] : new[] { target };
 
     public static IEnumerable<T> NullableToArray<T>(this T? target)
-        where T : struct 
+        where T : struct
         => target == null? [] : new[] { target.Value };
 
     public static TTarget? Top<TTarget>
@@ -354,7 +358,7 @@ public static class LinqExtension
             target = target.Where(selector);
 
         using var enumerator = target.GetEnumerator();
-        
+
         if(!enumerator.MoveNext())
         {
             if(emptyException != null)
@@ -499,7 +503,7 @@ public static class LinqExtension
 // ReSharper disable once IdentifierTypo
 public interface IAggregateable<T>
 {
-    T Aggregate(T other);
+    T Aggregate(T? other);
 }
 
 sealed class DuplicateKeyException : Exception;
