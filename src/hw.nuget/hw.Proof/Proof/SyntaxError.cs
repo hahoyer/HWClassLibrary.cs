@@ -13,7 +13,7 @@ namespace hw.Proof
         protected override ParsedSyntax Create(ParsedSyntax left, IToken token, ParsedSyntax right)
         {
             NotImplementedMethod(left, token, right);
-            return null;
+            return default!;
         }
 
         public override string Id => PrioTable.Error;

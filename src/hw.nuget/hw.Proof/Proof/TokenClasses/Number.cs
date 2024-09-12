@@ -11,7 +11,7 @@ namespace hw.Proof.TokenClasses
                 return new NumberSyntax(token);
 
             NotImplementedMethod(left, token, right);
-            return null;
+            return default!;
         }
 
         public override string Id => "";
