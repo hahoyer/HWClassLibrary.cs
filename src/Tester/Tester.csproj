@@ -18,7 +18,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\bin\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
@@ -46,6 +45,7 @@
     <Compile Include="hw\DebugFormatter\EnableDumpAttribute.cs" />
     <Compile Include="hw\DebugFormatter\EnableDumpExceptAttribute.cs" />
     <Compile Include="hw\DebugFormatter\EnableDumpWithExceptionPredicateAttribute.cs" />
+    <Compile Include="hw\DebugFormatter\LogLevel.cs" />
     <Compile Include="hw\DebugFormatter\Profiler.cs" />
     <Compile Include="hw\DebugFormatter\TextWriters.cs" />
     <Compile Include="hw\DebugFormatter\Tracer.cs" />
