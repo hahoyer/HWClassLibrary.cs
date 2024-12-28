@@ -1,5 +1,4 @@
-﻿using System;
-using hw.DebugFormatter;
+﻿using hw.DebugFormatter;
 using hw.Helper;
 using hw.UnitTest;
 // ReSharper disable IdentifierTypo

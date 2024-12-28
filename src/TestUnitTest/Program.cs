@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using hw.DebugFormatter;
 using hw.UnitTest;
 
@@ -16,7 +15,7 @@ static class Program
         TestRunner.IsUnitTestType(typeof(StaticClass)).Assert();
         TestRunner.IsUnitTestType(typeof(InterfaceTest)).Assert();
         var method = TestRunner
-            .GetUnitTestTypes(Assembly.GetAssembly(typeof(Program)))
+            .GetUnitTestTypes(Assembly.GetAssembly(typeof(Program))!)
             .Single(t => t.Type == typeof(InterfaceTest))
             .UnitTestMethods
             .Single();
