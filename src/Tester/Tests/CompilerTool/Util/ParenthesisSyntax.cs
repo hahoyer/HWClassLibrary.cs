@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using hw.Helper;
+﻿using hw.Helper;
 using hw.Parser;
-using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool.Util

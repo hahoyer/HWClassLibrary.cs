@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using hw.Scanner;
-using JetBrains.Annotations;
+﻿using hw.Scanner;
 
 // ReSharper disable CheckNamespace
 
