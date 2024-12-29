@@ -1,4 +1,5 @@
-﻿using hw.Parser;
+﻿using hw.DebugFormatter;
+using hw.Parser;
 // ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool.Util
@@ -7,7 +8,7 @@ namespace hw.Tests.CompilerTool.Util
     {
         public override string Id => PrioTable.EndOfText;
 
-        protected override Syntax Create(Syntax left, IToken token, Syntax right)
+        protected override Syntax? Create(Syntax? left, IToken token, Syntax? right)
         {
             if(left != null)
                 return left.RightParenthesis(Id, token, right);
@@ -19,11 +20,11 @@ namespace hw.Tests.CompilerTool.Util
 
         sealed class Matched : ParserTokenType<Syntax>
         {
-            protected override Syntax Create(Syntax left, IToken token, Syntax right)
+            protected override Syntax? Create(Syntax? left, IToken token, Syntax? right)
             {
                 if(right == null)
                 {
-                    var result = (ParenthesisSyntax) left;
+                    var result = (ParenthesisSyntax?) left!;
                     if(result.Right == null)
                         return result.Left;
 

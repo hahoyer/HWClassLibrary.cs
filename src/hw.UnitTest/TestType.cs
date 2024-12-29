@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using hw.DebugFormatter;
 using hw.Helper;
@@ -14,7 +15,6 @@ sealed class TestType : DumpableObject, ValueCache.IContainer
     internal bool IsComplete { get; set; }
     bool IsSuspended;
 
-    TestMethod[] UnitTestMethodsCache;
     internal TestType(Type type) => Type = type;
 
     ValueCache ValueCache.IContainer.Cache { get; } = new();
@@ -39,7 +39,8 @@ sealed class TestType : DumpableObject, ValueCache.IContainer
 
     internal bool IsSuccessful => IsComplete && FailedMethods.Count == 0;
 
-    internal TestMethod[] UnitTestMethods => UnitTestMethodsCache ??= GetUnitTestMethods();
+    [field: AllowNull, MaybeNull]
+    internal TestMethod[] UnitTestMethods => field ??= GetUnitTestMethods();
 
     IEnumerable<TestMethod> InterfaceMethods
     {
@@ -56,7 +57,7 @@ sealed class TestType : DumpableObject, ValueCache.IContainer
         {
             var testAttribute = Type.GetAttribute<UnitTestAttribute>(true);
             if(testAttribute?.DefaultMethod != null)
-                yield return new(Type.GetMethod(testAttribute.DefaultMethod));
+                yield return new(Type.GetMethod(testAttribute.DefaultMethod)!);
         }
     }
 

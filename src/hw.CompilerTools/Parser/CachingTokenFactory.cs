@@ -17,7 +17,7 @@ public sealed class CachingTokenFactory<TTreeItem>(ITokenFactory<TTreeItem> targ
         , ITokenFactory<TTreeItem>
     where TTreeItem : class
 {
-    readonly ValueCache<IParserTokenType<TTreeItem>> BeginOfTextCache = new(() => target.BeginOfText);
+    readonly ValueCache<IParserTokenType<TTreeItem>?> BeginOfTextCache = new(() => target.BeginOfText);
     readonly ValueCache<LexerItem[]> ClassesCache = new(() => target.Classes);
     readonly ValueCache<IScannerTokenType> EndOfTextCache = new(() => target.EndOfText);
     readonly ValueCache<IScannerTokenType> InvalidCharacterErrorCache = new(() => target.InvalidCharacterError);
@@ -26,5 +26,5 @@ public sealed class CachingTokenFactory<TTreeItem>(ITokenFactory<TTreeItem> targ
     IScannerTokenType ITokenFactory.EndOfText => EndOfTextCache.Value;
     IScannerTokenType ITokenFactory.InvalidCharacterError => InvalidCharacterErrorCache.Value;
 
-    IParserTokenType<TTreeItem> ITokenFactory<TTreeItem>.BeginOfText => BeginOfTextCache.Value;
+    IParserTokenType<TTreeItem>? ITokenFactory<TTreeItem>.BeginOfText => BeginOfTextCache.Value;
 }

@@ -7,7 +7,7 @@ namespace hw.Parser;
 [PublicAPI]
 public static class Extension
 {
-    public static TOut Operation<TIn, TOut>(this IOperator<TIn, TOut> @operator, TIn left, IToken token, TIn right)
+    public static TOut Operation<TIn, TOut>(this IOperator<TIn?, TOut> @operator, TIn? left, IToken token, TIn? right)
         where TIn : class => left == null? right == null
             ? @operator.Terminal(token)
             : @operator.Prefix(token, right) :
@@ -15,9 +15,9 @@ public static class Extension
 
     public static ISubParser<TTreeItem> Convert<TTreeItem>
         (this IParser<TTreeItem> parser, Func<TTreeItem, IParserTokenType<TTreeItem>> converter)
-        where TTreeItem : class => new SubParser<TTreeItem>(parser, converter);
+        where TTreeItem : class => new SubParser<TTreeItem>(parser, converter!);
 
-    public static string TreeDump(this IBinaryTreeItem value)
+    public static string TreeDump(this IBinaryTreeItem? value)
     {
         if(value == null)
             return "<null>";
@@ -41,7 +41,7 @@ public static class Extension
             , var _ => throw new ArgumentOutOfRangeException()
         };
 
-    internal static string TreeDump<TTreeItem>(TTreeItem value)
+    internal static string TreeDump<TTreeItem>(TTreeItem? value)
         where TTreeItem : class
         => value is IBinaryTreeItem t
             ? TreeDump(t) 

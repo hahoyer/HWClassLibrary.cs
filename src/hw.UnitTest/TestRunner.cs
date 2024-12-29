@@ -15,7 +15,7 @@ public sealed class TestRunner : Dumpable
         public bool IsBreakEnabled;
         public bool SaveResults;
         public bool SkipSuccessfulMethods;
-        public string TestsFileName;
+        public string? TestsFileName;
     }
 
 
@@ -25,7 +25,7 @@ public sealed class TestRunner : Dumpable
 
     // ReSharper disable once StringLiteralTypo
     readonly SmbFile ConfigFile = "Test.HW.config".ToSmbFile();
-    readonly SmbFile PendingTestsFile = Configuration.TestsFileName?.ToSmbFile();
+    readonly SmbFile? PendingTestsFile = Configuration.TestsFileName?.ToSmbFile();
 
     readonly Func<Type, bool>[] TestLevels;
     readonly TestType[] TestTypes;
@@ -35,7 +35,7 @@ public sealed class TestRunner : Dumpable
 
     bool AllIsFine => TestTypes.All(t => !t.IsStarted || t.IsSuccessful);
 
-    string ConfigurationString
+    string? ConfigurationString
     {
         get => HeaderText
             + "\n"

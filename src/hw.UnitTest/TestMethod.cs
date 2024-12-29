@@ -14,14 +14,13 @@ sealed class TestMethod : DumpableObject
         internal readonly MethodInfo MethodInfo;
         internal Type InstanceType;
 
-        protected ActorBase(MethodInfo methodInfo, Type instanceType = null)
+        protected ActorBase(MethodInfo methodInfo, Type? instanceType = null)
         {
-            InstanceType = instanceType ?? methodInfo.DeclaringType;
-            (InstanceType != null).Assert();
+            InstanceType = instanceType ?? methodInfo.DeclaringType!;
             MethodInfo = methodInfo;
         }
 
-        internal virtual object Instance => IsStatic? null : Activator.CreateInstance(InstanceType);
+        internal virtual object? Instance => IsStatic? null : Activator.CreateInstance(InstanceType);
         internal virtual void Run(object target) => MethodInfo.Invoke(target, []);
         bool IsStatic => MethodInfo.IsStatic;
     }
@@ -38,13 +37,13 @@ sealed class TestMethod : DumpableObject
 
         internal ActionActor(Action action)
             : base(action.Method, action.Target.AssertNotNull().GetType())
-            => Instance = action.Target;
+            => Instance = action.Target!;
     }
 
     sealed class InterfaceActor : ActorBase
     {
         internal InterfaceActor(Type target)
-            : base(typeof(ITestFixture).GetMethod("Run"))
+            : base(typeof(ITestFixture).GetMethod("Run")!)
             => InstanceType = target;
 
         internal override void Run(object target) => ((ITestFixture)target).Run();
@@ -77,7 +76,7 @@ sealed class TestMethod : DumpableObject
             var instance = Actor.InstanceType.GetAttributes<ILocationProvider>(true).FirstOrDefault();
             if(instance != null)
                 yield return instance.Where;
-            var method = Actor.MethodInfo?.GetAttributes<ILocationProvider>(true).FirstOrDefault();
+            var method = Actor.MethodInfo.GetAttributes<ILocationProvider>(true).FirstOrDefault();
             if(method != null)
                 yield return method.Where;
         }
@@ -99,7 +98,7 @@ sealed class TestMethod : DumpableObject
                 try
                 {
                     Tracer.IsBreakDisabled = !TestRunner.Configuration.IsBreakEnabled;
-                    Actor.Run(test);
+                    Actor.Run(test!);
                 }
                 catch(Exception e)
                 {

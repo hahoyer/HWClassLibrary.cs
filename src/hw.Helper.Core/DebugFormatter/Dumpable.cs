@@ -228,7 +228,7 @@ public class Dumpable
     [DebuggerHidden]
     [PublicAPI]
     [IsLoggingFunction]
-    protected static void DumpDataWithBreak(string text, params object[] p)
+    protected static void DumpDataWithBreak(string text, params object?[] p)
     {
         var os = Tracer.DumpData(text, p, 1);
         os.Log(LogLevel.Debug);
@@ -243,7 +243,7 @@ public class Dumpable
     /// <returns> </returns>
     [DebuggerHidden]
     [IsLoggingFunction]
-    protected void StartMethodDump(bool trace, params object[] p)
+    protected void StartMethodDump(bool trace, params object?[] p)
     {
         StartMethodDump(1, trace);
         if(!IsMethodDumpTraceActive)
@@ -270,7 +270,7 @@ public class Dumpable
     [DebuggerHidden]
     [PublicAPI]
     [IsLoggingFunction]
-    protected void DumpMethodWithBreak(string text, params object[] p)
+    protected void DumpMethodWithBreak(string text, params object?[] p)
     {
         var os = Tracer.DumpMethodWithData(text, this, p, 1);
         os.Log(LogLevel.Debug);
@@ -284,7 +284,7 @@ public class Dumpable
     /// <returns> </returns>
     [DebuggerHidden]
     [IsLoggingFunction]
-    protected void NotImplementedMethod(params object[] p)
+    protected void NotImplementedMethod(params object?[] p)
     {
         if(IsInDump)
             throw new NotImplementedException();
@@ -311,5 +311,5 @@ public class Dumpable
         MethodDumpTraceSwitches.Push(new(frameCount, trace));
     }
 
-    public static TValue[] T<TValue>(params TValue[] value) => value;
+    public static TValue?[] T<TValue>(params TValue?[] value) => value;
 }

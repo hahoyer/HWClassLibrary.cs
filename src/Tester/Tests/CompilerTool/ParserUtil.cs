@@ -21,6 +21,7 @@ namespace hw.Tests.CompilerTool
         internal static Syntax Parse(string text) 
             => Parse(text, TestRunner.Configuration.IsBreakEnabled);
 
+        [PublicAPI]
         internal static Syntax Parse(string text, bool trace)
         {
             var source = new Source(text);
@@ -29,7 +30,7 @@ namespace hw.Tests.CompilerTool
             var result = MainTokenFactory.Parser.Execute(source);
             MainTokenFactory.Parser.Trace = false;
             NestedTokenFactory.Parser.Trace = false;
-            return result;
+            return result!;
         }
     }
 }

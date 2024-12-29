@@ -21,12 +21,12 @@ public sealed partial class PrioParser<TSourcePart>
         Stack<OpenItem<TSourcePart>> Stack { get; }
         int StartLevel { get; }
         bool IsSubParser { get; }
-        Item<TSourcePart> Current { get; set; }
-        TSourcePart Left { get; set; }
+        Item<TSourcePart>? Current { get; set; }
+        TSourcePart? Left { get; set; }
 
         public PrioParserWorker
         (
-            PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>> stack, SourcePosition sourcePosition
+            PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>>? stack, SourcePosition sourcePosition
             , bool isSubParser
         )
         {
@@ -44,7 +44,7 @@ public sealed partial class PrioParser<TSourcePart>
 
         bool IsBaseLevel => Stack.Count == StartLevel;
 
-        public TSourcePart Execute()
+        public TSourcePart? Execute()
         {
             Current = CreateStartItem(SourcePosition);
             TraceNewItem(SourcePosition);
@@ -110,11 +110,12 @@ public sealed partial class PrioParser<TSourcePart>
 
         void Step(bool canPush = true)
         {
+            Current.AssertIsNotNull();
             var other = IsBaseLevel? null : Stack.Peek();
 
             var relation = other == null
                 ? PrioTable.Relation.Push
-                : Parent.GetRelation(Current, other.BracketItem);
+                : Parent.GetRelation(Current!, other.BracketItem);
 
             TraceRelation(relation);
             if(!canPush)
@@ -124,7 +125,7 @@ public sealed partial class PrioParser<TSourcePart>
                 Left = Stack.Pop().Create(Left);
             if(relation.IsPush)
             {
-                Stack.Push(new(Left, Current));
+                Stack.Push(new(Left, Current!));
                 Left = null;
             }
 
@@ -132,13 +133,13 @@ public sealed partial class PrioParser<TSourcePart>
                 return;
 
             if(relation.IsMatch)
-                Left = Current.Create(Left);
+                Left = Current!.Create(Left);
 
-            (other != null).Assert();
+            other.AssertIsNotNull();
 
             Current = relation.IsMatch
-                ? Current.CreateMatch(other)
-                : Current.RecreateWith(newContext: other.BracketItem.LeftContext);
+                ? Current!.CreateMatch(other!)
+                : Current!.RecreateWith(newContext: other!.BracketItem.LeftContext);
 
             TraceMatchPhase();
         }
@@ -165,7 +166,7 @@ public sealed partial class PrioParser<TSourcePart>
             if(!Trace)
                 return;
 
-            Current.Characters.GetDumpAroundCurrent(50).Log();
+            Current!.Characters.GetDumpAroundCurrent(50).Log();
             sourcePosition.GetDumpAroundCurrent(50).Log();
             ("Depth = " + Current.Depth).Log();
             "=================>".Log();
@@ -262,7 +263,7 @@ public sealed partial class PrioParser<TSourcePart>
             return $"stack: {stack.Count} items{("\n" + result).Indent()}";
         }
 
-        void TraceItemLine(string title, Item<TSourcePart> item)
+        void TraceItemLine(string title, Item<TSourcePart>? item)
         {
             if(!Trace)
                 return;

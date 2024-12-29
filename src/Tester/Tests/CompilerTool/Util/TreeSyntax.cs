@@ -5,15 +5,15 @@ namespace hw.Tests.CompilerTool.Util
 {
     abstract class TreeSyntax : Syntax
     {
-        protected TreeSyntax(Syntax left, IToken token, Syntax right)
+        protected TreeSyntax(Syntax? left, IToken token, Syntax? right)
             : base(token)
         {
             Left = left;
             Right = right;
         }
 
-        public sealed override Syntax Left { get; }
-        public sealed override Syntax Right { get; }
+        public sealed override Syntax? Left { get; }
+        public sealed override Syntax? Right { get; }
 
         public override IEnumerable<IToken> Tokens
         {

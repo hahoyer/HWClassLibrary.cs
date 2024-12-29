@@ -19,8 +19,8 @@ public sealed partial class PrioParser<TSourcePart>
     IScanner Scanner { get; } = scanner;
     IParserTokenType<TSourcePart> StartParserType { get; } = startParserType;
 
-    TSourcePart IParser<TSourcePart>
-        .Execute(SourcePosition start, Stack<OpenItem<TSourcePart>> initialStack)
+    TSourcePart? IParser<TSourcePart>
+        .Execute(SourcePosition start, Stack<OpenItem<TSourcePart>>? initialStack)
     {
         StartMethodDump(Trace, start.GetDumpAroundCurrent(50), initialStack);
         try
@@ -33,7 +33,7 @@ public sealed partial class PrioParser<TSourcePart>
         }
     }
 
-    TSourcePart IParser<TSourcePart>.Execute(Source source)
+    TSourcePart? IParser<TSourcePart>.Execute(Source source)
     {
         StartMethodDump(Trace, source.GetDumpAfterCurrent(0, 50));
         try
@@ -52,6 +52,6 @@ public sealed partial class PrioParser<TSourcePart>
         => PrioTable.GetRelation(newType, topType);
 
     PrioParserWorker CreateWorker
-        (Stack<OpenItem<TSourcePart>> stack, SourcePosition sourcePosition, bool isSubParser = false)
+        (Stack<OpenItem<TSourcePart>>? stack, SourcePosition sourcePosition, bool isSubParser = false)
         => new(this, stack, sourcePosition, isSubParser);
 }

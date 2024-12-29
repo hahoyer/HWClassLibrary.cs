@@ -30,9 +30,9 @@ public abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<
     public readonly IEnumerable<IParserTokenType<TSourcePart>> PredefinedTokenClasses;
 
     [EnableDump]
-    readonly string Title;
+    readonly string? Title;
 
-    protected GenericTokenFactory(string title = null)
+    protected GenericTokenFactory(string? title = null)
     {
         Title = title;
         PredefinedTokenClasses = GetType()
@@ -48,7 +48,7 @@ public abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<
     /// <param name="type"></param>
     /// <returns></returns>
     protected virtual IParserTokenType<TSourcePart> SpecialTokenClass(Type type)
-        => (IParserTokenType<TSourcePart>)Activator.CreateInstance(type);
+        => (IParserTokenType<TSourcePart>)Activator.CreateInstance(type)!;
 
     protected sealed override IEnumerable<IParserTokenType<TSourcePart>> GetPredefinedTokenClasses()
         => PredefinedTokenClasses;

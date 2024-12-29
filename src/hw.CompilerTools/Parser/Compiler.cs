@@ -21,12 +21,6 @@ public class Compiler<TSourcePart> : DumpableObject
         public readonly Compiler<TSourcePart> Parent;
         public readonly object Tag;
 
-        internal Component(Compiler<TSourcePart> parent, object tag)
-        {
-            Parent = parent;
-            Tag = tag;
-        }
-
         public PrioTable PrioTable
         {
             set => Parent.Define(value, null, null, Tag);
@@ -42,9 +36,16 @@ public class Compiler<TSourcePart> : DumpableObject
             set => Parent.Define(null, null, value, Tag);
         }
 
-        public IParser<TSourcePart> Parser => Parent.Dictionary[Tag].Parser;
+        public IParser<TSourcePart>? Parser => Parent.Dictionary[Tag].Parser;
         public ISubParser<TSourcePart> SubParser => Parent.Dictionary[Tag].SubParser;
-        public T Get<T>() => Parent.Dictionary[Tag].Get<T>();
+
+        internal Component(Compiler<TSourcePart> parent, object tag)
+        {
+            Parent = parent;
+            Tag = tag;
+        }
+
+        public T? Get<T>() => Parent.Dictionary[Tag].Get<T>();
         public void Add<T>(T value) => Parent.Dictionary[Tag].Add(value, this);
     }
 
@@ -55,11 +56,25 @@ public class Compiler<TSourcePart> : DumpableObject
         readonly IDictionary<Type, object> Components =
             new Dictionary<Type, object>();
 
+        public string PrettyDump
+            => Components
+                .Select(p => PrettyDumpPair(p.Key, p.Value))
+                .Stringify("\n");
+
+        internal IParser<TSourcePart>? Parser => this.CachedValue(CreateParser);
+        internal ISubParser<TSourcePart> SubParser => this.CachedValue(CreateSubParser);
+
+        Func<TSourcePart, IParserTokenType<TSourcePart>>? Converter =>
+            Get<Func<TSourcePart, IParserTokenType<TSourcePart>>>();
+
+        PrioTable? PrioTable => Get<PrioTable>();
+        ITokenFactory<TSourcePart>? TokenFactory => Get<ITokenFactory<TSourcePart>>();
+
         internal ComponentData
         (
-            PrioTable prioTable,
-            ITokenFactory<TSourcePart> tokenFactory,
-            Func<TSourcePart, IParserTokenType<TSourcePart>> converter,
+            PrioTable? prioTable,
+            ITokenFactory<TSourcePart>? tokenFactory,
+            Func<TSourcePart, IParserTokenType<TSourcePart>>? converter,
             Component component
         )
         {
@@ -70,35 +85,23 @@ public class Compiler<TSourcePart> : DumpableObject
 
         ValueCache ValueCache.IContainer.Cache { get; } = new();
 
-        public string PrettyDump
-            => Components
-                .Select(p => PrettyDumpPair(p.Key, p.Value))
-                .Stringify("\n");
-
-        internal IParser<TSourcePart> Parser => this.CachedValue(CreateParser);
-        internal ISubParser<TSourcePart> SubParser => this.CachedValue(CreateSubParser);
-
-        Func<TSourcePart, IParserTokenType<TSourcePart>> Converter =>
-            Get<Func<TSourcePart, IParserTokenType<TSourcePart>>>();
-
-        PrioTable PrioTable => Get<PrioTable>();
-        ITokenFactory<TSourcePart> TokenFactory => Get<ITokenFactory<TSourcePart>>();
-
         internal ComponentData ReCreate
         (
-            PrioTable prioTable,
-            ITokenFactory<TSourcePart> tokenFactory,
-            Func<TSourcePart, IParserTokenType<TSourcePart>> converter,
+            PrioTable? prioTable,
+            ITokenFactory<TSourcePart>? tokenFactory,
+            Func<TSourcePart, IParserTokenType<TSourcePart>>? converter,
             Component t
         )
             =>
                 new(prioTable ?? PrioTable, tokenFactory ?? TokenFactory, converter ?? Converter, t);
 
-        internal T Get<T>() => (T)Components[typeof(T)];
+        internal T? Get<T>() => (T?)Components[typeof(T)];
 
-        internal void Add<T>(T value, Component parent)
+        internal void Add<T>(T? value, Component parent)
         {
-            Components.Add(typeof(T), value);
+            if(ReferenceEquals(value, default(T)))
+                return;
+            Components.Add(typeof(T), value!);
 
             if(value is IComponent component)
                 component.Current = parent;
@@ -109,14 +112,14 @@ public class Compiler<TSourcePart> : DumpableObject
 
         static string PrettyDumpValue(object value) => Tracer.Dump(value);
 
-        ISubParser<TSourcePart> CreateSubParser() => new SubParser<TSourcePart>(Parser, Converter);
+        ISubParser<TSourcePart> CreateSubParser() => new SubParser<TSourcePart>(Parser!, Converter!);
 
-        IParser<TSourcePart> CreateParser()
+        IParser<TSourcePart>? CreateParser()
         {
             if(PrioTable == null)
                 return null;
 
-            ITokenFactory<TSourcePart> tokenFactory = new CachingTokenFactory<TSourcePart>(TokenFactory);
+            ITokenFactory<TSourcePart> tokenFactory = new CachingTokenFactory<TSourcePart>(TokenFactory!);
             var beginOfText = tokenFactory.BeginOfText;
             if(beginOfText == null)
                 return null;
@@ -142,9 +145,9 @@ public class Compiler<TSourcePart> : DumpableObject
 
     void Define
     (
-        PrioTable prioTable,
-        ITokenFactory<TSourcePart> tokenFactory,
-        Func<TSourcePart, IParserTokenType<TSourcePart>> converter,
+        PrioTable? prioTable,
+        ITokenFactory<TSourcePart>? tokenFactory,
+        Func<TSourcePart, IParserTokenType<TSourcePart>>? converter,
         object tag
     )
         => Dictionary[tag] =

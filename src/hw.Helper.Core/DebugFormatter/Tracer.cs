@@ -296,7 +296,7 @@ public static class Tracer
     /// <param name="data"> The data, as name/value pair. </param>
     /// <param name="stackFrameDepth"> The stack stackFrameDepth. </param>
     /// <returns> </returns>
-    public static string DumpData(string text, object[] data, int stackFrameDepth = 0)
+    public static string DumpData(string text, object?[] data, int stackFrameDepth = 0)
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
@@ -467,7 +467,7 @@ public static class Tracer
         => Writer.ThreadSafeWrite(value, false, level);
 
     public static string DumpMethodWithData
-        (string text, object? thisObject, object[] parameter, int stackFrameDepth = 0)
+        (string text, object? thisObject, object?[] parameter, int stackFrameDepth = 0)
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
@@ -477,7 +477,7 @@ public static class Tracer
             + DumpMethodWithData(stackFrame?.GetMethod(), thisObject, parameter).Indent();
     }
 
-    static string DumpMethodWithData(MethodBase? methodBase, object? target, object[] parameters)
+    static string DumpMethodWithData(MethodBase? methodBase, object? target, object?[] parameters)
     {
         var result = "\n";
         result += IsSetTo("this", target);
@@ -486,7 +486,7 @@ public static class Tracer
         return result;
     }
 
-    static string DumpMethodWithData(ParameterInfo[]? parameterInfos, object[] parameters)
+    static string DumpMethodWithData(ParameterInfo[]? parameterInfos, object?[] parameters)
     {
         parameterInfos ??= [];
         var result = "";
@@ -501,7 +501,7 @@ public static class Tracer
         for(var index = parameterInfos.Length; index < parameters.Length; index += 2)
         {
             result += "\n";
-            result += IsSetTo((string)parameters[index], parameters[index + 1]);
+            result += IsSetTo((string)parameters[index]!, parameters[index + 1]);
         }
 
         return result;

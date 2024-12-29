@@ -13,7 +13,7 @@ namespace hw.Tests.CompilerTool.Util
 
         public override bool IsMain => true;
 
-        protected override Syntax Create(Syntax left, IToken token, Syntax right) => null;
+        protected override Syntax? Create(Syntax? left, IToken token, Syntax? right) => null;
 
         static IParserTokenType<Syntax> Converter(Syntax arg) => new SyntaxBoxToken(arg);
 
@@ -21,10 +21,10 @@ namespace hw.Tests.CompilerTool.Util
         {
             [EnableDump]
             readonly Syntax Content;
-            public SyntaxBoxToken(Syntax content) { Content = content; }
+            public SyntaxBoxToken(Syntax content) => Content = content;
             public override string Id => "<box>";
 
-            protected override Syntax Create(Syntax left, IToken token, Syntax right)
+            protected override Syntax Create(Syntax? left, IToken token, Syntax? right)
             {
                 (left == null).Assert();
                 (right == null).Assert();

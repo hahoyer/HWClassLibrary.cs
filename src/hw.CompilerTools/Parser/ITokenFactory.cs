@@ -14,5 +14,5 @@ public interface ITokenFactory<TSourcePart> : ITokenFactory
     /// <summary>
     ///     Returns the pseudo token to use at the beginning of the sorce part to parse.
     /// </summary>
-    IParserTokenType<TSourcePart> BeginOfText { get; }
+    IParserTokenType<TSourcePart>? BeginOfText { get; }
 }

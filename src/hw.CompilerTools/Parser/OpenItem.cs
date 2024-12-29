@@ -10,11 +10,11 @@ public sealed class OpenItem<TTreeItem> : DumpableObject
     where TTreeItem : class
 {
     public readonly PrioTable.ITargetItem BracketItem;
-    public readonly TTreeItem Left;
+    public readonly TTreeItem? Left;
     public readonly IToken Token;
-    public readonly IParserTokenType<TTreeItem> Type;
+    public readonly IParserTokenType<TTreeItem>? Type;
 
-    internal OpenItem(TTreeItem left, Item<TTreeItem> current)
+    internal OpenItem(TTreeItem? left, Item<TTreeItem> current)
     {
         Left = left;
         Type = current.Type;
@@ -23,15 +23,15 @@ public sealed class OpenItem<TTreeItem> : DumpableObject
     }
 
     protected override string GetNodeDump()
-        => Tracer.Dump(Left) + " " + Type.GetType().PrettyName();
+        => Tracer.Dump(Left) + " " + (Type?.GetType().PrettyName()??"");
 
     internal int NextDepth => BracketContext.GetRightDepth(BracketItem);
 
-    internal TTreeItem Create(TTreeItem right)
+    internal TTreeItem? Create(TTreeItem? right)
     {
         if(Type != null)
             return Type.Create(Left, Token, right);
-        (Left == null).Assert();
+        Left.AssertIsNull();
         return right;
     }
 }
