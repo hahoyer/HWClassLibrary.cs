@@ -8,6 +8,7 @@
         <LangVersion>preview</LangVersion>
         <Features>strict</Features>
         <AnalysisMode>None</AnalysisMode>
+        <AnalysisLevel>none</AnalysisLevel>
         <EnableNETAnalyzers>false</EnableNETAnalyzers>
         <ImplicitUsings>enable</ImplicitUsings>
         <ProductDir>$(MSBuildThisFileDirectory)</ProductDir>
