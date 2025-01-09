@@ -70,6 +70,7 @@ public static class PendingTests
 {{
     public static void Run()
     {{
+    // ReSharper disable RedundantNameQualifier
     {GeneratedTestCalls}
 }}}}
 ";
