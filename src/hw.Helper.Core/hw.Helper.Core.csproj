@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.0</Version>
+        <Version>25.0.1</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             refactor: upgrade C#, .net9
@@ -156,5 +156,10 @@
 </PackageReleaseNotes>
     </PropertyGroup>
     <Import Project="sys.targets" />
+    <ItemGroup>
+      <Compile Remove="Tests\**" />
+      <EmbeddedResource Remove="Tests\**" />
+      <None Remove="Tests\**" />
+    </ItemGroup>
 
 </Project>

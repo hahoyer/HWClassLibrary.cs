@@ -4,10 +4,8 @@
         <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
     </PropertyGroup>
     <Import Project="sys.targets" />
-
     <ItemGroup>
-      <ProjectReference Include="..\hw.Helper.Core\hw.Helper.Core.csproj" />
-      <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.csproj" />
+      <PackageReference Include="hw.UnitTest" Version="25.0.0" />
     </ItemGroup>
 
 </Project>

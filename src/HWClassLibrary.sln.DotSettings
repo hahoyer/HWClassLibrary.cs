@@ -2551,6 +2551,8 @@ System.Linq.Enumerable.Single</s:String>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EPredefinedNamingRulesToUserRulesUpgrade/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EUnitTestFramework_002EMigrations_002EEnableDisabledProvidersMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/TypeNameHintsOptions/ShowTypeNameHintsForLambdaExpressionParameters/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/Environment/UnitTesting/TestLinker/SubjectAttributeName/@EntryValue">UnitTestAttribute</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/TestLinker/SubjectMarkerAttributeName/@EntryValue">UnitTestAttribute</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/VsTestProvider/ExecutorExcludeList/=executor_003A_002F_002Fmstestadapter_002Fv1/@EntryIndexedValue"></s:String>
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/VsTestProvider/ExecutorExcludeList/=executor_003A_002F_002Fmstestadapter_002Fv1/@EntryIndexRemoved">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/VsTestProvider/ExecutorExcludeList/=executor_003A_002F_002Fmstestadapter_002Fv2/@EntryIndexedValue"></s:String>
