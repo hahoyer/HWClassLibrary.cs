@@ -15,13 +15,3 @@ public sealed class UnitTestAttribute : LocationProviderAttribute
     public UnitTestAttribute([CallerFilePath] string fileName = "", [CallerLineNumber] int lineNumber = 0)
         => Where = new() { FileName = fileName, LineNumber = lineNumber };
 }
-
-[AttributeUsage(AttributeTargets.Class)]
-[MeansImplicitUse]
-[PublicAPI]
-public sealed class TestFixture : Attribute { }
-
-[AttributeUsage(AttributeTargets.Method)]
-[MeansImplicitUse]
-[PublicAPI]
-public sealed class TestAttribute : Attribute { }
