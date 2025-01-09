@@ -103,7 +103,7 @@ public class Dumpable
     [DebuggerHidden]
     [IsLoggingFunction]
     [PublicAPI]
-    public static void NotImplementedFunction(params object[] p)
+    public static void NotImplementedFunction(params object?[] p)
     {
         var os = Tracer.DumpMethodWithData("not implemented", thisObject: null, p, 1);
         os.Log(LogLevel.Debug);
