@@ -16,7 +16,7 @@ public sealed class BracketContext : DumpableObject
     /// <summary>
     ///     contains the codes of open brackets. It is the negative index of <see cref="Brackets" /> member, minus 1.
     ///     So the different bracket-pairs have a priority itself
-    ///     that is used stream recovery
+    ///     that is used in stream recovery
     ///     when brackets are not evenly paired.
     /// </summary>
     [EnableDump]
