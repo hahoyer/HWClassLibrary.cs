@@ -1,4 +1,5 @@
-﻿using hw.DebugFormatter;
+﻿using System.Diagnostics.CodeAnalysis;
+using hw.DebugFormatter;
 using hw.Helper;
 
 // ReSharper disable CheckNamespace
@@ -80,11 +81,11 @@ public sealed class PrioTable : DumpableObject
 
     readonly RelationDefinitionItem[] BaseRelation;
     readonly BracketPairItem[] Brackets;
-    BracketContext? BracketContextValue;
 
     [DisableDump]
+    [field: AllowNull, MaybeNull]
     public BracketContext BracketContext
-        => BracketContextValue ??= BracketContext.Start(Brackets);
+        => field ??= BracketContext.Start(Brackets);
 
     PrioTable()
     {

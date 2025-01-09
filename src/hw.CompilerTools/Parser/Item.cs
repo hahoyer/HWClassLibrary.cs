@@ -22,8 +22,6 @@ public sealed class Item<TSourcePart>
     public readonly IParserTokenType<TSourcePart> Type;
     internal readonly SourcePart Characters;
 
-    TSourcePart? Container;
-
     [EnableDump]
     public int Depth => Context.Depth;
 
@@ -45,13 +43,13 @@ public sealed class Item<TSourcePart>
 
     TSourcePart? ILinked<TSourcePart>.Container
     {
-        get => Container;
+        get;
         set
         {
-            if(Container != null)
-                (value == Container).Assert();
+            if(field != null)
+                (value == field).Assert();
 
-            Container = value;
+            field = value;
         }
     }
 
