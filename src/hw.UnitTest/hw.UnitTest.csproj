@@ -2,10 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.0.5</Version>
+        <Version>25.0.0.6</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReadmeFile>hw.UnitTest.md</PackageReadmeFile>
         <PackageReleaseNotes>
+            bugfix: pending test file generation respects static methods
             refactor: upgrade C#, .net9
             24.0.1
             refactor: upgrade C#

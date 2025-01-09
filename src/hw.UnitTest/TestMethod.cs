@@ -13,6 +13,7 @@ sealed class TestMethod : DumpableObject
     {
         internal readonly MethodInfo MethodInfo;
         internal Type InstanceType;
+        bool IsStatic => MethodInfo.IsStatic;
 
         protected ActorBase(MethodInfo methodInfo, Type? instanceType = null)
         {
@@ -20,15 +21,21 @@ sealed class TestMethod : DumpableObject
             MethodInfo = methodInfo;
         }
 
+        internal string ClassName
+            => IsStatic
+                ? $"{InstanceType.CompleteName()}"
+                : $"new {InstanceType.CompleteName()}()";
+
+
         internal virtual object? Instance => IsStatic? null : Activator.CreateInstance(InstanceType);
         internal virtual void Run(object target) => MethodInfo.Invoke(target, []);
-        bool IsStatic => MethodInfo.IsStatic;
     }
 
     sealed class MethodActor : ActorBase
     {
         internal MethodActor(MethodInfo methodInfo)
             : base(methodInfo) { }
+
     }
 
     sealed class ActionActor : ActorBase
@@ -38,6 +45,7 @@ sealed class TestMethod : DumpableObject
         internal ActionActor(Action action)
             : base(action.Method, action.Target.AssertNotNull().GetType())
             => Instance = action.Target!;
+
     }
 
     sealed class InterfaceActor : ActorBase
@@ -55,19 +63,12 @@ sealed class TestMethod : DumpableObject
 
     internal readonly ActorBase Actor;
 
-    public TestMethod(MethodInfo methodInfo) => Actor = new MethodActor(methodInfo);
-
-    public TestMethod(Type type) => Actor = new InterfaceActor(type);
-    public TestMethod(Action action) => Actor = new ActionActor(action);
-
-    protected override string GetNodeDump() => LongName;
-
     public string LongName => InstanceTypeName + "." + Name;
 
     string InstanceTypeName => Actor.InstanceType.CompleteName();
     public string ConfigurationString => Name + ",";
     public string Name => Actor.MethodInfo.Name;
-    public string RunString => $"TestRunner.RunTest(new {InstanceTypeName}().{Name})";
+    public string RunString => $"TestRunner.RunTest({Actor.ClassName}.{Name})";
 
     internal IEnumerable<SourceFilePosition> FilePositions
     {
@@ -81,6 +82,13 @@ sealed class TestMethod : DumpableObject
                 yield return method.Where;
         }
     }
+
+    public TestMethod(MethodInfo methodInfo) => Actor = new MethodActor(methodInfo);
+
+    public TestMethod(Type type) => Actor = new InterfaceActor(type);
+    public TestMethod(Action action) => Actor = new ActionActor(action);
+
+    protected override string GetNodeDump() => LongName;
 
     public void Run()
     {
