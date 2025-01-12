@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.1.1</Version>
+        <Version>25.0.1.2</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             refactor: upgrade C#, .net9
