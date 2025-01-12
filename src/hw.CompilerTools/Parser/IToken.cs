@@ -38,6 +38,6 @@ public static class TokenExtension
     public static SourcePart GetSourcePart(this IToken token)
         => (token.Characters.Start - token.PrecededWith).Span(token.Characters.End);
 
-    internal static SourcePart GetPrefixSourcePart(this IToken token)
+    public static SourcePart GetPrefixSourcePart(this IToken token)
         => token.Characters.Start.Span(-token.PrecededWith);
 }
