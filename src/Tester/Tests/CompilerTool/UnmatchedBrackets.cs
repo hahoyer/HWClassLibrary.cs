@@ -5,11 +5,9 @@ using hw.UnitTest;
 namespace hw.Tests.CompilerTool;
 
 [UnitTest]
-[TestFixture]
 public sealed class UnmatchedBrackets : DependenceProvider
 {
     [UnitTest]
-    [Test]
     public static void MissingRight()
         => ParserUtil.ParseAndCheck
         (
@@ -18,7 +16,6 @@ public sealed class UnmatchedBrackets : DependenceProvider
         );
 
     [UnitTest]
-    [Test]
     public static void MissingLeft()
         => ParserUtil.ParseAndCheck
         (

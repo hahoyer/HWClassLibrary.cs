@@ -7,7 +7,6 @@ using hw.UnitTest;
 namespace hw.Tests.CompilerTool;
 
 [UnitTest]
-[TestFixture]
 public sealed class SimpleParser : DependenceProvider
 {
     [UnitTest]
@@ -26,7 +25,6 @@ public sealed class SimpleParser : DependenceProvider
     );
 
     [UnitTest]
-    [Test]
     public static void InvalidComment() => ParserUtil.ParseAndCheck
     (
         "#( \na",
@@ -34,7 +32,6 @@ public sealed class SimpleParser : DependenceProvider
     );
 
     [UnitTest]
-    [Test]
     public static void PreceededInvalidComment()
     {
         var result = ParserUtil.Parse("    #( \na");
@@ -42,7 +39,6 @@ public sealed class SimpleParser : DependenceProvider
     }
 
     [UnitTest]
-    [Test]
     public static void Expression()
     {
         var expr = "(a*b+c*d)*(e*f+g*h)";

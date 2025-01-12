@@ -15,16 +15,16 @@ sealed class TestMethod : DumpableObject
         internal Type InstanceType;
         bool IsStatic => MethodInfo.IsStatic;
 
+        internal string ClassName
+            => IsStatic
+                ? $"{InstanceType.CompleteName()}"
+                : $"new {InstanceType.CompleteName()}()";
+
         protected ActorBase(MethodInfo methodInfo, Type? instanceType = null)
         {
             InstanceType = instanceType ?? methodInfo.DeclaringType!;
             MethodInfo = methodInfo;
         }
-
-        internal string ClassName
-            => IsStatic
-                ? $"{InstanceType.CompleteName()}"
-                : $"new {InstanceType.CompleteName()}()";
 
 
         internal virtual object? Instance => IsStatic? null : Activator.CreateInstance(InstanceType);
@@ -35,7 +35,6 @@ sealed class TestMethod : DumpableObject
     {
         internal MethodActor(MethodInfo methodInfo)
             : base(methodInfo) { }
-
     }
 
     sealed class ActionActor : ActorBase
@@ -43,9 +42,12 @@ sealed class TestMethod : DumpableObject
         internal override object Instance { get; }
 
         internal ActionActor(Action action)
-            : base(action.Method, action.Target.AssertNotNull().GetType())
+            : base(action.Method, GetTargetType(action))
             => Instance = action.Target!;
 
+        static Type GetTargetType(Action action) 
+            => action.Target?.GetType() 
+                ?? action.Method.DeclaringType.AssertNotNull();
     }
 
     sealed class InterfaceActor : ActorBase

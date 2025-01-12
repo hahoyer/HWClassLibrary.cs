@@ -6,7 +6,6 @@ using hw.UnitTest;
 
 namespace hw.Tests.CompilerTool;
 
-[TestFixture]
 [UnitTest]
 public sealed class SourceTests
 {
@@ -21,7 +20,6 @@ qwertz
 
 ";
 
-    [Test]
     [UnitTest]
     public void FromLineAndColumn()
     {
