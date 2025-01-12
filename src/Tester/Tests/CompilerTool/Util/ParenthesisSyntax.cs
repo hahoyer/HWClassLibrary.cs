@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using hw.Helper;
+﻿using hw.Helper;
 using hw.Parser;
-using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool.Util
@@ -12,7 +10,7 @@ namespace hw.Tests.CompilerTool.Util
     {
         internal readonly IToken LeftPart;
 
-        public ParenthesisSyntax(IToken leftPart, Syntax middle, IToken rightPart)
+        public ParenthesisSyntax(IToken leftPart, Syntax? middle, IToken rightPart)
             : base(middle, rightPart, null)
             => LeftPart = leftPart;
 
@@ -39,10 +37,10 @@ namespace hw.Tests.CompilerTool.Util
             }
         }
 
-        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax? right)
         {
             NotImplementedMethod(id, token, right);
-            return null;
+            return null!;
         }
     }
 }

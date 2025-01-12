@@ -1,0 +1,9 @@
+[*.proto]
+indent_size = 4
+indent_style = space
+tab_width = 4
+
+[*]
+indent_size = 4
+indent_style = space
+tab_width = 4

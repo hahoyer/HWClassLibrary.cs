@@ -5,7 +5,6 @@ using hw.UnitTest;
 namespace hw.Tests.CompilerTool;
 
 [UnitTest]
-[TestFixture]
 [SimpleParser]
 public static class NestedParser
 {

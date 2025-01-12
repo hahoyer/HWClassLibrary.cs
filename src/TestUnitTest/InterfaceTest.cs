@@ -1,5 +1,4 @@
-﻿using System;
-using hw.UnitTest;
+﻿using hw.UnitTest;
 
 namespace TestUnitTest;
 

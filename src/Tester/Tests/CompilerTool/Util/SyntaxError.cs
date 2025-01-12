@@ -8,10 +8,10 @@ namespace hw.Tests.CompilerTool.Util
     {
         [EnableDump]
         readonly IssueId IssueId;
-        public SyntaxError(IssueId issueId) { IssueId = issueId; }
+        public SyntaxError(IssueId issueId) => IssueId = issueId;
         public override string Id => PrioTable.Error;
 
-        protected override Syntax Create(Syntax left, IToken token, Syntax right)
+        protected override Syntax Create(Syntax? left, IToken token, Syntax? right)
             => new ErrorSyntax(left, token, right, IssueId);
     }
 }

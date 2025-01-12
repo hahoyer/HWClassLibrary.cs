@@ -18,8 +18,10 @@
         <license type="expression">MIT</license>
         <copyright>Copyright Harald Hoyer 2013 - 2024</copyright>
 
-        <version>24.1.3</version>
+        <version>24.1.4</version>
         <releaseNotes>
+            change: DebuggerDisplay-support for ValueCache
+            24.1.3
             change: SmbFile now provides version information
             24.1.2
             refactor: nullability  

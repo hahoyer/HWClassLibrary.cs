@@ -6,7 +6,6 @@ using hw.UnitTest;
 namespace hw.Tests.CompilerTool;
 
 [UnitTest]
-[TestFixture]
 [SimpleParser]
 public static class AdvancedParser
 {
@@ -56,7 +55,7 @@ public static class AdvancedParser
         (result.Left != null).Assert(result.Dump);
         (result.Right == null).Assert(result.Dump);
 
-        (result.Left.TokenClassName == "()").Assert(result.Dump);
+        (result.Left!.TokenClassName == "()").Assert(result.Dump);
         (result.Left.Left == null).Assert(result.Dump);
         (result.Left.Right == null).Assert(result.Dump);
     }

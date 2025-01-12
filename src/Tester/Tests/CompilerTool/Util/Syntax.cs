@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using hw.DebugFormatter;
+﻿using hw.DebugFormatter;
 using hw.Parser;
 using hw.Scanner;
 
@@ -16,15 +15,15 @@ abstract class Syntax
 
     protected Syntax(IToken token) => Token = token;
 
-    IBinaryTreeItem IBinaryTreeItem.Left => Left;
-    IBinaryTreeItem IBinaryTreeItem.Right => Right;
+    IBinaryTreeItem? IBinaryTreeItem.Left => Left;
+    IBinaryTreeItem? IBinaryTreeItem.Right => Right;
 
     string IBinaryTreeItem.TokenId => TokenClassName;
-    public abstract Syntax Left { get; }
+    public abstract Syntax? Left { get; }
     public abstract string TokenClassName { get; }
-    public abstract Syntax Right { get; }
+    public abstract Syntax? Right { get; }
 
-    public abstract Syntax RightParenthesis(string id, IToken token, Syntax right);
+    public abstract Syntax RightParenthesis(string id, IToken token, Syntax? right);
 
     public virtual IEnumerable<IToken> Tokens
     {

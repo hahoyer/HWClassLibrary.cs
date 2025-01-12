@@ -1,8 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--EXTERNAL_PROPERTIES: NuGetCommand-->
+<!--EXTERNAL_PROPERTIES: NonInteractiveSwitch-->
+<!--EXTERNAL_PROPERTIES: PackageOutputDir;NuGetCommand-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+    <PropertyGroup>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <PackageId>$(AssemblyName)</PackageId>
+        <Title>$(AssemblyName)</Title>
+        <Copyright>Copyright Harald Hoyer © 2013 - $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
+        <RepositoryUrl>https://github.com/hahoyer/HWClassLibrary.cs</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IncludeSymbols>True</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
     <Import Project="CSharp.Library.targets" />
-    <Import Project="ApiKey.targets" />
+
+    <Target Name="AfterBuild" DependsOnTargets="DeployPackage" />
+
+    <Target Name="FilterNuSpecs">
+        <ItemGroup>
+            <PackageSpecs Include="@(None)" Condition="'%(Extension)'=='.nuspec'"/>
+            <PackageSpecs Include="@(Content)" Condition="'%(Extension)'=='.nuspec'" />
+        </ItemGroup>
+    </Target>
 
     <PropertyGroup>
         <CleanDependsOn>
@@ -15,7 +38,44 @@
         <PackageSpecsIntermediate>$(IntermediateOutputPath)nuspec\</PackageSpecsIntermediate>
     </PropertyGroup>
 
-    <Target Name="CleanPackages">
+    <Target
+        Name="BuildPackages"
+        Inputs="%(PackageSpecs.Identity)"
+        Outputs="$(PackageSpecsIntermediate)\%(Identity)"
+        >
+
+        <Message Text="@(PackageSpecs)" />
+
+        <ItemGroup>
+            <todos/>
+        </ItemGroup>
+
+        <Copy SourceFiles="%(PackageSpecs.Identity)"
+              DestinationFolder="$(PackageSpecsIntermediate)"
+              SkipUnchangedFiles="true">
+            <Output ItemName="todos" TaskParameter="CopiedFiles"/>
+        </Copy>
+
+        <Exec
+            Condition="'@(todos)' != ''"
+            Command="$(NuGetCommand) pack &quot;%(PackageSpecs.Identity)&quot; -Properties Configuration=$(Configuration) $(NonInteractiveSwitch) -OutputDirectory $(PackageOutputDir)"
+            IgnoreExitCode="true"
+            ConsoleToMSBuild="true"
+            >
+            <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
+            <Output TaskParameter="ConsoleOutput" PropertyName="ConsoleOutput" />
+        </Exec>
+
+        <Delete Files="@(todos)" Condition="$(ExitCode) != 0" />
+        <Error Condition="$(ExitCode) != 0" Text="$(ConsoleOutput)" File="%(PackageSpecs.Identity)"/>
+
+    </Target>
+
+    <Target
+        Name="CleanPackages"
+        DependsOnTargets="FilterNuSpecs"
+        >
+
         <ItemGroup>
             <Temps Include="$(PackageSpecsIntermediate)\*.nuspec" />
             <Temps Include="$(PackageOutputDir)\*.nupkg" />
@@ -25,21 +85,16 @@
 
     </Target>
 
-    <Target Name="AfterBuild" DependsOnTargets="DeployPackage" />
-
-    <Target Name="DeployPackage" DependsOnTargets="BuildPackage">
+    <Target Name="DeployPackage" DependsOnTargets="BuildPackages">
         <ItemGroup>
-            <PackageFiles Include="$(PackageOutputDir)\$(TargetName).*.nupkg" Exclude="$(PackageOutputDir)\*.symbols.nupkg" />
+            <PackageFiles Include="$(PackageOutputDir)\*.nupkg" Exclude="$(PackageOutputDir)\*.symbols.nupkg" />
         </ItemGroup>
 
-        <Exec
+        <Exec Command="$(NuGetCommand) setApiKey a5f7f807-2780-44f4-8346-648338424192" />
+        
+        <Exec  
             Condition="'$(Configuration)' == 'Release'"
-            Command="$(NuGetCommand) setApiKey $(ApiKey)"
-            />
-
-        <Exec
-            Condition="'$(Configuration)' == 'Release'"
-            Command="$(NuGetCommand) push &quot;%(PackageFiles.Identity)&quot; -SkipDuplicate"
+            Command="$(NuGetCommand) push &quot;%(PackageFiles.Identity)&quot;"
             IgnoreExitCode="true"
             ConsoleToMSBuild="true"
             >
@@ -47,12 +102,9 @@
             <Output TaskParameter="ConsoleOutput" PropertyName="ConsoleOutput" />
         </Exec>
 
-        <Error
-            Condition="$(ExitCode) != 0 And '$(Configuration)' == 'Release'"
-            Text="$(ConsoleOutput)"
-            File="%(PackageSpecs.Identity)"
-            />
+        <Error Condition="$(ExitCode) != 0" Text="$(ConsoleOutput)" File="%(PackageSpecs.Identity)"/>
 
     </Target>
+    <Target Name="DeployPackage"></Target>
 
 </Project>

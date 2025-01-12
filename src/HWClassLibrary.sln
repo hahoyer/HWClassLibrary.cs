@@ -19,30 +19,47 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6CF995B9
 		..\build\CSharp.targets = ..\build\CSharp.targets
 		..\build\CSharp.WinExe.targets = ..\build\CSharp.WinExe.targets
 		..\build\HoyerWare.CSharp.targets = ..\build\HoyerWare.CSharp.targets
-		NuGet.Config = NuGet.Config
 		..\build\NuGetPackage.targets = ..\build\NuGetPackage.targets
 		..\build\NuGetPackages.targets = ..\build\NuGetPackages.targets
 		..\build\sys.targets = ..\build\sys.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.nuget", "hw.nuget\hw.nuget.csproj", "{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "this", "this", "{E931DD26-BF3D-4AB9-B8BA-E88B99ED4FD8}"
 	ProjectSection(SolutionItems) = preProject
 		..\.gitattributes = ..\.gitattributes
 		..\.gitignore = ..\.gitignore
+		..\Directory.Build.props = ..\Directory.Build.props
 		..\LICENSE = ..\LICENSE
 		..\README = ..\README
 		..\sys.targets = ..\sys.targets
 		sys.targets = sys.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.Helper.Core", "hw.Helper.Core\hw.Helper.Core.csproj", "{46BE7519-5FFB-408E-AFA9-597A957578A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{5457914D-BA98-4FA9-B85C-533041ECC663}"
 	ProjectSection(ProjectDependencies) = postProject
-		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2} = {0402FAE1-D5D6-490F-BC68-C26C8873C0B2}
+		{0A361A41-8902-42EA-97B3-400B49EE493A} = {0A361A41-8902-42EA-97B3-400B49EE493A}
+		{2EED9A43-3DDC-44BA-A879-518E62DA653F} = {2EED9A43-3DDC-44BA-A879-518E62DA653F}
+		{46BE7519-5FFB-408E-AFA9-597A957578A2} = {46BE7519-5FFB-408E-AFA9-597A957578A2}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUnitTest", "TestUnitTest\TestUnitTest.csproj", "{6C0E7BF8-84B4-4ED5-9551-E4D846384475}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUnitTest", "TestUnitTest\TestUnitTest.csproj", "{2EED9A43-3DDC-44BA-A879-518E62DA653F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0A361A41-8902-42EA-97B3-400B49EE493A} = {0A361A41-8902-42EA-97B3-400B49EE493A}
+		{46BE7519-5FFB-408E-AFA9-597A957578A2} = {46BE7519-5FFB-408E-AFA9-597A957578A2}
+		{E034D67C-2BEF-409D-B3A9-075EF61A2BC4} = {E034D67C-2BEF-409D-B3A9-075EF61A2BC4}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.UnitTest", "hw.UnitTest\hw.UnitTest.csproj", "{E034D67C-2BEF-409D-B3A9-075EF61A2BC4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{46BE7519-5FFB-408E-AFA9-597A957578A2} = {46BE7519-5FFB-408E-AFA9-597A957578A2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.CompilerTools", "hw.CompilerTools\hw.CompilerTools.csproj", "{0A361A41-8902-42EA-97B3-400B49EE493A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{46BE7519-5FFB-408E-AFA9-597A957578A2} = {46BE7519-5FFB-408E-AFA9-597A957578A2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,18 +67,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0402FAE1-D5D6-490F-BC68-C26C8873C0B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDCA1B0F-2DA9-4100-9350-8DA78E0CFC4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C0E7BF8-84B4-4ED5-9551-E4D846384475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C0E7BF8-84B4-4ED5-9551-E4D846384475}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C0E7BF8-84B4-4ED5-9551-E4D846384475}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C0E7BF8-84B4-4ED5-9551-E4D846384475}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46BE7519-5FFB-408E-AFA9-597A957578A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46BE7519-5FFB-408E-AFA9-597A957578A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46BE7519-5FFB-408E-AFA9-597A957578A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46BE7519-5FFB-408E-AFA9-597A957578A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5457914D-BA98-4FA9-B85C-533041ECC663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5457914D-BA98-4FA9-B85C-533041ECC663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5457914D-BA98-4FA9-B85C-533041ECC663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5457914D-BA98-4FA9-B85C-533041ECC663}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EED9A43-3DDC-44BA-A879-518E62DA653F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EED9A43-3DDC-44BA-A879-518E62DA653F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EED9A43-3DDC-44BA-A879-518E62DA653F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EED9A43-3DDC-44BA-A879-518E62DA653F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E034D67C-2BEF-409D-B3A9-075EF61A2BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E034D67C-2BEF-409D-B3A9-075EF61A2BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E034D67C-2BEF-409D-B3A9-075EF61A2BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E034D67C-2BEF-409D-B3A9-075EF61A2BC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A361A41-8902-42EA-97B3-400B49EE493A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A361A41-8902-42EA-97B3-400B49EE493A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A361A41-8902-42EA-97B3-400B49EE493A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A361A41-8902-42EA-97B3-400B49EE493A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

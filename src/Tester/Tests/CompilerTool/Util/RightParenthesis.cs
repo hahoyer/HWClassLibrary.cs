@@ -11,7 +11,7 @@ namespace hw.Tests.CompilerTool.Util
         {
             public override string Id => "()";
 
-            protected override Syntax Create(Syntax left, IToken token, Syntax right)
+            protected override Syntax? Create(Syntax? left, IToken token, Syntax? right)
                 => right == null? left : new NamelessSyntax(left, token, right);
         }
 
@@ -20,14 +20,14 @@ namespace hw.Tests.CompilerTool.Util
 
         IParserTokenType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
 
-        protected override Syntax Create(Syntax left, IToken token, Syntax right)
+        protected override Syntax Create(Syntax? left, IToken token, Syntax? right)
         {
             if(left != null)
                 return left.RightParenthesis(Id, token, right);
 
             // ReSharper disable once ExpressionIsAlwaysNull
             NotImplementedMethod(left, token, right);
-            return null;
+            return null!;
         }
     }
 }

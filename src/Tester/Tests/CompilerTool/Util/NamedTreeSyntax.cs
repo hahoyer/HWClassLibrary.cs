@@ -7,7 +7,7 @@ namespace hw.Tests.CompilerTool.Util
     {
         readonly NamedToken TokenClass;
 
-        public NamedTreeSyntax(Syntax left, NamedToken tokenClass, IToken part, Syntax right)
+        public NamedTreeSyntax(Syntax? left, NamedToken tokenClass, IToken part, Syntax? right)
             : base(left, part, right)
         {
             TokenClass = tokenClass;
@@ -15,7 +15,7 @@ namespace hw.Tests.CompilerTool.Util
 
         public override string TokenClassName => TokenClass.Name;
 
-        public override Syntax RightParenthesis(string id, IToken token, Syntax right)
+        public override Syntax RightParenthesis(string id, IToken token, Syntax? right)
             => new RightParenthesisSyntax(id, this, token, right);
     }
 }
