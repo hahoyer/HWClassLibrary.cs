@@ -95,7 +95,11 @@ public class Compiler<TParserResult> : DumpableObject
             =>
                 new(prioTable ?? PrioTable, tokenFactory ?? TokenFactory, converter ?? Converter, t);
 
-        internal T? Get<T>() => (T?)Components[typeof(T)];
+        internal T? Get<T>()
+        {
+            Components.TryGetValue(typeof(T), out var result);
+            return (T?)result;
+        }
 
         internal void Add<T>(T? value, Component parent)
         {

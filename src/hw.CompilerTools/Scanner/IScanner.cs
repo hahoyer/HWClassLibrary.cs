@@ -47,7 +47,7 @@ public interface IScannerTokenType
 {
     /// <summary>
     ///     Use this to link to the <see cref="IParserTokenFactory" /> if desired.
-    ///     If zero is returned, this token type is categorised as a blank character with no further meaning.
+    ///     If null is returned, this token type is categorised as a blank character (whitespace or comment) with no further meaning.
     /// </summary>
     IParserTokenFactory? ParserTokenFactory { get; }
 
