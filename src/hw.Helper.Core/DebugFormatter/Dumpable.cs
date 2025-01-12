@@ -119,7 +119,7 @@ public class Dumpable
     [DebuggerHidden]
     [IsLoggingFunction]
     [PublicAPI]
-    public static void Dump(string name, object value)
+    public static void Dump(string name, object? value)
     {
         if(IsMethodDumpTraceActive)
         {
