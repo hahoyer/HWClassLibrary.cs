@@ -5,9 +5,8 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.CompilerTools" Version="25.0.0.3" />
+      <PackageReference Include="hw.CompilerTools" Version="25.0.0.4" />
       <PackageReference Include="hw.UnitTest" Version="25.0.0.4" />
-      <PackageReference Include="NUnit" Version="4.3.2" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.csproj" />
