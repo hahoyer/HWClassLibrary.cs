@@ -5,22 +5,22 @@ using hw.Scanner;
 
 namespace hw.Parser;
 
-public sealed partial class PrioParser<TSourcePart>
+public sealed partial class PrioParser<TParserResult>
 (
     PrioTable prioTable
     , IScanner scanner
-    , IParserTokenType<TSourcePart> startParserType
+    , IParserTokenType<TParserResult> startParserType
 )
     : DumpableObject
-        , IParser<TSourcePart>
-    where TSourcePart : class
+        , IParser<TParserResult>
+    where TParserResult : class
 {
     PrioTable PrioTable { get; } = prioTable;
     IScanner Scanner { get; } = scanner;
-    IParserTokenType<TSourcePart> StartParserType { get; } = startParserType;
+    IParserTokenType<TParserResult> StartParserType { get; } = startParserType;
 
-    TSourcePart? IParser<TSourcePart>
-        .Execute(SourcePosition start, Stack<OpenItem<TSourcePart>>? initialStack)
+    TParserResult? IParser<TParserResult>
+        .Execute(SourcePosition start, Stack<OpenItem<TParserResult>>? initialStack)
     {
         StartMethodDump(Trace, start.GetDumpAroundCurrent(50), initialStack);
         try
@@ -33,7 +33,7 @@ public sealed partial class PrioParser<TSourcePart>
         }
     }
 
-    TSourcePart? IParser<TSourcePart>.Execute(Source source)
+    TParserResult? IParser<TParserResult>.Execute(Source source)
     {
         StartMethodDump(Trace, source.GetDumpAfterCurrent(0, 50));
         try
@@ -52,6 +52,6 @@ public sealed partial class PrioParser<TSourcePart>
         => PrioTable.GetRelation(newType, topType);
 
     PrioParserWorker CreateWorker
-        (Stack<OpenItem<TSourcePart>>? stack, SourcePosition sourcePosition, bool isSubParser = false)
+        (Stack<OpenItem<TParserResult>>? stack, SourcePosition sourcePosition, bool isSubParser = false)
         => new(this, stack, sourcePosition, isSubParser);
 }

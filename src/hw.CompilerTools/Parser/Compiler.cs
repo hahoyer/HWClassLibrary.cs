@@ -7,8 +7,8 @@ using hw.Scanner;
 namespace hw.Parser;
 
 [PublicAPI]
-public class Compiler<TSourcePart> : DumpableObject
-    where TSourcePart : class
+public class Compiler<TParserResult> : DumpableObject
+    where TParserResult : class
 {
     public interface IComponent
     {
@@ -18,7 +18,7 @@ public class Compiler<TSourcePart> : DumpableObject
     [PublicAPI]
     public sealed class Component
     {
-        public readonly Compiler<TSourcePart> Parent;
+        public readonly Compiler<TParserResult> Parent;
         public readonly object Tag;
 
         public PrioTable PrioTable
@@ -26,20 +26,20 @@ public class Compiler<TSourcePart> : DumpableObject
             set => Parent.Define(value, null, null, Tag);
         }
 
-        public ITokenFactory<TSourcePart> TokenFactory
+        public ITokenFactory<TParserResult> TokenFactory
         {
             set => Parent.Define(null, value, null, Tag);
         }
 
-        public Func<TSourcePart, IParserTokenType<TSourcePart>> BoxFunction
+        public Func<TParserResult, IParserTokenType<TParserResult>> BoxFunction
         {
             set => Parent.Define(null, null, value, Tag);
         }
 
-        public IParser<TSourcePart>? Parser => Parent.Dictionary[Tag].Parser;
-        public ISubParser<TSourcePart> SubParser => Parent.Dictionary[Tag].SubParser;
+        public IParser<TParserResult> Parser => Parent.Dictionary[Tag].Parser!;
+        public ISubParser<TParserResult> SubParser => Parent.Dictionary[Tag].SubParser;
 
-        internal Component(Compiler<TSourcePart> parent, object tag)
+        internal Component(Compiler<TParserResult> parent, object tag)
         {
             Parent = parent;
             Tag = tag;
@@ -61,20 +61,20 @@ public class Compiler<TSourcePart> : DumpableObject
                 .Select(p => PrettyDumpPair(p.Key, p.Value))
                 .Stringify("\n");
 
-        internal IParser<TSourcePart>? Parser => this.CachedValue(CreateParser);
-        internal ISubParser<TSourcePart> SubParser => this.CachedValue(CreateSubParser);
+        internal IParser<TParserResult>? Parser => this.CachedValue(CreateParser);
+        internal ISubParser<TParserResult> SubParser => this.CachedValue(CreateSubParser);
 
-        Func<TSourcePart, IParserTokenType<TSourcePart>>? Converter =>
-            Get<Func<TSourcePart, IParserTokenType<TSourcePart>>>();
+        Func<TParserResult, IParserTokenType<TParserResult>>? Converter =>
+            Get<Func<TParserResult, IParserTokenType<TParserResult>>>();
 
         PrioTable? PrioTable => Get<PrioTable>();
-        ITokenFactory<TSourcePart>? TokenFactory => Get<ITokenFactory<TSourcePart>>();
+        ITokenFactory<TParserResult>? TokenFactory => Get<ITokenFactory<TParserResult>>();
 
         internal ComponentData
         (
             PrioTable? prioTable,
-            ITokenFactory<TSourcePart>? tokenFactory,
-            Func<TSourcePart, IParserTokenType<TSourcePart>>? converter,
+            ITokenFactory<TParserResult>? tokenFactory,
+            Func<TParserResult, IParserTokenType<TParserResult>>? converter,
             Component component
         )
         {
@@ -88,8 +88,8 @@ public class Compiler<TSourcePart> : DumpableObject
         internal ComponentData ReCreate
         (
             PrioTable? prioTable,
-            ITokenFactory<TSourcePart>? tokenFactory,
-            Func<TSourcePart, IParserTokenType<TSourcePart>>? converter,
+            ITokenFactory<TParserResult>? tokenFactory,
+            Func<TParserResult, IParserTokenType<TParserResult>>? converter,
             Component t
         )
             =>
@@ -112,19 +112,19 @@ public class Compiler<TSourcePart> : DumpableObject
 
         static string PrettyDumpValue(object value) => Tracer.Dump(value);
 
-        ISubParser<TSourcePart> CreateSubParser() => new SubParser<TSourcePart>(Parser!, Converter!);
+        ISubParser<TParserResult> CreateSubParser() => new SubParser<TParserResult>(Parser!, Converter!);
 
-        IParser<TSourcePart>? CreateParser()
+        IParser<TParserResult>? CreateParser()
         {
             if(PrioTable == null)
                 return null;
 
-            ITokenFactory<TSourcePart> tokenFactory = new CachingTokenFactory<TSourcePart>(TokenFactory!);
+            ITokenFactory<TParserResult> tokenFactory = new CachingTokenFactory<TParserResult>(TokenFactory!);
             var beginOfText = tokenFactory.BeginOfText;
             if(beginOfText == null)
                 return null;
 
-            return new PrioParser<TSourcePart>
+            return new PrioParser<TParserResult>
             (
                 PrioTable,
                 new TwoLayerScanner(tokenFactory),
@@ -146,8 +146,8 @@ public class Compiler<TSourcePart> : DumpableObject
     void Define
     (
         PrioTable? prioTable,
-        ITokenFactory<TSourcePart>? tokenFactory,
-        Func<TSourcePart, IParserTokenType<TSourcePart>>? converter,
+        ITokenFactory<TParserResult>? tokenFactory,
+        Func<TParserResult, IParserTokenType<TParserResult>>? converter,
         object tag
     )
         => Dictionary[tag] =

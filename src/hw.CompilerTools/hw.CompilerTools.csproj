@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.0.3</Version>
+        <Version>25.0.0.8</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
             Bugfixing
@@ -188,6 +188,6 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="25.0.1" />
+      <PackageReference Include="hw.Helper.Core" Version="25.0.1.2" />
     </ItemGroup>
 </Project>

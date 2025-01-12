@@ -14,8 +14,8 @@ public abstract class ScannerTokenType
         , IScannerTokenType
         , IParserTokenFactory
 {
-    IParserTokenType<TSourcePart> IParserTokenFactory.GetTokenType<TSourcePart>(string id)
-        => GetParserTokenType<TSourcePart>(id);
+    IParserTokenType<TParserResult> IParserTokenFactory.GetTokenType<TParserResult>(string id)
+        => GetParserTokenType<TParserResult>(id);
 
     string IScannerTokenType.Id => GetType().PrettyName();
 
@@ -24,30 +24,30 @@ public abstract class ScannerTokenType
     /// <summary>
     ///     Helper function to map from generic method to generic class
     /// </summary>
-    /// <typeparam name="TSourcePart"></typeparam>
+    /// <typeparam name="TParserResult"></typeparam>
     /// <param name="id"></param>
     /// <returns></returns>
-    protected abstract IParserTokenType<TSourcePart> GetParserTokenType<TSourcePart>(string id)
-        where TSourcePart : class;
+    protected abstract IParserTokenType<TParserResult> GetParserTokenType<TParserResult>(string id)
+        where TParserResult : class;
 }
 
 /// <summary>
 ///     Generic variant of <see cref="ScannerTokenType" />
 /// </summary>
-/// <typeparam name="TSourcePart"></typeparam>
-public abstract class ScannerTokenType<TSourcePart> : ScannerTokenType
-    where TSourcePart : class
+/// <typeparam name="TParserResult"></typeparam>
+public abstract class ScannerTokenType<TParserResult> : ScannerTokenType
+    where TParserResult : class
 {
     /// <summary>
     ///     Create the parser token type from characters found by the scanner (stripped by whitespaces).
     /// </summary>
     /// <param name="id">characters without whitespaces</param>
     /// <returns></returns>
-    protected abstract IParserTokenType<TSourcePart> GetParserTokenType(string id);
+    protected abstract IParserTokenType<TParserResult> GetParserTokenType(string id);
 
     protected sealed override IParserTokenType<TSourcePartTarget> GetParserTokenType<TSourcePartTarget>(string id)
     {
-        (typeof(TSourcePart) == typeof(TSourcePartTarget)).Assert();
+        (typeof(TParserResult) == typeof(TSourcePartTarget)).Assert();
         return (IParserTokenType<TSourcePartTarget>)GetParserTokenType(id);
     }
 }

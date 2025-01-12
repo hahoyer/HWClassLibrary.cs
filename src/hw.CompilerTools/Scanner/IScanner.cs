@@ -5,7 +5,7 @@
 namespace hw.Scanner;
 
 /// <summary>
-///     Scanner interface that is used by <see cref="PrioParser{TSourcePart}" /> to split source into tokens.
+///     Scanner interface that is used by <see cref="PrioParser{TParserResult}" /> to split source into tokens.
 /// </summary>
 public interface IScanner
 {
@@ -58,16 +58,16 @@ public interface IScannerTokenType
 }
 
 /// <summary>
-///     Interface to get the <see cref="IParserTokenType{TSourcePart}" />
+///     Interface to get the <see cref="IParserTokenType{TParserResult}" />
 /// </summary>
 public interface IParserTokenFactory
 {
     /// <summary>
     ///     Create the parser token type from characters found by the scanner (stripped by whitespaces).
     /// </summary>
-    /// <typeparam name="TSourcePart"></typeparam>
+    /// <typeparam name="TParserResult"></typeparam>
     /// <param name="id">characters without whitespaces</param>
     /// <returns></returns>
-    IParserTokenType<TSourcePart> GetTokenType<TSourcePart>(string id)
-        where TSourcePart : class;
+    IParserTokenType<TParserResult> GetTokenType<TParserResult>(string id)
+        where TParserResult : class;
 }

@@ -7,26 +7,26 @@ using hw.Scanner;
 namespace hw.Parser;
 
 [PublicAPI]
-public sealed partial class PrioParser<TSourcePart>
+public sealed partial class PrioParser<TParserResult>
 {
     public interface ISubParserProvider
     {
-        ISubParser<TSourcePart> NextParser { get; }
+        ISubParser<TParserResult> NextParser { get; }
     }
 
     sealed class PrioParserWorker : DumpableObject
     {
         SourcePosition SourcePosition { get; }
-        PrioParser<TSourcePart> Parent { get; }
-        Stack<OpenItem<TSourcePart>> Stack { get; }
+        PrioParser<TParserResult> Parent { get; }
+        Stack<OpenItem<TParserResult>> Stack { get; }
         int StartLevel { get; }
         bool IsSubParser { get; }
-        Item<TSourcePart>? Current { get; set; }
-        TSourcePart? Left { get; set; }
+        Item<TParserResult>? Current { get; set; }
+        TParserResult? Left { get; set; }
 
         public PrioParserWorker
         (
-            PrioParser<TSourcePart> parent, Stack<OpenItem<TSourcePart>>? stack, SourcePosition sourcePosition
+            PrioParser<TParserResult> parent, Stack<OpenItem<TParserResult>>? stack, SourcePosition sourcePosition
             , bool isSubParser
         )
         {
@@ -34,7 +34,7 @@ public sealed partial class PrioParser<TSourcePart>
             IsSubParser = isSubParser;
             (IsSubParser || SourcePosition.Position == 0).Assert();
             Parent = parent;
-            Stack = stack ?? new Stack<OpenItem<TSourcePart>>();
+            Stack = stack ?? new Stack<OpenItem<TParserResult>>();
             StartLevel = Stack.Count;
             if(Trace)
                 (Parent.PrioTable.Title ?? "").Log();
@@ -44,7 +44,7 @@ public sealed partial class PrioParser<TSourcePart>
 
         bool IsBaseLevel => Stack.Count == StartLevel;
 
-        public TSourcePart? Execute()
+        public TParserResult? Execute()
         {
             Current = CreateStartItem(SourcePosition);
             TraceNewItem(SourcePosition);
@@ -79,21 +79,21 @@ public sealed partial class PrioParser<TSourcePart>
             return Current.Create(Left);
         }
 
-        Item<TSourcePart> CreateStartItem(SourcePosition sourcePosition)
+        Item<TParserResult> CreateStartItem(SourcePosition sourcePosition)
         {
             var bracketContext = Parent.PrioTable.BracketContext;
             if(IsSubParser)
                 return ReadNextToken(sourcePosition, bracketContext);
 
             (sourcePosition.Position == 0).Assert();
-            return Item<TSourcePart>.CreateStart(sourcePosition.Source, Parent.StartParserType, bracketContext);
+            return Item<TParserResult>.CreateStart(sourcePosition.Source, Parent.StartParserType, bracketContext);
         }
 
-        Item<TSourcePart> ReadNextToken(SourcePosition sourcePosition, BracketContext context)
+        Item<TParserResult> ReadNextToken(SourcePosition sourcePosition, BracketContext context)
         {
             TraceNextToken(sourcePosition);
             var nextTokenGroup = Parent.Scanner.GetNextTokenGroup(sourcePosition);
-            var result = Item<TSourcePart>
+            var result = Item<TParserResult>
                 .Create(nextTokenGroup, sourcePosition, context, IsSubParser);
 
             // ReSharper disable once SuspiciousTypeConversion.Global
@@ -221,7 +221,7 @@ public sealed partial class PrioParser<TSourcePart>
             Tracer.IndentEnd();
         }
 
-        void TraceSubParserStart(Item<TSourcePart> item)
+        void TraceSubParserStart(Item<TParserResult> item)
         {
             if(!Trace)
                 return;
@@ -233,7 +233,7 @@ public sealed partial class PrioParser<TSourcePart>
             Tracer.IndentStart();
         }
 
-        void TraceSubParserEnd(Item<TSourcePart> item)
+        void TraceSubParserEnd(Item<TParserResult> item)
         {
             if(!Trace)
                 return;
@@ -245,7 +245,7 @@ public sealed partial class PrioParser<TSourcePart>
             "======================>".Log();
         }
 
-        static string FormatStackForTrace(Stack<OpenItem<TSourcePart>> stack)
+        static string FormatStackForTrace(Stack<OpenItem<TParserResult>> stack)
         {
             var count = stack.Count;
             if(count == 0)
@@ -263,7 +263,7 @@ public sealed partial class PrioParser<TSourcePart>
             return $"stack: {stack.Count} items{("\n" + result).Indent()}";
         }
 
-        void TraceItemLine(string title, Item<TSourcePart>? item)
+        void TraceItemLine(string title, Item<TParserResult>? item)
         {
             if(!Trace)
                 return;
@@ -278,7 +278,7 @@ public sealed partial class PrioParser<TSourcePart>
             $"{title} = {typeDump} Depth={item.Context.Depth}".Log();
         }
 
-        static string TreeDump(OpenItem<TSourcePart> value)
+        static string TreeDump(OpenItem<TParserResult> value)
             => Extension.TreeDump(value.Left) +
                 " " +
                 (value.Type == null

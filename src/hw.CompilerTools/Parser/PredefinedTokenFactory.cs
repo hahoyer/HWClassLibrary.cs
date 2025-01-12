@@ -5,15 +5,15 @@ using hw.Helper;
 namespace hw.Parser;
 
 [PublicAPI]
-public abstract class PredefinedTokenFactory<TSourcePart> : ScannerTokenType<TSourcePart>
-    where TSourcePart : class
+public abstract class PredefinedTokenFactory<TParserResult> : ScannerTokenType<TParserResult>
+    where TParserResult : class
 {
-    readonly ValueCache<FunctionCache<string, IParserTokenType<TSourcePart>>> PredefinedTokenClassesCache;
+    readonly ValueCache<FunctionCache<string, IParserTokenType<TParserResult>>> PredefinedTokenClassesCache;
 
     protected PredefinedTokenFactory() => PredefinedTokenClassesCache = new(GetDictionary);
 
-    protected abstract IEnumerable<IParserTokenType<TSourcePart>> GetPredefinedTokenClasses();
-    protected abstract IParserTokenType<TSourcePart> GetTokenClass(string name);
+    protected abstract IEnumerable<IParserTokenType<TParserResult>> GetPredefinedTokenClasses();
+    protected abstract IParserTokenType<TParserResult> GetTokenClass(string name);
 
     /// <summary>
     ///     Override this method, when the dictionary requires a key different from occurrence found in source,
@@ -25,7 +25,7 @@ public abstract class PredefinedTokenFactory<TSourcePart> : ScannerTokenType<TSo
     protected virtual string GetTokenClassKeyFromToken(string id) => id;
 
     [PublicAPI]
-    protected sealed override IParserTokenType<TSourcePart> GetParserTokenType(string id)
+    protected sealed override IParserTokenType<TParserResult> GetParserTokenType(string id)
     {
         var key = GetTokenClassKeyFromToken(id);
         var result = PredefinedTokenClassesCache.Value[key];
@@ -34,7 +34,7 @@ public abstract class PredefinedTokenFactory<TSourcePart> : ScannerTokenType<TSo
         return result;
     }
 
-    FunctionCache<string, IParserTokenType<TSourcePart>> GetDictionary()
+    FunctionCache<string, IParserTokenType<TParserResult>> GetDictionary()
         => new
         (
             GetPredefinedTokenClasses().ToDictionary(item => GetTokenClassKeyFromToken(item.PrioTableId)),
@@ -43,7 +43,7 @@ public abstract class PredefinedTokenFactory<TSourcePart> : ScannerTokenType<TSo
 }
 
 /// <summary>
-///     Use this interface at your <see cref="IParserTokenType&lt;TSourcePart&gt;" /> to register names that are actually
+///     Use this interface at your <see cref="IParserTokenType&lt;TParserResult&gt;" /> to register names that are actually
 ///     used for your token type.
 /// </summary>
 [PublicAPI]

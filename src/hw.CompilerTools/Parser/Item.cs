@@ -7,19 +7,19 @@ using hw.Scanner;
 namespace hw.Parser;
 
 [PublicAPI]
-public sealed class Item<TSourcePart>
+public sealed class Item<TParserResult>
     : DumpableObject
         , PrioTable.ITargetItem
         , IToken
-        , ILinked<TSourcePart>
-    where TSourcePart : class
+        , ILinked<TParserResult>
+    where TParserResult : class
 {
     [EnableDump]
     public readonly BracketContext Context;
 
     public readonly BracketSide BracketSide;
     public readonly IItem[] PrefixItems;
-    public readonly IParserTokenType<TSourcePart> Type;
+    public readonly IParserTokenType<TParserResult> Type;
     internal readonly SourcePart Characters;
 
     [EnableDump]
@@ -28,7 +28,7 @@ public sealed class Item<TSourcePart>
     Item
     (
         IEnumerable<IItem> prefixItems,
-        IParserTokenType<TSourcePart> type,
+        IParserTokenType<TParserResult> type,
         SourcePart characters,
         BracketContext context,
         BracketSide bracketSide
@@ -41,7 +41,7 @@ public sealed class Item<TSourcePart>
         BracketSide = bracketSide;
     }
 
-    TSourcePart? ILinked<TSourcePart>.Container
+    TParserResult? ILinked<TParserResult>.Container
     {
         get;
         set
@@ -60,7 +60,7 @@ public sealed class Item<TSourcePart>
     SourcePart IToken.Characters => Characters;
     int IToken.PrecededWith => PrefixItems.Sum(item => item.Length);
 
-    public static Item<TSourcePart> Create
+    public static Item<TParserResult> Create
     (
         IItem[] items
         , SourcePosition end
@@ -78,7 +78,7 @@ public sealed class Item<TSourcePart>
             .ParserTokenFactory;
         var parserType = parserTokenFactory
             .AssertNotNull()
-            .GetTokenType<TSourcePart>(token.Id);
+            .GetTokenType<TParserResult>(token.Id);
 
         return new
         (
@@ -90,10 +90,10 @@ public sealed class Item<TSourcePart>
         );
     }
 
-    public static Item<TSourcePart> CreateStart
+    public static Item<TParserResult> CreateStart
     (
         Source source,
-        IParserTokenType<TSourcePart> startParserType,
+        IParserTokenType<TParserResult> startParserType,
         BracketContext bracketContext
     )
         => new
@@ -105,10 +105,10 @@ public sealed class Item<TSourcePart>
             BracketSide.None
         );
 
-    public Item<TSourcePart> RecreateWith
+    public Item<TParserResult> RecreateWith
     (
         IEnumerable<IItem>? newPrefixItems = null,
-        IParserTokenType<TSourcePart>? newType = null,
+        IParserTokenType<TParserResult>? newType = null,
         BracketContext? newContext = null
     )
         => new
@@ -120,13 +120,13 @@ public sealed class Item<TSourcePart>
             BracketSide
         );
 
-    public TSourcePart? Create(TSourcePart? left) => Type.Create(left, this, null);
+    public TParserResult? Create(TParserResult? left) => Type.Create(left, this, null);
 
-    public Item<TSourcePart> CreateMatch(OpenItem<TSourcePart> other)
+    public Item<TParserResult> CreateMatch(OpenItem<TParserResult> other)
         => new
         (
             new IItem[0],
-            ((IBracketMatch<TSourcePart>)Type).Value,
+            ((IBracketMatch<TParserResult>)Type).Value,
             Characters.End.Span(0),
             other.BracketItem.LeftContext,
             BracketSide

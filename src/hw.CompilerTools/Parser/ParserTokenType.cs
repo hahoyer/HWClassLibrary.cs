@@ -7,35 +7,35 @@ namespace hw.Parser;
 /// <summary>
 ///     Used as base for all token types.
 /// </summary>
-/// <typeparam name="TSourcePart">Tree structure that is returned by the parser</typeparam>
-public abstract class ParserTokenType<TSourcePart>
-    : ScannerTokenType<TSourcePart>
+/// <typeparam name="TParserResult">Tree structure that is returned by the parser</typeparam>
+public abstract class ParserTokenType<TParserResult>
+    : ScannerTokenType<TParserResult>
         , IUniqueIdProvider
-        , IParserTokenType<TSourcePart>
-    where TSourcePart : class
+        , IParserTokenType<TParserResult>
+    where TParserResult : class
 {
-    TSourcePart? IParserTokenType<TSourcePart>.Create(TSourcePart? left, IToken token, TSourcePart? right)
+    TParserResult? IParserTokenType<TParserResult>.Create(TParserResult? left, IToken token, TParserResult? right)
     {
         var result = Create(left, token, right);
-        if(token is ILinked<TSourcePart> treeLinkedToken)
+        if(token is ILinked<TParserResult> treeLinkedToken)
             treeLinkedToken.Container = result;
         return result;
     }
 
-    string IParserTokenType<TSourcePart>.PrioTableId => Id;
+    string IParserTokenType<TParserResult>.PrioTableId => Id;
 
     string IUniqueIdProvider.Value => Id;
     [PublicAPI]
     public abstract string Id { get; }
-    protected abstract TSourcePart? Create(TSourcePart? left, IToken token, TSourcePart? right);
+    protected abstract TParserResult? Create(TParserResult? left, IToken token, TParserResult? right);
 
     public override string ToString() => base.ToString() + " Id=" + Id.Quote();
 
-    protected override IParserTokenType<TSourcePart> GetParserTokenType(string id) => this;
+    protected override IParserTokenType<TParserResult> GetParserTokenType(string id) => this;
 }
 
-interface ILinked<TSourcePart>
+public interface ILinked<TParserResult>
 {
     [PublicAPI]
-    TSourcePart? Container { get; set; }
+    TParserResult? Container { get; set; }
 }

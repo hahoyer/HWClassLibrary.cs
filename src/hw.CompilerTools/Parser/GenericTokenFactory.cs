@@ -10,8 +10,8 @@ namespace hw.Parser;
 ///     flagged with <see cref="BelongsToFactory" /> attribute pointing to this factory.
 /// </summary>
 [PublicAPI]
-public abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<TSourcePart>
-    where TSourcePart : class
+public abstract class GenericTokenFactory<TParserResult> : PredefinedTokenFactory<TParserResult>
+    where TParserResult : class
 {
     /// <summary>
     ///     Token classes in this assembly that are
@@ -27,7 +27,7 @@ public abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<
     ///         </item>
     ///     </list>
     /// </summary>
-    public readonly IEnumerable<IParserTokenType<TSourcePart>> PredefinedTokenClasses;
+    public readonly IEnumerable<IParserTokenType<TParserResult>> PredefinedTokenClasses;
 
     [EnableDump]
     readonly string? Title;
@@ -47,18 +47,18 @@ public abstract class GenericTokenFactory<TSourcePart> : PredefinedTokenFactory<
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    protected virtual IParserTokenType<TSourcePart> SpecialTokenClass(Type type)
-        => (IParserTokenType<TSourcePart>)Activator.CreateInstance(type)!;
+    protected virtual IParserTokenType<TParserResult> SpecialTokenClass(Type type)
+        => (IParserTokenType<TParserResult>)Activator.CreateInstance(type)!;
 
-    protected sealed override IEnumerable<IParserTokenType<TSourcePart>> GetPredefinedTokenClasses()
+    protected sealed override IEnumerable<IParserTokenType<TParserResult>> GetPredefinedTokenClasses()
         => PredefinedTokenClasses;
 
-    IEnumerable<IParserTokenType<TSourcePart>> CreateInstance(Type type)
+    IEnumerable<IParserTokenType<TParserResult>> CreateInstance(Type type)
     {
         var variants = type.GetAttributes<VariantAttribute>(true).ToArray();
         if(variants.Any())
             return variants
-                .Select(variant => variant.CreateInstance<TSourcePart>(type));
+                .Select(variant => variant.CreateInstance<TParserResult>(type));
 
         return [SpecialTokenClass(type)];
     }

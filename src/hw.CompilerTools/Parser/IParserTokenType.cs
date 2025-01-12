@@ -6,9 +6,9 @@ namespace hw.Parser;
 /// <summary>
 ///     Interface to define token types for parser.
 /// </summary>
-/// <typeparam name="TSourcePart">Tree structure that is returned by the parser</typeparam>
-public interface IParserTokenType<TSourcePart>
-    where TSourcePart : class
+/// <typeparam name="TParserResult">Tree structure that is returned by the parser</typeparam>
+public interface IParserTokenType<TParserResult>
+    where TParserResult : class
 {
     /// <summary>
     ///     lookup identifier for obtaining priority in priority table
@@ -22,11 +22,11 @@ public interface IParserTokenType<TSourcePart>
     /// <param name="token"></param>
     /// <param name="right"></param>
     /// <returns></returns>
-    TSourcePart? Create(TSourcePart? left, IToken token, TSourcePart? right);
+    TParserResult? Create(TParserResult? left, IToken token, TParserResult? right);
 }
 
-public interface IBracketMatch<TSourcePart>
-    where TSourcePart : class
+public interface IBracketMatch<TParserResult>
+    where TParserResult : class
 {
-    IParserTokenType<TSourcePart> Value { get; }
+    IParserTokenType<TParserResult> Value { get; }
 }

@@ -5,16 +5,16 @@
 namespace hw.Parser;
 
 [PublicAPI]
-public interface IParser<TSourcePart>
-    where TSourcePart : class
+public interface IParser<TParserResult>
+    where TParserResult : class
 {
     bool Trace { get; set; }
-    TSourcePart? Execute(Source source);
-    TSourcePart? Execute(SourcePosition source, Stack<OpenItem<TSourcePart>>? stack);
+    TParserResult? Execute(Source source);
+    TParserResult? Execute(SourcePosition source, Stack<OpenItem<TParserResult>>? stack);
 }
 
-public interface ISubParser<TSourcePart>
-    where TSourcePart : class
+public interface ISubParser<TParserResult>
+    where TParserResult : class
 {
-    IParserTokenType<TSourcePart> Execute(SourcePosition sourcePosition, Stack<OpenItem<TSourcePart>>? stack = null);
+    IParserTokenType<TParserResult> Execute(SourcePosition sourcePosition, Stack<OpenItem<TParserResult>>? stack = null);
 }
