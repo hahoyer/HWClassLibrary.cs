@@ -61,7 +61,7 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="25.0.1.1" />
+      <PackageReference Include="hw.Helper.Core" Version="25.0.1.2" />
     </ItemGroup>
     <ItemGroup>
         <None Update="hw.UnitTest.md">

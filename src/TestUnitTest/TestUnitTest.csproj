@@ -5,7 +5,8 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.UnitTest" Version="25.0.0" />
+      <PackageReference Include="hw.Helper.Core" Version="25.0.1.2" />
+      <PackageReference Include="hw.UnitTest" Version="25.0.0.8" />
     </ItemGroup>
 
 </Project>
