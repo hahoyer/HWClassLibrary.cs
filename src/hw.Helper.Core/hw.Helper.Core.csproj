@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.2</Version>
+        <Version>25.0.3</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            Bugfix: Make things public again
+            25.0.2
             Bugfix: Sleep should ignore negatve values
             25.0.1.3
             refactor: nullability

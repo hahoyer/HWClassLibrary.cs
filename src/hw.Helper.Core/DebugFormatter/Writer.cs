@@ -5,7 +5,7 @@ using hw.Helper;
 
 namespace hw.DebugFormatter;
 
-sealed class Writer
+public sealed class Writer
 {
     sealed class WriteInitiator
     {
@@ -24,7 +24,7 @@ sealed class Writer
     }
 
     [PublicAPI]
-    internal static LogLevel LogLevel = LogLevel.Information;
+    public static LogLevel LogLevel = LogLevel.Information;
 
     readonly WriteInitiator Instance = new();
     int IndentCount;
