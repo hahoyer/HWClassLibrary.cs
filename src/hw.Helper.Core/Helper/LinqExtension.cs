@@ -287,7 +287,7 @@ public static class LinqExtension
         return null;
     }
 
-    public static IEnumerable<T> Chain<T>(this T? current, Func<T, T> getNext)
+    public static IEnumerable<T> Chain<T>(this T? current, Func<T, T?> getNext)
         where T : class
     {
         while(current != null)

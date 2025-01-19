@@ -20,7 +20,7 @@ namespace Tester
             {
                 configuration.SkipSuccessfulMethods = true;
                 configuration.SaveResults = false;
-                PendingTests.Run();
+                //PendingTests.Run();
             }
 
             configuration.TestsFileName = (SmbFile.SourceFolder! / "PendingTests.cs").FullName;

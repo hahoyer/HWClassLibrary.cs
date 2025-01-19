@@ -6,7 +6,6 @@ using hw.Helper;
 
 namespace hw.DebugFormatter;
 
-/// <summary>     Summary description for Tracer. </summary>
 [PublicAPI]
 public static class Tracer
 {

@@ -17,7 +17,7 @@ public sealed class EnableDumpExceptAttribute
     ///     Set exception for value tha will not be dumped
     /// </summary>
     /// <param name="exceptionValue"> dump this property or not </param>
-    public EnableDumpExceptAttribute(object exceptionValue)
+    public EnableDumpExceptAttribute(object? exceptionValue)
         : base(exceptionValue) { }
 
     bool IDumpExceptAttribute.IsException(object? value) => IsException(value);
@@ -27,9 +27,9 @@ public sealed class EnableDumpExceptAttribute
 [MeansImplicitUse]
 public abstract class DumpExceptAttribute : DumpAttributeBase
 {
-    readonly object ExceptionValue;
+    readonly object? ExceptionValue;
 
-    protected DumpExceptAttribute(object exceptionValue) => ExceptionValue = exceptionValue;
+    protected DumpExceptAttribute(object? exceptionValue) => ExceptionValue = exceptionValue;
 
     protected bool IsException(object? targetValue) => Equals(targetValue, ExceptionValue);
 }
@@ -44,7 +44,7 @@ public sealed class DisableDumpExceptAttribute
     ///     Set exception for value tha will not be dumped
     /// </summary>
     /// <param name="exceptionValue"> dump this property or not </param>
-    public DisableDumpExceptAttribute(object exceptionValue)
+    public DisableDumpExceptAttribute(object? exceptionValue)
         : base(exceptionValue) { }
 
     bool IDumpExceptAttribute.IsException(object? targetValue) => !IsException(targetValue);
