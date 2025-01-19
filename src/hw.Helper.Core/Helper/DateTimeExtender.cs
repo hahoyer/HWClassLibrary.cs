@@ -94,7 +94,11 @@ public static class DateTimeExtender
     public static TimeSpan Days(this double value) => TimeSpan.FromDays(value);
     public static TimeSpan Days(this int value) => TimeSpan.FromDays(value);
 
-    public static void Sleep(this TimeSpan value) => Thread.Sleep(value);
+    public static void Sleep(this TimeSpan value)
+    {
+        if(value.Ticks > 0)
+            Thread.Sleep(value);
+    }
 
     static string OmitCheck(string delimiter, int value, bool omitZeros)
     {
