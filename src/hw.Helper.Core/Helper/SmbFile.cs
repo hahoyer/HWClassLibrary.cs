@@ -438,7 +438,7 @@ public sealed class SmbFile
     }
 
     FileSystemInfo[] GetItems()
-        => ((DirectoryInfo)FileSystemInfo).GetFileSystemInfos().ToArray();
+        => ((DirectoryInfo)FileSystemInfo).GetFileSystemInfos();
 
     public string FilePosition
     (
