@@ -2,9 +2,13 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.1.2</Version>
+        <Version>25.0.2</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            Bugfix: Sleep should ignore negatve values
+            25.0.1.3
+            refactor: nullability
+            25.0.1.2
             refactor: upgrade C#, .net9
             24.1.3
             change: SmbFile now provides version information
