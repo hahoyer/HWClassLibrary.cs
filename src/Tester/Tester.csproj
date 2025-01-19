@@ -2,12 +2,13 @@
 
     <PropertyGroup>
         <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
+        <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.CompilerTools" Version="25.0.0.9" />
-      <PackageReference Include="hw.Helper.Core" Version="25.0.1.2" />
-      <PackageReference Include="hw.UnitTest" Version="25.0.0.4" />
+      <PackageReference Include="hw.CompilerTools" Version="*" />
+      <PackageReference Include="hw.Helper.Core" Version="*" />
+      <PackageReference Include="hw.UnitTest" Version="*" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.csproj" />
