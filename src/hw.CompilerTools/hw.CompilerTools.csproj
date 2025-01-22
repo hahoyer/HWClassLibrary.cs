@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.0.9</Version>
+        <Version>25.0.1</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
+            Upgrade hw core
+            25.0.0.9
             Bugfixing
             25.0.0
             refactor: upgrade C#, .net9
@@ -189,6 +191,6 @@
 
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="25.0.1.2" />
+      <PackageReference Include="hw.Helper.Core" Version="25.0.3.1" />
     </ItemGroup>
 </Project>

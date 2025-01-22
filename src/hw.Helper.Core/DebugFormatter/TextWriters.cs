@@ -4,7 +4,7 @@ using System.Text;
 
 namespace hw.DebugFormatter;
 
-sealed class TextWriters(params TextWriter[] writers) : TextWriter
+public sealed class TextWriters(params TextWriter[] writers) : TextWriter
 {
     public override Encoding Encoding => writers.First().Encoding;
 
