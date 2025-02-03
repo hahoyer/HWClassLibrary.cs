@@ -58,7 +58,7 @@ sealed class TypeLibrary
 
         var conflictingTypes = ConflictingTypes(type);
 
-        var namespaceParts = type.Namespace.Split('.').Reverse().ToArray();
+        var namespaceParts = Enumerable.Reverse(type.Namespace.Split('.')).ToArray();
         var namespacePart = "";
         for(var i = 0; i < namespaceParts.Length && conflictingTypes.Length > 0; i++)
         {

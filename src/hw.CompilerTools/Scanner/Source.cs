@@ -13,12 +13,17 @@ public sealed class Source : Dumpable
     public readonly string? Identifier;
     readonly ISourceProvider SourceProvider;
 
-    public string Data => SourceProvider.Data;
+    public string? Data => SourceProvider.Data;
 
-    public char this[int index] => IsEnd(index)? '\0' : Data[index];
-    public int Length => Data.Length;
+    [Obsolete("use version withIndex")]
+    public char this[int position] => IsEnd(position)? '\0' : Data![position];
+
+    public char this[Index position] => IsEndPosition(position)? '\0' : Data![position];
+    public string this[Range range] => Data![range];
+    public int Length => Data!.Length;
     public bool IsPersistent => SourceProvider.IsPersistent;
     public SourcePart All => (this + 0).Span(Length);
+    public bool IsValid => Data != null;
 
     public Source(ISourceProvider sourceProvider, string? identifier = null)
     {
@@ -35,8 +40,19 @@ public sealed class Source : Dumpable
     protected override string Dump(bool isRecursion) => FilePosition(0, Length, "see there");
 
     public static SourcePosition operator +(Source target, int y) => new(target, y);
+    public static SourcePosition operator +(Source target, Index y) => new(target, y);
+
+    [Obsolete("use IsEndPosition")]
     public bool IsEnd(int position) => Length <= position;
-    public string SubString(int start, int length) => Data.Substring(start, length);
+
+    [Obsolete("use this[start..start+length]")]
+    public string SubString(int start, int length) => this[start..(start + length)];
+
+    public bool IsValidPosition(Index position)
+        => position.GetOffset(Length) < Length;
+
+    public bool IsEndPosition(Index position)
+        => position.GetOffset(Length) >= Length;
 
     public TextPosition GetTextPosition(int position)
         => new() { LineNumber = LineIndex(position), ColumnNumber = ColumnIndex(position) };
@@ -52,10 +68,10 @@ public sealed class Source : Dumpable
                 tag ?? FilePositionTag.Debug.ToString())
             + flagText;
 
-    public int LineIndex(int position) => Data.Take(position).Count(c => c == '\n');
+    public int LineIndex(int position) => Data!.Take(position).Count(c => c == '\n');
 
     public int ColumnIndex(int position)
-        => Data
+        => Data!
             .Take(position)
             .Aggregate(0, (current, c) => c.In('\r', '\n')? 0 : current + 1);
 
@@ -93,18 +109,18 @@ public sealed class Source : Dumpable
     public string GetDumpBeforeCurrent(int position, int dumpWidth)
     {
         if(position < dumpWidth + 3)
-            return SubString(0, position);
+            return this[..position];
 
-        return "..." + SubString(position - dumpWidth, dumpWidth);
+        return "..." + this[(position - dumpWidth)..position];
     }
 
     public string GetDumpAfterCurrent(int position, int dumpWidth)
     {
-        if(IsEnd(position))
+        if(IsEndPosition(position))
             return "";
 
         if(dumpWidth + 3 < Length - position)
-            return SubString(position, dumpWidth) + "...";
-        return SubString(position, Length - position);
+            return this[position..(position + dumpWidth)] + "...";
+        return this[position..];
     }
 }

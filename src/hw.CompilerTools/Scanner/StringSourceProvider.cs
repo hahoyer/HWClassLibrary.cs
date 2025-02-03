@@ -4,8 +4,8 @@
 
 namespace hw.Scanner;
 
-public sealed class StringSourceProvider(string data) : ISourceProvider
+public sealed class StringSourceProvider(string? data) : ISourceProvider
 {
-    string ISourceProvider.Data => data;
+    string? ISourceProvider.Data => data;
     bool ISourceProvider.IsPersistent => false;
 }

@@ -2,9 +2,12 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.1</Version>
+        <Version>25.0.1.6</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
+            Source: Nullable data
+            Providing functions using of Range for string classes
+            25.0.1
             Upgrade hw core
             25.0.0.9
             Bugfixing

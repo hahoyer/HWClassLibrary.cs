@@ -13,5 +13,8 @@
     <ItemGroup>
       <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <PackageReference Update="JetBrains.Annotations" Version="2025.1.0-eap1" />
+    </ItemGroup>
 
 </Project>

@@ -25,18 +25,18 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     /// <summary>
     ///     The current character
     /// </summary>
-    public char Current => Source[Position];
+    public char Current => Source[new Index(Position)];
 
     /// <summary>
     ///     Natural indexer
     /// </summary>
-    public char this[int index] => Source[Position + index];
+    public char this[int index] => Source[new Index(Position+index)];
 
     /// <summary>
     ///     Checks if at or beyond end of source
     /// </summary>
     /// <value> </value>
-    public bool IsEnd => Source.IsEnd(Position);
+    public bool IsEnd => Source.IsEndPosition(Position);
 
     [UsedImplicitly]
     string NodeDump => GetDumpAroundCurrent();
@@ -57,6 +57,16 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     {
         Position = position;
         Source = source;
+    }
+
+    /// <summary>
+    ///     ctor from source and position
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="position"></param>
+    public SourcePosition(Source source, Index position)
+    : this(source, position.IsFromEnd? source.Length-position.Value: position.Value)
+    {
     }
 
     public bool Equals(SourcePosition? other)
@@ -123,7 +133,14 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     /// <param name="start">start position</param>
     /// <param name="length">number of characters</param>
     /// <returns></returns>
-    public string SubString(int start, int length) => Source.SubString(Position + start, length);
+    [Obsolete("use Range-indexer")]
+    public string SubString(int start, int length) => Source[start..(start + length)];
+    /// <summary>
+    ///     Obtains a piece
+    /// </summary>
+    /// <param name="range">Range</param>
+    /// <returns></returns>
+    public string this[Range range] => Source[range];
 
     /// <summary>
     ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
@@ -148,11 +165,8 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
         return automaton.Match(span, isForward);
     }
 
-    public bool StartsWith(string data, StringComparison type = StringComparison.InvariantCulture)
-    {
-        var length = data.Length;
-        return !Source.IsEnd(Position + length - 1) && Source.SubString(Position, length).Equals(data, type);
-    }
+    public bool StartsWith(string data, StringComparison type = StringComparison.InvariantCulture) 
+        => Source[..data.Length].Equals(data, type);
 
     public SourcePart Span(SourcePosition other) => SourcePart.Span(new(Source, Position), other);
     public SourcePart Span(int length) => SourcePart.Span(new(Source, Position), length);
