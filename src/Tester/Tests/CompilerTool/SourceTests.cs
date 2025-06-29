@@ -27,6 +27,8 @@ public sealed class SourceTests
     {
         string? ISourceProvider.Data => null;
         bool ISourceProvider.IsPersistent => false;
+        int ISourceProvider.Length => 0;
+        string? ISourceProvider.Identifier => null;
     }
 
     [UnitTest]
