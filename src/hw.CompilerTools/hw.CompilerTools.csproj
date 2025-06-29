@@ -5,6 +5,8 @@
         <Version>25.0.2</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
+			Bugfixes
+            25.0.2
             change: Multiple sources
             25.0.1.6
             Source: Nullable data
@@ -195,6 +197,7 @@
     </PropertyGroup>
 
     <Import Project="sys.targets" />
+
     <ItemGroup>
       <PackageReference Include="hw.Helper.Core" Version="25.0.3.1" />
     </ItemGroup>
