@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.1.6</Version>
+        <Version>25.0.2</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
+            change: Multiple sources
+            25.0.1.6
             Source: Nullable data
             Providing functions using of Range for string classes
             25.0.1

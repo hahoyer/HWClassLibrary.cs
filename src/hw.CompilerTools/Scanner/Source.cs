@@ -6,12 +6,13 @@ using hw.Helper;
 namespace hw.Scanner;
 
 [PublicAPI]
-public sealed class Source : Dumpable
+public sealed class Source : DumpableObject
 {
     public const int NodeDumpWidth = 10;
     public const int DumpWidth = 20;
+    static int NextObjectId;
     public readonly string? Identifier;
-    readonly ISourceProvider SourceProvider;
+    public readonly ISourceProvider SourceProvider;
 
     public string? Data => SourceProvider.Data;
 
@@ -20,12 +21,13 @@ public sealed class Source : Dumpable
 
     public char this[Index position] => IsEndPosition(position)? '\0' : Data![position];
     public string this[Range range] => Data![range];
-    public int Length => Data!.Length;
+    public int Length => SourceProvider.Length;
     public bool IsPersistent => SourceProvider.IsPersistent;
     public SourcePart All => (this + 0).Span(Length);
     public bool IsValid => Data != null;
 
     public Source(ISourceProvider sourceProvider, string? identifier = null)
+        : base(NextObjectId++)
     {
         SourceProvider = sourceProvider;
         Identifier = identifier;
@@ -37,7 +39,7 @@ public sealed class Source : Dumpable
     public Source(string data, string? identifier = null)
         : this(new StringSourceProvider(data), identifier ?? "????") { }
 
-    protected override string Dump(bool isRecursion) => FilePosition(0, Length, "see there");
+    protected override string Dump(bool isRecursion) => GetFilePositions(0, Length, "see there");
 
     public static SourcePosition operator +(Source target, int y) => new(target, y);
     public static SourcePosition operator +(Source target, Index y) => new(target, y);
@@ -57,7 +59,22 @@ public sealed class Source : Dumpable
     public TextPosition GetTextPosition(int position)
         => new() { LineNumber = LineIndex(position), ColumnNumber = ColumnIndex(position) };
 
-    public string FilePosition(int position, int positionEnd, string flagText, string? tag = null)
+    public string GetIdentifier(int start) => "";
+
+    SourcePart[] GetProviderSplits(int position, int positionEnd)
+    {
+        if(SourceProvider is not IMultiSourceProvider target)
+            return [(this + position).Span(this + positionEnd)];
+
+        var resultStart = target.Position(position, false);
+        var resultEnd = target.Position(positionEnd, true);
+        if(resultStart.Source == resultEnd.Source)
+            return [resultStart.Span(resultEnd)];
+        NotImplementedMethod(position, positionEnd);
+        return default!;
+    }
+    
+    public string GetFilePosition(int position, int positionEnd, string flagText, string? tag = null)
         => Tracer.FilePosition
             (
                 Identifier,
@@ -65,8 +82,16 @@ public sealed class Source : Dumpable
                 {
                     Start = GetTextPosition(position), End = GetTextPosition(positionEnd)
                 },
-                tag ?? FilePositionTag.Debug.ToString())
+                tag ?? nameof(FilePositionTag.Debug))
             + flagText;
+
+    public string GetFilePositions(int position, int positionEnd, string flagText, string? tag = null)
+    {
+        var splits = GetProviderSplits(position, positionEnd);
+        return splits
+            .Select(s => s.Source.GetFilePosition(s.Position, s.EndPosition, flagText, tag))
+            .Stringify("\n");
+    }
 
     public int LineIndex(int position) => Data!.Take(position).Count(c => c == '\n');
 

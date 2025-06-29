@@ -16,6 +16,12 @@ public sealed class FileSourceProvider : ISourceProvider
             DataCache = new(() => File.String);
     }
 
-    string? ISourceProvider.Data => DataCache?.Value ?? File.String;
+    string ISourceProvider.Data => Data;
+
+    string Data => DataCache?.Value ?? File.String ?? "";
+
     bool ISourceProvider.IsPersistent => false;
+    int ISourceProvider.Length => Data.Length;
+
+    string ISourceProvider.Identifier => File.FullName;
 }

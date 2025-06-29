@@ -30,7 +30,7 @@ public sealed class SourcePart
     public string Id => Source[Position..EndPosition];
 
     [DisableDump]
-    public string FilePosition => "\n" + Source.FilePosition(Position, EndPosition, Id);
+    public string FilePosition => "\n" + Source.GetFilePositions(Position, EndPosition, Id);
 
     [UsedImplicitly]
     public string NodeDump => GetDumpAroundCurrent().LogDump();
@@ -96,7 +96,7 @@ public sealed class SourcePart
             right == null? left : left.Overlay(right);
 
     public string FileErrorPosition(string errorTag)
-        => "\n" + Source.FilePosition(Position, EndPosition, Id.Quote(), "error " + errorTag);
+        => "\n" + Source.GetFilePositions(Position, EndPosition, Id.Quote(), "error " + errorTag);
 
     public string GetDumpAroundCurrent(int dumpWidth = Source.NodeDumpWidth)
         => Source.GetDumpBeforeCurrent(Position, dumpWidth)

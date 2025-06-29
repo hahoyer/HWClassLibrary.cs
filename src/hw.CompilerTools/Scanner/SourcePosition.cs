@@ -147,7 +147,7 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     /// </summary>
     /// <param name="flagText">the flag text</param>
     /// <returns>the "FileName(lineNumber,ColNr): tag: " string</returns>
-    public string FilePosition(string flagText) => Source.FilePosition(Position, Position, flagText);
+    public string FilePosition(string flagText) => Source.GetFilePositions(Position, Position, flagText);
 
     public string GetDumpAroundCurrent(int dumpWidth = Source.NodeDumpWidth)
     {
