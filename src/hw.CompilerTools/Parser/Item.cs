@@ -65,7 +65,6 @@ public sealed class Item<TParserResult>
         IItem[] items
         , SourcePosition end
         , BracketContext context
-        , bool isSubParser
     )
     {
         var prefixItems = items.Take(items.Length - 1);

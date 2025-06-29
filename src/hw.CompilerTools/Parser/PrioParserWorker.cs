@@ -94,7 +94,7 @@ public sealed partial class PrioParser<TParserResult>
             TraceNextToken(sourcePosition);
             var nextTokenGroup = Parent.Scanner.GetNextTokenGroup(sourcePosition);
             var result = Item<TParserResult>
-                .Create(nextTokenGroup, sourcePosition, context, IsSubParser);
+                .Create(nextTokenGroup, sourcePosition, context);
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             var nextParser = (result.Type as ISubParserProvider)?.NextParser;
