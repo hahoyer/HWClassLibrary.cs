@@ -2,10 +2,12 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.2</Version>
+        <Version>25.1</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReadmeFile>hw.UnitTest.md</PackageReadmeFile>
         <PackageReleaseNotes>
+            Upgrade hw core
+            25.0.2.1
             Upgrade hw core
             25.0.0.8
             bugfix: use DeclaringType for actions with static methods
@@ -63,7 +65,7 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="25.0.4" />
+        <PackageReference Include="hw.Helper.Core" Version="*" />
     </ItemGroup>
     <ItemGroup>
         <None Update="hw.UnitTest.md">

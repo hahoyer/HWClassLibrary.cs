@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1</Version>
+        <TargetTypeEx>NugetPackage</TargetTypeEx>
+        <Version>25.0.4</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
-            admin: changed back to source-code-only-package
             Bugfix: Make things public again
             25.0.2
             Bugfix: Sleep should ignore negatve values
@@ -161,8 +160,13 @@
             15.1.1
             Change: ValueCache: is now public
         </PackageReleaseNotes>
-
     </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Remove="Tests\**" />
+        <EmbeddedResource Remove="Tests\**" />
+        <None Remove="Tests\**" />
+    </ItemGroup>
 
     <Import Project="sys.targets" />
 

@@ -20,7 +20,12 @@ public sealed class Source : DumpableObject
     public char this[int position] => IsEnd(position)? '\0' : Data![position];
 
     public char this[Index position] => IsEndPosition(position)? '\0' : Data![position];
-    public string this[Range range] => Data![range];
+
+    public string this[Range range] 
+        => range.Start.GetOffset(Length)< range.End.GetOffset(Length)
+            ? Data![range] 
+            : Data![range.End..range.Start];
+
     public int Length => SourceProvider.Length;
     public bool IsPersistent => SourceProvider.IsPersistent;
     public SourcePart All => (this + 0).Span(Length);
@@ -73,7 +78,7 @@ public sealed class Source : DumpableObject
         NotImplementedMethod(position, positionEnd);
         return default!;
     }
-    
+
     public string GetFilePosition(int position, int positionEnd, string flagText, string? tag = null)
         => Tracer.FilePosition
             (

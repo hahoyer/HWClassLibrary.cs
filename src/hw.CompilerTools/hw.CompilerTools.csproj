@@ -1,11 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.0.3</Version>
+        <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
+        <Version>25.1.0.2</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
-			Bugfixes
+            Bugfixes
+            25.1
+            admin: changed back to source-code-only-package
+            25.0.3
+            Bugfixes
             25.0.2
             change: Multiple sources
             25.0.1.6
@@ -199,6 +203,6 @@
     <Import Project="sys.targets" />
 
     <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="25.0.4" />
+      <PackageReference Include="hw.Helper.Core" Version="*" />
     </ItemGroup>
 </Project>
