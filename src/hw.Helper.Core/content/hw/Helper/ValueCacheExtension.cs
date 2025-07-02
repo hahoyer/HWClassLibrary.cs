@@ -15,7 +15,7 @@ public static class ValueCacheExtension
     }
 
     public static TValueType CachedValue<TValueType>(this ValueCache.IContainer container, Func<TValueType> target)
-        => CachedItem(container, target).Value;
+        => container.CachedItem(target).Value;
 
     public static ValueCache<TValueType> CachedItem<TValueType>
         (this ValueCache.IContainer container, Func<TValueType> target)

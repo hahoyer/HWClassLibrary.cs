@@ -53,20 +53,22 @@ public sealed class SourcePart
         Source = source;
         Position = range.Start.GetOffset(Source.Length);
         EndPosition = range.End.GetOffset(Source.Length);
+        if(Length < 0)
+            (EndPosition, Position) = (Position, EndPosition);
     }
 
     SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart? other) => Overlay(other);
 
     public override bool Equals(object? obj)
-        => ReferenceEquals(this, obj) || (obj is SourcePart other && Equals(other));
+        => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
 
     public override int GetHashCode()
     {
         unchecked
         {
             var hashCode = Length;
-            hashCode = (hashCode * 397) ^ Position;
-            hashCode = (hashCode * 397) ^ Source.GetHashCode();
+            hashCode = hashCode * 397 ^ Position;
+            hashCode = hashCode * 397 ^ Source.GetHashCode();
             return hashCode;
         }
     }
@@ -119,7 +121,7 @@ public sealed class SourcePart
         return new(first.Source, first.Position..other.Position);
     }
 
-    public static SourcePart Span(SourcePosition first, int length) 
+    public static SourcePart Span(SourcePosition first, int length)
         => new(first.Source, first.Position..(first.Position + length));
 
     public bool Contains(SourcePosition sourcePosition)

@@ -1,4 +1,7 @@
-﻿
+﻿// ReSharper disable CheckNamespace
+
+
+
 
 // ReSharper disable CheckNamespace
 

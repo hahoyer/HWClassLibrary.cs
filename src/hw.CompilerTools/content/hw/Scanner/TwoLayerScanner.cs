@@ -1,5 +1,5 @@
-using hw.DebugFormatter;
 using hw.Parser;
+using hw.DebugFormatter;
 
 // ReSharper disable CheckNamespace
 
@@ -17,7 +17,7 @@ namespace hw.Scanner;
 ///     <see cref="ITokenFactory.InvalidCharacterError" />.<br />
 ///     - Only the last (or only) token in group returned <see cref="IScanner.GetNextTokenGroup" /> by will have a token
 ///     class with <see cref="IParserTokenFactory" /> defined.<br />
-///     - During scanning process, exceptions of type <see cref="TwoLayerScanner.Exception" /> will be catch-ed
+///     - During scanning process, exceptions of type <see cref="Exception" /> will be catch-ed
 ///     and converted into appropriate token<br />
 ///     - When the <see cref="ITokenFactory.EndOfText" /> is returned the source position is set to invalid.<br />
 /// </remarks>

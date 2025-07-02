@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using hw.DebugFormatter;
+using hw.Helper;
 
 // ReSharper disable CheckNamespace
 
@@ -227,7 +228,7 @@ public static class LinqExtension
     public static IEnumerable<Tuple<TKey, T?, T?>> Merge<TKey, T>
         (this IEnumerable<T> left, IEnumerable<T> right, Func<T, TKey> getKey)
         where T : class
-        => Merge(left, right, getKey, getKey);
+        => left.Merge(right, getKey, getKey);
 
     public static Tuple<TKey, TLeft?, TRight?> Merge<TKey, TLeft, TRight>
         (IGrouping<TKey, Tuple<TKey, TLeft?, TRight?>> grouping)

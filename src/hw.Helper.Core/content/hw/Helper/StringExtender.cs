@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using hw.DebugFormatter;
+using hw.Helper;
 
 // ReSharper disable CheckNamespace
 
@@ -60,7 +61,7 @@ public static class StringExtender
 
         if(data.IndexOf("\n", StringComparison.Ordinal) < 0)
             return left + data + right;
-        return "\n" + left + Indent("\n" + data) + "\n" + right;
+        return "\n" + left + ("\n" + data).Indent() + "\n" + right;
     }
 
     public static string SaveConcat(this string delimiter, params string[] data)

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.0.2</Version>
+        <Version>25.1.0.5</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
             Bugfixes

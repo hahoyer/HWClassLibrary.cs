@@ -1,5 +1,3 @@
-
-
 // ReSharper disable CheckNamespace
 
 namespace hw.Helper;
@@ -33,7 +31,7 @@ public static class LongExtender
         if(value == 0)
             return "0";
         if(value < 0)
-            return "-" + Format3Digits(-value, omitZeros);
+            return "-" + (-value).Format3Digits(omitZeros);
 
         var size = 0;
         for(; value >= 1000; size++, value /= 10) { }

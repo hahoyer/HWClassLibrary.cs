@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Import Project="ApiKey.targets" />
+
+    <PropertyGroup>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <IsPublishable>False</IsPublishable>
+        <NuSpecFile>$(MSBuildThisFileDirectory)NugetSourcecodePackage.nuspec</NuSpecFile>
+        <NuspecProperties>
+            id=$(AssemblyName);
+            version=$(Version);
+            authors=$(Authors);
+            description=$(PackageReleaseNotes);
+            copyright=$(Copyright);
+            projectdir=$(MSBuildProjectDirectory)
+        </NuspecProperties>
+        <Build>false</Build>
+        <GenerateNugetPackage>true</GenerateNugetPackage>
+    </PropertyGroup>
+
+    <Import Project="CSharp.Library.targets" />
+
+    <Target Name="PostBuild" AfterTargets="GenerateNuspec">
+
+        <Exec
+            Condition="'$(Configuration)' == 'Release'"
+            Command="$(MSBuildThisFileDirectory)nuget.exe push $(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg -ApiKey $(ApiKey) -Source https://api.nuget.org/v3/index.json -ForceEnglishOutput" />
+    </Target>
+
+
+</Project>

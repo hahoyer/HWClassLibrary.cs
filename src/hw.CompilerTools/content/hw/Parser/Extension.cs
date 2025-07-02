@@ -1,4 +1,5 @@
 ﻿using hw.DebugFormatter;
+using hw.Parser;
 
 // ReSharper disable CheckNamespace
 
@@ -23,11 +24,11 @@ public static class Extension
             return "<null>";
 
         var result = "(";
-        result += TreeDump(value.Left);
+        result += value.Left.TreeDump();
         result += " ";
         result += value.TokenId;
         result += " ";
-        result += TreeDump(value.Right);
+        result += value.Right.TreeDump();
         result += ")";
         return result;
     }
@@ -44,6 +45,6 @@ public static class Extension
     internal static string TreeDump<TTreeItem>(TTreeItem? value)
         where TTreeItem : class
         => value is IBinaryTreeItem t
-            ? TreeDump(t) 
+            ? t.TreeDump() 
             : Tracer.Dump(value);
 }

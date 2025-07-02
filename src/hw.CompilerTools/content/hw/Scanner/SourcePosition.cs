@@ -140,7 +140,8 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     /// </summary>
     /// <param name="range">Range</param>
     /// <returns></returns>
-    public string this[Range range] => Source[range];
+    public string this[Range range] 
+        => Source[(Position + range.Start.GetOffset(Source.Length))..(Position + range.End.GetOffset(Source.Length))];
 
     /// <summary>
     ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
@@ -166,7 +167,7 @@ public sealed class SourcePosition : Dumpable, IEquatable<SourcePosition>
     }
 
     public bool StartsWith(string data, StringComparison type = StringComparison.InvariantCulture) 
-        => Source[..data.Length].Equals(data, type);
+        => this[..data.Length].Equals(data, type);
 
     public SourcePart Span(SourcePosition other) => SourcePart.Span(new(Source, Position), other);
     public SourcePart Span(int length) => SourcePart.Span(new(Source, Position), length);

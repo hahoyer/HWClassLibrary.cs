@@ -6,11 +6,9 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-      <PackageReference Include="hw.CompilerTools" Version="*" />
-      <PackageReference Include="hw.UnitTest" Version="*" />
-    </ItemGroup>
-    <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.1.0-eap1" />
+        <PackageReference Include="hw.CompilerTools" Version="*"/>
+        <PackageReference Include="hw.UnitTest" Version="*" />
+        <PackageReference Update="JetBrains.Annotations" Version="*" />
     </ItemGroup>
 
 </Project>

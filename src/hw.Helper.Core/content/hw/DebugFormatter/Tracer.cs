@@ -185,13 +185,13 @@ public static class Tracer
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         if(stackFrame == null)
             return "";
-        return FilePosition(stackFrame, tag) + DumpMethod(stackFrame.GetMethod(), showParam);
+        return FilePosition(stackFrame, tag) + stackFrame.GetMethod().DumpMethod(showParam);
     }
 
     public static string CallingMethodName(int stackFrameDepth = 0)
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
-        return DumpMethod(stackFrame?.GetMethod(), false);
+        return (stackFrame?.GetMethod()).DumpMethod(false);
     }
 
     public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0)
@@ -201,7 +201,7 @@ public static class Tracer
         for(var frameDepth = stackFrameDepth + 1; frameDepth < stackTrace.FrameCount; frameDepth++)
         {
             var stackFrame = stackTrace.GetFrame(frameDepth);
-            var filePosition = FilePosition(stackFrame, tag) + DumpMethod(stackFrame?.GetMethod(), false);
+            var filePosition = FilePosition(stackFrame, tag) + (stackFrame?.GetMethod()).DumpMethod(false);
             result += "\n" + filePosition;
         }
 
@@ -231,7 +231,7 @@ public static class Tracer
             flagText,
             stackFrameDepth: stackFrameDepth + 1,
             showParam: showParam);
-        Log(methodHeader + " " + text, level);
+        (methodHeader + " " + text).Log(level);
     }
 
     [IsLoggingFunction]
@@ -249,7 +249,7 @@ public static class Tracer
             flagText,
             stackFrameDepth: stackFrameDepth + 1,
             showParam: showParam);
-        Log(methodHeader + " " + text, level);
+        (methodHeader + " " + text).Log(level);
     }
 
     /// <summary>
@@ -285,7 +285,7 @@ public static class Tracer
     public static void DumpStaticMethodWithData(params object[] parameter)
     {
         var result = DumpMethodWithData("", null, parameter, 1);
-        Log(result);
+        result.Log();
     }
 
     /// <summary>
@@ -300,7 +300,7 @@ public static class Tracer
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
                 (stackFrame, FilePositionTag.Debug)
-            + DumpMethod(stackFrame?.GetMethod(), true)
+            + (stackFrame?.GetMethod()).DumpMethod(true)
             + text
             + DumpMethodWithData(null, data).Indent();
     }
@@ -319,7 +319,7 @@ public static class Tracer
     public static void UnconditionalBreak(string cond, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         var result = "Conditional break: " + cond + "\nData: " + (getText == null? "" : getText());
-        FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
+        result.FlaggedLine(stackFrameDepth: stackFrameDepth + 1);
         TraceBreak();
     }
 
@@ -364,7 +364,7 @@ public static class Tracer
     public static string AssertionFailed(string cond, Func<string>? getText = null, int stackFrameDepth = 0)
     {
         var result = "Assertion Failed: " + cond + "\nData: " + (getText == null? "" : getText());
-        FlaggedLine(result, stackFrameDepth: stackFrameDepth + 1);
+        result.FlaggedLine(stackFrameDepth: stackFrameDepth + 1);
         AssertionBreak(result);
         return result;
     }
@@ -388,7 +388,7 @@ public static class Tracer
 
     [DebuggerHidden]
     [ContractAnnotation("b: false => halt")]
-    public static void Assert(this bool b, string s) => Assert(b, () => s, 1);
+    public static void Assert(this bool b, string s) => b.Assert(() => s, 1);
 
     [DebuggerHidden]
     public static void TraceBreak()
@@ -471,7 +471,7 @@ public static class Tracer
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return FilePosition
                 (stackFrame, FilePositionTag.Debug)
-            + DumpMethod(stackFrame?.GetMethod(), true)
+            + (stackFrame?.GetMethod()).DumpMethod(true)
             + text
             + DumpMethodWithData(stackFrame?.GetMethod(), thisObject, parameter).Indent();
     }
@@ -479,7 +479,7 @@ public static class Tracer
     static string DumpMethodWithData(MethodBase? methodBase, object? target, object?[] parameters)
     {
         var result = "\n";
-        result += IsSetTo("this", target);
+        result += "this".IsSetTo(target);
         result += "\n";
         result += DumpMethodWithData(methodBase?.GetParameters(), parameters);
         return result;
@@ -494,13 +494,13 @@ public static class Tracer
         {
             if(index > 0)
                 result += "\n";
-            result += IsSetTo(parameterInfos[index].Name??"_", parameters[index]);
+            result += (parameterInfos[index].Name??"_").IsSetTo(parameters[index]);
         }
 
         for(var index = parameterInfos.Length; index < parameters.Length; index += 2)
         {
             result += "\n";
-            result += IsSetTo((string)parameters[index]!, parameters[index + 1]);
+            result += ((string)parameters[index]!).IsSetTo(parameters[index + 1]);
         }
 
         return result;

@@ -1,5 +1,8 @@
 // ReSharper disable CheckNamespace
 
+
+// ReSharper disable CheckNamespace
+
 namespace hw.Scanner;
 
 /// <summary>

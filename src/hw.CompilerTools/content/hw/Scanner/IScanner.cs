@@ -1,4 +1,5 @@
 ﻿using hw.Parser;
+using hw.Parser;
 
 // ReSharper disable CheckNamespace
 
@@ -41,7 +42,7 @@ public interface IItem
 }
 
 /// <summary>
-///     There are two general cases: <see cref="WhiteSpaceTokenType" /> and <see cref="hw.Parser.ScannerTokenType" />
+///     There are two general cases: <see cref="WhiteSpaceTokenType" /> and <see cref="ScannerTokenType" />
 /// </summary>
 public interface IScannerTokenType
 {

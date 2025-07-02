@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using hw.Helper;
+using System.Linq.Expressions;
 using System.Reflection;
 
 // ReSharper disable CheckNamespace
@@ -50,7 +51,7 @@ public static class ReflectionExtender
     public static TAttribute? GetAttribute<TAttribute>(this Type target, bool inherit)
         where TAttribute : Attribute
     {
-        var list = GetAttributes<TAttribute>(target, inherit).ToArray();
+        var list = target.GetAttributes<TAttribute>(inherit).ToArray();
         switch(list.Length)
         {
             case 0:
@@ -65,7 +66,7 @@ public static class ReflectionExtender
 
     public static TAttribute? GetAttribute<TAttribute>(this Enum target)
         where TAttribute : Attribute
-        => GetAttributes<TAttribute>(target).SingleOrDefault();
+        => target.GetAttributes<TAttribute>().SingleOrDefault();
 
     public static TAttribute? GetRecentAttribute<TAttribute>(this Type target)
         where TAttribute : Attribute
@@ -74,7 +75,7 @@ public static class ReflectionExtender
     public static TAttribute? GetAttribute<TAttribute>(this MemberInfo target, bool inherit)
         where TAttribute : Attribute
     {
-        var list = GetAttributes<TAttribute>(target, inherit).ToArray();
+        var list = target.GetAttributes<TAttribute>(inherit).ToArray();
         switch(list.Length)
         {
             case 0:
@@ -135,13 +136,13 @@ public static class ReflectionExtender
         throw new InvalidDataException();
     }
 
-    public static DateTime ToDateTime(this object target) => Convert<DateTime>(target);
-    public static decimal ToDecimal(this object target) => Convert<decimal>(target);
-    public static short ToInt16(this object target) => Convert<short>(target);
-    public static int ToInt32(this object target) => Convert<int>(target);
-    public static long ToInt64(this object target) => Convert<long>(target);
-    public static bool ToBoolean(this object target) => Convert<bool>(target);
-    public static Type? ToType(this object target) => Convert<Type>(target);
+    public static DateTime ToDateTime(this object target) => target.Convert<DateTime>();
+    public static decimal ToDecimal(this object target) => target.Convert<decimal>();
+    public static short ToInt16(this object target) => target.Convert<short>();
+    public static int ToInt32(this object target) => target.Convert<int>();
+    public static long ToInt64(this object target) => target.Convert<long>();
+    public static bool ToBoolean(this object target) => target.Convert<bool>();
+    public static Type? ToType(this object target) => target.Convert<Type>();
 
     public static string ToSingular(this object target)
     {
@@ -170,7 +171,7 @@ public static class ReflectionExtender
         return type.GetInterfaces().Contains(otherType);
     }
 
-    public static bool Is<T>(this Type type) => Is(type, typeof(T));
+    public static bool Is<T>(this Type type) => type.Is(typeof(T));
 
     public static Type[] GetDirectInterfaces
         (this Type type)

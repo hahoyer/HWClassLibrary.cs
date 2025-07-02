@@ -1,5 +1,6 @@
 ﻿using hw.Scanner;
 
+
 // ReSharper disable CheckNamespace
 
 namespace hw.Parser;
