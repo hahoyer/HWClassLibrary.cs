@@ -13,7 +13,7 @@ namespace hw.Tests.CompilerTool.Util
         {
         }
 
-        public override string TokenClassName => "<(>";
+        public override string TokenClassName => "?(?";
 
         public override Syntax RightParenthesis(string id, IToken token, Syntax? right)
         {
