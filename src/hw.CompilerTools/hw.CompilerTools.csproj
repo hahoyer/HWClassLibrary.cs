@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.0.5</Version>
+        <Version>25.1.0.10-alpha</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
             Bugfixes
@@ -198,11 +198,16 @@
             Change: Customized debugger display for Token and WhiteSpaceToken
             Change: Introducing white space fine structure
         </PackageReleaseNotes>
+        <NuSpecFile>package.nuspec</NuSpecFile>
     </PropertyGroup>
 
     <Import Project="sys.targets" />
 
     <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="*" />
+        <PackageReference Include="hw.Helper.Core" Version="25.1.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>build; contentfiles; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
+
 </Project>

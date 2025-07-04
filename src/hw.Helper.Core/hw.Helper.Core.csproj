@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.0.1</Version>
+        <Version>25.1.0.4</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             admin: changed back to source-code-only-package

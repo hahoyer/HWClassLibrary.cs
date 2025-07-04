@@ -11,8 +11,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>$description$</description>
         <releaseNotes>$releaseNotes$</releaseNotes>
+        <readme>docs\$id$.md</readme>
     </metadata>
     <files>
         <file src="$projectdir$\hw\**\*" target="contentFiles\any\any\hw" />
+        <file src="$projectdir$\$id$.md" target="docs\" />
     </files>
 </package>

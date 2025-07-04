@@ -4,17 +4,23 @@
 
     <Import Project="ApiKey.targets" />
 
+    <PropertyGroup Condition="'$(NuSpecFile)' == ''">
+        <NuSpecFileName Condition="!Exists('$(AssemblyName).md')">NugetSourcecodePackage</NuSpecFileName>
+        <NuSpecFileName Condition="Exists('$(AssemblyName).md')">NugetDocedSourcecodePackage</NuSpecFileName>
+        <NuSpecFile>$(MSBuildThisFileDirectory)$(NuSpecFileName).nuspec</NuSpecFile>
+    </PropertyGroup>
+
     <PropertyGroup>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <IsPublishable>False</IsPublishable>
-        <NuSpecFile>$(MSBuildThisFileDirectory)NugetSourcecodePackage.nuspec</NuSpecFile>
         <NuspecProperties>
             id=$(AssemblyName);
             version=$(Version);
             authors=$(Authors);
-            description=$(PackageReleaseNotes);
+            description=$(Description);
+            releaseNotes=$(PackageReleaseNotes)
             copyright=$(Copyright);
-            projectdir=$(MSBuildProjectDirectory)
+            projectdir=$(MSBuildProjectDirectory);
         </NuspecProperties>
         <Build>false</Build>
         <GenerateNugetPackage>true</GenerateNugetPackage>

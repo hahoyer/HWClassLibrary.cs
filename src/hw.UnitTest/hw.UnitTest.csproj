@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetTypeEx>NugetPackage</TargetTypeEx>
-        <Version>25.1</Version>
+        <TargetTypeEx>NuGetSourcecodePackage</TargetTypeEx>
+        <Version>25.1.0.9-alpha</Version>
         <Description>Provides some support for unit-testing.</Description>
-        <PackageReadmeFile>hw.UnitTest.md</PackageReadmeFile>
         <PackageReleaseNotes>
             Upgrade hw core
             25.0.2.1
@@ -62,16 +61,20 @@
             15.0
             Breaking Change: Attributes TestFixture and Test renamed to UnitTest
         </PackageReleaseNotes>
+        <NuSpecFile>package.nuspec</NuSpecFile>
     </PropertyGroup>
+
     <Import Project="sys.targets" />
+
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="*" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="hw.UnitTest.md">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
+      <PackageReference Include="hw.CompilerTools" Version="25.1.0.9-alpha">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="hw.Helper.Core" Version="25.1.0.4">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>build; contentfiles; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
 </Project>

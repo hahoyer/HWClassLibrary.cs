@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6CF995B9
 		..\build\CSharp.WinExe.targets = ..\build\CSharp.WinExe.targets
 		..\Directory.Build.props = ..\Directory.Build.props
 		..\build\HoyerWare.CSharp.targets = ..\build\HoyerWare.CSharp.targets
+		..\build\NuGetDocedSourcecodePackage.nuspec = ..\build\NuGetDocedSourcecodePackage.nuspec
 		..\build\NuGetPackage.targets = ..\build\NuGetPackage.targets
 		..\build\NugetSourcecodePackage.nuspec = ..\build\NugetSourcecodePackage.nuspec
 		..\build\NuGetSourcecodePackage.targets = ..\build\NuGetSourcecodePackage.targets

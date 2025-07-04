@@ -11,6 +11,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>$description$</description>
         <releaseNotes>$releaseNotes$</releaseNotes>
+        <dependencies>
+            <dependency id="hw.Helper.Core" version="25.1.0.3" include="contentFiles, build" />
+        </dependencies>
     </metadata>
     <files>
         <file src="$projectdir$\hw\**\*" target="contentFiles\any\any\hw" />

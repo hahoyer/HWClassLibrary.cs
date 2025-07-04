@@ -4,11 +4,20 @@
         <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
         <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     </PropertyGroup>
-    <Import Project="sys.targets" />
+    
     <ItemGroup>
-        <PackageReference Include="hw.CompilerTools" Version="*"/>
-        <PackageReference Include="hw.UnitTest" Version="*" />
+        <PackageReference Include="hw.Helper.Core" Version="*" />
+        <PackageReference Include="hw.CompilerTools" Version="25.1.0.9-alpha">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="hw.UnitTest" Version="25.1.0.9-alpha">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>build; contentfiles; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Update="JetBrains.Annotations" Version="*" />
     </ItemGroup>
+
+    <Import Project="sys.targets" />
 
 </Project>
