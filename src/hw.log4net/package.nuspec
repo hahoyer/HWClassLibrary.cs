@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <developmentDependency>true</developmentDependency>
+        <authors>$authors$</authors>
+        <copyright>$copyright$</copyright>
+        <license type="expression">MIT</license>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>$description$</description>
+        <releaseNotes>$releaseNotes$</releaseNotes>
+        <readme>docs\$id$.md</readme>
+        <dependencies>
+            <dependency id="hw.Helper.Core" version="25.1.0.10-alpha" include="all"/>
+            <dependency id="log4net" version="3.2.0-preview.1" include="all"/>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="$projectdir$\hw\**\*" target="contentFiles\any\any\hw" />
+        <file src="$projectdir$\$id$.md" target="docs\" />
+    </files>
+</package>

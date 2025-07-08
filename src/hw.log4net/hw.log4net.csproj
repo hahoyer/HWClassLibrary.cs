@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
+        <Version>25.0.0.20-alpha</Version>
+        <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
+        <PackageReleaseNotes>
+            admin: changed back to source-code-only-package
+            24.1.0
+            refactor: upgrade C#
+            24.0.3
+            bugfix: hw.Helper.Core
+            24.0.2
+            new: documentation
+            24.0.1
+            refactor: upgrade C#
+            change: log-levels
+            23.0
+            admin: Fix for use with .net6
+            refactor: Upgrade C#
+            21.0
+            refactor: Upgrade C#
+            20.0.1
+            change: stack level detection
+        </PackageReleaseNotes>
+        <NuSpecFile>package.nuspec</NuSpecFile>
+    </PropertyGroup>
+
+    <Import Project="sys.targets" />
+
+    <ItemGroup>
+        <PackageReference Include="hw.Helper.Core" Version="25.1.0.10-alpha" />
+        <PackageReference Include="log4net" Version="3.2.0-preview.1" />
+    </ItemGroup>
+</Project>
