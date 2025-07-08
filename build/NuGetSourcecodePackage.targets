@@ -2,8 +2,6 @@
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <Import Project="ApiKey.targets" />
-
     <PropertyGroup Condition="'$(NuSpecFile)' == ''">
         <NuSpecFileName Condition="!Exists('$(AssemblyName).md')">NugetSourcecodePackage</NuSpecFileName>
         <NuSpecFileName Condition="Exists('$(AssemblyName).md')">NugetDocedSourcecodePackage</NuSpecFileName>
@@ -11,8 +9,6 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <IsPublishable>False</IsPublishable>
         <NuspecProperties>
             id=$(AssemblyName);
             version=$(Version);
@@ -26,14 +22,11 @@
         <GenerateNugetPackage>true</GenerateNugetPackage>
     </PropertyGroup>
 
-    <Import Project="CSharp.Library.targets" />
+    <PropertyGroup>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <IsPublishable>False</IsPublishable>
+    </PropertyGroup>
 
-    <Target Name="PostBuild" AfterTargets="GenerateNuspec">
-
-        <Exec
-            Condition="'$(Configuration)' == 'Release'"
-            Command="$(MSBuildThisFileDirectory)nuget.exe push $(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg -ApiKey $(ApiKey) -Source https://api.nuget.org/v3/index.json -ForceEnglishOutput" />
-    </Target>
-
+    <Import Project="NuGetPackage.targets" />
 
 </Project>

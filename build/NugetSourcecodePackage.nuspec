@@ -11,6 +11,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>$description$</description>
         <releaseNotes>$releaseNotes$</releaseNotes>
+        <dependencies>
+            <dependency id="JetBrains.Annotations" version="2024.3.0" include="all" />
+        </dependencies>
     </metadata>
     <files>
         <file src="$projectdir$\hw\**\*" target="contentFiles\any\any\hw" />

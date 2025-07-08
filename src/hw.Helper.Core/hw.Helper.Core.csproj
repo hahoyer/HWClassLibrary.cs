@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.0.4</Version>
+        <Version>25.1.0.10-alpha</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             admin: changed back to source-code-only-package
@@ -161,7 +161,6 @@
             15.1.1
             Change: ValueCache: is now public
         </PackageReleaseNotes>
-
     </PropertyGroup>
 
     <Import Project="sys.targets" />

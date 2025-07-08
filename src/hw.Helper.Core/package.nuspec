@@ -12,7 +12,7 @@
         <description>$description$</description>
         <releaseNotes>$releaseNotes$</releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="25.1.0.4" include="contentFiles, build" />
+            <dependency id="JetBrains.Annotations" version="" />
         </dependencies>
     </metadata>
     <files>

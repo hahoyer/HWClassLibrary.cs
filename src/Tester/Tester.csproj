@@ -7,7 +7,7 @@
     
     <ItemGroup>
         <PackageReference Include="hw.Helper.Core" Version="*" />
-        <PackageReference Include="hw.CompilerTools" Version="25.1.0.9-alpha">
+        <PackageReference Include="hw.CompilerTools" Version="25.1.0.10-alpha">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.0.9-alpha</Version>
+        <Version>25.1.0.12-alpha</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReleaseNotes>
             Upgrade hw core
@@ -67,10 +67,6 @@
     <Import Project="sys.targets" />
 
     <ItemGroup>
-      <PackageReference Include="hw.CompilerTools" Version="25.1.0.9-alpha">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
       <PackageReference Include="hw.Helper.Core" Version="25.1.0.4">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>build; contentfiles; buildtransitive</IncludeAssets>
