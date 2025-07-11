@@ -27,7 +27,7 @@ It is comapatible to nunit and MSTest although is provides some more features.
   - without parameters and return values
 - include at least `Assembly.GetExecutingAssembly().RunTests()` in Main-function of your test-executable
 
-With default configuration when executed it will create and update a file that contains the prograss of the testrun. 
+With default configuration when executed it will create and update a file that contains the progress of the testrun. 
 The file is named `Test.HW.config` and is located at working directory of test run. 
 It is also used as input for subsequent runs by not re-running successful tests.
 To completely rerun all tests just delete it.
