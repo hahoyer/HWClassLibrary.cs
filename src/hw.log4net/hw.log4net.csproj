@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.0.0.20-alpha</Version>
+        <Version>25.0.1</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             admin: changed back to source-code-only-package
@@ -28,7 +28,9 @@
     <Import Project="sys.targets" />
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="25.1.0.10-alpha" />
-        <PackageReference Include="log4net" Version="3.2.0-preview.1" />
+        <PackageReference Include="hw.Helper.Core" Version="25.1.1.*" />
+        <PackageReference Include="log4net" Version="3.*">
+            <IncludeAssets>all</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 </Project>

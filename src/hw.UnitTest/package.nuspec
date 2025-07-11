@@ -13,7 +13,7 @@
         <releaseNotes>$releaseNotes$</releaseNotes>
         <readme>docs\$id$.md</readme>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="25.1" />
+            <dependency id="hw.Helper.Core" version="25.1.1" include="all"/>
         </dependencies>
     </metadata>
     <files>

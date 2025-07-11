@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.0.10-alpha</Version>
+        <Version>25.1.1</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             admin: changed back to source-code-only-package
@@ -164,5 +164,9 @@
     </PropertyGroup>
 
     <Import Project="sys.targets" />
+
+    <ItemGroup>
+      <PackageReference Update="JetBrains.Annotations" Version="2024.3" />
+    </ItemGroup>
 
 </Project>

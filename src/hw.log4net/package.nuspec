@@ -13,8 +13,8 @@
         <releaseNotes>$releaseNotes$</releaseNotes>
         <readme>docs\$id$.md</readme>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="25.1.0.10-alpha" include="all"/>
-            <dependency id="log4net" version="3.2.0-preview.1" include="all"/>
+            <dependency id="hw.Helper.Core" version="25.1.1" include="all"/>
+            <dependency id="log4net" version="3.*" include="all"/>
         </dependencies>
     </metadata>
     <files>

@@ -14,17 +14,15 @@
             version=$(Version);
             authors=$(Authors);
             description=$(Description);
-            releaseNotes=$(PackageReleaseNotes)
+            releaseNotes=$(PackageReleaseNotes);
             copyright=$(Copyright);
             projectdir=$(MSBuildProjectDirectory);
         </NuspecProperties>
-        <Build>false</Build>
-        <GenerateNugetPackage>true</GenerateNugetPackage>
     </PropertyGroup>
 
     <PropertyGroup>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <IsPublishable>False</IsPublishable>
+        <Build>false</Build>
+        <GenerateNugetPackage>true</GenerateNugetPackage>
     </PropertyGroup>
 
     <Import Project="NuGetPackage.targets" />
