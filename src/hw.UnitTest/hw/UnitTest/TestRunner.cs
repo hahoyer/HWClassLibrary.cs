@@ -106,7 +106,7 @@ public static class PendingTests
             LoadConfiguration();
     }
 
-    string GeneratedTestCallsForMode(IGrouping<string, (TestType type, TestMethod method)> group)
+    static string GeneratedTestCallsForMode(IGrouping<string, (TestType type, TestMethod method)> group)
         => $"\n// {group.Key} \n\n"
             + group
                 .Select(testType => $"{testType.method.RunString};")
