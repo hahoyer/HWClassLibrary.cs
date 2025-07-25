@@ -9,6 +9,7 @@ public sealed class Dumper
 {
     [PublicAPI]
     public readonly Configuration Configuration = new();
+
     readonly Dictionary<object, long> ActiveObjects = new();
     long NextObjectId;
 
@@ -157,16 +158,15 @@ public sealed class Dumper
 
     static bool CheckDumpExceptAttribute(MemberInfo memberInfo, object target)
     {
-        foreach(
-            var attribute in
-            Attribute.GetCustomAttributes(memberInfo, typeof(DumpAttributeBase))
-                .Select(attribute => attribute as IDumpExceptAttribute)
-                .Where(attribute => attribute != null))
-        {
-            var value = target.InvokeValue(memberInfo);
-            return attribute!.IsException(value);
-        }
+        var attributes = Attribute.GetCustomAttributes(memberInfo, typeof(DumpAttributeBase))
+            .OfType<IDumpExceptAttribute>()
+            .ToArray();
 
-        return true;
+        if(!attributes.Any())
+            return true;
+
+        var value = target.InvokeValue(memberInfo);
+        return attributes
+            .All(attribute => !attribute.IsException(value));
     }
 }
