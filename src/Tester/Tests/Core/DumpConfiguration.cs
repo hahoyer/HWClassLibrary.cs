@@ -1,5 +1,4 @@
-﻿
-namespace Tester.Tests.Core;
+﻿namespace Tester.Tests.Core;
 
 [UnitTest]
 public static class EnableExceptTest

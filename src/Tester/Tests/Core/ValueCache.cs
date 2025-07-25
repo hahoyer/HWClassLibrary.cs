@@ -1,6 +1,4 @@
-﻿using hw.DebugFormatter;
-using hw.Helper;
-using hw.UnitTest;
+﻿
 // ReSharper disable UnusedVariable
 // ReSharper disable CheckNamespace
 

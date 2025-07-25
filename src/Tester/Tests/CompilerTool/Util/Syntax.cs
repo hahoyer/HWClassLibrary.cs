@@ -1,5 +1,4 @@
-﻿using hw.DebugFormatter;
-using hw.Parser;
+﻿using hw.Parser;
 using hw.Scanner;
 
 // ReSharper disable CheckNamespace
