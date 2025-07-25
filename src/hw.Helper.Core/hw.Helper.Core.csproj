@@ -167,7 +167,7 @@
     <Import Project="sys.targets" />
 
     <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2024.3" />
+      <PackageReference Update="JetBrains.Annotations" Version="2025.2.0" />
     </ItemGroup>
 
 </Project>

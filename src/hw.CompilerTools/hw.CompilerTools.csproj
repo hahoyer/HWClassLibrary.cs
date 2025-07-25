@@ -204,7 +204,14 @@
     <Import Project="sys.targets" />
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="25.1.1" />
+      <PackageReference Include="hw.Helper.Core" Version="25.1.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="JetBrains.Annotations" Version="2025.2.0" />
     </ItemGroup>
 
 </Project>
