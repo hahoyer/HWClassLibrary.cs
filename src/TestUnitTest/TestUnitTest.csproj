@@ -5,8 +5,8 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-        <PackageReference Include="hw.UnitTest" Version="25.1.0.7-alpha">
-          <IncludeAssets>contentfiles; buildtransitive</IncludeAssets>
+        <PackageReference Include="hw.UnitTest" Version="25.1.1">
+          <IncludeAssets>build; contentfiles; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
