@@ -2,24 +2,6 @@
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <PropertyGroup Condition="'$(NuSpecFile)' == ''">
-        <NuSpecFileName Condition="!Exists('$(AssemblyName).md')">NugetSourcecodePackage</NuSpecFileName>
-        <NuSpecFileName Condition="Exists('$(AssemblyName).md')">NugetDocedSourcecodePackage</NuSpecFileName>
-        <NuSpecFile>$(MSBuildThisFileDirectory)$(NuSpecFileName).nuspec</NuSpecFile>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <NuspecProperties>
-            id=$(AssemblyName);
-            version=$(Version);
-            authors=$(Authors);
-            description=$(Description);
-            releaseNotes=$(PackageReleaseNotes);
-            copyright=$(Copyright);
-            projectdir=$(MSBuildProjectDirectory);
-        </NuspecProperties>
-    </PropertyGroup>
-
     <PropertyGroup>
         <Build>false</Build>
         <GenerateNugetPackage>true</GenerateNugetPackage>
