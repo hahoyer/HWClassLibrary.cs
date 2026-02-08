@@ -300,7 +300,7 @@ sealed class ProfileItem
             tag +
             ":  " +
             CountEnd.Format3Digits() +
-            "target  " +
+            "x  " +
             AverageDuration.Format3Digits() +
             "  " +
             Duration.Format3Digits() +
