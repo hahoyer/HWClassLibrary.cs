@@ -1,4 +1,5 @@
 ﻿using hw.Parser;
+using Tester.Tests.CompilerTool;
 
 // ReSharper disable CheckNamespace
 
@@ -65,7 +66,7 @@ public sealed class BracketBalance
         var result = ParserUtil.Parse(expr);
         var items = result.Tokens;
         var depth = items.Sum(item => item.BracketBalance());
-        (depth == 0).Assert
+        (depth == -1).Assert
         (() =>
             items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                 .Stringify(" "));
@@ -91,7 +92,7 @@ public sealed class BracketBalance
         var result = ParserUtil.Parse(expr);
         var items = result.Tokens;
         var depth = items.Sum(syntax => syntax.BracketBalance());
-        (depth == 0).Assert
+        (depth == -1).Assert
         (() =>
             items.Select(item => item.Characters.Id + ":" + item.BracketBalance())
                 .Stringify(" "));

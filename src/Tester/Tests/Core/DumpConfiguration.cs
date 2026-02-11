@@ -3,12 +3,13 @@
 [UnitTest]
 public static class EnableExceptTest
 {
+    static int NextObjectId = 1;
     sealed class None : DumpableObject
     {
         public int Zwei;
         int Eins;
 
-        public None(int eins, int zwei)
+        public None(int eins, int zwei): base(NextObjectId++)
         {
             Eins = eins;
             Zwei = zwei;
@@ -24,7 +25,7 @@ public static class EnableExceptTest
         [EnableDumpExcept(3)]
         int Eins;
 
-        public Both(int eins, int zwei)
+        public Both(int eins, int zwei): base(NextObjectId++)
         {
             Eins = eins;
             Zwei = zwei;
@@ -39,7 +40,7 @@ public static class EnableExceptTest
 
         int Eins;
 
-        public Public(int eins, int zwei)
+        public Public(int eins, int zwei): base(NextObjectId++)
         {
             Eins = eins;
             Zwei = zwei;
@@ -54,7 +55,7 @@ public static class EnableExceptTest
         [EnableDumpExcept(3)]
         int Eins;
 
-        public Private(int eins, int zwei)
+        public Private(int eins, int zwei): base(NextObjectId++)
         {
             Eins = eins;
             Zwei = zwei;
@@ -65,6 +66,7 @@ public static class EnableExceptTest
     [UnitTest]
     public static void Run()
     {
+        NextObjectId = 1;
         Check(new None(1, 1), "EnableExceptTest.None.1i{Zwei=1}");
         Check(new None(3, 3), "EnableExceptTest.None.2i{Zwei=3}");
         Check(new Both(1, 1), "EnableExceptTest.Both.3i{Zwei=1}");
