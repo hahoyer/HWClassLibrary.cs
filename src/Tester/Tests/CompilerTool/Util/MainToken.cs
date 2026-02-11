@@ -1,7 +1,7 @@
 ﻿
 // ReSharper disable CheckNamespace
 
-namespace hw.Tests.CompilerTool.Util
+namespace Tester.Tests.CompilerTool.Util
 {
     sealed class MainToken : NamedToken
     {

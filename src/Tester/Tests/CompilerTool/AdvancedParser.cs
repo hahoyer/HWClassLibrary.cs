@@ -2,6 +2,8 @@
 
 // ReSharper disable CheckNamespace
 
+using Tester.Tests.CompilerTool;
+
 namespace hw.Tests.CompilerTool;
 
 [UnitTest]

@@ -1,44 +1,42 @@
 ﻿using hw.Parser;
-// ReSharper disable CheckNamespace
 
-namespace hw.Tests.CompilerTool.Util
+namespace Tester.Tests.CompilerTool.Util;
+
+sealed class EndOfText : ParserTokenType<Syntax>, IBracketMatch<Syntax>
 {
-    sealed class EndOfText : ParserTokenType<Syntax>, IBracketMatch<Syntax>
-    {
-        public override string Id => PrioTable.EndOfText;
+    public override string Id => PrioTable.EndOfText;
 
+    protected override Syntax? Create(Syntax? left, IToken token, Syntax? right)
+    {
+        if(left != null)
+            return left.RightParenthesis(Id, token, right);
+
+        // ReSharper disable once ExpressionIsAlwaysNull
+        NotImplementedMethod(left, token, right);
+        return null;
+    }
+
+    sealed class Matched : ParserTokenType<Syntax>
+    {
         protected override Syntax? Create(Syntax? left, IToken token, Syntax? right)
         {
-            if(left != null)
-                return left.RightParenthesis(Id, token, right);
-
-            // ReSharper disable once ExpressionIsAlwaysNull
-            NotImplementedMethod(left, token, right);
-            return null;
-        }
-
-        sealed class Matched : ParserTokenType<Syntax>
-        {
-            protected override Syntax? Create(Syntax? left, IToken token, Syntax? right)
+            if(right == null)
             {
-                if(right == null)
-                {
-                    var result = (ParenthesisSyntax?) left!;
-                    if(result.Right == null)
-                        return result.Left;
+                var result = (ParenthesisSyntax?) left!;
+                if(result.Right == null)
+                    return result.Left;
 
-                    // ReSharper disable once ExpressionIsAlwaysNull
-                    NotImplementedMethod(left, token, right);
-                    return null;
-                }
-
+                // ReSharper disable once ExpressionIsAlwaysNull
                 NotImplementedMethod(left, token, right);
                 return null;
             }
 
-            public override string Id => "<source>";
+            NotImplementedMethod(left, token, right);
+            return null;
         }
 
-        IParserTokenType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
+        public override string Id => "<source>";
     }
+
+    IParserTokenType<Syntax> IBracketMatch<Syntax>.Value { get; } = new Matched();
 }

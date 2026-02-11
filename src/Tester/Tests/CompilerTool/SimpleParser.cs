@@ -1,9 +1,6 @@
-﻿
+﻿// ReSharper disable UnusedVariable
 
-// ReSharper disable UnusedVariable
-// ReSharper disable CheckNamespace
-
-namespace hw.Tests.CompilerTool;
+namespace Tester.Tests.CompilerTool;
 
 [UnitTest]
 public sealed class SimpleParser : DependenceProvider

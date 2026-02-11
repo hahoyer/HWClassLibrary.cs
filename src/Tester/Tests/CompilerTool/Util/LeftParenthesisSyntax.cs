@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics;
 using hw.Parser;
-// ReSharper disable CheckNamespace
 
-namespace hw.Tests.CompilerTool.Util
+namespace Tester.Tests.CompilerTool.Util
 {
     [DebuggerDisplay(value: "{NodeDump}")]
     sealed class LeftParenthesisSyntax : TreeSyntax
