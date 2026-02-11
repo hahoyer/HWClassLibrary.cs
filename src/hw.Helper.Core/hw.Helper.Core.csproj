@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.2</Version>
+        <Version>26.0</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            refactor: upgrade C#
+            25.1.2
             admin: net472
             25.1.1
             Bugfix: Dump exceptions where not working
@@ -166,19 +168,12 @@
         </PackageReleaseNotes>
     </PropertyGroup>
 
+    <ItemGroup>
+        <Compile Remove="hw\**\*.cs" />
+        <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/%(RecursiveDir)%(Filename)%(Extension)" BuildAction="Compile"
+            CopyToOutput="false" />
+    </ItemGroup>
+
     <Import Project="sys.targets" />
-    
-    <ItemGroup>
-        <None Include="hw\**\*.cs"
-            Pack="true"
-            PackagePath="contentFiles\cs\$(TargetFramework)\any\hw" />
-        <None Include="hw\**\*"
-            Pack="true"
-            PackagePath="content\net472\hw" />
-    </ItemGroup>
-    
-    <ItemGroup>
-        <PackageReference Update="JetBrains.Annotations" Version="2025.2.0" />
-    </ItemGroup>
 
 </Project>

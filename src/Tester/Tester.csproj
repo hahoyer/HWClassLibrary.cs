@@ -1,29 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
-        <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+        <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
+        <OutputType>WinExe</OutputType>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="*" />
-        <PackageReference Include="hw.CompilerTools" Version="25.1.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="hw.UnitTest" Version="25.1.1">
+        <PackageReference Include="hw.UnitTest" Version="26.0.0-alpha.2">
             <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>build; contentfiles; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Update="JetBrains.Annotations" Version="*" />
     </ItemGroup>
-    
+
     <ItemGroup>
-      <Using Include="hw.DebugFormatter" />
-      <Using Include="hw.Helper" />
-      <Using Include="hw.UnitTest" />
+        <ProjectReference Include="..\hw.CompilerTools\hw.CompilerTools.dev.csproj" />
     </ItemGroup>
 
-    <Import Project="sys.targets" />
-
+    <ItemGroup>
+        <Using Remove="System.Net.Http" />
+        <Using Include="hw.DebugFormatter" />
+        <Using Include="hw.Helper" />
+        <Using Include="hw.UnitTest" />
+    </ItemGroup>
 </Project>
