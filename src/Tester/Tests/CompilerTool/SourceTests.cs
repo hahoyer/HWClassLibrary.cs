@@ -23,7 +23,7 @@ public sealed class SourceTests
 
     sealed class NoProvider : ISourceProvider
     {
-        string? ISourceProvider.Data => null;
+        ITextProvider? ISourceProvider.Data => null;
         bool ISourceProvider.IsPersistent => false;
         int ISourceProvider.Length => 0;
         string? ISourceProvider.Identifier => null;
