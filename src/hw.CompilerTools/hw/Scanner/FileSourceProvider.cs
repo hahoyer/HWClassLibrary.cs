@@ -1,10 +1,12 @@
-﻿using hw.Helper;
+﻿using System.Collections;
+using hw.Helper;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // ReSharper disable CheckNamespace
 
 namespace hw.Scanner;
 
-public sealed class FileSourceProvider : ISourceProvider
+public sealed class FileSourceProvider : ISourceProvider, ITextProvider
 {
     readonly ValueCache<string?>? DataCache;
     readonly SmbFile File;
@@ -16,12 +18,18 @@ public sealed class FileSourceProvider : ISourceProvider
             DataCache = new(() => File.String);
     }
 
-    string ISourceProvider.Data => Data;
+    ITextProvider ISourceProvider.Data => this;
 
     string Data => DataCache?.Value ?? File.String ?? "";
 
-    bool ISourceProvider.IsPersistent => false;
-    int ISourceProvider.Length => Data.Length;
+    bool ISourceProvider.IsPersistent => true;
+    int ISourceProvider.Length => (int)long.Min(File.Size, int.MaxValue);
 
     string ISourceProvider.Identifier => File.FullName;
+
+    IEnumerator IEnumerable.GetEnumerator() => Data.GetEnumerator();
+    IEnumerator<char> IEnumerable<char>.GetEnumerator() => Data.GetEnumerator();
+    string ITextProvider.this[Range range] => Data[range];
+    char ITextProvider.this[Index index] => Data[index];
 }
+

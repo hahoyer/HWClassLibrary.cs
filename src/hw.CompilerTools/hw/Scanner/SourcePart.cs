@@ -60,7 +60,7 @@ public sealed class SourcePart
     SourcePart IAggregateable<SourcePart>.Aggregate(SourcePart? other) => Overlay(other);
 
     public override bool Equals(object? obj)
-        => ReferenceEquals(this, obj) || obj is SourcePart other && Equals(other);
+        => ReferenceEquals(this, obj) || (obj is SourcePart other && Equals(other));
 
     public override int GetHashCode()
     {

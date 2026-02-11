@@ -15,9 +15,9 @@ public sealed class Source : DumpableObject
     public readonly string? Identifier;
     public readonly ISourceProvider SourceProvider;
 
-    public string? Data => SourceProvider.Data;
+    public ITextProvider? Data => SourceProvider.Data;
 
-    [Obsolete("use version withIndex")]
+    [Obsolete("use version withIndex", true)]
     public char this[int position] => IsEnd(position)? '\0' : Data![position];
 
     public char this[Index position] => IsEndPosition(position)? '\0' : Data![position];
@@ -50,10 +50,10 @@ public sealed class Source : DumpableObject
     public static SourcePosition operator +(Source target, int y) => new(target, y);
     public static SourcePosition operator +(Source target, Index y) => new(target, y);
 
-    [Obsolete("use IsEndPosition")]
+    [Obsolete("use IsEndPosition", true)]
     public bool IsEnd(int position) => Length <= position;
 
-    [Obsolete("use this[start..start+length]")]
+    [Obsolete("use this[start..start+length]", true)]
     public string SubString(int start, int length) => this[start..(start + length)];
 
     public bool IsValidPosition(Index position)
