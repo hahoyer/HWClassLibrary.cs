@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetSourcecodePackage</TargetTypeEx>
-        <Version>26.0.0-alpha.2</Version>
+        <Version>26.0.0</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReleaseNotes>
             refactor: upgrade C#
