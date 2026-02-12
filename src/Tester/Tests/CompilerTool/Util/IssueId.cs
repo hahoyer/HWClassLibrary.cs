@@ -1,7 +1,6 @@
 ﻿using hw.Scanner;
-// ReSharper disable CheckNamespace
 
-namespace hw.Tests.CompilerTool.Util
+namespace Tester.Tests.CompilerTool.Util
 {
     sealed class IssueId
         : EnumEx

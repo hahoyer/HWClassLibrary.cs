@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.0.1</Version>
+        <Version>26.0</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            refactor: upgrade C#
+            25.0.1
             admin: changed back to source-code-only-package
             24.1.0
             refactor: upgrade C#
@@ -22,19 +24,19 @@
             20.0.1
             change: stack level detection
         </PackageReleaseNotes>
-        <NuSpecFile>package.nuspec</NuSpecFile>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageReadmeFile>docs\$(AssemblyName).md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(AssemblyName).md" Pack="true" PackagePath="docs\" />
+        <Compile Remove="hw\**\*.cs" />
+        <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile"
+            CopyToOutput="false" />
+    </ItemGroup>
 
     <Import Project="sys.targets" />
 
-    <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="25.1.1.*" />
-        <PackageReference Include="log4net" Version="3.*">
-            <IncludeAssets>all</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.0" />
-    </ItemGroup>
 </Project>

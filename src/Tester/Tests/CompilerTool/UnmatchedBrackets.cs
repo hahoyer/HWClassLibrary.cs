@@ -1,8 +1,4 @@
-
-
-// ReSharper disable CheckNamespace
-
-namespace hw.Tests.CompilerTool;
+namespace Tester.Tests.CompilerTool;
 
 [UnitTest]
 public sealed class UnmatchedBrackets : DependenceProvider

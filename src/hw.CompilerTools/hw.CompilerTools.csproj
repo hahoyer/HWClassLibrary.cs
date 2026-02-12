@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.1</Version>
+        <Version>26.0.0</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
+            change: Streams as source provider
+            25.1.1
             Bugfixes
             25.1
             admin: changed back to source-code-only-package
@@ -24,13 +26,13 @@
             24.0.2
             refactor: nullability
             24.0.0
-            refactor: upgrade C#            
+            refactor: upgrade C#
             breaking change: use BracketSide-enum instead of bool?
             breaking change: type SourcePosn removed
-			bugfix: wrong assertion removed
-	        23.0.0
+            bugfix: wrong assertion removed
+            23.0.0
             admin: Fix for use with .net6
-            22.0.5                                         
+            22.0.5
             refactor: Default parameter
             22.0.1
             new: SourcePart.Split
@@ -198,20 +200,20 @@
             Change: Customized debugger display for Token and WhiteSpaceToken
             Change: Introducing white space fine structure
         </PackageReleaseNotes>
-        <NuSpecFile>package.nuspec</NuSpecFile>
     </PropertyGroup>
+ 
+    <ItemGroup>
+        <Compile Remove="hw\**\*.cs" />
+        <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile"
+            CopyToOutput="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="hw.Helper.Core" Version="26.0">
+            <PrivateAssets>none</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
     <Import Project="sys.targets" />
-
-    <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="25.1.1">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.0" />
-    </ItemGroup>
 
 </Project>

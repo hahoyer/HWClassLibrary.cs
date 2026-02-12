@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text;
 using hw.DebugFormatter;
-using hw.Helper;
 
 // ReSharper disable CheckNamespace
 
@@ -12,197 +11,454 @@ public static class LinqExtension
 {
     public enum SeparatorTreatmentForSplit { Drop, BeginOfSubList, EndOfSubList }
 
-    public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
-        => InternalAddDistinct(a, b, isEqual);
-
-    public static bool AddDistinct<T>(this IList<T> a, IEnumerable<T> b, Func<T, T, T> combine)
-        where T : class
-        => InternalAddDistinct(a, b, combine);
-
-    public static IEnumerable<IEnumerable<T>> Separate<T>(this IEnumerable<T> target, Func<T, bool> isHead)
+    extension<T>(IList<T> a)
     {
-        var subResult = new List<T>();
-
-        foreach(var xx in target)
-        {
-            if(isHead(xx))
-                if(subResult.Count > 0)
-                {
-                    yield return subResult.ToArray();
-                    subResult = [];
-                }
-
-            subResult.Add(xx);
-        }
-
-        if(subResult.Count > 0)
-            yield return subResult.ToArray();
+        public bool AddDistinct(IEnumerable<T> b, Func<T, T, bool> isEqual)
+            => InternalAddDistinct(a, b, isEqual);
     }
 
-    public static T? Aggregate<T>(this IEnumerable<T?> target, Func<T>? getDefault = null)
+    extension<T>(IList<T> a)
+        where T : class
+    {
+        public bool AddDistinct(IEnumerable<T> b, Func<T, T, T> combine)
+            => InternalAddDistinct(a, b, combine);
+    }
+
+    extension<T>(IEnumerable<T> target)
+    {
+        public IEnumerable<IEnumerable<T>> Separate(Func<T, bool> isHead)
+        {
+            var subResult = new List<T>();
+
+            foreach(var xx in target)
+            {
+                if(isHead(xx))
+                    if(subResult.Count > 0)
+                    {
+                        yield return subResult.ToArray();
+                        subResult = [];
+                    }
+
+                subResult.Add(xx);
+            }
+
+            if(subResult.Count > 0)
+                yield return subResult.ToArray();
+        }
+
+        public string Dump() => Tracer.Dump(target);
+
+        public string Stringify(string separator, bool showNumbers = false)
+        {
+            var result = new StringBuilder();
+            var i = 0;
+            var isNext = false;
+            foreach(var element in target)
+            {
+                if(isNext)
+                    result.Append(separator);
+                if(showNumbers)
+                    result.Append("[" + i + "] ");
+                isNext = true;
+                result.Append(element);
+                i++;
+            }
+
+            return result.ToString();
+        }
+
+        public TimeSpan Sum(Func<T, TimeSpan> selector)
+        {
+            var result = new TimeSpan();
+            return target.Aggregate(result, (current, element) => current + selector(element));
+        }
+
+        /// <summary>
+        ///     Splits an enumeration at positions where <see cref="isSeparator" /> returns true.
+        ///     The resulting enumeration of enumerations may contain the separator item
+        ///     depending on <see cref="separatorTreatment" /> parameter
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="isSeparator"></param>
+        /// <param name="separatorTreatment"></param>
+        /// <returns>
+        ///     Enumeration of arrays of <see cref="target" /> items
+        ///     split at points where <see cref="isSeparator" /> returns true.
+        /// </returns>
+        public IEnumerable<IEnumerable<T>> Split
+        (
+            Func<T, bool> isSeparator
+            , SeparatorTreatmentForSplit separatorTreatment = SeparatorTreatmentForSplit.Drop
+        )
+        {
+            var part = new List<T>();
+            foreach(var item in target)
+                if(isSeparator(item))
+                {
+                    if(separatorTreatment == SeparatorTreatmentForSplit.EndOfSubList)
+                        part.Add(item);
+
+                    if(part.Any())
+                        yield return part.ToArray();
+                    part = [];
+
+                    if(separatorTreatment == SeparatorTreatmentForSplit.BeginOfSubList)
+                        part.Add(item);
+                }
+                else
+                    part.Add(item);
+
+            if(part.Any())
+                yield return part.ToArray();
+        }
+    }
+
+    extension<T>(IEnumerable<T?> target)
         where T : class, IAggregateable<T>
     {
-        var targetArray = target.ToArray();
-        if(!targetArray.Any())
-            return getDefault?.Invoke();
-        var result = targetArray[0];
-        for(var i = 1; i < targetArray.Length; i++)
+        public T? Aggregate(Func<T>? getDefault = null)
         {
-            var item = targetArray[i];
+            var targetArray = target.ToArray();
+            if(!targetArray.Any())
+                return getDefault?.Invoke();
+            var result = targetArray[0];
+            for(var i = 1; i < targetArray.Length; i++)
+            {
+                var item = targetArray[i];
                 result = result?.Aggregate(item) ?? item;
-        }
+            }
 
-        return result;
+            return result;
+        }
     }
 
-    public static string Dump<T>(this IEnumerable<T> target) => Tracer.Dump(target);
-
-    public static string DumpLines<T>(this IEnumerable<T> target)
+    extension<T>(IEnumerable<T> target)
         where T : Dumpable
     {
-        var i = 0;
-        return target.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
+        public string DumpLines()
+        {
+            var i = 0;
+            return target.Aggregate("", (a, xx) => a + "[" + i++ + "] " + xx.Dump() + "\n");
+        }
     }
 
-    public static string Stringify<T>(this IEnumerable<T> target, string separator, bool showNumbers = false)
+    extension<T>(IEnumerable<T> list)
     {
-        var result = new StringBuilder();
-        var i = 0;
-        var isNext = false;
-        foreach(var element in target)
+        /// <summary>
+        ///     Returns index list of all elements, that have no other element, with "isInRelation(element, other)" is true
+        ///     For example if relation is "element ;&lt; other" will return the maximal element
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="isInRelation"></param>
+        /// <returns></returns>
+        public IEnumerable<int> FrameIndexList(Func<T, T, bool> isInRelation)
         {
-            if(isNext)
-                result.Append(separator);
-            if(showNumbers)
-                result.Append("[" + i + "] ");
-            isNext = true;
-            result.Append(element);
-            i++;
+            var listArray = list.ToArray();
+            return
+                listArray.Select((item, index) => new Tuple<T, int>(item, index))
+                    .Where(element => !listArray.Any(other => isInRelation(element.Item1, other)))
+                    .Select(element => element.Item2);
         }
 
-        return result.ToString();
-    }
+        /// <summary>
+        ///     Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true
+        ///     For example if relation is "element &lt; other" will return the maximal element
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="isInRelation"></param>
+        /// <returns></returns>
+        public IEnumerable<T> FrameElementList(Func<T, T, bool> isInRelation)
+        {
+            var listArray = list.ToArray();
+            return listArray.FrameIndexList(isInRelation).Select(index => listArray[index]);
+        }
+    }                                                                   
 
-    public static TimeSpan Sum<T>(this IEnumerable<T> target, Func<T, TimeSpan> selector)
-    {
-        var result = new TimeSpan();
-        return target.Aggregate(result, (current, element) => current + selector(element));
-    }
-
-    /// <summary>
-    ///     Returns index list of all elements, that have no other element, with "isInRelation(element, other)" is true
-    ///     For example if relation is "element ;&lt; other" will return the maximal element
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="isInRelation"></param>
-    /// <returns></returns>
-    public static IEnumerable<int> FrameIndexList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
-    {
-        var listArray = list.ToArray();
-        return
-            listArray.Select((item, index) => new Tuple<T, int>(item, index))
-                .Where(element => !listArray.Any(other => isInRelation(element.Item1, other)))
-                .Select(element => element.Item2);
-    }
-
-    /// <summary>
-    ///     Returns list of all elements, that have no other element, with "isInRelation(element, other)" is true
-    ///     For example if relation is "element &lt; other" will return the maximal element
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="isInRelation"></param>
-    /// <returns></returns>
-    public static IEnumerable<T> FrameElementList<T>(this IEnumerable<T> list, Func<T, T, bool> isInRelation)
-    {
-        var listArray = list.ToArray();
-        return listArray.FrameIndexList(isInRelation).Select(index => listArray[index]);
-    }
-
-    public static IEnumerable<int> MaxIndexList<T>(this IEnumerable<T> list)
+    extension<T>(IEnumerable<T> list)
         where T : IComparable<T>
-        => list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
-
-    public static IEnumerable<int> MinIndexList<T>(this IEnumerable<T> list)
-        where T : IComparable<T>
-        => list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
-
-    /// <summary>
-    ///     Checks if object starts with given object.
-    /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="target"> The target. </param>
-    /// <param name="y"> The y. </param>
-    /// <returns> </returns>
-    public static bool StartsWith<T>(this IList<T> target, IList<T> y)
     {
-        if(target.Count < y.Count)
-            return false;
-        return !y.Where((t, i) => !Equals(target[i], t)).Any();
+        public IEnumerable<int> GetMaxIndexList()
+            => list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
+
+        public IEnumerable<int> GetMinIndexList()
+            => list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
+
+        [Obsolete("use GetMaxIndexList",false)]
+        public IEnumerable<int> MaxIndexList()
+            => list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
+
+        [Obsolete("use GetMinIndexList",false)]
+        public IEnumerable<int> MinIndexList()
+            => list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
     }
 
-    /// <summary>
-    ///     Checks if object starts with given object and is longer.
-    /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="target"> The target. </param>
-    /// <param name="y"> The y. </param>
-    /// <returns> </returns>
-    public static bool StartsWithAndNotEqual<T>(this IList<T> target, IList<T> y)
-        => target.Count != y.Count && target.StartsWith(y);
+    extension<T>(IList<T> target)
+    {
+        /// <summary>
+        ///     Checks if object starts with given object.
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="y"> The y. </param>
+        /// <returns> </returns>
+        public bool StartsWith(IList<T> y)
+        {
+            if(target.Count < y.Count)
+                return false;
+            return !y.Where((t, i) => !Equals(target[i], t)).Any();
+        }
 
-    public static TResult? CheckedApply<T, TResult>(this T? target, Func<T, TResult> function)
+        /// <summary>
+        ///     Checks if object starts with given object and is longer.
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="y"> The y. </param>
+        /// <returns> </returns>
+        public bool StartsWithAndNotEqual(IList<T> y)
+            => target.Count != y.Count && target.StartsWith(y);
+    }
+
+    extension<T>(T? target)
         where T : class
-        where TResult : class
-        => target == default(T)? default : function(target);
+    {
+        public TResult? CheckedApply<TResult>(Func<T, TResult> function)
+            where TResult : class
+            => target == default(T)? default : function(target);
 
-    public static TResult AssertValue<TResult>(this TResult? target)
+        public IEnumerable<T> NullableToArray()
+            => target == null? [] : new[] { target };
+    }
+
+    extension<TResult>(TResult? target)
         where TResult : struct
     {
-        (target != null).Assert(stackFrameDepth: 1);
-        return target!.Value;
+        public TResult AssertValue()
+        {
+            (target != null).Assert(stackFrameDepth: 1);
+            return target!.Value;
+        }
     }
 
-    [DebuggerHidden]
-    [ContractAnnotation("target: null => halt")]
-    public static TResult AssertNotNull<TResult>(this TResult? target, int stackFrameDepth = 0)
+    extension<TResult>(TResult? target)
         where TResult : class
     {
-        (target != null).Assert(stackFrameDepth: stackFrameDepth + 1);
-        return target!;
+        [DebuggerHidden]
+        [ContractAnnotation("target: null => halt")]
+        public TResult AssertNotNull(int stackFrameDepth = 0)
+        {
+            (target != null).Assert(stackFrameDepth: stackFrameDepth + 1);
+            return target!;
+        }
     }
 
-
-    public static IEnumerable<int> Select(this int count)
+    extension(int count)
     {
-        for(var i = 0; i < count; i++)
-            yield return i;
+        public IEnumerable<int> Select()
+        {
+            for(var i = 0; i < count; i++)
+                yield return i;
+        }
+
+
+        public IEnumerable<T> Select<T>(Func<int, T> getValue)
+        {
+            for(var i = 0; i < count; i++)
+                yield return getValue(i);
+        }
     }
 
-    public static IEnumerable<long> Select(this long count)
+    extension(long count)
     {
-        for(long i = 0; i < count; i++)
-            yield return i;
+        public IEnumerable<long> Select()
+        {
+            for(long i = 0; i < count; i++)
+                yield return i;
+        }
+
+        public IEnumerable<T> Select<T>(Func<long, T> getValue)
+        {
+            for(long i = 0; i < count; i++)
+                yield return getValue(i);
+        }
+    }
+
+    extension<TKey, TValue>(IDictionary<TKey, TValue> target)
+    {
+        public void AddRange
+        (
+            IEnumerable<KeyValuePair<TKey, TValue>> newEntries
+        )
+        {
+            foreach(var item in newEntries.Where(entry => !target.ContainsKey(entry.Key)))
+                target.Add(item);
+        }
+    }
+
+    extension<T>(IEnumerable<T> items)
+    {
+        /// <summary>Finds the index of the first item matching an expression in an enumerable.</summary>
+        /// <param name="predicate">The expression to test the items against.</param>
+        /// <returns>The index of the first matching item, or null if no items match.</returns>
+        public int? IndexWhere(Func<T, bool> predicate)
+        {
+            if(items == null)
+                throw new ArgumentNullException(nameof(items));
+            if(predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
+            var result = 0;
+            foreach(var item in items)
+            {
+                if(predicate(item))
+                    return result;
+                result++;
+            }
+
+            return null;
+        }
+    }
+
+    extension<T>(T? current)
+        where T : class
+    {
+        public IEnumerable<T> Chain(Func<T, T?> getNext)
+        {
+            while(current != null)
+            {
+                yield return current;
+                current = getNext(current);
+            }
+        }
+    }
+
+    extension<T>(T a)
+    {
+        public bool In(params T[] b) => b.Contains(a);
+    }
+
+    extension<TType>(IEnumerable<TType> target)
+    {
+        public IEnumerable<TType>? Sort(Func<TType, IEnumerable<TType>> immediateParents)
+        {
+            var xx = target.ToArray();
+            xx.IsCircuitFree(immediateParents).Assert();
+            return null;
+        }
+
+        public IEnumerable<TType> Closure(Func<TType, IEnumerable<TType>> immediateParents)
+        {
+            var types = target.ToArray();
+            var targets = types;
+            while(true)
+            {
+                targets = targets.SelectMany(immediateParents).Except(types).ToArray();
+                if(!targets.Any())
+                    return types;
+                types = types.Union(targets).ToArray();
+            }
+        }
+
+        public bool IsCircuitFree(Func<TType, IEnumerable<TType>> immediateParents)
+            => target.All(item => item.IsCircuitFree(immediateParents));
+
+        public IEnumerable<TType> Circuits(Func<TType, IEnumerable<TType>> immediateParents)
+            => target.Where(item => !item.IsCircuitFree(immediateParents));
+    }
+
+    extension<TType>(TType target)
+    {
+        public bool IsCircuitFree(Func<TType, IEnumerable<TType>> immediateParents)
+            => immediateParents(target).Closure(immediateParents).All(item => !Equals(item, target));
+    }
+
+    extension<T>(T? target)
+        where T : struct
+    {
+        public IEnumerable<T> NullableToArray()
+            => target == null? [] : new[] { target.Value };
+    }
+
+    extension<TTarget>(IEnumerable<TTarget> target)
+    {
+        public TTarget? Top
+        (
+            Func<TTarget, bool>? selector = null,
+            Func<Exception>? emptyException = null,
+            Func<IEnumerable<TTarget>, Exception>? multipleException = null,
+            bool enableEmpty = true,
+            bool enableMultiple = true
+        )
+        {
+            if(selector != null)
+                target = target.Where(selector);
+
+            using var enumerator = target.GetEnumerator();
+
+            if(!enumerator.MoveNext())
+            {
+                if(emptyException != null)
+                    throw emptyException();
+                return enableEmpty? default : target.Single();
+            }
+
+            var result = enumerator.Current;
+            if(!enumerator.MoveNext())
+                return result;
+
+            if(multipleException != null)
+                throw multipleException(target);
+            return enableMultiple? result : target.Single();
+        }
+    }
+
+    extension(IEnumerable<int> values)
+    {
+        public int? Maxx
+        {
+            get
+            {
+                if(values == null)
+                    throw new ArgumentNullException(nameof(values));
+                int? result = null;
+                foreach(var value in values)
+                    if(result == null)
+                        result = value;
+                    else if(value > result)
+                        result = value;
+                return result;
+            }
+        }
+
+        public int? Minn
+        {
+            get
+            {
+                if(values == null)
+                    throw new ArgumentNullException(nameof(values));
+                int? result = null;
+                foreach(var value in values)
+                    if(result == null)
+                        result = value;
+                    else if(value < result)
+                        result = value;
+                return result;
+            }
+        }
+    }
+
+    extension<T>(T root)
+    {
+        public IEnumerable<T> SelectHierarchical(Func<T, IEnumerable<T>> getChildren)
+        {
+            yield return root;
+            foreach(var item in getChildren(root).SelectMany(i => i.SelectHierarchical(getChildren)))
+                yield return item;
+        }
     }
 
     public static IEnumerable<int> Where(Func<int, bool> getValue)
     {
         for(var i = 0; getValue(i); i++)
             yield return i;
-    }
-
-
-    public static IEnumerable<T> Select<T>(this int count, Func<int, T> getValue)
-    {
-        for(var i = 0; i < count; i++)
-            yield return getValue(i);
-    }
-
-    public static IEnumerable<T> Select<T>(this long count, Func<long, T> getValue)
-    {
-        for(long i = 0; i < count; i++)
-            yield return getValue(i);
     }
 
     public static IEnumerable<Tuple<TKey, TLeft?, TRight?>> Merge<TKey, TLeft, TRight>
@@ -255,195 +511,6 @@ public static class LinqExtension
         (this IEnumerable<T> list, Func<T, TKey> selector)
         where TKey : notnull
         => new(key => list.Where(item => Equals(selector(item), key)));
-
-    public static void AddRange<TKey, TValue>
-    (
-        this IDictionary<TKey, TValue> target,
-        IEnumerable<KeyValuePair<TKey, TValue>> newEntries
-    )
-    {
-        foreach(var item in newEntries.Where(entry => !target.ContainsKey(entry.Key)))
-            target.Add(item);
-    }
-
-    /// <summary>Finds the index of the first item matching an expression in an enumerable.</summary>
-    /// <param name="items">The enumerable to search.</param>
-    /// <param name="predicate">The expression to test the items against.</param>
-    /// <returns>The index of the first matching item, or null if no items match.</returns>
-    public static int? IndexWhere<T>(this IEnumerable<T> items, Func<T, bool> predicate)
-    {
-        if(items == null)
-            throw new ArgumentNullException(nameof(items));
-        if(predicate == null)
-            throw new ArgumentNullException(nameof(predicate));
-
-        var result = 0;
-        foreach(var item in items)
-        {
-            if(predicate(item))
-                return result;
-            result++;
-        }
-
-        return null;
-    }
-
-    public static IEnumerable<T> Chain<T>(this T? current, Func<T, T?> getNext)
-        where T : class
-    {
-        while(current != null)
-        {
-            yield return current;
-            current = getNext(current);
-        }
-    }
-
-    public static bool In<T>(this T a, params T[] b) => b.Contains(a);
-
-    public static IEnumerable<TType>? Sort<TType>
-        (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
-    {
-        var xx = target.ToArray();
-        xx.IsCircuitFree(immediateParents).Assert();
-        return null;
-    }
-
-    public static IEnumerable<TType> Closure<TType>
-        (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
-    {
-        var types = target.ToArray();
-        var targets = types;
-        while(true)
-        {
-            targets = targets.SelectMany(immediateParents).Except(types).ToArray();
-            if(!targets.Any())
-                return types;
-            types = types.Union(targets).ToArray();
-        }
-    }
-
-    public static bool IsCircuitFree<TType>(this TType target, Func<TType, IEnumerable<TType>> immediateParents)
-        => immediateParents(target).Closure(immediateParents).All(item => !Equals(item, target));
-
-    public static bool IsCircuitFree<TType>
-        (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
-        => target.All(item => item.IsCircuitFree(immediateParents));
-
-    public static IEnumerable<TType> Circuits<TType>
-        (this IEnumerable<TType> target, Func<TType, IEnumerable<TType>> immediateParents)
-        => target.Where(item => !item.IsCircuitFree(immediateParents));
-
-    public static IEnumerable<T> NullableToArray<T>(this T? target)
-        where T : class
-        => target == null? [] : new[] { target };
-
-    public static IEnumerable<T> NullableToArray<T>(this T? target)
-        where T : struct
-        => target == null? [] : new[] { target.Value };
-
-    public static TTarget? Top<TTarget>
-    (
-        this IEnumerable<TTarget> target,
-        Func<TTarget, bool>? selector = null,
-        Func<Exception>? emptyException = null,
-        Func<IEnumerable<TTarget>, Exception>? multipleException = null,
-        bool enableEmpty = true,
-        bool enableMultiple = true
-    )
-    {
-        if(selector != null)
-            target = target.Where(selector);
-
-        using var enumerator = target.GetEnumerator();
-
-        if(!enumerator.MoveNext())
-        {
-            if(emptyException != null)
-                throw emptyException();
-            return enableEmpty? default : target.Single();
-        }
-
-        var result = enumerator.Current;
-        if(!enumerator.MoveNext())
-            return result;
-
-        if(multipleException != null)
-            throw multipleException(target);
-        return enableMultiple? result : target.Single();
-    }
-
-    /// <summary>
-    ///     Splits an enumeration at positions where <see cref="isSeparator" /> returns true.
-    ///     The resulting enumeration of enumerations may contain the separator item
-    ///     depending on <see cref="separatorTreatment" /> parameter
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="target"></param>
-    /// <param name="isSeparator"></param>
-    /// <param name="separatorTreatment"></param>
-    /// <returns>
-    ///     Enumeration of arrays of <see cref="target" /> items
-    ///     split at points where <see cref="isSeparator" /> returns true.
-    /// </returns>
-    public static IEnumerable<IEnumerable<T>> Split<T>
-    (
-        this IEnumerable<T> target, Func<T, bool> isSeparator
-        , SeparatorTreatmentForSplit separatorTreatment = SeparatorTreatmentForSplit.Drop
-    )
-    {
-        var part = new List<T>();
-        foreach(var item in target)
-            if(isSeparator(item))
-            {
-                if(separatorTreatment == SeparatorTreatmentForSplit.EndOfSubList)
-                    part.Add(item);
-
-                if(part.Any())
-                    yield return part.ToArray();
-                part = [];
-
-                if(separatorTreatment == SeparatorTreatmentForSplit.BeginOfSubList)
-                    part.Add(item);
-            }
-            else
-                part.Add(item);
-
-        if(part.Any())
-            yield return part.ToArray();
-    }
-
-    public static int? MaxEx(this IEnumerable<int> values)
-    {
-        if(values == null)
-            throw new ArgumentNullException(nameof(values));
-        int? result = null;
-        foreach(var value in values)
-            if(result == null)
-                result = value;
-            else if(value > result)
-                result = value;
-        return result;
-    }
-
-    public static int? MinEx(this IEnumerable<int> values)
-    {
-        if(values == null)
-            throw new ArgumentNullException(nameof(values));
-        int? result = null;
-        foreach(var value in values)
-            if(result == null)
-                result = value;
-            else if(value < result)
-                result = value;
-        return result;
-    }
-
-    public static IEnumerable<T> SelectHierarchical<T>(this T root, Func<T, IEnumerable<T>> getChildren)
-    {
-        yield return root;
-        foreach(var item in getChildren(root).SelectMany(i => i.SelectHierarchical(getChildren)))
-            yield return item;
-    }
 
     static bool InternalAddDistinct<T>(ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
     {

@@ -1,9 +1,7 @@
 ﻿using hw.Scanner;
-using hw.Tests.CompilerTool.Util;
+using Tester.Tests.CompilerTool.Util;
 
-// ReSharper disable CheckNamespace
-
-namespace hw.Tests.CompilerTool
+namespace Tester.Tests.CompilerTool
 {
     static class ParserUtil
     {

@@ -1,8 +1,6 @@
 ﻿using hw.Parser;
 
-// ReSharper disable CheckNamespace
-
-namespace hw.Tests.CompilerTool.Util
+namespace Tester.Tests.CompilerTool.Util
 {
     [PublicAPI]
     sealed class ParenthesisSyntax : TreeSyntax

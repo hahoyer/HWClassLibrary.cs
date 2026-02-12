@@ -12,7 +12,7 @@
         <description>$description$</description>
         <releaseNotes>$releaseNotes$</releaseNotes>
         <dependencies>
-            <dependency id="hw.Helper.Core" version="25.1.1" include="all"/>
+            <dependency id="hw.Helper.Core" version="25.1.2" include="all"/>
         </dependencies>
     </metadata>
     <files>

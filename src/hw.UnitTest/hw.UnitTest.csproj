@@ -2,9 +2,13 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetSourcecodePackage</TargetTypeEx>
-        <Version>25.1.1</Version>
+        <Version>26.0.0</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReleaseNotes>
+            refactor: upgrade C#
+            25.1.2
+            admin: net472
+            25.1.1
             Upgrade hw core
             25.0.2.1
             Upgrade hw core
@@ -61,20 +65,24 @@
             15.0
             Breaking Change: Attributes TestFixture and Test renamed to UnitTest
         </PackageReleaseNotes>
-        <NuSpecFile>package.nuspec</NuSpecFile>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageReadmeFile>docs\$(AssemblyName).md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(AssemblyName).md" Pack="true" PackagePath="docs\" />
+        <Compile Remove="hw\**\*.cs" />
+        <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile"
+            CopyToOutput="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="hw.Helper.Core" Version="26.0">
+        </PackageReference>
+    </ItemGroup>
+
     <Import Project="sys.targets" />
-
-    <ItemGroup>
-      <PackageReference Include="hw.Helper.Core" Version="25.1.1">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>all</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.0" />
-    </ItemGroup>
 
 </Project>

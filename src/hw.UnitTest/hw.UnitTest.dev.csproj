@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetTypeEx>CSharp.Library</TargetTypeEx>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageReadmeFile>docs\$(AssemblyName).md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="hw.Helper.Core" Version="26.0">
+            <PrivateAssets>none</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <Import Project="sys.targets" />
+
+</Project>

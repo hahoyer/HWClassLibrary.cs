@@ -16,7 +16,7 @@
 
         <Exec
             Condition="'$(Configuration)' == 'Release'"
-            Command="$(MSBuildThisFileDirectory)nuget.exe push $(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg -ApiKey $(ApiKey) -Source https://api.nuget.org/v3/index.json -ForceEnglishOutput -SkipDuplicate -Verbosity quiet" />
+            Command="$(MSBuildThisFileDirectory)nuget.exe push $(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg -Source https://api.nuget.org/v3/index.json -ForceEnglishOutput -SkipDuplicate -Verbosity quiet" />
     </Target>
 
 

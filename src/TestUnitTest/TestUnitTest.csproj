@@ -5,13 +5,12 @@
     </PropertyGroup>
     <Import Project="sys.targets" />
     <ItemGroup>
-        <PackageReference Include="hw.UnitTest" Version="25.1.1">
-          <IncludeAssets>build; contentfiles; buildtransitive</IncludeAssets>
+        <PackageReference Include="hw.UnitTest" Version="26.0.0-alpha.2">
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.0" />
+      <PackageReference Update="JetBrains.Annotations" Version="2025.2.4" />
     </ItemGroup>
 
 </Project>

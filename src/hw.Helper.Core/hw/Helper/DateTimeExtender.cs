@@ -7,60 +7,72 @@ namespace hw.Helper;
 [PublicAPI]
 public static class DateTimeExtender
 {
-    public static string Format(this DateTime dateTime)
+    extension(DateTime dateTime)
     {
-        var result = "";
-        result += dateTime.Hour.ToString("00");
-        result += ":";
-        result += dateTime.Minute.ToString("00");
-        result += ":";
-        result += dateTime.Second.ToString("00");
-        result += ".";
-        result += dateTime.Millisecond.ToString("000");
-        result += " ";
-        result += dateTime.Day.ToString("00");
-        result += ".";
-        result += dateTime.Month.ToString("00");
-        result += ".";
-        result += dateTime.Year.ToString("00");
-        return result;
-    }
-
-    public static string DynamicShortFormat(this DateTime dateTime, bool showMilliseconds)
-    {
-        var result = "";
-        result += dateTime.Hour.ToString("00");
-        result += ":";
-        result += dateTime.Minute.ToString("00");
-        result += ":";
-        result += dateTime.Second.ToString("00");
-        if(showMilliseconds)
+        public string Format()
         {
+            var result = "";
+            result += dateTime.Hour.ToString("00");
+            result += ":";
+            result += dateTime.Minute.ToString("00");
+            result += ":";
+            result += dateTime.Second.ToString("00");
             result += ".";
             result += dateTime.Millisecond.ToString("000");
-        }
-
-        var nowDate = DateTime.Now.Date;
-        var sameYear = nowDate.Year == dateTime.Year;
-        var sameMonth = sameYear && nowDate.Month == dateTime.Month;
-        var sameDay = sameMonth && nowDate.Day == dateTime.Day;
-
-        if(!sameDay)
-        {
             result += " ";
             result += dateTime.Day.ToString("00");
             result += ".";
-        }
-
-        if(!sameMonth)
-        {
             result += dateTime.Month.ToString("00");
             result += ".";
+            result += dateTime.Year.ToString("00");
+            return result;
         }
 
-        if(!sameYear)
-            result += dateTime.Year.ToString("00");
-        return result;
+        public string DynamicShortFormat(bool showMilliseconds)
+        {
+            var result = "";
+            result += dateTime.Hour.ToString("00");
+            result += ":";
+            result += dateTime.Minute.ToString("00");
+            result += ":";
+            result += dateTime.Second.ToString("00");
+            if (showMilliseconds)
+            {
+                result += ".";
+                result += dateTime.Millisecond.ToString("000");
+            }
+
+            var nowDate = DateTime.Now.Date;
+            var sameYear = nowDate.Year == dateTime.Year;
+            var sameMonth = sameYear && nowDate.Month == dateTime.Month;
+            var sameDay = sameMonth && nowDate.Day == dateTime.Day;
+
+            if (!sameDay)
+            {
+                result += " ";
+                result += dateTime.Day.ToString("00");
+                result += ".";
+            }
+
+            if (!sameMonth)
+            {
+                result += dateTime.Month.ToString("00");
+                result += ".";
+            }
+
+            if (!sameYear)
+                result += dateTime.Year.ToString("00");
+            return result;
+        }
+
+        public int WeekNumber(CultureInfo? culture)
+        {
+            culture ??= CultureInfo.CurrentCulture;
+            var dateTimeFormatInfo = culture.DateTimeFormat;
+            return dateTimeFormatInfo
+                .Calendar
+                .GetWeekOfYear(dateTime, dateTimeFormatInfo.CalendarWeekRule, dateTimeFormatInfo.FirstDayOfWeek);
+        }
     }
 
     public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = true, bool useSymbols = true)
@@ -74,15 +86,6 @@ public static class DateTimeExtender
 
         var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
         return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", useSymbols? "\"" : "s");
-    }
-
-    public static int WeekNumber(this DateTime dateTime, CultureInfo? culture)
-    {
-        culture ??= CultureInfo.CurrentCulture;
-        var dateTimeFormatInfo = culture.DateTimeFormat;
-        return dateTimeFormatInfo
-            .Calendar
-            .GetWeekOfYear(dateTime, dateTimeFormatInfo.CalendarWeekRule, dateTimeFormatInfo.FirstDayOfWeek);
     }
 
     public static TimeSpan Seconds(this double value) => TimeSpan.FromSeconds(value);
