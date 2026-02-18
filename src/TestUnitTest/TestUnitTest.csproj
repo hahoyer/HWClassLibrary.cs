@@ -3,14 +3,11 @@
     <PropertyGroup>
         <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
     </PropertyGroup>
-    <Import Project="sys.targets" />
+
     <ItemGroup>
-        <PackageReference Include="hw.UnitTest" Version="26.0.0-alpha.2">
-          <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup>
+      <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.dev.csproj" />
       <PackageReference Update="JetBrains.Annotations" Version="2025.2.4" />
     </ItemGroup>
 
+    <Import Project="sys.targets" />
 </Project>

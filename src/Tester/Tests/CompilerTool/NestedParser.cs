@@ -1,7 +1,5 @@
 
-using Tester.Tests.CompilerTool;
-
-namespace hw.Tests.CompilerTool;
+namespace Tester.Tests.CompilerTool;
 
 [UnitTest]
 [SimpleParser]
