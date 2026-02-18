@@ -65,6 +65,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.CompilerTools.dev", "hw.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.UnitTest.dev", "hw.UnitTest\hw.UnitTest.dev.csproj", "{B62B9B46-1FE3-E704-E2A1-2708B3B297A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreTester", "CoreTester\CoreTester.csproj", "{7CCBFF36-9331-9D33-372C-CAB85E94FA50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{B62B9B46-1FE3-E704-E2A1-2708B3B297A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B62B9B46-1FE3-E704-E2A1-2708B3B297A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B62B9B46-1FE3-E704-E2A1-2708B3B297A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CCBFF36-9331-9D33-372C-CAB85E94FA50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CCBFF36-9331-9D33-372C-CAB85E94FA50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CCBFF36-9331-9D33-372C-CAB85E94FA50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CCBFF36-9331-9D33-372C-CAB85E94FA50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

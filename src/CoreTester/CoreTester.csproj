@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
+        <OutputType>WinExe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="hw.UnitTest" Version="26.0.1">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\hw.Helper.Core\hw.Helper.Core.dev.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Remove="System.Net.Http" />
+        <Using Include="hw.DebugFormatter" />
+        <Using Include="hw.Helper" />
+        <Using Include="hw.UnitTest" />
+    </ItemGroup>
+</Project>
