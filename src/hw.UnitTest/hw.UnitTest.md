@@ -1,7 +1,7 @@
 # Overview
 
 Provides some support for unit-testing.
-It is comapatible to nunit and MSTest although is provides some more features.
+It is compatible to nunit and MSTest although is provides some more features.
 ### Supports:
 - almost any public non-abstract class can be a test class
 - supports dependencies between tests

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetTypeEx>NuGetSourcecodePackage</TargetTypeEx>
+        <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
         <Version>26.0.1</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReleaseNotes>
@@ -69,12 +69,7 @@
         </PackageReleaseNotes>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <PackageReadmeFile>docs\$(AssemblyName).md</PackageReadmeFile>
-    </PropertyGroup>
-
     <ItemGroup>
-        <None Include="$(AssemblyName).md" Pack="true" PackagePath="docs\" />
         <Compile Remove="hw\**\*.cs" />
         <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile"
             CopyToOutput="false" />
