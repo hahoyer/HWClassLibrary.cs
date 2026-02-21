@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="NugetSourcecodePackage.targets" />
+
+    <PropertyGroup>
+        <PackageReadmeFile>docs\$(AssemblyName).md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(AssemblyName).md" Pack="true" PackagePath="docs\" />
+    </ItemGroup>
+</Project>

@@ -10,10 +10,10 @@
 
     <ItemGroup>
         <PackageReference Include="hw.Helper.Core" Version="26.0.1">
-            <PrivateAssets>none</PrivateAssets>
+            <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
 
-    <Import Project="sys.targets" />
+    
 
 </Project>

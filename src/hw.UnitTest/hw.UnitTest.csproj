@@ -85,6 +85,6 @@
         </PackageReference>
     </ItemGroup>
 
-    <Import Project="sys.targets" />
+    
 
 </Project>

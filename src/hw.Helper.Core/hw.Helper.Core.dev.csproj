@@ -4,6 +4,6 @@
         <TargetTypeEx>CSharp.Library</TargetTypeEx>
     </PropertyGroup>
 
-    <Import Project="sys.targets" />
+    
 
 </Project>

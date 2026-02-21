@@ -6,8 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.dev.csproj" />
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.4" />
     </ItemGroup>
 
-    <Import Project="sys.targets" />
+    
 </Project>

@@ -13,12 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6CF995B9
 		..\build\CSharp.targets = ..\build\CSharp.targets
 		..\build\CSharp.WinExe.targets = ..\build\CSharp.WinExe.targets
 		..\Directory.Build.props = ..\Directory.Build.props
+		..\Directory.Build.targets = ..\Directory.Build.targets
 		..\build\HoyerWare.CSharp.targets = ..\build\HoyerWare.CSharp.targets
 		..\build\NuGetDocedSourcecodePackage.nuspec = ..\build\NuGetDocedSourcecodePackage.nuspec
+		..\build\NuGetDocedSourcecodePackage.targets = ..\build\NuGetDocedSourcecodePackage.targets
 		..\build\NuGetPackage.targets = ..\build\NuGetPackage.targets
 		..\build\NugetSourcecodePackage.nuspec = ..\build\NugetSourcecodePackage.nuspec
 		..\build\NuGetSourcecodePackage.targets = ..\build\NuGetSourcecodePackage.targets
-		..\build\sys.targets = ..\build\sys.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "this", "this", "{E931DD26-BF3D-4AB9-B8BA-E88B99ED4FD8}"
@@ -28,8 +29,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "this", "this", "{E931DD26-B
 		..\Directory.Build.props = ..\Directory.Build.props
 		..\LICENSE = ..\LICENSE
 		..\README = ..\README
-		..\sys.targets = ..\sys.targets
-		sys.targets = sys.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hw.Helper.Core", "hw.Helper.Core\hw.Helper.Core.csproj", "{46BE7519-5FFB-408E-AFA9-597A957578A2}"

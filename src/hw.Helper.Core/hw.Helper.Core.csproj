@@ -178,6 +178,6 @@
             CopyToOutput="false" />
     </ItemGroup>
 
-    <Import Project="sys.targets" />
+    
 
 </Project>
