@@ -77,15 +77,15 @@ public static class DateTimeExtender
 
     public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = true, bool useSymbols = true)
     {
-        if(timeSpan.TotalDays >= 1)
+        if (timeSpan.TotalDays >= 1)
             return timeSpan.TotalDays.ToString("0.00") + "d";
-        if(timeSpan.Hours > 0)
+        if (timeSpan.Hours > 0)
             return timeSpan.Hours + OmitCheck(":", timeSpan.Minutes, omitZeros) + "h";
-        if(timeSpan.Minutes > 0)
-            return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols? "'" : "m");
+        if (timeSpan.Minutes > 0)
+            return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols ? "'" : "m");
 
         var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
-        return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", useSymbols? "\"" : "s");
+        return nanoSeconds.Replace("kns", "µs").Replace("Mns", "ms").Replace("Gns", useSymbols ? "\"" : "s");
     }
 
     public static TimeSpan Seconds(this double value) => TimeSpan.FromSeconds(value);
@@ -99,13 +99,13 @@ public static class DateTimeExtender
 
     public static void Sleep(this TimeSpan value)
     {
-        if(value.Ticks > 0)
+        if (value.Ticks > 0)
             Thread.Sleep(value);
     }
 
     static string OmitCheck(string delimiter, int value, bool omitZeros)
     {
-        if(omitZeros && value == 0)
+        if (omitZeros && value == 0)
             return "";
         return delimiter + value.ToString("00");
     }

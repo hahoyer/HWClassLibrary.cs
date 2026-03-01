@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.1</Version>
+        <Version>26.0.2</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            new: Exception dump improved
+            26.0.1
             new: Exception dump
             26.0.0
             bugfix: Fixing mulitple

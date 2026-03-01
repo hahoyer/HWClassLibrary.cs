@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>26.0.1</Version>
+        <Version>26.0.2</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
+            admin: package upgrade
+            26.0.1
             admin: package upgrade
             26.0.0
             change: Streams as source provider
@@ -211,7 +213,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.1">
+        <PackageReference Include="hw.Helper.Core" Version="26.0.2">
             <PrivateAssets>none</PrivateAssets>
         </PackageReference>
     </ItemGroup>
