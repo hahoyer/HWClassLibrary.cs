@@ -66,6 +66,7 @@ public sealed class SmbFile
         }
         set
         {
+            CheckedEnsureDirectoryOfFileExists();
             var f = File.OpenWrite(InternalName);
             f.Write(value, 0, value.Length);
             f.Close();

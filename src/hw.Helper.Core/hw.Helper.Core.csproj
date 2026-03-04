@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.2</Version>
+        <Version>26.0.3</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            bugfix: SmbFile.Bytes.set does not ensure directory exists #29
+            26.0.2
             new: Exception dump improved
             26.0.1
             new: Exception dump

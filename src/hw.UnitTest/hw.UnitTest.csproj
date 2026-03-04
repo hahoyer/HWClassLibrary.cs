@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.2</Version>
+        <Version>26.0.3</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReleaseNotes>
+            admin: package upgrade
+            26.0.2
             admin: package upgrade
             26.0.1
             admin: package upgrade
@@ -73,12 +75,11 @@
 
     <ItemGroup>
         <Compile Remove="hw\**\*.cs" />
-        <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile"
-            CopyToOutput="false" />
+        <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile" CopyToOutput="false" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.2">
+        <PackageReference Include="hw.Helper.Core" Version="26.0.3">
         </PackageReference>
     </ItemGroup>
 
