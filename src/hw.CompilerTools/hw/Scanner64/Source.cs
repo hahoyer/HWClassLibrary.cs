@@ -3,7 +3,7 @@ using hw.Helper;
 
 // ReSharper disable CheckNamespace
 
-namespace hw.Scanner;
+namespace hw.Scanner64;
 
 [PublicAPI]
 public sealed class Source : DumpableObject
@@ -16,22 +16,16 @@ public sealed class Source : DumpableObject
 
     public ITextProvider Data => SourceProvider.Data;
 
-    [Obsolete("use version withIndex", true)]
-    public char this[int position] => IsEnd(position)? '\0' : Data[position];
+    public char this[Index64 position] => IsEndPosition(position)? '\0' : Data[position];
 
-    public char this[Index position] => IsEndPosition(position)? '\0' : Data[position];
-
-    public string this[Range range]
+    public string this[Range64 range]
         => range.Start.GetOffset(Length) < range.End.GetOffset(Length)
             ? Data[range]
-            : Data[range.End..range.Start];
+            : Data[range.End / range.Start];
 
-    public int Length => SourceProvider.Length;
+    public long Length => SourceProvider.Length;
     public bool IsPersistent => SourceProvider.IsPersistent;
     public SourcePart All => (this + 0).Span(Length);
-
-    [Obsolete("It is always true")]
-    public static bool IsValid => true;
 
     public Source(ISourceProvider sourceProvider, string? identifier = null)
         : base(NextObjectId++)
@@ -48,27 +42,21 @@ public sealed class Source : DumpableObject
 
     protected override string Dump(bool isRecursion) => GetFilePositions(0, Length, "see there");
 
-    public static SourcePosition operator +(Source target, int y) => new(target, y);
-    public static SourcePosition operator +(Source target, Index y) => new(target, y);
+    public static SourcePosition operator +(Source target, long y) => new(target, y);
+    public static SourcePosition operator +(Source target, Index64 y) => new(target, y);
 
-    [Obsolete("use IsEndPosition", true)]
-    public bool IsEnd(int position) => Length <= position;
-
-    [Obsolete("use this[start..start+length]", true)]
-    public string SubString(int start, int length) => this[start..(start + length)];
-
-    public bool IsValidPosition(Index position)
+    public bool IsValidPosition(Index64 position)
         => position.GetOffset(Length) < Length;
 
-    public bool IsEndPosition(Index position)
+    public bool IsEndPosition(Index64 position)
         => position.GetOffset(Length) >= Length;
 
-    public TextPosition GetTextPosition(int position)
-        => new() { LineNumber = LineIndex(position), ColumnNumber = ColumnIndex(position) };
+    public TextPosition GetTextPosition(long position)
+        => new() { LineNumber = checked((int)LineIndex(position)), ColumnNumber = ColumnIndex(position) };
 
     public string GetIdentifier(int start) => "";
 
-    SourcePart[] GetProviderSplits(int position, int positionEnd)
+    SourcePart[] GetProviderSplits(long position, long positionEnd)
     {
         if(SourceProvider is not IMultiSourceProvider target)
             return [(this + position).Span(this + positionEnd)];
@@ -81,7 +69,7 @@ public sealed class Source : DumpableObject
         return default!;
     }
 
-    public string GetFilePosition(int position, int positionEnd, string flagText, string? tag = null)
+    public string GetFilePosition(long position, long positionEnd, string flagText, string? tag = null)
         => Tracer.FilePosition
             (
                 Identifier,
@@ -92,7 +80,7 @@ public sealed class Source : DumpableObject
                 tag ?? nameof(FilePositionTag.Debug))
             + flagText;
 
-    public string GetFilePositions(int position, int positionEnd, string flagText, string? tag = null)
+    public string GetFilePositions(long position, long positionEnd, string flagText, string? tag = null)
     {
         var splits = GetProviderSplits(position, positionEnd);
         return splits
@@ -100,23 +88,23 @@ public sealed class Source : DumpableObject
             .Stringify("\n");
     }
 
-    public int LineIndex(int position) => Data.Take(position).Count(c => c == '\n');
+    public long LineIndex(long position) => Data.Take(checked((int)position)).LongCount(c => c == '\n');
 
-    public int ColumnIndex(int position)
+    public int ColumnIndex(long position)
         => Data
-            .Take(position)
+            .Take(checked((int)position))
             .Aggregate(0, (current, c) => c.In('\r', '\n')? 0 : current + 1);
 
     public SourcePosition FromLineAndColumn(int lineIndex, int? columnIndex)
         => this + PositionFromLineAndColumn(lineIndex, columnIndex);
 
-    public int LineLength(int lineIndex)
+    public long LineLength(int lineIndex)
         => FromLineAndColumn(lineIndex + 1, 0) - FromLineAndColumn(lineIndex, 0);
 
     public SourcePart Line(int lineIndex)
         => FromLineAndColumn(lineIndex, 0).Span(FromLineAndColumn(lineIndex, null));
 
-    int PositionFromLineAndColumn(int lineIndex, int? columnIndex)
+    long PositionFromLineAndColumn(int lineIndex, int? columnIndex)
     {
         var match = "\n".AnyChar().Find.Repeat(lineIndex, lineIndex);
         var l = (this + 0).Match(match);
@@ -138,21 +126,25 @@ public sealed class Source : DumpableObject
         return Length;
     }
 
-    public string GetDumpBeforeCurrent(int position, int dumpWidth)
+    public string GetDumpBeforeCurrent(long position, int dumpWidth)
     {
         if(position < dumpWidth + 3)
-            return this[..position];
+            return this[new Range64(0,position)];
 
-        return "..." + this[(position - dumpWidth)..position];
+        return "..." + this[new Index64(position - dumpWidth) / position];
     }
 
-    public string GetDumpAfterCurrent(int position, int dumpWidth)
+    public string GetDumpAfterCurrent(long position, int dumpWidth)
     {
         if(IsEndPosition(position))
             return "";
 
+        var index = new Index64(position);
         if(dumpWidth + 3 < Length - position)
-            return this[position..(position + dumpWidth)] + "...";
-        return this[position..];
+        {
+            return this[index/(position + dumpWidth)] + "...";
+        }
+
+        return this[new Range64(index)];
     }
 }

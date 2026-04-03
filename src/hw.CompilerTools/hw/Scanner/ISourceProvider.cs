@@ -4,7 +4,7 @@ namespace hw.Scanner;
 
 public interface ISourceProvider
 {
-    ITextProvider? Data { get; }
+    ITextProvider Data { get; }
     bool IsPersistent { get; }
     int Length { get; }
     string? Identifier { get; }
