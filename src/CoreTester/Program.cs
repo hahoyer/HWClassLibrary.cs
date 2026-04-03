@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
-namespace Tester;
+namespace CoreTester;
 
 [PublicAPI]
 static class Program
