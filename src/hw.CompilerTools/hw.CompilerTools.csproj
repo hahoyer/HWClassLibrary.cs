@@ -2,9 +2,12 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>26.0.3</Version>
+        <Version>26.0.4-alpha3</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
+            new: Source/SourcePosition/SourcePart/Match for long 
+            ITextProvider must not be nullable
+            26.0.3.1
             admin: package upgrade
             26.0.2
             admin: package upgrade
@@ -215,7 +218,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.3">
+        <PackageReference Include="hw.Helper.Core" Version="26.0.4">
             <PrivateAssets>none</PrivateAssets>
         </PackageReference>
     </ItemGroup>

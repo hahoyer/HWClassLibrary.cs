@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
-        <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
         <OutputType>WinExe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.UnitTest" Version="26.0.1">
+        <PackageReference Include="hw.UnitTest" Version="26.0.3.2">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>

@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.2">
-            <PrivateAssets>none</PrivateAssets>
+        <PackageReference Include="hw.Helper.Core" Version="26.0.4">
+            <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
 
