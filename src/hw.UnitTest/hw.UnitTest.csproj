@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.3</Version>
+        <Version>26.0.3.2</Version>
         <Description>Provides some support for unit-testing.</Description>
         <PackageReleaseNotes>
             admin: package upgrade
@@ -79,7 +79,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.3">
+        <PackageReference Include="hw.Helper.Core" Version="26.0.4">
         </PackageReference>
     </ItemGroup>
 
