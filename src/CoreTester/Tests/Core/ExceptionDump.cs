@@ -1,4 +1,4 @@
-﻿namespace Tester.Tests.Core;
+﻿namespace CoreTester.Tests.Core;
 
 [UnitTest]
 public static class ExceptionDump
