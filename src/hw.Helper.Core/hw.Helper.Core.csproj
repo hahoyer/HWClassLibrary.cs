@@ -6,6 +6,7 @@
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             change: LinqExtension.Separate now set obsolete
+            admin: readme
             26.0.4
             new: Index64/Range64
             bugfix: Type.PrettyName improved for built-in types
