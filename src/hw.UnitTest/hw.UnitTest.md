@@ -2,6 +2,8 @@
 
 Provides some support for unit-testing.
 It is compatible to nunit and MSTest although is provides some more features.
+[![NuGet](https://img.shields.io/nuget/v/hw.UnitTest)](https://www.nuget.org/packages/hw.UnitTest)
+
 ### Supports:
 - almost any public non-abstract class can be a test class
 - supports dependencies between tests
