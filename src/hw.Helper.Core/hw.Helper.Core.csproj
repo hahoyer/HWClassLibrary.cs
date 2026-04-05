@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.4</Version>
+        <Version>26.0.5</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            change: LinqExtension.Separate now set obsolete
+            26.0.4
             new: Index64/Range64
             bugfix: Type.PrettyName improved for built-in types
             26.0.3
