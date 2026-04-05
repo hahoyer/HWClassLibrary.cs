@@ -1,6 +1,9 @@
 # Overview
 
 Provides some support for log4net logging.
+[![NuGet](https://img.shields.io/nuget/v/hw.log4net)](https://www.nuget.org/packages/hw.log4net)
+
+
 It installs a text writer that uses log4net.
 The writer is registered using:
 
