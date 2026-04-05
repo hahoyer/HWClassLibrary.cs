@@ -1,10 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>26.0.0</Version>
+        <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
+        <Version>26.0.5</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            change: LinqExtension.Separate now set obsolete
+            26.0.4
+            new: Index64/Range64
+            bugfix: Type.PrettyName improved for built-in types
+            26.0.3
+            bugfix: SmbFile.Bytes.set does not ensure directory exists #29
+            26.0.2
+            new: Exception dump improved
+            26.0.1
+            new: Exception dump
+            26.0.0
+            bugfix: Fixing mulitple
+            26.0.0
             refactor: upgrade C#
             25.1.2
             admin: net472
@@ -174,6 +187,6 @@
             CopyToOutput="false" />
     </ItemGroup>
 
-    <Import Project="sys.targets" />
+    
 
 </Project>

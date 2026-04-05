@@ -1,23 +1,25 @@
 ﻿// ReSharper disable CheckNamespace
 
-namespace hw.Scanner;
+using hw.Helper;
+
+namespace hw.Scanner64;
 
 public interface ISourceProvider
 {
     ITextProvider Data { get; }
     bool IsPersistent { get; }
-    int Length { get; }
+    long Length { get; }
     string? Identifier { get; }
 }
 
 public interface IMultiSourceProvider
 {
-    SourcePosition Position(int position, bool isEnd);
+    SourcePosition Position(long position, bool isEnd);
 }
 
 public interface ITextProvider: IEnumerable<char>
 {
-    string this[Range range] { get; }
-    char this[Index index] { get; }
+    string this[Range64 range] { get; }
+    char this[Index64 index] { get; }
 }
 

@@ -21,22 +21,6 @@ public sealed class SourceTests
 
         """;
 
-    sealed class NoProvider : ISourceProvider
-    {
-        ITextProvider? ISourceProvider.Data => null;
-        bool ISourceProvider.IsPersistent => false;
-        int ISourceProvider.Length => 0;
-        string? ISourceProvider.Identifier => null;
-    }
-
-    [UnitTest]
-    public void IsValid()
-    {
-        var source = new Source(Text);
-        (source.IsValid).Assert();
-        (!new Source(new NoProvider()).IsValid).Assert();
-    }
-
     [UnitTest]
     public void FromLineAndColumn()
     {

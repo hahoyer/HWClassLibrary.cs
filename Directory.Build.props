@@ -3,7 +3,7 @@
         Condition=" $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')) != '' "
         Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
     <PropertyGroup>
-        <Copyright>Copyright Harald Hoyer © 2025</Copyright>
+        <Copyright>Copyright Harald Hoyer © 2026</Copyright>
         <Authors>Harald Hoyer</Authors>
         <LangVersion>preview</LangVersion>
         <Features>strict</Features>

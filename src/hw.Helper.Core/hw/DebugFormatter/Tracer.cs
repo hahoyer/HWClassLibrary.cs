@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using hw.Helper;
 
 // ReSharper disable CheckNamespace
@@ -9,6 +10,58 @@ namespace hw.DebugFormatter;
 [PublicAPI]
 public static class Tracer
 {
+    extension(string target)
+    {
+        public IEnumerable<StackTraceLevel> ParseStackTrace()
+        {
+            if(string.IsNullOrWhiteSpace(target))
+                return [];
+
+            return StackFrameRegex
+                .Matches(target)
+                .Select(match => new StackTraceLevel
+                {
+                    Method = match.Groups["method"].Value.Trim(), Filename = match.Groups["file"].Value.Trim()
+                    , LineNrString = match.Groups["line"].Value.Trim()
+                });
+        }
+    }
+
+    extension(Exception exception)
+    {
+        public string Dump
+        {
+            get
+            {
+                var levels = exception.StackTrace?.ParseStackTrace().ToArray() ?? [];
+                var targetSite = exception.TargetSite == null
+                    ? null
+                    : $"Method: {exception.TargetSite.DumpMethod(false)}\r\nStack:"
+                    + levels
+                        .Select
+                        (level
+                            =>
+                            "\n"
+                            + FilePosition
+                            (
+                                level.Filename,
+                                level.LineNr,
+                                1,
+                                FilePositionTag.Exception
+                            )
+                            + level.Method
+                        )
+                        .Stringify("")
+                        .Indent();
+                var result
+                    = $"{(targetSite == null? "" : targetSite + ": ")}{exception.GetType().PrettyName()}({exception.Message.Quote()})";
+                if(exception.InnerException == null)
+                    return result;
+                return result + "\nInnerException:\n  " + exception.InnerException.LogDump().Indent();
+            }
+        }
+    }
+
     sealed class AssertionFailedException(string result) : Exception(result);
 
     sealed class BreakException : Exception;
@@ -21,6 +74,11 @@ public static class Tracer
     public static bool IsBreakDisabled;
 
     static readonly Writer Writer = new();
+
+    static readonly Regex StackFrameRegex = new(
+        @"^\s*at\s+(?<method>.+?)\s+in\s+(?<file>.+?):line\s+(?<line>\d+)",
+        RegexOptions.Multiline | RegexOptions.Compiled
+    );
 
     /// <summary>
     ///     creates the file(line,col) string to be used with "Edit.GotoNextLocation" command of IDE
@@ -40,7 +98,7 @@ public static class Tracer
             {
                 Start = new()
                 {
-                    LineNumber = stackFrame.GetFileLineNumber() - 1, ColumnNumber = stackFrame.GetFileColumnNumber()-1
+                    LineNumber = stackFrame.GetFileLineNumber() - 1, ColumnNumber = stackFrame.GetFileColumnNumber() - 1
                 }
             }
             ,
@@ -63,7 +121,7 @@ public static class Tracer
             {
                 Start = new()
                 {
-                    LineNumber = lineNumber, ColumnNumber = columnNumber1-1
+                    LineNumber = lineNumber, ColumnNumber = columnNumber1 - 1
                 }
             }
             , tag);
@@ -85,7 +143,7 @@ public static class Tracer
             {
                 Start = new()
                 {
-                    LineNumber = lineNumber, ColumnNumber = columnNumber1-1
+                    LineNumber = lineNumber, ColumnNumber = columnNumber1 - 1
                 }
                 , End = new()
                 {
@@ -110,8 +168,10 @@ public static class Tracer
             , new()
             {
                 Start = new() { LineNumber = lineNumber, ColumnNumber = columnNumber1 - 1 }
-                , End = new() { LineNumber = lineNumberEnd, ColumnNumber = columnNumber1End - 1
-                  }
+                , End = new()
+                {
+                    LineNumber = lineNumberEnd, ColumnNumber = columnNumber1End - 1
+                }
             }
             , tagText);
 
@@ -127,7 +187,7 @@ public static class Tracer
             .Replace("{lineNumber}", (start.LineNumber + 1).ToString())
             .Replace("{columnNumber}", (start.ColumnNumber + 1).ToString())
             .Replace("{lineNumberEnd}", (end.LineNumber + 1).ToString())
-            .Replace("{columnNumberEnd}", (end.ColumnNumber+1).ToString())
+            .Replace("{columnNumberEnd}", (end.ColumnNumber + 1).ToString())
             .Replace("{tagText}", tagText);
     }
 
@@ -494,7 +554,7 @@ public static class Tracer
         {
             if(index > 0)
                 result += "\n";
-            result += (parameterInfos[index].Name??"_").IsSetTo(parameters[index]);
+            result += (parameterInfos[index].Name ?? "_").IsSetTo(parameters[index]);
         }
 
         for(var index = parameterInfos.Length; index < parameters.Length; index += 2)
@@ -515,6 +575,14 @@ public static class Tracer
     }
 }
 
+public class StackTraceLevel
+{
+    public required string Method;
+    public required string Filename;
+    public required string LineNrString;
+    public int LineNr => int.Parse(LineNrString);
+}
+
 [PublicAPI]
 public enum FilePositionTag
 {
@@ -523,6 +591,7 @@ public enum FilePositionTag
     , Query
     , Test
     , Profiler
+    , Exception
 }
 
 interface IDumpExceptAttribute

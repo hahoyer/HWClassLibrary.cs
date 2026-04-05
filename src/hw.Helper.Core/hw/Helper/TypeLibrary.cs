@@ -36,6 +36,22 @@ sealed class TypeLibrary
             return "int";
         if(type == typeof(string))
             return "string";
+        if(type == typeof(bool))
+            return "bool";
+        if(type == typeof(long))
+            return "long";
+        if(type == typeof(short))
+            return "short";
+        if(type == typeof(byte))
+            return "byte";
+        if(type == typeof(char))
+            return "char";
+        if(type == typeof(decimal))
+            return "decimal";
+        if(type == typeof(double))
+            return "double";
+        if(type == typeof(float))
+            return "float";
 
         var namePart = ObtainNamePart(type, shortenNamespace);
         var namespacePart = ObtainNameSpacePart(type, shortenNamespace);

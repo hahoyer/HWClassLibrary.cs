@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text;
 using hw.DebugFormatter;
-using hw.Helper;
 
 // ReSharper disable CheckNamespace
 
@@ -66,6 +65,7 @@ public sealed class SmbFile
         }
         set
         {
+            CheckedEnsureDirectoryOfFileExists();
             var f = File.OpenWrite(InternalName);
             f.Write(value, 0, value.Length);
             f.Close();
@@ -169,7 +169,7 @@ public sealed class SmbFile
     public DateTime ModifiedDate => FileSystemInfo.LastWriteTime;
 
     [DisableDump]
-    public Version? FileVersion 
+    public Version? FileVersion
         => FileVersionInfo.FileVersion == null? null : new(FileVersionInfo.FileVersion);
 
     [DisableDump]
@@ -177,7 +177,7 @@ public sealed class SmbFile
         => FileVersionInfo.ProductVersion == null? null : new(FileVersionInfo.ProductVersion);
 
     [DisableDump]
-    public FileVersionInfo FileVersionInfo 
+    public FileVersionInfo FileVersionInfo
         => FileVersionInfoCache ??= FileVersionInfo.GetVersionInfo(InternalName);
 
     [DisableDump]
@@ -294,8 +294,7 @@ public sealed class SmbFile
         using var f = Reader;
         f.Position = start;
         var buffer = new byte[size];
-        var actualSize = f.Read(buffer, 0, size);
-        (actualSize == size).Assert();
+        var _ = f.Read(buffer);
         return Encoding.UTF8.GetString(buffer);
     }
 
@@ -385,7 +384,7 @@ public sealed class SmbFile
         {
             var newList = new List<string?>();
             var items =
-                filePaths.SelectMany(s => s?.ToSmbFile(AutoCreateDirectories).GuardedItems()??[])
+                filePaths.SelectMany(s => s?.ToSmbFile(AutoCreateDirectories).GuardedItems() ?? [])
                     .ToArray();
             foreach(var item in items)
             {

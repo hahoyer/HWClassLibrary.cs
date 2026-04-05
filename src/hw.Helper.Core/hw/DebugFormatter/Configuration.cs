@@ -125,6 +125,7 @@ public sealed class Configuration
         Handlers.Add(typeof(ICollection), (_, o) => Dump(((ICollection)o).Cast<object>()));
         Handlers.Add(typeof(Type), (_, o) => ((Type)o).PrettyName());
         Handlers.Add(typeof(string), (_, o) => ((string)o).CSharpQuote());
+        Handlers.Add(typeof(Exception), (_, o) => ((Exception)o).Dump);
         Handlers.Add(t => t.IsEnum, DumpEnum);
         Handlers.Add(t => t.IsPrimitive, (_, o) => o.ToString() ?? "null");
         Handlers.Add(IsOutlookClass, (_, o) => o.ToString() ?? "null");

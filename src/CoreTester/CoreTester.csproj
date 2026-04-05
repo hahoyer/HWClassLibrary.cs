@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
+        <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
         <OutputType>WinExe</OutputType>
     </PropertyGroup>
 
@@ -10,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\hw.CompilerTools\hw.CompilerTools.dev.csproj" />
+        <ProjectReference Include="..\hw.Helper.Core\hw.Helper.Core.dev.csproj" />
     </ItemGroup>
 
     <ItemGroup>

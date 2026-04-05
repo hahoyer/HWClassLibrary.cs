@@ -26,25 +26,9 @@ public static class LinqExtension
 
     extension<T>(IEnumerable<T> target)
     {
+        [Obsolete("Use Split(isHead, SeparatorTreatmentForSplit.BeginOfSubList) instead.")]
         public IEnumerable<IEnumerable<T>> Separate(Func<T, bool> isHead)
-        {
-            var subResult = new List<T>();
-
-            foreach(var xx in target)
-            {
-                if(isHead(xx))
-                    if(subResult.Count > 0)
-                    {
-                        yield return subResult.ToArray();
-                        subResult = [];
-                    }
-
-                subResult.Add(xx);
-            }
-
-            if(subResult.Count > 0)
-                yield return subResult.ToArray();
-        }
+            => target.Split(isHead, SeparatorTreatmentForSplit.BeginOfSubList);
 
         public string Dump() => Tracer.Dump(target);
 
@@ -172,7 +156,7 @@ public static class LinqExtension
             var listArray = list.ToArray();
             return listArray.FrameIndexList(isInRelation).Select(index => listArray[index]);
         }
-    }                                                                   
+    }
 
     extension<T>(IEnumerable<T> list)
         where T : IComparable<T>
@@ -183,11 +167,11 @@ public static class LinqExtension
         public IEnumerable<int> GetMinIndexList()
             => list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
 
-        [Obsolete("use GetMaxIndexList",false)]
+        [Obsolete("use GetMaxIndexList", false)]
         public IEnumerable<int> MaxIndexList()
             => list.FrameIndexList((a, b) => a.CompareTo(b) < 0);
 
-        [Obsolete("use GetMinIndexList",false)]
+        [Obsolete("use GetMinIndexList", false)]
         public IEnumerable<int> MinIndexList()
             => list.FrameIndexList((a, b) => a.CompareTo(b) > 0);
     }
