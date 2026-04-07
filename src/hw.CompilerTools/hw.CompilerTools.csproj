@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
-        <Version>26.0.4-alpha3</Version>
+        <Version>26.0.4-alpha5</Version>
         <Description>Provides support for building compilers.</Description>
         <PackageReleaseNotes>
             new: Source/SourcePosition/SourcePart/Match for long 
@@ -218,7 +218,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.4">
+        <PackageReference Include="hw.Helper.Core" Version="26.0.5">
             <PrivateAssets>none</PrivateAssets>
         </PackageReference>
     </ItemGroup>

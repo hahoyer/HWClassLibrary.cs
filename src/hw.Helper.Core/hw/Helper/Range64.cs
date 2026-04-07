@@ -17,4 +17,5 @@ public readonly struct Range64(Index64 start, Index64? end = null)
     }
 
     public static Range64 All => new(0L, Index64.FromEnd(0));
+    public override string ToString() => $"{Start}..{End}";
 }

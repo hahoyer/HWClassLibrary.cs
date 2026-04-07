@@ -37,8 +37,20 @@ public class SmbFileBuffer
     {
         get
         {
-            Index = position.Start.Value / BlockSizeValue;
-            return Buffer[(int)(position.Start.Value % BlockSizeValue)..(int)(position.End.Value % BlockSizeValue)];
+            IndexValue = position.Start.Value / BlockSizeValue;
+            var positionStart = (int)position.Start.Value % BlockSizeValue;
+            var indexEnd = position.End.Value / BlockSizeValue;
+            var positionEnd = (int)position.End.Value % BlockSizeValue;
+
+            var result = "";
+            while(IndexValue < indexEnd)
+            {
+                result += Buffer[positionStart..];
+                IndexValue++;
+                positionStart = 0;
+            }
+
+            return result + Buffer[positionStart..positionEnd];
         }
     }
 
