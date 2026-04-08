@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.6</Version>
+        <Version>26.0.7</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
             Issue #32: SmbFileBuffer: Exception when parsing across buffer boundaries
