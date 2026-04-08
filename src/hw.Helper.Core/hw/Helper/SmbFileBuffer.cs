@@ -4,9 +4,10 @@ namespace hw.Helper;
 public class SmbFileBuffer
 {
     public readonly SmbFile Parent;
-    long IndexValue;
+    long[] IndexValue;
     int BlockSizeValue = 100_000_000;
-    ValueCache<string> BufferCache;
+    ValueCache<string>[] BufferCache;
+    int CurrentBufferIndex;
 
     public int BlockSize
     {
@@ -16,29 +17,36 @@ public class SmbFileBuffer
             if(BlockSizeValue == value)
                 return;
             BlockSizeValue = value;
-            BufferCache.IsValid = false;
+            BufferCache[0].IsValid = false;
+            BufferCache[1].IsValid = false;
         }
     }
 
     long Index
     {
+        get => IndexValue[CurrentBufferIndex];
         set
         {
-            if(IndexValue == value)
+            if(IndexValue[CurrentBufferIndex] == value)
                 return;
-            IndexValue = value;
-            BufferCache.IsValid = false;
+
+            CurrentBufferIndex = 1 - CurrentBufferIndex;
+            if(IndexValue[CurrentBufferIndex] == value)
+                return;
+
+            IndexValue[CurrentBufferIndex] = value;
+            BufferCache[CurrentBufferIndex].IsValid = false;
         }
     }
 
-    public string Buffer => BufferCache.Value;
+    string Buffer => BufferCache[CurrentBufferIndex].Value;
 
     public string this[Range64 position]
     {
         get
         {
             var start = position.Start.GetOffset(Parent.Size);
-            IndexValue = start / BlockSizeValue;
+            Index = start / BlockSizeValue;
             var positionStart = (int)start % BlockSizeValue;
             
             var end = position.End.GetOffset(Parent.Size);
@@ -46,10 +54,10 @@ public class SmbFileBuffer
             var positionEnd = (int)end % BlockSizeValue;
 
             var result = "";
-            while(IndexValue < indexEnd)
+            while(Index < indexEnd)
             {
                 result += Buffer[positionStart..];
-                IndexValue++;
+                Index++;
                 positionStart = 0;
             }
 
@@ -78,7 +86,14 @@ public class SmbFileBuffer
     public SmbFileBuffer(SmbFile parent, int? blockSize = null)
     {
         Parent = parent;
-        BufferCache = new(() => Parent.SubString(BlockSize * IndexValue, BlockSize) ?? "");
+        IndexValue = new long[2];
+        BufferCache = new ValueCache<string>[2];
+        for (var i = 0; i < 2; i++)
+        {
+            var index = i;
+            BufferCache[i] = new(() => Parent.SubString(BlockSize * IndexValue[index], BlockSize) ?? "");
+        }   
+        
         if(blockSize != null)
             BlockSizeValue = blockSize.Value;
     }
