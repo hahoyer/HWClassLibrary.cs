@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.7"/>
+        <PackageReference Include="hw.Helper.Core" Version="26.0.9"/>
         <!--<ProjectReference Include="..\hw.Helper.Core\hw.Helper.Core.dev.csproj" />-->
     </ItemGroup>
 

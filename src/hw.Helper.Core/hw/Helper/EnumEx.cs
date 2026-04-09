@@ -59,4 +59,4 @@ public abstract class EnumEx : Dumpable
     }
 }
 
-sealed class NotAnEnumInstanceAttribute : Attribute { }
+public sealed class NotAnEnumInstanceAttribute : Attribute { }
