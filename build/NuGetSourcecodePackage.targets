@@ -4,6 +4,7 @@
     <PropertyGroup>
         <Build>false</Build>
         <GenerateNugetPackage>true</GenerateNugetPackage>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <Import Project="NuGetPackage.targets" />

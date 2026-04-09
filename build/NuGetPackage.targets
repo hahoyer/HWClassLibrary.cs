@@ -7,7 +7,6 @@
     <PropertyGroup>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <IsPublishable>False</IsPublishable>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <Import Project="CSharp.Library.targets" />
