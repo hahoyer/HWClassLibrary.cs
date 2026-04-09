@@ -47,12 +47,11 @@ public class SmbFileBuffer
         {
             var start = position.Start.GetOffset(Parent.Size);
             Index = start / BlockSizeValue;
-            var positionStart = (int)start % BlockSizeValue;
+            var positionStart = (int)(start % BlockSizeValue);
             
             var end = position.End.GetOffset(Parent.Size);
             var indexEnd = end / BlockSizeValue;
-            var positionEnd = (int)end % BlockSizeValue;
-
+            var positionEnd = (int)(end % BlockSizeValue);
             var result = "";
             while(Index < indexEnd)
             {
