@@ -94,6 +94,9 @@ sealed class TypeLibrary
         if(type.IsGenericType)
             return result + ObtainNameForGeneric(type.GetGenericArguments(), shortenNamespace);
 
+        if(type.IsArray)
+            return result + "[]";
+
         return result;
     }
 

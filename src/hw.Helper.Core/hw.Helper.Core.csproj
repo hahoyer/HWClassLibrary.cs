@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.9</Version>
+        <Version>26.0.10</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            Issue #33: Type.PrettyName does not work for arrays
+            26.0.9
             Issue #32: SmbFileBuffer: Exception when parsing across buffer boundaries
             26.0.5
             change: LinqExtension.Separate now set obsolete
