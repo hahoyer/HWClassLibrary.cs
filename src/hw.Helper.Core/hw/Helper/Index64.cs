@@ -1,3 +1,4 @@
+#pragma warning disable IDE0130
 namespace hw.Helper;
 
 public readonly struct Index64(long value, bool fromEnd = false)

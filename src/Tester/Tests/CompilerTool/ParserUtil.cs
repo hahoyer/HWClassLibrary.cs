@@ -1,5 +1,4 @@
-﻿using hw.Scanner;
-using Tester.Tests.CompilerTool.Util;
+﻿using Tester.Tests.CompilerTool.Util;
 
 namespace Tester.Tests.CompilerTool
 {

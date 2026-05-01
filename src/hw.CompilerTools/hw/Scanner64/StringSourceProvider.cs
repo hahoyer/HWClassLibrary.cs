@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using hw.Helper;
 
+#pragma warning disable IDE0130
 namespace hw.Scanner64;
 
 public sealed class StringSourceProvider(string data) : ISourceProvider, ITextProvider

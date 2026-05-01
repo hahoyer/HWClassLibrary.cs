@@ -1,6 +1,4 @@
-﻿using hw.Parser;
-
-namespace Tester.Tests.CompilerTool.Util
+﻿namespace Tester.Tests.CompilerTool.Util
 {
     sealed class SwitchToken : NamedToken, PrioParser<Syntax>.ISubParserProvider
     {

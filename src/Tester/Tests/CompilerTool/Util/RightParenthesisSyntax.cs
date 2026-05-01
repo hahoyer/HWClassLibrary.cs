@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using hw.Parser;
 
 namespace Tester.Tests.CompilerTool.Util
 {

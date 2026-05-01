@@ -1,6 +1,5 @@
 ﻿using hw.Scanner;
-
-namespace Tester.Tests.CompilerTool.Util
+﻿namespace Tester.Tests.CompilerTool.Util
 {
     sealed class IssueId
         : EnumEx

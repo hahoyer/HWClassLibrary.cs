@@ -1,7 +1,4 @@
-﻿using hw.Parser;
-using hw.Scanner;
-
-namespace Tester.Tests.CompilerTool.Util;
+﻿namespace Tester.Tests.CompilerTool.Util;
 
 abstract class Syntax
     : DumpableObject

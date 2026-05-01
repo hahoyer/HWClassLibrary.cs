@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 
+#pragma warning disable IDE0130
 namespace hw.Helper;
 
 public static class ReplaceVariablesExtension

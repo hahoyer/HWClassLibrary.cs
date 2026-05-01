@@ -1,3 +1,4 @@
+#pragma warning disable IDE0130
 namespace hw.Helper;
 
 public readonly struct Range64(Index64 start, Index64? end = null)
