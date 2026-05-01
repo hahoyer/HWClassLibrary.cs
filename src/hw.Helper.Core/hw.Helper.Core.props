@@ -1,0 +1,7 @@
+<Project>
+    <ItemGroup>
+        <Using Include="JetBrains.Annotations" />
+        <Using Include="hw.DebugFormatter" />
+        <Using Include="hw.Helper" />
+    </ItemGroup>
+</Project>

@@ -51,10 +51,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+        <!--<PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />-->
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="JetBrains.Annotations" />
+        <Using Remove="System.Net.Http" />
     </ItemGroup>
 </Project>

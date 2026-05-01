@@ -1,17 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
-        <OutputType>WinExe</OutputType>
+        <OutputTypeEx>CSharp.WinExe</OutputTypeEx>
     </PropertyGroup>
 
     <ItemGroup>
-        <!--<ProjectReference Include="..\hw.Helper.Core\hw.Helper.Core.dev.csproj" />-->
-        <PackageReference Include="hw.UnitTest" Version="26.0.6" />
-
-        <Using Remove="System.Net.Http" />
-        <Using Include="hw.DebugFormatter" />
-        <Using Include="hw.Helper" />
-        <Using Include="hw.UnitTest" />
+        <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.dev.csproj" />
     </ItemGroup>
 </Project>

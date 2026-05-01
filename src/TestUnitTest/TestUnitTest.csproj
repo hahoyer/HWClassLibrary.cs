@@ -1,12 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.dev.csproj" />
+        <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.dev.csproj" />
     </ItemGroup>
-
-    
 </Project>

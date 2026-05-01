@@ -1,0 +1,6 @@
+<Project>
+     <ItemGroup>
+        <Using Include="hw.Parser" />
+        <Using Include="hw.Scanner" />
+    </ItemGroup>
+</Project>

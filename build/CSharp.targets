@@ -1,11 +1,7 @@
-<!--EXTERNAL_PROPERTIES: PackagesDir;LevelDir-->
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <!-- CSharp specific settings -->
     <PropertyGroup>
         <RootNamespace Condition=" '$(RootNamespace)' == '' ">$(AssemblyName)</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-        <Using Remove="System.Net.Http" />
-    </ItemGroup>
 </Project>

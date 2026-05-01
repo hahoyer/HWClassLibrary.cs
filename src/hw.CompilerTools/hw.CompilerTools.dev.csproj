@@ -1,13 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-
     <PropertyGroup>
-        <OutputType>Library</OutputType>
+        <TargetTypeEx>CSharp.Library</TargetTypeEx>
     </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="hw.Helper.Core" Version="26.0.9"/>
-        <!--<ProjectReference Include="..\hw.Helper.Core\hw.Helper.Core.dev.csproj" />-->
+        <ProjectReference Include="..\hw.Helper.Core\hw.Helper.Core.dev.csproj" />
     </ItemGroup>
-
 </Project>
