@@ -35,6 +35,7 @@
         <Compile Remove="hw\**\*.cs" />
         <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile"
             CopyToOutput="false" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     </ItemGroup>
 
     

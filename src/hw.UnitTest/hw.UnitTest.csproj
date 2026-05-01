@@ -79,6 +79,9 @@
         <Compile Remove="hw\**\*.cs" />
         <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/" BuildAction="Compile" CopyToOutput="false" />
         <None Include="*.props" Pack="true" PackagePath="build\" />
+        <PackageReference Include="hw.Helper.Core" Version="26.1.0-alpha">
+            <PrivateAssets>none</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
     
