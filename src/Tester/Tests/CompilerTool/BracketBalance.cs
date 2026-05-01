@@ -1,8 +1,6 @@
-﻿using Tester.Tests.CompilerTool;
+﻿using Tester.Tests.CompilerTool.Util;
 
-// ReSharper disable CheckNamespace
-
-namespace hw.Tests.CompilerTool;
+namespace Tester.Tests.CompilerTool;
 
 [UnitTest]
 public sealed class BracketBalance
