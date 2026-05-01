@@ -6,5 +6,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\hw.UnitTest\hw.UnitTest.dev.csproj" />
+        <Using Include="hw.DebugFormatter" />
+        <Using Include="hw.Helper" />
+        <Using Include="hw.UnitTest" />
     </ItemGroup>
 </Project>
