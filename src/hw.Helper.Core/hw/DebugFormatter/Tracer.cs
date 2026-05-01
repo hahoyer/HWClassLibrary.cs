@@ -51,7 +51,7 @@ public static class Tracer
                             )
                             + level.Method
                         )
-                        .Stringify("")
+                        .Stringify()
                         .Indent();
                 var result
                     = $"{(targetSite == null? "" : targetSite + ": ")}{exception.GetType().PrettyName()}({exception.Message.Quote()})";

@@ -144,7 +144,7 @@ public static class StringExtender
         (this string head, params string[] tail) => Path.Combine(head, Path.Combine(tail));
 
     public static string UnderScoreToCamelCase
-        (this string name) => name.Split('_').Select(ToLowerFirstUpper).Stringify("");
+        (this string name) => name.Split('_').Select(ToLowerFirstUpper).Stringify();
 
     public static string ToLowerFirstUpper
         (this string text) => text.Substring(0, 1).ToUpperInvariant() + text.Substring(1).ToLowerInvariant();
