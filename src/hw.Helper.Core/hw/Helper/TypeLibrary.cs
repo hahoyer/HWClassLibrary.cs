@@ -52,6 +52,9 @@ sealed class TypeLibrary
             return "double";
         if(type == typeof(float))
             return "float";
+        var underlyingType = Nullable.GetUnderlyingType(type);
+        if(underlyingType != null)
+            return underlyingType.PrettyName() + "?";
 
         var namePart = ObtainNamePart(type, shortenNamespace);
         var namespacePart = ObtainNameSpacePart(type, shortenNamespace);

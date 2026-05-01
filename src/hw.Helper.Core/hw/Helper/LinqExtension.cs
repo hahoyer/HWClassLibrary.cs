@@ -32,7 +32,7 @@ public static class LinqExtension
 
         public string Dump() => Tracer.Dump(target);
 
-        public string Stringify(string separator, bool showNumbers = false)
+        public string Stringify(string separator = "",  bool showNumbers = false)
         {
             var result = new StringBuilder();
             var i = 0;

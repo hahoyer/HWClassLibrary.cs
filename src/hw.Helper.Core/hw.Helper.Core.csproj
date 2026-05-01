@@ -2,9 +2,12 @@
 
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
-        <Version>26.0.10</Version>
+        <Version>26.0.11</Version>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
         <PackageReleaseNotes>
+            <![CDATA[Issue #35: Type.PrettyName: "Nullable<byte>" should be "byte?"]]>
+            Issue #34: string.Stringify: default delimiter to ""
+            26.0.10
             Issue #33: Type.PrettyName does not work for arrays
             26.0.9
             Issue #32: SmbFileBuffer: Exception when parsing across buffer boundaries
