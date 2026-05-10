@@ -3,16 +3,16 @@
 namespace hw.DebugFormatter;
 
 /// <summary>
-///     Used to control dump.
+///     Base attribute for replacing the standard dump representation of a class or struct.
+///     Derive from this attribute and override <see cref="Dump" /> to control how instances are rendered.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public abstract class DumpClassAttribute : Attribute
 {
     /// <summary>
-    ///     override this function to define special dump behaviour of class
+    ///     Produces the dump representation for <paramref name="target" />.
     /// </summary>
-    /// <param name="type"> the type to dump. Is the type of any base class of "target" </param>
-    /// <param name="target"> the object to dump </param>
-    /// <returns> </returns>
+    /// <param name="type"> The type currently being processed. May be a base type of <paramref name="target" />'s runtime type. </param>
+    /// <param name="target"> The instance to render. </param>
     public abstract string Dump(Type type, object target);
 }

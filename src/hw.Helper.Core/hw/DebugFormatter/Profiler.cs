@@ -5,11 +5,18 @@ using hw.Helper;
 
 namespace hw.DebugFormatter;
 
+/// <summary>
+///     Singleton profiler that aggregates wall-clock measurements per source location and renders a
+///     ranked summary. Use <see cref="Frame(Action, int?, double)" /> as a convenience for the typical
+///     "reset, measure, dump" cycle.
+/// </summary>
 [PublicAPI]
 public sealed class Profiler
 {
     /// <summary>
-    ///     Measurement Item
+    ///     Handle to a running measurement returned by <see cref="Profiler.Start" />. Calls to
+    ///     <see cref="End" /> and <see cref="Next" /> must respect lexical nesting; out-of-order
+    ///     completion is detected by an assertion.
     /// </summary>
     public sealed class Item
     {
@@ -22,9 +29,7 @@ public sealed class Profiler
             Start(flag, stackFrameDepth + 1);
         }
 
-        /// <summary>
-        ///     End of measurement for this item
-        /// </summary>
+        /// <summary>Stops the measurement represented by this handle.</summary>
         [PublicAPI]
         public void End()
         {
@@ -32,9 +37,8 @@ public sealed class Profiler
             Profiler.AfterAction();
         }
 
-        /// <summary>
-        ///     End of measurement for this item and start of new measurement
-        /// </summary>
+        /// <summary>Stops the current measurement and immediately starts a new one tagged with <paramref name="flag" />.</summary>
+        /// <param name="flag"> Optional tag for the new measurement. </param>
         [PublicAPI]
         public void Next(string flag = "")
         {

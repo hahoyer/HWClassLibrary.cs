@@ -3,21 +3,19 @@
 namespace hw.DebugFormatter;
 
 /// <summary>
-///     Used to control dump. Use ToString function
+///     Delegates dump rendering of the decorated class or struct to a named parameterless instance method
+///     that returns <see cref="string" /> (typically a custom Dump helper, but any method is accepted).
+///     If the call throws, the type's name is used as a fallback.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public sealed class DumpAttribute : DumpClassAttribute
 {
     readonly string Name;
 
+    /// <param name="name"> Name of the parameterless string-returning method to invoke on the target. </param>
     public DumpAttribute(string name) => Name = name;
 
-    /// <summary>
-    ///     set "ToString" as dump behaviour of class
-    /// </summary>
-    /// <param name="type"> the type to dump. Is the type of any base class of "target" </param>
-    /// <param name="target"> the object to dump </param>
-    /// <returns> </returns>
+    /// <inheritdoc />
     public override string Dump(Type type, object target)
     {
         try

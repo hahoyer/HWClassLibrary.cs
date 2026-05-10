@@ -2,30 +2,25 @@
 
 namespace hw.Helper;
 
+/// <summary>Numeric helpers around <see cref="long" /> and <see cref="int" />.</summary>
 [PublicAPI]
 public static class LongExtender
 {
-    /// <summary>
-    ///     Gets the giga.
-    /// </summary>
-    /// <value>The giga.</value>
-    /// [created 30.08.2006 22:24]
+    /// <summary>10^9 as a <see cref="long" /> (decimal giga, not 2^30).</summary>
     public static long Giga => 1000 * 1000 * 1000;
 
-    /// <summary>
-    ///     Gets the mega.
-    /// </summary>
-    /// <value>The mega.</value>
-    /// [created 30.08.2006 22:24]
+    /// <summary>10^6 as a <see cref="long" /> (decimal mega, not 2^20).</summary>
     public static long Mega => 1000 * 1000;
 
-    /// <summary>
-    ///     Gets the kilo.
-    /// </summary>
-    /// <value>The kilo.</value>
-    /// [created 30.08.2006 22:24]
+    /// <summary>10^3 as a <see cref="long" />.</summary>
     public static long Kilo => 1000;
 
+    /// <summary>
+    ///     Formats <paramref name="value" /> with at most three significant digits and an SI suffix
+    ///     (k, M, G, T, P, E, Z, Y), e.g. <c>1234567 → "1.23M"</c>. Negative numbers keep their sign.
+    /// </summary>
+    /// <param name="value"> Value to format. </param>
+    /// <param name="omitZeros"> If <c>true</c>, trailing fractional zeros are dropped. </param>
     public static string Format3Digits(this long value, bool omitZeros = true)
     {
         if(value == 0)
@@ -55,6 +50,12 @@ public static class LongExtender
         return result + "kMGTPEZY"[(size - 1) / 3];
     }
 
+    /// <summary>
+    ///     Tests whether every bit set in <paramref name="bit" /> is also set in
+    ///     <paramref name="bitArray" /> (i.e. a bitmask containment check, not single-bit equality).
+    /// </summary>
     public static bool HasBitSet(this long bitArray, long bit) => (bitArray & bit) == bit;
+
+    /// <inheritdoc cref="HasBitSet(long, long)" />
     public static bool HasBitSet(this int bitArray, int bit) => (bitArray & bit) == bit;
 }

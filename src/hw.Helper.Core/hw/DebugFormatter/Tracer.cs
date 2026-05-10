@@ -7,11 +7,19 @@ using hw.Helper;
 
 namespace hw.DebugFormatter;
 
+/// <summary>
+///     Static facade for diagnostic output: dump formatting, stack-trace inspection, assertion helpers
+///     and indented logging. Most members are extension methods so they read naturally at the call site.
+/// </summary>
 [PublicAPI]
 public static class Tracer
 {
     extension(string target)
     {
+        /// <summary>
+        ///     Parses a textual <see cref="Exception.StackTrace" /> into structured frames. Lines that
+        ///     do not match the expected ".NET <c>at … in … :line N</c>" shape are silently dropped.
+        /// </summary>
         public IEnumerable<StackTraceLevel> ParseStackTrace()
         {
             if(string.IsNullOrWhiteSpace(target))
@@ -29,6 +37,10 @@ public static class Tracer
 
     extension(Exception exception)
     {
+        /// <summary>
+        ///     Multi-line rendering of <paramref name="exception" /> with the throwing method, an
+        ///     IDE-clickable stack trace and any inner exception, suitable for pasting into a log.
+        /// </summary>
         public string Dump
         {
             get
@@ -66,11 +78,21 @@ public static class Tracer
 
     sealed class BreakException : Exception;
 
+    /// <summary>
+    ///     Pattern used by <see cref="FilePosition(string?, TextPart?, FilePositionTag)" /> and
+    ///     friends. Following Visual Studio's "Edit.GotoNextLocation" convention makes the resulting
+    ///     line clickable in the IDE output window.
+    /// </summary>
     public const string VisualStudioLineFormat =
         "{fileName}({lineNumber},{columnNumber},{lineNumberEnd},{columnNumberEnd}): {tagText}: ";
 
+    /// <summary>Shared dump engine used by <see cref="Dump" />, <see cref="DumpData(object?)" /> and friends.</summary>
     public static readonly Dumper Dumper = new();
 
+    /// <summary>
+    ///     When <c>true</c>, <see cref="TraceBreak" /> and assertion helpers throw instead of calling
+    ///     <see cref="Debugger.Break" />. Useful for unit tests that exercise failing paths.
+    /// </summary>
     public static bool IsBreakDisabled;
 
     static readonly Writer Writer = new();
@@ -248,12 +270,23 @@ public static class Tracer
         return FilePosition(stackFrame, tag) + stackFrame.GetMethod().DumpMethod(showParam);
     }
 
+    /// <summary>
+    ///     Returns a printable name for the method <paramref name="stackFrameDepth" /> frames above
+    ///     the caller of this function (without parameter list).
+    /// </summary>
+    /// <param name="stackFrameDepth"> Number of additional frames to skip above the caller. </param>
     public static string CallingMethodName(int stackFrameDepth = 0)
     {
         var stackFrame = new StackTrace(true).GetFrame(stackFrameDepth + 1);
         return (stackFrame?.GetMethod()).DumpMethod(false);
     }
 
+    /// <summary>
+    ///     Multi-line dump of the call stack at the call site, with each line formatted via
+    ///     <see cref="FilePosition(StackFrame?, FilePositionTag)" /> so the IDE can navigate to it.
+    /// </summary>
+    /// <param name="tag"> Tag stamped on every line (e.g. <see cref="FilePositionTag.Debug" />). </param>
+    /// <param name="stackFrameDepth"> Number of frames to skip at the top of the trace. </param>
     public static string StackTrace(FilePositionTag tag, int stackFrameDepth = 0)
     {
         var stackTrace = new StackTrace(true);
@@ -294,6 +327,15 @@ public static class Tracer
         (methodHeader + " " + text).Log(level);
     }
 
+    /// <summary>
+    ///     Logs <paramref name="text" /> prefixed with the caller's method header (file/line + method
+    ///     name).
+    /// </summary>
+    /// <param name="text"> The text to log. </param>
+    /// <param name="flagText"> Tag stamped on the file-position prefix. </param>
+    /// <param name="showParam"> If <c>true</c>, includes the parameter list in the method header. </param>
+    /// <param name="stackFrameDepth"> Frames to skip when locating the caller. </param>
+    /// <param name="level"> Severity of the resulting log entry. </param>
     [IsLoggingFunction]
     public static void Log
     (
@@ -319,6 +361,7 @@ public static class Tracer
     /// <returns> </returns>
     public static string Dump(object? target) => Dumper.Dump(target);
 
+    /// <summary>Extension-method form of <see cref="Dump" /> for fluent call sites.</summary>
     public static string LogDump(this object target) => Dumper.Dump(target);
 
     /// <summary>
@@ -365,6 +408,7 @@ public static class Tracer
             + DumpMethodWithData(null, data).Indent();
     }
 
+    /// <summary>Formats a name/value pair as <c>name=&lt;dump-of-value&gt;</c>.</summary>
     public static string IsSetTo(this string name, object? value) => name + "=" + Dump(value);
 
     /// <summary>
@@ -446,10 +490,20 @@ public static class Tracer
         AssertionFailed("", getText, stackFrameDepth + 1);
     }
 
+    /// <summary>
+    ///     Convenience overload of <see cref="Assert(bool, Func{string}?, int)" /> that takes a literal
+    ///     message instead of a producer.
+    /// </summary>
+    /// <param name="b"> Condition that must hold. </param>
+    /// <param name="s"> Message to record on failure. </param>
     [DebuggerHidden]
     [ContractAnnotation("b: false => halt")]
     public static void Assert(this bool b, string s) => b.Assert(() => s, 1);
 
+    /// <summary>
+    ///     Breaks into the debugger if one is attached. With <see cref="IsBreakDisabled" /> set, throws
+    ///     a private break exception instead.
+    /// </summary>
     [DebuggerHidden]
     public static void TraceBreak()
     {
@@ -509,22 +563,46 @@ public static class Tracer
         AssertionFailed($"is {typeof(TTargetType).PrettyName()}", getText, stackFrameDepth + 1);
     }
 
+    /// <summary>
+    ///     Returns the number of stack frames currently above the caller, optionally offset by
+    ///     <paramref name="stackFrameDepth" />. Used by the method-dump infrastructure to detect
+    ///     unbalanced start/end pairs.
+    /// </summary>
+    /// <param name="stackFrameDepth"> Frames to subtract from the raw frame count. </param>
     public static int CurrentFrameCount(int stackFrameDepth) => new StackTrace(true).FrameCount - stackFrameDepth;
 
+    /// <summary>Launches a debugger from code; usually only sensible during initial process startup.</summary>
     [DebuggerHidden]
     public static void LaunchDebugger() => Debugger.Launch();
 
+    /// <summary>Increases the global indent applied to subsequent <see cref="Log(string?, LogLevel)" /> calls.</summary>
     public static void IndentStart() => Writer.IndentStart();
+
+    /// <summary>Decreases the global indent applied to subsequent <see cref="Log(string?, LogLevel)" /> calls.</summary>
     public static void IndentEnd() => Writer.IndentEnd();
 
+    /// <summary>Writes <paramref name="value" /> as a complete line through the shared <see cref="Writer" />.</summary>
+    /// <param name="value"> Line to write. </param>
+    /// <param name="level"> Severity tagged onto the write. </param>
     [IsLoggingFunction]
     public static void Log(this string? value, LogLevel level = LogLevel.Information)
         => Writer.ThreadSafeWrite(value, true, level);
 
+    /// <summary>Writes <paramref name="value" /> without appending a newline.</summary>
+    /// <param name="value"> Text to append to the current line. </param>
+    /// <param name="level"> Severity tagged onto the write. </param>
     [IsLoggingFunction]
     public static void LogLinePart(this string value, LogLevel level = LogLevel.Information)
         => Writer.ThreadSafeWrite(value, false, level);
 
+    /// <summary>
+    ///     Renders the call site, the runtime arguments and an optional prefix into the logging
+    ///     format used by <c>StartMethodDump</c> and <see cref="DumpStaticMethodWithData" />.
+    /// </summary>
+    /// <param name="text"> Prefix shown before the parameter list. </param>
+    /// <param name="thisObject"> Receiver of the call, or <c>null</c> for static methods. </param>
+    /// <param name="parameter"> Argument values matching the method's signature, optionally followed by name/value pairs. </param>
+    /// <param name="stackFrameDepth"> Frames to skip when locating the call site. </param>
     public static string DumpMethodWithData
         (string text, object? thisObject, object?[] parameter, int stackFrameDepth = 0)
     {
@@ -575,22 +653,41 @@ public static class Tracer
     }
 }
 
+/// <summary>One parsed entry from an <see cref="Exception.StackTrace" /> string.</summary>
 public class StackTraceLevel
 {
+    /// <summary>The "<c>at …</c>" method signature as captured from the original line.</summary>
     public required string Method;
+
+    /// <summary>Source file the frame came from.</summary>
     public required string Filename;
+
+    /// <summary>Raw line-number text; parse via <see cref="LineNr" />.</summary>
     public required string LineNrString;
+
+    /// <summary>Numeric line number; throws if <see cref="LineNrString" /> is not a valid integer.</summary>
     public int LineNr => int.Parse(LineNrString);
 }
 
+/// <summary>
+///     Tag stamped on the file-position prefix produced by
+///     <see cref="Tracer.FilePosition(StackFrame?, FilePositionTag)" />. The tag becomes the third
+///     field in the Visual-Studio-clickable line and helps distinguish the call's purpose.
+/// </summary>
 [PublicAPI]
 public enum FilePositionTag
 {
+    /// <summary>General-purpose debug output.</summary>
     Debug
+    /// <summary>Application output (e.g. a print statement).</summary>
     , Output
+    /// <summary>Database or query-related diagnostics.</summary>
     , Query
+    /// <summary>Test framework integration.</summary>
     , Test
+    /// <summary>Output from <see cref="Profiler" />.</summary>
     , Profiler
+    /// <summary>An exception location.</summary>
     , Exception
 }
 
@@ -599,5 +696,11 @@ interface IDumpExceptAttribute
     bool IsException(object? target);
 }
 
+/// <summary>Common base for attributes recognised by the dump infrastructure.</summary>
 public abstract class DumpAttributeBase : Attribute;
+
+/// <summary>
+///     Marks a method as a logging helper so that ReSharper-style call-site information (caller member
+///     name, file, line) is preserved through it instead of being attributed to the helper itself.
+/// </summary>
 public sealed class IsLoggingFunction : Attribute;

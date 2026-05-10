@@ -5,6 +5,12 @@ using hw.Helper;
 
 namespace hw.DebugFormatter;
 
+/// <summary>
+///     Base class that gives derived types a structured debug representation and a small toolkit of
+///     method-tracing helpers. The reflection-based dump used by the debugger display can be tuned via
+///     attributes such as <see cref="DumpAttribute" />, <see cref="EnableDumpAttribute" /> and
+///     <see cref="DisableDumpAttribute" />.
+/// </summary>
 [Dump("Dump")]
 [DebuggerDisplay("{" + nameof(DebuggerDumpString) + "}")]
 public class Dumpable
@@ -21,33 +27,36 @@ public class Dumpable
         }
     }
 
+    /// <summary>
+    ///     Global override for method-dump tracing. When <c>null</c> (default), tracing follows the
+    ///     per-call switches pushed by <c>StartMethodDump</c>. Set to <c>true</c> to suppress all method
+    ///     dump output, or <c>false</c> to force it.
+    /// </summary>
     [PublicAPI]
     public static bool? IsMethodDumpTraceInhibited;
 
     static readonly Stack<MethodDumpTraceItem> MethodDumpTraceSwitches = new();
 
     /// <summary>
-    ///     Gets a value indicating whether this instance is in dump.
+    ///     Re-entry guard: <c>true</c> while the dump of this instance is in progress. Used to break
+    ///     cycles in object graphs.
     /// </summary>
-    /// <value>
-    ///     <c>true</c>
-    ///     if this instance is in dump; otherwise,
-    ///     <c>false</c>
-    ///     .
-    /// </value>
-    /// created 23.09.2006 17:39
     [DisableDump]
     [PublicAPI]
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public bool IsInDump { get; set; }
 
     /// <summary>
-    ///     generate dump string to be shown in debug windows
+    ///     Override to customise the string shown in debugger windows. The default uses
+    ///     <see cref="Tracer.Dump(object?)" />.
     /// </summary>
-    /// <returns> </returns>
     [PublicAPI]
     public virtual string DebuggerDump() => Tracer.Dump(this);
 
+    /// <summary>
+    ///     Renders the data portion (members) of this instance. Falls back to
+    ///     <c>"&lt;not implemented&gt;"</c> when the dump throws.
+    /// </summary>
     [PublicAPI]
     public virtual string DumpData()
     {
@@ -73,13 +82,18 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     dump string to be shown in debug windows
+    ///     CRLF-normalised version of <see cref="DebuggerDump" />, bound to
+    ///     <see cref="DebuggerDisplayAttribute" />.
     /// </summary>
     [DisableDump]
     [PublicAPI]
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public string DebuggerDumpString => DebuggerDump().Replace("\n", "\r\n");
 
+    /// <summary>
+    ///     One-letter alias for <see cref="DebuggerDumpString" />, intended to be typed quickly in the
+    ///     debugger watch window.
+    /// </summary>
     [DisableDump]
     [PublicAPI]
     // ReSharper disable once InconsistentNaming
@@ -96,10 +110,10 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method dump with break,
+    ///     Marker for static methods that have not been implemented yet. Logs the call site and the
+    ///     given parameters, then breaks into the debugger.
     /// </summary>
-    /// <param name="p"> </param>
-    /// <returns> </returns>
+    /// <param name="p"> Parameter values to include in the log. </param>
     [DebuggerHidden]
     [IsLoggingFunction]
     [PublicAPI]
@@ -111,11 +125,11 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method start dump,
+    ///     Logs a name/value pair from inside an instrumented method. No-op when method-dump tracing
+    ///     is inactive.
     /// </summary>
-    /// <param name="name"> </param>
-    /// <param name="value"> </param>
-    /// <returns> </returns>
+    /// <param name="name"> Label shown in the log. </param>
+    /// <param name="value"> Value to dump. </param>
     [DebuggerHidden]
     [IsLoggingFunction]
     [PublicAPI]
@@ -129,11 +143,11 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method start dump,
+    ///     Like <see cref="Dump(string, object?)" />, but the value is computed lazily and only when
+    ///     tracing is active.
     /// </summary>
-    /// <param name="name"> </param>
-    /// <param name="getValue"> </param>
-    /// <returns> </returns>
+    /// <param name="name"> Label shown in the log. </param>
+    /// <param name="getValue"> Producer for the value to dump. </param>
     [DebuggerHidden]
     [IsLoggingFunction]
     [PublicAPI]
@@ -146,11 +160,16 @@ public class Dumpable
         }
     }
 
+    /// <summary>One-letter alias for logging this instance, intended for use from the debugger.</summary>
     // ReSharper disable once InconsistentNaming
     [PublicAPI]
     [IsLoggingFunction]
     public void t() => DebuggerDumpString.Log(LogLevel.Debug);
 
+    /// <summary>
+    ///     Re-entrancy-safe dump entry point: sets <see cref="IsInDump" /> for the duration of the
+    ///     call so that recursive references render as <c>&lt;recursion&gt;</c>.
+    /// </summary>
     public string Dump()
     {
         var oldIsInDump = IsInDump;
@@ -165,15 +184,16 @@ public class Dumpable
         }
     }
 
+    /// <summary>Empty placeholder so instances can be used inside <c>using</c> blocks.</summary>
     [PublicAPI]
     public void Dispose() { }
 
     /// <summary>
-    ///     Method dump,
+    ///     Closing counterpart to <c>StartMethodDump</c> for value-returning methods. Logs the return
+    ///     value and optionally breaks into the debugger.
     /// </summary>
-    /// <param name="rv"> </param>
-    /// <param name="breakExecution"> </param>
-    /// <returns> </returns>
+    /// <param name="rv"> Return value to log and pass through. </param>
+    /// <param name="breakExecution"> If <c>true</c>, breaks into the debugger after logging. </param>
     [DebuggerHidden]
     [IsLoggingFunction]
     protected static T ReturnMethodDump<T>(T rv, bool breakExecution = true)
@@ -190,8 +210,9 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method dump,
+    ///     Closing counterpart to <c>StartMethodDump</c> for void methods.
     /// </summary>
+    /// <param name="breakExecution"> If <c>true</c>, breaks into the debugger after logging. </param>
     [DebuggerHidden]
     [PublicAPI]
     [IsLoggingFunction]
@@ -207,7 +228,8 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method dump,
+    ///     Pops the trace switch pushed by <c>StartMethodDump</c> without logging a return value, and
+    ///     asserts that the call stack depth matches the matching start.
     /// </summary>
     [DebuggerHidden]
     protected static void EndMethodDump()
@@ -220,11 +242,10 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method dump with break,
+    ///     Logs <paramref name="text" /> and the supplied data, then breaks into the debugger.
     /// </summary>
-    /// <param name="text"> </param>
-    /// <param name="p"> </param>
-    /// <returns> </returns>
+    /// <param name="text"> Free-form prefix shown before the data. </param>
+    /// <param name="p"> Data values to dump. </param>
     [DebuggerHidden]
     [PublicAPI]
     [IsLoggingFunction]
@@ -236,11 +257,12 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method start dump,
+    ///     Opens a method-dump scope. Pair every call with <see cref="EndMethodDump" /> or one of the
+    ///     <c>Return…MethodDump</c> helpers. When <paramref name="trace" /> is <c>true</c> the call,
+    ///     <paramref name="p" /> and subsequent intra-method <c>Dump</c> calls are written to the log.
     /// </summary>
-    /// <param name="trace"> </param>
-    /// <param name="p"> </param>
-    /// <returns> </returns>
+    /// <param name="trace"> Whether to actually emit log output for this scope. </param>
+    /// <param name="p"> Argument values to record on entry. </param>
     [DebuggerHidden]
     [IsLoggingFunction]
     protected void StartMethodDump(bool trace, params object?[] p)
@@ -253,6 +275,7 @@ public class Dumpable
         Tracer.IndentStart();
     }
 
+    /// <summary>Breaks into the debugger only if method-dump tracing is active for the current scope.</summary>
     [DebuggerHidden]
     [PublicAPI]
     protected void BreakExecution()
@@ -262,11 +285,11 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method dump with break,
+    ///     Logs the current method together with <paramref name="text" /> and the supplied parameters,
+    ///     then breaks into the debugger.
     /// </summary>
-    /// <param name="text"> </param>
-    /// <param name="p"> </param>
-    /// <returns> </returns>
+    /// <param name="text"> Free-form prefix shown before the parameter list. </param>
+    /// <param name="p"> Argument values to dump. </param>
     [DebuggerHidden]
     [PublicAPI]
     [IsLoggingFunction]
@@ -278,10 +301,11 @@ public class Dumpable
     }
 
     /// <summary>
-    ///     Method dump with break,
+    ///     Marker for instance methods that have not been implemented yet. Logs the call site and
+    ///     parameters, then breaks into the debugger. Throws <see cref="NotImplementedException" />
+    ///     when invoked while a dump of <c>this</c> is already in progress, to avoid re-entry.
     /// </summary>
-    /// <param name="p"> </param>
-    /// <returns> </returns>
+    /// <param name="p"> Argument values to log. </param>
     [DebuggerHidden]
     [IsLoggingFunction]
     protected void NotImplementedMethod(params object?[] p)
@@ -311,5 +335,9 @@ public class Dumpable
         MethodDumpTraceSwitches.Push(new(frameCount, trace));
     }
 
+    /// <summary>
+    ///     Convenience for building a typed array from a parameter list, useful when calling overloads
+    ///     that expect <c>params object?[]</c>.
+    /// </summary>
     public static TValue?[] T<TValue>(params TValue?[] value) => value;
 }

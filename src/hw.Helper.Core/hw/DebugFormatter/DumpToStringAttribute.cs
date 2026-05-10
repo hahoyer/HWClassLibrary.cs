@@ -3,17 +3,13 @@
 namespace hw.DebugFormatter;
 
 /// <summary>
-///     Used to control dump. Use ToString function
+///     Replaces the dump representation of the decorated class or struct with the result of its
+///     <see cref="object.ToString" /> override.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 [PublicAPI]
 public sealed class DumpToStringAttribute : DumpClassAttribute
 {
-    /// <summary>
-    ///     set "ToString" as dump behaviour of class
-    /// </summary>
-    /// <param name="type"> the type to dump. Is the type of any base class of "target" </param>
-    /// <param name="target"> the object to dump </param>
-    /// <returns> </returns>
+    /// <inheritdoc />
     public override string Dump(Type type, object target) => target.ToString()!;
 }

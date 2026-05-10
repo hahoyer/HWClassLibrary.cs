@@ -5,11 +5,21 @@ using hw.Helper;
 
 namespace hw.Helper;
 
+/// <summary>
+///     Aligns multi-line text into columns by inserting spaces. Columns are anchored at literal
+///     marker substrings ("floating columns"); the first marker that appears on a line determines the
+///     column position, and subsequent lines are padded so that the markers line up.
+/// </summary>
 [PublicAPI]
 public sealed class StringAligner
 {
     readonly List<FloatingColumn> FloatingColumns = new();
 
+    /// <summary>
+    ///     Appends a floating column anchored at the first occurrence of any of
+    ///     <paramref name="pattern" />. Columns are processed in the order they were added.
+    /// </summary>
+    /// <param name="pattern"> Marker strings; the first one found per line wins. </param>
     public void AddFloatingColumn(params string[] pattern)
     {
         var c = FloatingColumns.Count;
@@ -18,9 +28,11 @@ public sealed class StringAligner
             FloatingColumns[c - 1].FindStartFailed = FloatingColumns[c].FindStart;
     }
 
+    /// <summary>Aligns a single string by splitting it on <c>\n</c> and re-joining the result with <c>\n</c>-terminators.</summary>
     public string Format
         (string lines) => Format(lines.Split('\n')).Aggregate("", (current, temp) => current + temp + "\n");
 
+    /// <summary>Aligns each line, padding so all configured markers line up across rows.</summary>
     public string[] Format(string[] lines)
     {
         var result = lines.Select(target => target).ToArray();
@@ -32,46 +44,38 @@ public sealed class StringAligner
 }
 
 /// <summary>
-///     Description of a floating column
+///     One column definition for <see cref="StringAligner" />: locates the start and end of a marker
+///     in a line and pads other lines so all markers line up.
 /// </summary>
 [PublicAPI]
 public abstract class FloatingColumn : Dumpable
 {
     /// <summary>
-    ///     called when find start failed
+    ///     Fallback used when the marker is not found in the current line. By default returns the
+    ///     line length so that the column "ends" at end-of-line; <see cref="StringAligner" /> wires
+    ///     this to delegate to the next column when there is one.
     /// </summary>
     public Func<string, int, int> FindStartFailed;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="FloatingColumn" /> class.
-    /// </summary>
-    /// created 15.10.2006 15:44
+    /// <summary>Constructs a column with the default end-of-line fallback.</summary>
     protected FloatingColumn() => FindStartFailed = (s, i) => s.Length;
 
-    /// <summary>
-    ///     Finds the start.of column marker
-    /// </summary>
-    /// <param name="s"> The string. </param>
-    /// <param name="i"> The old start position. </param>
-    /// <returns> </returns>
-    /// created 15.10.2006 15:22
+    /// <summary>Returns the column-marker start position in <paramref name="s" /> at or after <paramref name="i" />.</summary>
+    /// <param name="s"> Line to search. </param>
+    /// <param name="i"> Position to start searching from. </param>
     public abstract int FindStart(string s, int i);
 
-    /// <summary>
-    ///     Finds the end.of column marker
-    /// </summary>
-    /// <param name="s"> The string. </param>
-    /// <param name="i"> The old start position. </param>
-    /// <returns> </returns>
-    /// created 15.10.2006 15:22
+    /// <summary>Returns the position just past the column marker.</summary>
+    /// <param name="s"> Line to search. </param>
+    /// <param name="i"> Position to start searching from. </param>
     public abstract int FindEnd(string s, int i);
 
     /// <summary>
-    ///     Formats the specified lines beginning at specified positions .
+    ///     Pads <paramref name="lines" /> in place so that this column's marker lines up across rows.
+    ///     <paramref name="positions" /> is updated to point past the handled portion of each line.
     /// </summary>
-    /// <param name="lines"> The lines, will be modified. </param>
-    /// <param name="positions"> The positions, will be set to end of part handled. </param>
-    /// created 15.10.2006 15:07
+    /// <param name="lines"> Lines to align (modified in place). </param>
+    /// <param name="positions"> Per-line cursor positions (modified in place). </param>
     public void Format(string[] lines, int[] positions)
     {
         var count = lines.Length;

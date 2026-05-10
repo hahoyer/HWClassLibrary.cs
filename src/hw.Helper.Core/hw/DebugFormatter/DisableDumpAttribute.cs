@@ -3,12 +3,13 @@
 namespace hw.DebugFormatter;
 
 /// <summary>
-///     Used to control dump of data element.
-///     Inhibit dump of this member, even if it's not private
+///     Excludes the decorated field or property from the dump, overriding the default rule that public,
+///     non-private members are included.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public sealed class DisableDumpAttribute : DumpEnabledAttribute
 {
+    /// <summary>Initialises the attribute with <see cref="DumpEnabledAttribute.IsEnabled" /> set to <c>false</c>.</summary>
     public DisableDumpAttribute()
         : base(false) { }
 }

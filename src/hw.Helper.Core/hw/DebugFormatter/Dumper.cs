@@ -5,8 +5,13 @@ using hw.Helper;
 
 namespace hw.DebugFormatter;
 
+/// <summary>
+///     Reflection-based dump engine used by <see cref="Tracer" /> and <see cref="Dumpable" />. Tracks
+///     active references so cycles render as <c>[see{n#}]</c> back-references rather than recursing.
+/// </summary>
 public sealed class Dumper
 {
+    /// <summary>Configuration consulted to decide how a given type is rendered. Mutate to install custom handlers.</summary>
     [PublicAPI]
     public readonly Configuration Configuration = new();
 
