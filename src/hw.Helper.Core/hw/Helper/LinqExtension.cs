@@ -524,50 +524,55 @@ public static class LinqExtension
             yield return i;
     }
 
-    /// <summary>
-    ///     Outer-merges <paramref name="left" /> and <paramref name="right" /> by their respective
-    ///     keys, returning one tuple per key with the left and/or right element (whichever is
-    ///     present). Throws <see cref="DuplicateKeyException" /> when a key occurs more than once on
-    ///     either side.
-    /// </summary>
-    public static IEnumerable<Tuple<TKey, TLeft?, TRight?>> Merge<TKey, TLeft, TRight>
-    (
-        this IEnumerable<TLeft> left,
-        IEnumerable<TRight> right,
-        Func<TLeft, TKey> getLeftKey,
-        Func<TRight, TKey> getRightKey
-    )
-        where TLeft : class
-        where TRight : class
+    extension<TKey, TLeft, TRight>(IEnumerable<TLeft> left)
     {
-        var leftCommon = left.Select
-            (l => new Tuple<TKey, TLeft?, TRight?>(getLeftKey(l), l, null));
-        var rightCommon = right.Select
-            (r => new Tuple<TKey, TLeft?, TRight?>(getRightKey(r), null, r));
-        return
-            leftCommon.Union(rightCommon)
-                .GroupBy(t => t.Item1)
-                .Select(Merge);
+        /// <summary>
+        ///     Outer-merges <paramref name="left" /> and <paramref name="right" /> by their respective
+        ///     keys, returning one tuple per key with the left and/or right element (whichever is
+        ///     present). Throws <see cref="DuplicateKeyException" /> when a key occurs more than once on
+        ///     either side.
+        /// </summary>
+        public IEnumerable<Tuple<TKey, TLeft?, TRight?>>
+            Merge(IEnumerable<TRight> right,
+                Func<TLeft, TKey> getLeftKey,
+                Func<TRight, TKey> getRightKey
+            )
+        {
+            var leftCommon = left.Select
+                (l => new Tuple<TKey, TLeft?, TRight?>(getLeftKey(l), l, default));
+            var rightCommon = right.Select
+                (r => new Tuple<TKey, TLeft?, TRight?>(getRightKey(r), default, r));
+            return
+                leftCommon.Union(rightCommon)
+                    .GroupBy(t => t.Item1)
+                    .Select(Merge);
+        }
     }
 
-    /// <summary>Symmetric variant of <see cref="Merge{TKey, TLeft, TRight}" /> for when both sides have the same element type.</summary>
-    public static IEnumerable<Tuple<TKey, T?, T?>> Merge<TKey, T>
-        (this IEnumerable<T> left, IEnumerable<T> right, Func<T, TKey> getKey)
-        where T : class
-        => left.Merge(right, getKey, getKey);
+    extension<TKey, T>(IEnumerable<T> left)
+    {
+        /// <summary>
+        ///     Symmetric variant of
+        ///     <see>
+        ///         <cref>Merge{TKey, TLeft, TRight}</cref>
+        ///     </see>
+        ///     for when both sides have the same element type.
+        /// </summary>
+        public IEnumerable<Tuple<TKey, T?, T?>>
+            Merge(IEnumerable<T> right, Func<T, TKey> getKey)
+            => left.Merge(right, getKey, getKey);
+    }
 
     /// <summary>
     ///     Combines a key-grouping into a single triple. Public so callers can supply this as the
     ///     last step in a custom merge pipeline; throws <see cref="DuplicateKeyException" /> when
     ///     the grouping is malformed.
     /// </summary>
-    public static Tuple<TKey, TLeft?, TRight?> Merge<TKey, TLeft, TRight>
-        (IGrouping<TKey, Tuple<TKey, TLeft?, TRight?>> grouping)
-        where TLeft : class
-        where TRight : class
+    public static Tuple<TKey, TLeft?, TRight?>
+        Merge<TKey, TLeft, TRight>(IGrouping<TKey, Tuple<TKey, TLeft?, TRight?>> grouping)
     {
         var list = grouping.ToArray();
-        switch(list.Length)
+        switch (list.Length)
         {
             case 1:
                 return list[0];
