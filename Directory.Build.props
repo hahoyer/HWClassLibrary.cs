@@ -20,7 +20,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Prefer32Bit>false</Prefer32Bit>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -51,7 +51,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <!--<PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />-->
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.*" />
     </ItemGroup>
 
     <ItemGroup>
