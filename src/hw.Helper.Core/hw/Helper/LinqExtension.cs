@@ -577,9 +577,9 @@ public static class LinqExtension
             case 1:
                 return list[0];
             case 2:
-                if(list[0].Item2 == null && list[1].Item3 == null)
+                if (Equals(list[0].Item2, default(TLeft?)) && Equals(list[1].Item3, default(TRight?)))
                     return new(grouping.Key, list[1].Item2, list[0].Item3);
-                if(list[1].Item2 == null && list[0].Item3 == null)
+                if (Equals(list[1].Item2, default(TLeft?)) && Equals(list[0].Item3, default(TRight?)))
                     return new(grouping.Key, list[0].Item2, list[1].Item3);
                 break;
         }
