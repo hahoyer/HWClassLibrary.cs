@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
         <Description>Helper classes - provide some basic extensions for everyday programming.</Description>
-        <Version>26.1.0-alpha</Version>
+        <Version>26.1.0</Version>
         <PackageReleaseNotes>
             change: deliver with global-usings
             26.0.11
@@ -195,7 +195,6 @@
         <Compile Remove="hw\**\*.cs" />
         <Content Include="hw/**/*.cs" Pack="true" PackagePath="contentFiles/cs/any/hw/%(RecursiveDir)%(Filename)%(Extension)" BuildAction="Compile" CopyToOutput="false" />
         <None Include="*.props" Pack="true" PackagePath="build\" />
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     </ItemGroup>    
 
 </Project>
