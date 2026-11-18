@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/build/">
+    <File Path="../build/ApiKey.targets" />
+    <File Path="../build/ApiKey.targets.sample" />
+    <File Path="../build/CSharp.Exe.targets" />
+    <File Path="../build/CSharp.Library.targets" />
+    <File Path="../build/CSharp.Library.UnitTest.targets" />
+    <File Path="../build/CSharp.targets" />
+    <File Path="../build/CSharp.WinExe.targets" />
+    <File Path="../Directory.Build.props" />
+    <File Path="../Directory.Build.targets" />
+    <File Path="../build/HoyerWare.CSharp.targets" />
+    <File Path="../build/NuGetDocedSourcecodePackage.nuspec" />
+    <File Path="../build/NuGetDocedSourcecodePackage.targets" />
+    <File Path="../build/NuGetPackage.targets" />
+    <File Path="../build/NugetSourcecodePackage.nuspec" />
+    <File Path="../build/NuGetSourcecodePackage.targets" />
+  </Folder>
+  <Folder Name="/development/">
+    <Project Path="CoreTester/CoreTester.csproj" />
+    <Project Path="Tester/Tester.csproj" />
+    <Project Path="TestUnitTest/TestUnitTest.csproj" />
+    <Project Path="hw.CompilerTools/hw.CompilerTools.dev.csproj" />
+    <Project Path="hw.Helper.Core/hw.Helper.Core.dev.csproj" />
+    <Project Path="hw.UnitTest/hw.UnitTest.dev.csproj" />
+  </Folder>
+  <Folder Name="/this/">
+    <File Path="../.gitattributes" />
+    <File Path="../.gitignore" />
+    <File Path="../Directory.Build.props" />
+    <File Path="../LICENSE" />
+    <File Path="../README" />
+  </Folder>
+</Solution>

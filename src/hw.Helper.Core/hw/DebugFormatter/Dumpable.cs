@@ -161,9 +161,9 @@ public class Dumpable
     }
 
     /// <summary>One-letter alias for logging this instance, intended for use from the debugger.</summary>
-    // ReSharper disable once InconsistentNaming
     [PublicAPI]
     [IsLoggingFunction]
+    // ReSharper disable once InconsistentNaming
     public void t() => DebuggerDumpString.Log(LogLevel.Debug);
 
     /// <summary>

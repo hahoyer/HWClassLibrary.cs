@@ -47,7 +47,9 @@ public static class ReplaceVariablesExtension
             => target.ReplaceVariables(values, prefix, new Tagged<TAttribute>(brackets));
 
         /// <summary>
-        ///     Replacement with a name prefix; same shape as <see cref="ReplaceVariables(object, IReplaceProvider?)" />
+        ///     Replacement with a name prefix; same shape as <see>
+        ///         <cref>ReplaceVariables(object, IReplaceProvider?)</cref>
+        ///     </see>
         ///     but used during recursive descent into nested objects.
         /// </summary>
         public string ReplaceVariables(object values, string prefix, IReplaceProvider? provider = null)

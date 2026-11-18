@@ -100,11 +100,11 @@ public static class DateTimeExtender
     public static string Format3Digits(this TimeSpan timeSpan, bool omitZeros = true, bool useSymbols = true)
     {
         if (timeSpan.TotalDays >= 1)
-            return timeSpan.TotalDays.ToString("0.00") + "d";
+            return $"{timeSpan.TotalDays:0.00}d";
         if (timeSpan.Hours > 0)
-            return timeSpan.Hours + OmitCheck(":", timeSpan.Minutes, omitZeros) + "h";
+            return $"{timeSpan.Hours}{OmitCheck(":", timeSpan.Minutes, omitZeros)}h";
         if (timeSpan.Minutes > 0)
-            return timeSpan.Minutes + OmitCheck(":", timeSpan.Seconds, omitZeros) + (useSymbols ? "'" : "m");
+            return $"{timeSpan.Minutes}{OmitCheck(":", timeSpan.Seconds, omitZeros)}{(useSymbols ? "'" : "m")}";
 
         var nanoSeconds = ((long)(timeSpan.TotalMilliseconds * 1000 * 1000)).Format3Digits(omitZeros) + "ns";
         return nanoSeconds.Replace("kns", "�s").Replace("Mns", "ms").Replace("Gns", useSymbols ? "\"" : "s");

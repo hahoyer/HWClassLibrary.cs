@@ -17,12 +17,9 @@ public static class LinqExtension
     /// <summary>How <see cref="LinqExtension.Split{T}" /> places the separator element relative to the produced sub-lists.</summary>
     public enum SeparatorTreatmentForSplit
     {
-        /// <summary>The separator is discarded.</summary>
-        Drop
-        /// <summary>The separator becomes the first element of the next sub-list.</summary>
-        , BeginOfSubList
-        /// <summary>The separator becomes the last element of the previous sub-list.</summary>
-        , EndOfSubList
+        Drop,
+        BeginOfSubList,
+        EndOfSubList
     }
 
     extension<T>(IList<T> a)
@@ -51,7 +48,10 @@ public static class LinqExtension
 
     extension<T>(IEnumerable<T> target)
     {
-        /// <summary>Deprecated; use <see cref="Split(Func{T, bool}, SeparatorTreatmentForSplit)" /> with <see cref="SeparatorTreatmentForSplit.BeginOfSubList" />.</summary>
+        /// <summary>
+        ///     Deprecated; use <see cref="Split(IEnumerable{T},Func{T,bool},SeparatorTreatmentForSplit)" /> with
+        ///     <see cref="SeparatorTreatmentForSplit.BeginOfSubList" />.
+        /// </summary>
         [Obsolete("Use Split(isHead, SeparatorTreatmentForSplit.BeginOfSubList) instead.")]
         public IEnumerable<IEnumerable<T>> Separate(Func<T, bool> isHead)
             => target.Split(isHead, SeparatorTreatmentForSplit.BeginOfSubList);
@@ -64,16 +64,16 @@ public static class LinqExtension
         ///     <paramref name="separator" />. With <paramref name="showNumbers" /> set, each item is
         ///     prefixed with its zero-based index.
         /// </summary>
-        public string Stringify(string separator = "",  bool showNumbers = false)
+        public string Stringify(string separator = "", bool showNumbers = false)
         {
             var result = new StringBuilder();
             var i = 0;
             var isNext = false;
-            foreach(var element in target)
+            foreach (var element in target)
             {
-                if(isNext)
+                if (isNext)
                     result.Append(separator);
-                if(showNumbers)
+                if (showNumbers)
                     result.Append("[" + i + "] ");
                 isNext = true;
                 result.Append(element);
@@ -104,23 +104,25 @@ public static class LinqExtension
         )
         {
             var part = new List<T>();
-            foreach(var item in target)
-                if(isSeparator(item))
+            foreach (var item in target)
+                if (isSeparator(item))
                 {
-                    if(separatorTreatment == SeparatorTreatmentForSplit.EndOfSubList)
+                    if (separatorTreatment == SeparatorTreatmentForSplit.EndOfSubList)
                         part.Add(item);
 
-                    if(part.Any())
+                    if (part.Any())
                         yield return part.ToArray();
                     part = [];
 
-                    if(separatorTreatment == SeparatorTreatmentForSplit.BeginOfSubList)
+                    if (separatorTreatment == SeparatorTreatmentForSplit.BeginOfSubList)
                         part.Add(item);
                 }
                 else
+                {
                     part.Add(item);
+                }
 
-            if(part.Any())
+            if (part.Any())
                 yield return part.ToArray();
         }
     }
@@ -136,10 +138,10 @@ public static class LinqExtension
         public T? Aggregate(Func<T>? getDefault = null)
         {
             var targetArray = target.ToArray();
-            if(!targetArray.Any())
+            if (!targetArray.Any())
                 return getDefault?.Invoke();
             var result = targetArray[0];
-            for(var i = 1; i < targetArray.Length; i++)
+            for (var i = 1; i < targetArray.Length; i++)
             {
                 var item = targetArray[i];
                 result = result?.Aggregate(item) ?? item;
@@ -211,12 +213,12 @@ public static class LinqExtension
         /// <summary>Whether <paramref name="target" /> begins with <paramref name="y" /> element-wise.</summary>
         public bool StartsWith(IList<T> y)
         {
-            if(target.Count < y.Count)
+            if (target.Count < y.Count)
                 return false;
             return !y.Where((t, i) => !Equals(target[i], t)).Any();
         }
 
-        /// <summary>Like <see cref="StartsWith(IList{T})" />, but also requires <paramref name="target" /> to be strictly longer.</summary>
+        /// <summary>Like <see cref="StartsWith(IList{T},IList{T})" />, but also requires <paramref name="target" /> to be strictly longer.</summary>
         public bool StartsWithAndNotEqual(IList<T> y)
             => target.Count != y.Count && target.StartsWith(y);
     }
@@ -231,11 +233,11 @@ public static class LinqExtension
         /// </summary>
         public TResult? CheckedApply<TResult>(Func<T, TResult> function)
             where TResult : class
-            => target == default(T)? default : function(target);
+            => target == default(T) ? default : function(target);
 
         /// <summary>Wraps a single value as a one-element enumerable, or returns an empty one when <c>null</c>.</summary>
         public IEnumerable<T> NullableToArray()
-            => target == null? [] : new[] { target };
+            => target == null ? [] : new[] { target };
     }
 
     extension<TResult>(TResult? target)
@@ -268,14 +270,14 @@ public static class LinqExtension
         /// <summary>Yields the integers <c>0, 1, …, count-1</c>.</summary>
         public IEnumerable<int> Select()
         {
-            for(var i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
                 yield return i;
         }
 
         /// <summary>Yields <paramref name="getValue" /> applied to each integer in <c>0..count-1</c>.</summary>
         public IEnumerable<T> Select<T>(Func<int, T> getValue)
         {
-            for(var i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
                 yield return getValue(i);
         }
     }
@@ -285,14 +287,14 @@ public static class LinqExtension
         /// <summary>Yields the long integers <c>0, 1, …, count-1</c>.</summary>
         public IEnumerable<long> Select()
         {
-            for(long i = 0; i < count; i++)
+            for (long i = 0; i < count; i++)
                 yield return i;
         }
 
         /// <summary>Yields <paramref name="getValue" /> applied to each long integer in <c>0..count-1</c>.</summary>
         public IEnumerable<T> Select<T>(Func<long, T> getValue)
         {
-            for(long i = 0; i < count; i++)
+            for (long i = 0; i < count; i++)
                 yield return getValue(i);
         }
     }
@@ -308,7 +310,7 @@ public static class LinqExtension
             IEnumerable<KeyValuePair<TKey, TValue>> newEntries
         )
         {
-            foreach(var item in newEntries.Where(entry => !target.ContainsKey(entry.Key)))
+            foreach (var item in newEntries.Where(entry => !target.ContainsKey(entry.Key)))
                 target.Add(item);
         }
     }
@@ -322,15 +324,15 @@ public static class LinqExtension
         /// <param name="predicate"> Filter applied to each element. </param>
         public int? IndexWhere(Func<T, bool> predicate)
         {
-            if(items == null)
+            if (items == null)
                 throw new ArgumentNullException(nameof(items));
-            if(predicate == null)
+            if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
             var result = 0;
-            foreach(var item in items)
+            foreach (var item in items)
             {
-                if(predicate(item))
+                if (predicate(item))
                     return result;
                 result++;
             }
@@ -348,7 +350,7 @@ public static class LinqExtension
         /// </summary>
         public IEnumerable<T> Chain(Func<T, T?> getNext)
         {
-            while(current != null)
+            while (current != null)
             {
                 yield return current;
                 current = getNext(current);
@@ -358,13 +360,19 @@ public static class LinqExtension
 
     extension<T>(T a)
     {
-        /// <summary>Whether <paramref name="a" /> equals any element of <paramref name="b" />. The reverse of <see cref="Enumerable.Contains{T}(IEnumerable{T}, T)" />.</summary>
+        /// <summary>
+        ///     Whether <paramref name="a" /> equals any element of <paramref name="b" />. The reverse of
+        ///     <see cref="Enumerable.Contains{T}(IEnumerable{T}, T)" />.
+        /// </summary>
         public bool In(params T[] b) => b.Contains(a);
     }
 
     extension<TType>(IEnumerable<TType> target)
     {
-        /// <summary>Asserts that the parent relation has no cycles. Always returns <c>null</c>; the call exists for its side effect.</summary>
+        /// <summary>
+        ///     Asserts that the parent relation has no cycles. Always returns <c>null</c>; the call exists for its side
+        ///     effect.
+        /// </summary>
         public IEnumerable<TType>? Sort(Func<TType, IEnumerable<TType>> immediateParents)
         {
             var xx = target.ToArray();
@@ -377,10 +385,10 @@ public static class LinqExtension
         {
             var types = target.ToArray();
             var targets = types;
-            while(true)
+            while (true)
             {
                 targets = targets.SelectMany(immediateParents).Except(types).ToArray();
-                if(!targets.Any())
+                if (!targets.Any())
                     return types;
                 types = types.Union(targets).ToArray();
             }
@@ -407,7 +415,7 @@ public static class LinqExtension
     {
         /// <summary>Wraps a nullable value type as a one-element enumerable (or empty when null).</summary>
         public IEnumerable<T> NullableToArray()
-            => target == null? [] : new[] { target.Value };
+            => target == null ? [] : new[] { target.Value };
     }
 
     extension<TTarget>(IEnumerable<TTarget> target)
@@ -430,42 +438,45 @@ public static class LinqExtension
             bool enableMultiple = true
         )
         {
-            if(selector != null)
+            if (selector != null)
                 target = target.Where(selector);
 
             using var enumerator = target.GetEnumerator();
 
-            if(!enumerator.MoveNext())
+            if (!enumerator.MoveNext())
             {
-                if(emptyException != null)
+                if (emptyException != null)
                     throw emptyException();
-                return enableEmpty? default : target.Single();
+                return enableEmpty ? default : target.Single();
             }
 
             var result = enumerator.Current;
-            if(!enumerator.MoveNext())
+            if (!enumerator.MoveNext())
                 return result;
 
-            if(multipleException != null)
+            if (multipleException != null)
                 throw multipleException(target);
-            return enableMultiple? result : target.Single();
+            return enableMultiple ? result : target.Single();
         }
     }
 
     extension(IEnumerable<int> values)
     {
-        /// <summary>Maximum element of <paramref name="values" />, or <c>null</c> when empty (unlike <see cref="Enumerable.Max{TSource}(IEnumerable{TSource})" />, which throws).</summary>
+        /// <summary>
+        ///     Maximum element of <paramref name="values" />, or <c>null</c> when empty (unlike
+        ///     <see cref="Enumerable.Max{TSource}(IEnumerable{TSource})" />, which throws).
+        /// </summary>
         public int? Maxx
         {
             get
             {
-                if(values == null)
+                if (values == null)
                     throw new ArgumentNullException(nameof(values));
                 int? result = null;
-                foreach(var value in values)
-                    if(result == null)
+                foreach (var value in values)
+                    if (result == null)
                         result = value;
-                    else if(value > result)
+                    else if (value > result)
                         result = value;
                 return result;
             }
@@ -476,13 +487,13 @@ public static class LinqExtension
         {
             get
             {
-                if(values == null)
+                if (values == null)
                     throw new ArgumentNullException(nameof(values));
                 int? result = null;
-                foreach(var value in values)
-                    if(result == null)
+                foreach (var value in values)
+                    if (result == null)
                         result = value;
-                    else if(value < result)
+                    else if (value < result)
                         result = value;
                 return result;
             }
@@ -491,11 +502,14 @@ public static class LinqExtension
 
     extension<T>(T root)
     {
-        /// <summary>Pre-order traversal of <paramref name="root" /> followed by every descendant under <paramref name="getChildren" />.</summary>
+        /// <summary>
+        ///     Pre-order traversal of <paramref name="root" /> followed by every descendant under
+        ///     <paramref name="getChildren" />.
+        /// </summary>
         public IEnumerable<T> SelectHierarchical(Func<T, IEnumerable<T>> getChildren)
         {
             yield return root;
-            foreach(var item in getChildren(root).SelectMany(i => i.SelectHierarchical(getChildren)))
+            foreach (var item in getChildren(root).SelectMany(i => i.SelectHierarchical(getChildren)))
                 yield return item;
         }
     }
@@ -506,7 +520,7 @@ public static class LinqExtension
     /// </summary>
     public static IEnumerable<int> Where(Func<int, bool> getValue)
     {
-        for(var i = 0; getValue(i); i++)
+        for (var i = 0; getValue(i); i++)
             yield return i;
     }
 
@@ -568,23 +582,24 @@ public static class LinqExtension
         throw new DuplicateKeyException();
     }
 
-    /// <summary>
-    ///     Lazily groups <paramref name="list" /> by <paramref name="selector" /> into a
-    ///     <see cref="FunctionCache{TKey, TValue}" />: missing keys yield the empty group on first
-    ///     access. Unlike <see cref="Enumerable.ToLookup{TSource, TKey}(IEnumerable{TSource}, Func{TSource, TKey})" />,
-    ///     the source is re-scanned on every miss instead of materialised eagerly.
-    /// </summary>
-    public static FunctionCache<TKey, IEnumerable<T>> ToDictionaryEx<TKey, T>
-        (this IEnumerable<T> list, Func<T, TKey> selector)
-        where TKey : notnull
-        => new(key => list.Where(item => Equals(selector(item), key)));
+    extension<TKey, T>(IEnumerable<T> list) where TKey : notnull
+    {
+        /// <summary>
+        ///     Lazily groups <paramref name="list" /> by <paramref name="selector" /> into a
+        ///     <see cref="FunctionCache{TKey, TValue}" />: missing keys yield the empty group on first
+        ///     access. Unlike <see cref="Enumerable.ToLookup{TSource, TKey}(IEnumerable{TSource}, Func{TSource, TKey})" />,
+        ///     the source is re-scanned on every miss instead of materialised eagerly.
+        /// </summary>
+        public FunctionCache<TKey, IEnumerable<T>> 
+            ToDictionaryEx(Func<T, TKey> selector) => new(key => list.Where(item => Equals(selector(item), key)));
+    }
 
     static bool InternalAddDistinct<T>(ICollection<T> a, IEnumerable<T> b, Func<T, T, bool> isEqual)
     {
         var result = false;
         // ReSharper disable once LoopCanBePartlyConvertedToQuery
-        foreach(var bi in b)
-            if(AddDistinct(a, bi, isEqual))
+        foreach (var bi in b)
+            if (AddDistinct(a, bi, isEqual))
                 result = true;
         return result;
     }
@@ -594,15 +609,15 @@ public static class LinqExtension
     {
         var result = false;
         // ReSharper disable once LoopCanBePartlyConvertedToQuery
-        foreach(var bi in b)
-            if(AddDistinct(a, bi, combine))
+        foreach (var bi in b)
+            if (AddDistinct(a, bi, combine))
                 result = true;
         return result;
     }
 
     static bool AddDistinct<T>(ICollection<T> a, T bi, Func<T, T, bool> isEqual)
     {
-        if(a.Any(ai => isEqual(ai, bi)))
+        if (a.Any(ai => isEqual(ai, bi)))
             return false;
         a.Add(bi);
         return true;
@@ -611,10 +626,10 @@ public static class LinqExtension
     static bool AddDistinct<T>(IList<T> a, T bi, Func<T, T, T?> combine)
         where T : class
     {
-        for(var i = 0; i < a.Count; i++)
+        for (var i = 0; i < a.Count; i++)
         {
             var ab = combine(a[i], bi);
-            if(ab == null)
+            if (ab == null)
                 continue;
             a[i] = ab;
             return false;

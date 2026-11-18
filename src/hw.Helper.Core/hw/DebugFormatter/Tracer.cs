@@ -679,15 +679,10 @@ public enum FilePositionTag
 {
     /// <summary>General-purpose debug output.</summary>
     Debug
-    /// <summary>Application output (e.g. a print statement).</summary>
     , Output
-    /// <summary>Database or query-related diagnostics.</summary>
     , Query
-    /// <summary>Test framework integration.</summary>
     , Test
-    /// <summary>Output from <see cref="Profiler" />.</summary>
     , Profiler
-    /// <summary>An exception location.</summary>
     , Exception
 }
 

@@ -96,10 +96,10 @@ public sealed class DateRange
             if(Start.TimeOfDay != TimeSpan.FromHours(0) || End.TimeOfDay != TimeSpan.FromHours(0))
                 return null;
             if(Start.Year != End.Year)
-                return Start.ToString("yyyy.MM.dd") + "..." + End.ToString("yyyy.MM.dd");
+                return $"{Start:yyyy.MM.dd}...{End:yyyy.MM.dd}";
             if(Start.Month != End.Month)
-                return Start.Year + " " + Start.ToString("MM.dd") + "..." + End.ToString("MM.dd");
-            return Start.ToString("yyyy.MM") + " " + Start.Day + "..." + End.Day;
+                return $"{Start:yyyy.MM.dd}...{End:MM.dd}";
+            return $"{Start:yyyy.MM.dd}...{End:dd}";
         }
     }
 
