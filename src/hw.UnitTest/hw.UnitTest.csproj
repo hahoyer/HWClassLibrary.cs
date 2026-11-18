@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetTypeEx>NuGetDocedSourcecodePackage</TargetTypeEx>
         <Description>Provides some support for unit-testing.</Description>
-        <Version>26.1.0</Version>
+        <Version>26.1.1</Version>
         <PackageReleaseNotes>
             change: deliver with global-usings
             26.0.6
