@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <OutputTypeEx>CSharp.WinExe</OutputTypeEx>
+        <TargetTypeEx>CSharp.WinExe</TargetTypeEx>
     </PropertyGroup>
 
     <ItemGroup>
