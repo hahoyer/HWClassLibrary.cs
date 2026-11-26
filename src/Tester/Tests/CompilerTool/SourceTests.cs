@@ -1,5 +1,3 @@
-
-
 // ReSharper disable CheckNamespace
 
 namespace hw.Tests.CompilerTool;
@@ -48,10 +46,31 @@ public sealed class SourceTests
     {
         var source = new Source(Text);
         (!source.IsEndPosition(Index.FromStart(2))).Assert();
-        (source.IsEndPosition(Index.FromStart(source.Length))).Assert();
+        source.IsEndPosition(Index.FromStart(source.Length)).Assert();
 
         (!source.IsEndPosition(Index.FromEnd(2))).Assert();
-        (source.IsEndPosition(Index.FromEnd(0))).Assert();
-        (source.IsEndPosition(Index.End)).Assert();
+        source.IsEndPosition(Index.FromEnd(0)).Assert();
+        source.IsEndPosition(Index.End).Assert();
+    }
+
+
+    [UnitTest]
+    public static void MultiSource()
+    {
+        var folder = Environment.CurrentDirectory.ToSmbFile() / "Temp";
+        var files = new[] { Text, "_1_2_3_4_5_6_7_8", "ASDFGHJKLyx" }
+            .Select((text, index) =>
+            {
+                var file = folder / $"File{index}.reni";
+                file.String = text;
+                return new FileSourceProvider(file);
+            })
+            .ToArray();
+
+        var sourceList = new SourceList(files);
+        var source = new Source(sourceList);
+
+        var p = source.All.FilePosition;
+        true.ConditionalBreak(() => p);
     }
 }

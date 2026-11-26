@@ -75,10 +75,15 @@ public sealed class Source : DumpableObject
 
         var resultStart = target.Position(position, false);
         var resultEnd = target.Position(positionEnd, true);
-        if(resultStart.Source == resultEnd.Source)
-            return [resultStart.Span(resultEnd)];
-        NotImplementedMethod(position, positionEnd);
-        return default!;
+        var result = new List<SourcePart>();
+        while (resultStart.Source != resultEnd.Source)
+        {
+            var resultStartEnd = resultStart.Source.All.End;
+            position = position - resultStart.Position + resultStartEnd.Position;
+            result.Add(resultStart.Span(resultStartEnd));
+            resultStart = target.Position(position, false);
+        }
+        return [.. result, resultStart.Span(resultEnd)];
     }
 
     public string GetFilePosition(int position, int positionEnd, string flagText, string? tag = null)
