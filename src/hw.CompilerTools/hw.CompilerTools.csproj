@@ -3,8 +3,10 @@
     <PropertyGroup>
         <TargetTypeEx>NugetSourcecodePackage</TargetTypeEx>
         <Description>Provides support for building compilers.</Description>
-        <Version>26.1.0</Version>
+        <Version>26.1.1</Version>
         <PackageReleaseNotes>
+            change: Provide implementation of IMultiSourceProvider
+            26.1.0
             change: deliver with global-usings
             26.0.4
             new: Source/SourcePosition/SourcePart/Match for long 
